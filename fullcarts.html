@@ -1,0 +1,3232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>FullCarts — Shrinkflation Scanner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --duo-green: #58CC02;
+      --duo-green-dark: #46a302;
+      --duo-green-shadow: #3d8e02;
+      --duo-green-light: #d7ffb8;
+      --duo-blue: #1CB0F6;
+      --duo-blue-dark: #1899d6;
+      --duo-blue-shadow: #1580b5;
+      --duo-red: #FF4B4B;
+      --duo-red-dark: #ea2b2b;
+      --duo-red-shadow: #cc1f1f;
+      --duo-orange: #FF9600;
+      --duo-orange-dark: #e08600;
+      --duo-yellow: #FFC800;
+      --duo-purple: #CE82FF;
+      --duo-purple-dark: #b06bdd;
+      --snow: #FFFFFF;
+      --polar: #F7F7F7;
+      --swan: #E5E5E5;
+      --hare: #AFAFAF;
+      --wolf: #777777;
+      --eel: #4B4B4B;
+      --bg: #131F24;
+      --card-bg: #1a2c33;
+      --card-border: #2b3f48;
+    }
+
+    body {
+      font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--snow);
+      min-height: 100vh;
+      max-width: 430px;
+      margin: 0 auto;
+      -webkit-font-smoothing: antialiased;
+    }
+    #app { display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* ═══════════════════════════════════════════
+       HEADER
+    ═══════════════════════════════════════════ */
+    #header {
+      background: var(--bg);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 2px solid var(--card-border);
+    }
+    .header-left { display: flex; align-items: center; gap: 10px; }
+    .header-mascot {
+      width: 40px;
+      height: 40px;
+      background: var(--duo-green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      border-bottom: 3px solid var(--duo-green-shadow);
+    }
+    #header h1 { font-size: 22px; font-weight: 900; color: var(--snow); letter-spacing: -0.5px; }
+    .header-stats { display: flex; align-items: center; gap: 14px; }
+    .header-stat {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .header-stat .fire { color: var(--duo-orange); }
+    .header-stat .xp { color: var(--duo-yellow); }
+
+    /* ═══════════════════════════════════════════
+       CONTENT
+    ═══════════════════════════════════════════ */
+    #content { flex: 1; overflow-y: auto; padding-bottom: 90px; }
+
+    /* ═══════════════════════════════════════════
+       BOTTOM NAV
+    ═══════════════════════════════════════════ */
+    #nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      background: var(--bg);
+      border-top: 2px solid var(--card-border);
+      display: flex;
+      padding: 4px 8px;
+      z-index: 100;
+    }
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 0 6px;
+      gap: 2px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--wolf);
+      transition: all 0.15s;
+      border-radius: 12px;
+    }
+    .nav-item .icon { font-size: 24px; }
+    .nav-item.active {
+      color: var(--duo-green);
+      background: rgba(88, 204, 2, 0.1);
+    }
+
+    /* ═══════════════════════════════════════════
+       DUO BUTTONS — chunky 3D style
+    ═══════════════════════════════════════════ */
+    .btn-duo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: none;
+      border-radius: 16px;
+      padding: 16px 28px;
+      font-size: 17px;
+      font-weight: 900;
+      font-family: 'Nunito', sans-serif;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.1s;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      position: relative;
+    }
+    .btn-duo:active { transform: translateY(3px); }
+    .btn-green {
+      background: var(--duo-green);
+      color: white;
+      border-bottom: 4px solid var(--duo-green-shadow);
+    }
+    .btn-green:active { border-bottom-width: 1px; }
+    .btn-blue {
+      background: var(--duo-blue);
+      color: white;
+      border-bottom: 4px solid var(--duo-blue-shadow);
+    }
+    .btn-blue:active { border-bottom-width: 1px; }
+    .btn-red {
+      background: var(--duo-red);
+      color: white;
+      border-bottom: 4px solid var(--duo-red-shadow);
+    }
+    .btn-red:active { border-bottom-width: 1px; }
+    .btn-outline {
+      background: transparent;
+      color: var(--duo-blue);
+      border: 2px solid var(--card-border);
+      border-bottom: 4px solid var(--card-border);
+    }
+    .btn-outline:active { border-bottom-width: 2px; }
+    .btn-sm {
+      padding: 10px 20px;
+      font-size: 14px;
+      border-radius: 14px;
+      width: auto;
+      display: inline-flex;
+    }
+
+    /* ═══════════════════════════════════════════
+       CARDS — rounded, bordered
+    ═══════════════════════════════════════════ */
+    .duo-card {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 16px;
+      margin: 12px 16px;
+      overflow: hidden;
+    }
+
+    /* ═══════════════════════════════════════════
+       HERO
+    ═══════════════════════════════════════════ */
+    .hero { padding: 24px 20px 4px; text-align: center; }
+    .hero-mascot { font-size: 64px; margin-bottom: 12px; animation: bounce 2s infinite; }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .hero h2 {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--snow);
+      line-height: 1.2;
+    }
+    .hero p {
+      font-size: 15px;
+      color: var(--hare);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+    .hero .btn-duo { margin-top: 20px; }
+
+    /* ═══════════════════════════════════════════
+       XP BAR / STATS ROW
+    ═══════════════════════════════════════════ */
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 16px;
+    }
+    .stat-bubble {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+    .stat-bubble .num {
+      font-size: 22px;
+      font-weight: 900;
+    }
+    .stat-bubble .num.green { color: var(--duo-green); }
+    .stat-bubble .num.orange { color: var(--duo-orange); }
+    .stat-bubble .num.blue { color: var(--duo-blue); }
+    .stat-bubble .num.red { color: var(--duo-red); }
+    .stat-bubble .lbl {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--wolf);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .xp-bar-wrap {
+      margin: 0 16px 12px;
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .xp-bar-label {
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--duo-yellow);
+      white-space: nowrap;
+    }
+    .xp-bar {
+      flex: 1;
+      height: 14px;
+      background: var(--card-border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .xp-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--duo-yellow) 0%, var(--duo-orange) 100%);
+      border-radius: 10px;
+      transition: width 0.5s ease;
+    }
+
+    /* ═══════════════════════════════════════════
+       SEARCH
+    ═══════════════════════════════════════════ */
+    .search-wrap { padding: 4px 16px 0; }
+    .search-bar {
+      display: flex;
+      gap: 8px;
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 14px;
+      padding: 4px 6px 4px 16px;
+      transition: border-color 0.2s;
+    }
+    .search-bar:focus-within { border-color: var(--duo-blue); }
+    .search-bar input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'Nunito', sans-serif;
+      background: transparent;
+      color: var(--snow);
+      padding: 10px 0;
+    }
+    .search-bar input::placeholder { color: var(--wolf); }
+    .search-bar button {
+      background: var(--card-border);
+      color: var(--hare);
+      border: none;
+      border-radius: 10px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 800;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    /* ═══════════════════════════════════════════
+       SECTION TITLE
+    ═══════════════════════════════════════════ */
+    .section-title {
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--wolf);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 18px 16px 8px;
+    }
+
+    /* ═══════════════════════════════════════════
+       PRODUCT LIST
+    ═══════════════════════════════════════════ */
+    .product-item {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 2px solid var(--card-border);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .product-item:last-child { border-bottom: none; }
+    .product-item:active { background: rgba(255,255,255,0.03); }
+    .product-emoji {
+      width: 48px;
+      height: 48px;
+      background: rgba(88, 204, 2, 0.1);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+    .product-info { flex: 1; min-width: 0; }
+    .product-info strong { font-size: 15px; font-weight: 800; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--snow); }
+    .product-info span { font-size: 13px; color: var(--wolf); font-weight: 700; }
+
+    /* ═══════════════════════════════════════════
+       BADGES — chunky Duolingo style
+    ═══════════════════════════════════════════ */
+    .badge {
+      font-size: 12px;
+      font-weight: 900;
+      padding: 4px 10px;
+      border-radius: 10px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      margin-left: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .badge-red { background: rgba(255,75,75,0.15); color: var(--duo-red); border: 2px solid rgba(255,75,75,0.3); }
+    .badge-amber { background: rgba(255,150,0,0.15); color: var(--duo-orange); border: 2px solid rgba(255,150,0,0.3); }
+
+    /* ═══════════════════════════════════════════
+       SCANNER
+    ═══════════════════════════════════════════ */
+    .scanner-wrap { padding: 20px 16px; text-align: center; }
+    .scanner-title { font-size: 20px; font-weight: 900; margin-bottom: 16px; }
+    #reader { border-radius: 16px; overflow: hidden; background: #000; border: 3px solid var(--card-border); }
+    #reader video { width: 100%; }
+    .scanner-hint {
+      font-size: 14px;
+      color: var(--wolf);
+      font-weight: 700;
+      margin-top: 16px;
+      line-height: 1.5;
+    }
+    .manual-wrap { margin-top: 20px; }
+    .manual-wrap a { color: var(--duo-blue); font-weight: 800; text-decoration: none; }
+    #manual-entry {
+      margin-top: 14px;
+      display: none;
+    }
+    .manual-row { display: flex; gap: 8px; }
+    .manual-row input {
+      flex: 1;
+      padding: 14px;
+      border: 2px solid var(--card-border);
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: 'Nunito', sans-serif;
+      outline: none;
+      background: var(--card-bg);
+      color: var(--snow);
+    }
+    .manual-row input:focus { border-color: var(--duo-blue); }
+    .manual-row button {
+      background: var(--duo-blue);
+      color: white;
+      border: none;
+      border-bottom: 3px solid var(--duo-blue-shadow);
+      border-radius: 14px;
+      padding: 14px 20px;
+      font-size: 16px;
+      font-weight: 900;
+      font-family: 'Nunito', sans-serif;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    /* ═══════════════════════════════════════════
+       RESULT
+    ═══════════════════════════════════════════ */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      color: var(--duo-blue);
+      font-size: 15px;
+      font-weight: 900;
+      font-family: 'Nunito', sans-serif;
+      cursor: pointer;
+      padding: 16px 16px 8px;
+      text-transform: uppercase;
+    }
+    .result-hero {
+      margin: 0 16px;
+      border-radius: 18px;
+      padding: 22px;
+      text-align: center;
+      border: 2px solid var(--card-border);
+      background: var(--card-bg);
+      position: relative;
+      overflow: hidden;
+    }
+    .result-hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--duo-red), var(--duo-orange), var(--duo-yellow));
+    }
+    .result-hero .product-icon { font-size: 52px; margin-bottom: 8px; }
+    .result-hero h2 { font-size: 22px; font-weight: 900; color: var(--snow); line-height: 1.2; }
+    .result-hero .sub { font-size: 14px; color: var(--wolf); font-weight: 700; margin-top: 4px; }
+    .repeat-badge {
+      display: inline-block;
+      margin-top: 12px;
+      background: rgba(255,75,75,0.15);
+      color: var(--duo-red);
+      font-size: 13px;
+      font-weight: 900;
+      padding: 6px 14px;
+      border-radius: 12px;
+      border: 2px solid rgba(255,75,75,0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 14px 16px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px 12px;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 30px;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .stat-value.red { color: var(--duo-red); }
+    .stat-value.orange { color: var(--duo-orange); }
+    .stat-value.blue { color: var(--duo-blue); }
+    .stat-value.green { color: var(--duo-green); }
+    .stat-label {
+      font-size: 11px;
+      color: var(--wolf);
+      margin-top: 4px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ═══════════════════════════════════════════
+       TIMELINE
+    ═══════════════════════════════════════════ */
+    .timeline { padding: 0 16px 8px; }
+    .timeline-item {
+      display: flex;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 2px solid var(--card-border);
+    }
+    .timeline-item:last-child { border-bottom: none; }
+    .timeline-left { display: flex; flex-direction: column; align-items: center; }
+    .timeline-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--duo-red);
+      border: 3px solid rgba(255,75,75,0.3);
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+    .timeline-line { width: 3px; background: var(--card-border); flex: 1; margin-top: 4px; border-radius: 3px; }
+    .timeline-date { font-size: 12px; color: var(--wolf); font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; }
+    .timeline-change { font-size: 16px; font-weight: 900; margin-top: 3px; color: var(--snow); }
+    .timeline-pct { color: var(--duo-red); }
+    .timeline-detail { font-size: 14px; color: var(--hare); font-weight: 700; margin-top: 4px; line-height: 1.4; }
+    .timeline-price { font-size: 14px; font-weight: 700; margin-top: 4px; color: var(--hare); }
+    .timeline-price strong { color: var(--duo-red); }
+
+    /* ═══════════════════════════════════════════
+       LEADERBOARD
+    ═══════════════════════════════════════════ */
+    .leaderboard-hero {
+      text-align: center;
+      padding: 28px 20px 16px;
+    }
+    .leaderboard-hero .trophy { font-size: 56px; margin-bottom: 8px; }
+    .leaderboard-hero h2 {
+      font-size: 26px;
+      font-weight: 900;
+      background: linear-gradient(90deg, var(--duo-red), var(--duo-orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .leaderboard-hero p { font-size: 14px; color: var(--wolf); font-weight: 700; margin-top: 4px; }
+    .rank-item {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 2px solid var(--card-border);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .rank-item:last-child { border-bottom: none; }
+    .rank-item:active { background: rgba(255,255,255,0.03); }
+    .rank-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 900;
+      margin-right: 10px;
+      flex-shrink: 0;
+      border-bottom: 3px solid transparent;
+    }
+    .rank-num.gold { background: var(--duo-yellow); color: #5c4800; border-color: #c89e00; }
+    .rank-num.silver { background: #c0c0c0; color: #4a4a4a; border-color: #999; }
+    .rank-num.bronze { background: #cd7f32; color: #462a00; border-color: #a5631a; }
+    .rank-num.normal { background: var(--card-border); color: var(--wolf); }
+    .rank-info { flex: 1; min-width: 0; }
+    .rank-info strong { font-size: 15px; font-weight: 800; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--snow); }
+    .rank-info span { font-size: 13px; color: var(--wolf); font-weight: 700; }
+    .rank-pct {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--duo-red);
+      margin-left: 8px;
+      flex-shrink: 0;
+      background: rgba(255,75,75,0.1);
+      padding: 4px 10px;
+      border-radius: 10px;
+    }
+
+    /* ═══════════════════════════════════════════
+       REPORT FORM
+    ═══════════════════════════════════════════ */
+    .report-hero { text-align: center; padding: 24px 20px 8px; }
+    .report-hero .icon { font-size: 48px; margin-bottom: 8px; }
+    .report-hero h2 { font-size: 22px; font-weight: 900; color: var(--snow); }
+    .report-hero p { font-size: 14px; color: var(--wolf); font-weight: 700; margin-top: 4px; line-height: 1.4; }
+    .form-group { margin: 12px 16px 0; }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--hare);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid var(--card-border);
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: 'Nunito', sans-serif;
+      outline: none;
+      background: var(--card-bg);
+      color: var(--snow);
+      transition: border-color 0.2s;
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: var(--wolf); }
+    .form-group input:focus,
+    .form-group textarea:focus { border-color: var(--duo-blue); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 16px 0; }
+    .form-row .form-group { margin: 0; }
+    .submit-wrap { padding: 16px; }
+    .success-msg {
+      background: rgba(88, 204, 2, 0.15);
+      color: var(--duo-green);
+      border: 2px solid rgba(88, 204, 2, 0.3);
+      border-radius: 16px;
+      padding: 16px;
+      margin: 12px 16px;
+      font-size: 16px;
+      font-weight: 800;
+      display: none;
+      text-align: center;
+    }
+
+    /* ═══════════════════════════════════════════
+       NOT FOUND
+    ═══════════════════════════════════════════ */
+    .not-found { text-align: center; padding: 52px 28px; }
+    .not-found .icon { font-size: 64px; animation: bounce 2s infinite; }
+    .not-found h2 { font-size: 22px; font-weight: 900; margin: 16px 0 8px; color: var(--snow); }
+    .not-found p { font-size: 15px; color: var(--wolf); font-weight: 700; line-height: 1.5; }
+    .not-found .btn-duo { margin-top: 20px; width: auto; display: inline-flex; }
+
+    .empty { padding: 32px 16px; text-align: center; color: var(--wolf); font-size: 15px; font-weight: 700; }
+
+    /* ═══════════════════════════════════════════
+       PROGRESS RING (used in result)
+    ═══════════════════════════════════════════ */
+    .shrink-meter {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 12px;
+      position: relative;
+    }
+    .shrink-meter svg { transform: rotate(-90deg); }
+    .shrink-meter .meter-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--duo-red);
+    }
+
+    /* ═══════════════════════════════════════════
+       CATEGORY PILLS (home)
+    ═══════════════════════════════════════════ */
+    .category-row {
+      display: flex;
+      gap: 8px;
+      padding: 4px 16px 8px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .category-row::-webkit-scrollbar { display: none; }
+    .cat-pill {
+      padding: 7px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 900;
+      white-space: nowrap;
+      cursor: pointer;
+      border: 2px solid var(--card-border);
+      background: var(--card-bg);
+      color: var(--wolf);
+      font-family: 'Nunito', sans-serif;
+      transition: all 0.15s;
+    }
+    .cat-pill.active {
+      background: rgba(88, 204, 2, 0.15);
+      color: var(--duo-green);
+      border-color: var(--duo-green);
+    }
+
+    /* ═══════════════════════════════════════════
+       REDDIT IMPORT
+    ═══════════════════════════════════════════ */
+    .reddit-import {
+      margin: 16px 16px 0;
+      border: 2px solid #ff4500;
+      border-radius: 16px;
+      background: rgba(255, 69, 0, 0.07);
+      overflow: hidden;
+    }
+    .reddit-import-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .reddit-logo {
+      width: 32px;
+      height: 32px;
+      background: #ff4500;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .reddit-import-header h3 { flex: 1; font-size: 15px; font-weight: 900; color: #ff6634; }
+    .reddit-import-header p { font-size: 12px; color: var(--wolf); font-weight: 700; margin-top: 1px; }
+    .reddit-chevron { font-size: 16px; color: var(--wolf); transition: transform 0.2s; }
+    .reddit-chevron.open { transform: rotate(180deg); }
+    .reddit-import-body { padding: 0 16px 16px; display: none; }
+    .reddit-import-body.open { display: block; }
+    .reddit-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+    .reddit-tab {
+      flex: 1;
+      padding: 8px;
+      border: 2px solid var(--card-border);
+      border-radius: 12px;
+      background: var(--card-bg);
+      color: var(--wolf);
+      font-size: 13px;
+      font-weight: 900;
+      font-family: 'Nunito', sans-serif;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      transition: all 0.15s;
+    }
+    .reddit-tab.active { background: rgba(255,69,0,0.15); color: #ff6634; border-color: #ff4500; }
+    .reddit-input-wrap input,
+    .reddit-input-wrap textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid var(--card-border);
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'Nunito', sans-serif;
+      background: var(--card-bg);
+      color: var(--snow);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .reddit-input-wrap input::placeholder,
+    .reddit-input-wrap textarea::placeholder { color: var(--wolf); }
+    .reddit-input-wrap input:focus,
+    .reddit-input-wrap textarea:focus { border-color: #ff4500; }
+    .reddit-fetch-btn {
+      margin-top: 8px;
+      width: 100%;
+      padding: 12px;
+      background: #ff4500;
+      border: none;
+      border-bottom: 3px solid #c73700;
+      border-radius: 12px;
+      color: white;
+      font-size: 14px;
+      font-weight: 900;
+      font-family: 'Nunito', sans-serif;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.1s;
+    }
+    .reddit-fetch-btn:active { transform: translateY(2px); border-bottom-width: 1px; }
+    .reddit-fetch-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .parse-result {
+      margin-top: 12px;
+      padding: 12px 14px;
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 12px;
+      display: none;
+    }
+    .parse-result.success { border-color: var(--duo-green); background: rgba(88,204,2,0.06); }
+    .parse-result.error   { border-color: var(--duo-red);   background: rgba(255,75,75,0.06); }
+    .parse-field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 0;
+      font-size: 13px;
+      font-weight: 700;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .parse-field:last-child { border-bottom: none; }
+    .parse-field .field-label { color: var(--wolf); width: 80px; flex-shrink: 0; text-transform: uppercase; font-size: 11px; letter-spacing: 0.4px; }
+    .parse-field .field-val   { color: var(--snow); flex: 1; }
+    .confidence { font-size: 11px; padding: 2px 7px; border-radius: 8px; font-weight: 900; }
+    .conf-high { background: rgba(88,204,2,0.15);  color: var(--duo-green); }
+    .conf-med  { background: rgba(255,150,0,0.15); color: var(--duo-orange); }
+    .conf-low  { background: rgba(255,75,75,0.15); color: var(--duo-red); }
+    .autofill-btn {
+      margin-top: 10px;
+      width: 100%;
+      padding: 11px;
+      background: var(--duo-green);
+      border: none;
+      border-bottom: 3px solid var(--duo-green-shadow);
+      border-radius: 12px;
+      color: white;
+      font-size: 14px;
+      font-weight: 900;
+      font-family: 'Nunito', sans-serif;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .autofill-btn:active { transform: translateY(2px); border-bottom-width: 1px; }
+    .parse-loading { text-align: center; padding: 16px; color: var(--wolf); font-size: 14px; font-weight: 700; display: none; }
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 18px 16px 4px;
+      color: var(--wolf);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 2px; background: var(--card-border); border-radius: 2px; }
+
+    /* ═══════════════════════════════════════════
+       SHRINK TYPE BADGES
+    ═══════════════════════════════════════════ */
+    .type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 3px 9px;
+      border-radius: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+    .type-shrinkflation  { background: rgba(255,75,75,0.15);   color: #FF4B4B;  border: 1.5px solid rgba(255,75,75,0.3); }
+    .type-skimpflation   { background: rgba(206,130,255,0.15); color: #CE82FF;  border: 1.5px solid rgba(206,130,255,0.3); }
+    .type-downsizing     { background: rgba(255,150,0,0.15);   color: #FF9600;  border: 1.5px solid rgba(255,150,0,0.3); }
+    .type-count-cut      { background: rgba(28,176,246,0.15);  color: #1CB0F6;  border: 1.5px solid rgba(28,176,246,0.3); }
+    .type-price-hike     { background: rgba(255,200,0,0.15);   color: #FFC800;  border: 1.5px solid rgba(255,200,0,0.3); }
+
+    /* ═══════════════════════════════════════════
+       TYPE FILTER ROW
+    ═══════════════════════════════════════════ */
+    .type-row {
+      display: flex;
+      gap: 7px;
+      padding: 0 16px 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .type-row::-webkit-scrollbar { display: none; }
+    .type-pill {
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+      cursor: pointer;
+      border: 2px solid var(--card-border);
+      background: var(--card-bg);
+      color: var(--wolf);
+      font-family: 'Nunito', sans-serif;
+      transition: all 0.15s;
+    }
+    .type-pill.active-shrinkflation  { background:rgba(255,75,75,0.15);   color:#FF4B4B;  border-color:#FF4B4B; }
+    .type-pill.active-skimpflation   { background:rgba(206,130,255,0.15); color:#CE82FF;  border-color:#CE82FF; }
+    .type-pill.active-downsizing     { background:rgba(255,150,0,0.15);   color:#FF9600;  border-color:#FF9600; }
+    .type-pill.active-count-cut      { background:rgba(28,176,246,0.15);  color:#1CB0F6;  border-color:#1CB0F6; }
+    .type-pill.active-price-hike     { background:rgba(255,200,0,0.15);   color:#FFC800;  border-color:#FFC800; }
+    .type-pill.active-all            { background:rgba(88,204,2,0.15);    color:var(--duo-green); border-color:var(--duo-green); }
+
+    /* ═══════════════════════════════════════════
+       NEWS MODULE
+    ═══════════════════════════════════════════ */
+    .news-header { padding: 22px 20px 8px; }
+    .news-header h2 { font-size: 22px; font-weight: 900; }
+    .news-header p  { font-size: 14px; color: var(--wolf); font-weight: 700; margin-top: 4px; }
+    .news-filter-row {
+      display: flex;
+      gap: 7px;
+      padding: 4px 16px 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .news-filter-row::-webkit-scrollbar { display: none; }
+    .news-pill {
+      padding: 6px 13px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+      cursor: pointer;
+      border: 2px solid var(--card-border);
+      background: var(--card-bg);
+      color: var(--wolf);
+      font-family: 'Nunito', sans-serif;
+      transition: all 0.15s;
+    }
+    .news-pill.active { background: rgba(28,176,246,0.15); color: var(--duo-blue); border-color: var(--duo-blue); }
+    .news-card {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 16px;
+      border-bottom: 2px solid var(--card-border);
+      cursor: pointer;
+      transition: background 0.1s;
+      text-decoration: none;
+    }
+    .news-card:active { background: rgba(255,255,255,0.03); }
+    .news-card:last-child { border-bottom: none; }
+    .news-card-top { display: flex; align-items: flex-start; gap: 10px; }
+    .news-source-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 3px 8px;
+      border-radius: 8px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .news-headline {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--snow);
+      line-height: 1.35;
+      flex: 1;
+    }
+    .news-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--wolf);
+      font-weight: 700;
+    }
+    .news-summary {
+      font-size: 13px;
+      color: var(--hare);
+      font-weight: 700;
+      line-height: 1.45;
+    }
+    .news-type-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Demo banner */
+    .demo-banner {
+      background: rgba(255,200,0,0.1);
+      border: 1.5px solid rgba(255,200,0,0.3);
+      border-radius: 12px;
+      padding: 10px 14px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--duo-yellow);
+    }
+    .demo-banner button {
+      background: var(--duo-yellow);
+      color: #4a3800;
+      border: none;
+      border-bottom: 2px solid #c89e00;
+      border-radius: 8px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 900;
+      font-family: 'Nunito', sans-serif;
+      cursor: pointer;
+      white-space: nowrap;
+      text-transform: uppercase;
+    }
+    .demo-pill {
+      background: rgba(28,176,246,0.15);
+      color: var(--duo-blue);
+      border: 1.5px solid rgba(28,176,246,0.35);
+      border-bottom: 3px solid rgba(28,176,246,0.5);
+      border-radius: 20px;
+      padding: 5px 11px;
+      font-size: 12px;
+      font-weight: 900;
+      font-family: 'Nunito', sans-serif;
+      cursor: pointer;
+      white-space: nowrap;
+      margin-right: 4px;
+    }
+    .demo-pill:active { border-bottom-width: 1px; transform: translateY(2px); }
+    .prod-img {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+      border-radius: 10px;
+      display: block;
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .prod-img.loaded { opacity: 1; }
+    .result-prod-img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      border-radius: 16px;
+      display: block;
+      margin: 0 auto 8px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .result-prod-img.loaded { opacity: 1; }
+
+    /* ═══════════════════════════════════════════
+       CELEBRATION SCREEN
+    ═══════════════════════════════════════════ */
+    @keyframes popIn {
+      0%   { transform: scale(0.5); opacity: 0; }
+      70%  { transform: scale(1.12); }
+      100% { transform: scale(1);   opacity: 1; }
+    }
+    @keyframes confettiFall {
+      0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(80px) rotate(720deg); opacity: 0; }
+    }
+    @keyframes slideUp {
+      from { transform: translateY(24px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    .celebrate-wrap { padding: 20px 16px 100px; }
+    .xp-burst {
+      text-align: center;
+      padding: 28px 20px 20px;
+      position: relative;
+    }
+    .xp-burst-badge {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(145deg, #FFC800, #FF9600);
+      border: 4px solid #e08600;
+      border-bottom: 8px solid #c07000;
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+      position: relative;
+      z-index: 2;
+    }
+    .xp-burst-badge .xp-num { font-size: 32px; font-weight: 900; color: #4a2800; line-height: 1; }
+    .xp-burst-badge .xp-lbl { font-size: 13px; font-weight: 900; color: #4a2800; letter-spacing: 1px; }
+    .xp-burst h3 { font-size: 20px; font-weight: 900; margin-top: 14px; color: var(--snow); animation: slideUp 0.4s 0.3s both; }
+    .xp-burst p  { font-size: 14px; font-weight: 700; color: var(--wolf); margin-top: 4px; animation: slideUp 0.4s 0.45s both; }
+    .confetti-row {
+      display: flex; justify-content: center; gap: 6px; margin-top: 6px;
+      animation: slideUp 0.4s 0.5s both;
+    }
+    .confetti-dot {
+      font-size: 18px;
+      animation: confettiFall 1.2s ease-in forwards;
+    }
+    .receipt-card {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 14px;
+      animation: slideUp 0.4s 0.55s both;
+    }
+    .receipt-title {
+      font-size: 11px; font-weight: 900; letter-spacing: 1.5px;
+      color: var(--wolf); text-transform: uppercase; margin-bottom: 12px;
+    }
+    .receipt-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 7px 0; border-bottom: 1.5px dashed var(--card-border);
+      font-size: 14px; font-weight: 700;
+    }
+    .receipt-row:last-child { border-bottom: none; }
+    .receipt-row .lbl { color: var(--wolf); }
+    .receipt-row .val { color: var(--snow); font-weight: 800; }
+    .receipt-row .val.green { color: var(--duo-green); }
+    .receipt-row .val.red   { color: var(--duo-red); }
+    .reddit-meme-card {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 14px;
+      animation: slideUp 0.4s 0.7s both;
+    }
+    .reddit-meme-header {
+      background: rgba(255,70,0,0.12);
+      border-bottom: 1.5px solid rgba(255,70,0,0.2);
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 900;
+      color: #FF4500;
+    }
+    .reddit-meme-body {
+      padding: 14px 16px;
+    }
+    .reddit-meme-text {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--snow);
+      line-height: 1.5;
+    }
+    .reddit-meme-footer {
+      display: flex; align-items: center; gap: 14px;
+      margin-top: 12px; padding-top: 10px;
+      border-top: 1.5px solid var(--card-border);
+    }
+    .upvote-btn {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(255,70,0,0.1); border: 1.5px solid rgba(255,70,0,0.3);
+      border-radius: 20px; padding: 5px 12px;
+      font-size: 13px; font-weight: 900; color: #FF4500;
+      cursor: pointer; font-family: 'Nunito', sans-serif;
+      transition: background 0.15s;
+    }
+    .upvote-btn:active { background: rgba(255,70,0,0.25); }
+    .upvote-btn.voted { background: rgba(255,70,0,0.2); border-color: #FF4500; }
+    .meme-award { font-size: 18px; cursor: pointer; }
+    .celebrate-actions {
+      display: flex; flex-direction: column; gap: 10px;
+      animation: slideUp 0.4s 0.85s both;
+    }
+
+    /* ═══════════════════════════════════════════
+       MISSION TAGLINE
+    ═══════════════════════════════════════════ */
+    .mission-strip {
+      display: flex; align-items: center; justify-content: center;
+      flex-wrap: wrap; gap: 8px;
+      padding: 10px 16px 4px;
+    }
+    .mission-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(88,204,2,0.08); border: 1.5px solid rgba(88,204,2,0.2);
+      border-radius: 20px; padding: 4px 10px;
+      font-size: 11px; font-weight: 900; color: var(--duo-green);
+      letter-spacing: 0.3px;
+    }
+    .mission-pill.blue  { background:rgba(28,176,246,0.08); border-color:rgba(28,176,246,0.2); color:var(--duo-blue); }
+    .mission-pill.amber { background:rgba(255,200,0,0.08);  border-color:rgba(255,200,0,0.2);  color:var(--duo-yellow); }
+
+    /* ═══════════════════════════════════════════
+       COMMUNITY SIGNALS
+    ═══════════════════════════════════════════ */
+    .community-signals {
+      display: flex; align-items: center; gap: 10px;
+      margin-top: 4px;
+      font-size: 11px; font-weight: 800; color: var(--wolf);
+    }
+    .signal-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--duo-green); margin-right: 3px; }
+
+    /* ═══════════════════════════════════════════
+       COMPANY RESPONSE
+    ═══════════════════════════════════════════ */
+    .company-response-card {
+      margin: 0 16px 16px;
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .cr-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px;
+      background: rgba(255,200,0,0.06);
+      border-bottom: 1.5px solid var(--card-border);
+    }
+    .cr-header h4 { font-size: 13px; font-weight: 900; color: var(--duo-yellow); flex: 1; }
+    .cr-badge { font-size: 11px; font-weight: 900; padding: 3px 8px; border-radius: 8px; }
+    .cr-badge.no-comment { background:rgba(175,175,175,0.12); color:var(--wolf); }
+    .cr-badge.deflected   { background:rgba(255,150,0,0.12);  color:var(--duo-orange); }
+    .cr-badge.acknowledged{ background:rgba(88,204,2,0.12);   color:var(--duo-green); }
+    .cr-badge.restored    { background:rgba(88,204,2,0.2);    color:var(--duo-green); border:1.5px solid rgba(88,204,2,0.4); }
+    .fighting-back-banner {
+      margin: 0 16px 14px;
+      background: rgba(88,204,2,0.08);
+      border: 2px solid rgba(88,204,2,0.25);
+      border-radius: 14px; padding: 12px 14px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .fighting-back-banner .fb-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(88,204,2,0.15);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .fighting-back-banner h4 { font-size: 13px; font-weight: 900; color: var(--duo-green); }
+    .fighting-back-banner p  { font-size: 12px; font-weight: 700; color: var(--hare); margin-top: 2px; line-height: 1.4; }
+    /* Transparency Partners coming-soon card */
+    .tp-card {
+      margin: 0 16px 14px;
+      background: var(--card-bg);
+      border: 2px dashed var(--card-border);
+      border-radius: 16px; padding: 18px 16px;
+      text-align: center;
+    }
+    .tp-card .tp-label {
+      display: inline-block; font-size: 10px; font-weight: 900;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      color: var(--wolf); background: var(--card-border);
+      border-radius: 6px; padding: 3px 8px; margin-bottom: 10px;
+    }
+    .tp-card h3 { font-size: 16px; font-weight: 900; color: var(--snow); margin-bottom: 6px; }
+    .tp-card p  { font-size: 13px; font-weight: 700; color: var(--wolf); line-height: 1.5; }
+    .cr-body { padding: 12px 14px; }
+    .cr-quote {
+      font-size: 13px; font-weight: 700; color: var(--hare);
+      font-style: italic; line-height: 1.5; margin-bottom: 8px;
+      padding-left: 10px; border-left: 3px solid var(--card-border);
+    }
+    .cr-source { font-size: 11px; font-weight: 800; color: var(--wolf); }
+    .cr-none { padding: 12px 14px; font-size: 13px; font-weight: 700; color: var(--wolf); }
+
+    /* ═══════════════════════════════════════════
+       SHARE CARD OVERLAY
+    ═══════════════════════════════════════════ */
+    #share-overlay {
+      display: none; position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,0.85);
+      flex-direction: column; align-items: center; justify-content: flex-start;
+      overflow-y: auto; padding: 20px 16px 40px;
+    }
+    #share-overlay.open { display: flex; }
+    .share-hint {
+      font-size: 13px; font-weight: 800; color: var(--wolf); text-align: center;
+      margin-bottom: 14px;
+    }
+    .share-hint strong { color: var(--snow); }
+    #share-card {
+      width: 100%; max-width: 380px;
+      background: #0d1a1f;
+      border: 2.5px solid #2b3f48;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+    }
+    .sc-header {
+      background: var(--duo-green); padding: 14px 18px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sc-header .logo { font-size: 22px; font-weight: 900; color: #0d1a1f; }
+    .sc-header .tagline { font-size: 11px; font-weight: 900; color: rgba(0,0,0,0.55); letter-spacing: 0.5px; }
+    .sc-body { padding: 18px; }
+    .sc-product-name { font-size: 20px; font-weight: 900; color: var(--snow); margin-bottom: 2px; }
+    .sc-brand { font-size: 13px; font-weight: 700; color: var(--wolf); margin-bottom: 14px; }
+    .sc-grade-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .sc-grade-badge {
+      font-size: 28px; font-weight: 900; width: 56px; height: 56px;
+      border-radius: 14px; border-bottom: 4px solid rgba(0,0,0,0.2);
+      display: flex; align-items: center; justify-content: center; color: white;
+      flex-shrink: 0;
+    }
+    .sc-grade-label { font-size: 13px; font-weight: 700; color: var(--wolf); }
+    .sc-grade-label strong { font-size: 16px; font-weight: 900; color: var(--snow); display: block; }
+    .sc-stats { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+    .sc-stat-row {
+      display: flex; justify-content: space-between;
+      padding: 8px 10px; border-radius: 10px;
+      background: rgba(255,255,255,0.04);
+      font-size: 13px;
+    }
+    .sc-stat-row .lbl { color: var(--wolf); font-weight: 700; }
+    .sc-stat-row .val { font-weight: 900; color: var(--snow); }
+    .sc-val-red { color: #FF4B4B !important; }
+    .sc-footer {
+      border-top: 1.5px solid #2b3f48; padding: 12px 18px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .sc-url { font-size: 11px; font-weight: 900; color: var(--duo-green); letter-spacing: 0.3px; }
+    .sc-cta { font-size: 11px; font-weight: 900; color: var(--wolf); }
+    .share-close-btn { margin-top: 16px; width: 100%; max-width: 380px; }
+
+    /* ═══════════════════════════════════════════
+       ABOUT / TRANSPARENCY MODAL
+    ═══════════════════════════════════════════ */
+    #about-overlay {
+      display: none; position: fixed; inset: 0; z-index: 600;
+      background: rgba(0,0,0,0.8);
+      align-items: flex-end; justify-content: center;
+    }
+    #about-overlay.open { display: flex; }
+    #about-sheet {
+      background: #131F24;
+      border: 2px solid var(--card-border);
+      border-radius: 24px 24px 0 0;
+      width: 100%; max-width: 430px;
+      max-height: 88vh;
+      overflow-y: auto;
+      padding: 20px 20px 48px;
+    }
+    .about-handle { width: 40px; height: 5px; background: #2b3f48; border-radius: 3px; margin: 0 auto 18px; }
+    .about-logo-row { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+    .about-logo-icon { width:48px; height:48px; background:var(--duo-green); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; border-bottom:3px solid var(--duo-green-shadow); }
+    .about-logo-row h2 { font-size:22px; font-weight:900; }
+    .about-logo-row p  { font-size:12px; font-weight:700; color:var(--wolf); }
+    .about-section { margin-bottom: 18px; }
+    .about-section h3 { font-size:13px; font-weight:900; letter-spacing:1px; text-transform:uppercase; color:var(--wolf); margin-bottom:8px; }
+    .about-section p  { font-size:14px; font-weight:700; color:var(--hare); line-height:1.6; }
+    .about-commitment {
+      background: rgba(88,204,2,0.08); border: 1.5px solid rgba(88,204,2,0.2);
+      border-radius: 12px; padding: 12px 14px; margin-bottom: 10px;
+    }
+    .about-commitment p { font-size: 13px; font-weight: 800; color: var(--duo-green); line-height: 1.5; }
+    .about-nope {
+      background: rgba(255,75,75,0.08); border: 1.5px solid rgba(255,75,75,0.2);
+      border-radius: 12px; padding: 12px 14px; margin-bottom: 10px;
+    }
+    .about-nope p { font-size: 13px; font-weight: 800; color: var(--duo-red); line-height: 1.5; }
+    .about-data-access {
+      background: rgba(28,176,246,0.08); border: 1.5px solid rgba(28,176,246,0.2);
+      border-radius: 12px; padding: 12px 14px; margin-bottom: 10px;
+    }
+    .about-data-access p { font-size: 13px; font-weight: 800; color: var(--duo-blue); line-height: 1.5; }
+    .info-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 18px; padding: 4px 6px; border-radius: 50%;
+      transition: background 0.15s;
+    }
+    .info-btn:hover { background: rgba(255,255,255,0.08); }
+
+    /* ═══════════════════════════════════════════
+       SVG ICON
+    ═══════════════════════════════════════════ */
+    .header-mascot svg { display: block; }
+    .nav-icon { width: 24px; height: 24px; display: block; }
+
+    /* ═══════════════════════════════════════════
+       SCANNER STATUS BAR
+    ═══════════════════════════════════════════ */
+    .scan-status-bar {
+      display: flex; align-items: center; gap: 10px;
+      margin: 0 0 14px; padding: 10px 14px;
+      border-radius: 12px; font-size: 14px; font-weight: 800;
+      transition: all 0.3s;
+    }
+    .scan-status-idle { background: rgba(255,255,255,0.04); border: 1.5px solid var(--card-border); color: var(--wolf); }
+    .scan-status-scanning { background: rgba(28,176,246,0.1); border: 1.5px solid rgba(28,176,246,0.3); color: var(--duo-blue); }
+    .scan-status-found { background: rgba(88,204,2,0.12); border: 1.5px solid rgba(88,204,2,0.35); color: var(--duo-green); }
+    .scan-status-error { background: rgba(255,75,75,0.1); border: 1.5px solid rgba(255,75,75,0.25); color: var(--duo-red); }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+    .scan-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: currentColor; flex-shrink: 0;
+      animation: pulse-dot 1.2s ease-in-out infinite;
+    }
+    .scan-status-idle .scan-dot { animation: none; opacity: 0.4; }
+    .scan-status-found .scan-dot { animation: none; }
+    .off-prefill-toast {
+      margin: 10px 0 0; padding: 10px 14px;
+      background: rgba(88,204,2,0.1); border: 1.5px solid rgba(88,204,2,0.3);
+      border-radius: 12px; font-size: 13px; font-weight: 800;
+      color: var(--duo-green); display: none;
+    }
+    .off-prefill-toast.show { display: block; }
+
+    /* ═══════════════════════════════════════════
+       SHAME TOGGLE
+    ═══════════════════════════════════════════ */
+    .shame-toggle {
+      display: flex; gap: 6px;
+      margin: 16px 16px 4px;
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 14px; padding: 4px;
+    }
+    .shame-btn {
+      flex: 1; padding: 9px 10px;
+      border: none; border-radius: 10px;
+      font-size: 13px; font-weight: 900;
+      font-family: 'Nunito', sans-serif;
+      cursor: pointer; transition: all 0.15s;
+      color: var(--wolf); background: transparent;
+      letter-spacing: 0.2px;
+    }
+    .shame-btn.active {
+      background: var(--duo-red);
+      color: white;
+      box-shadow: 0 2px 8px rgba(255,75,75,0.3);
+    }
+
+    /* ═══════════════════════════════════════════
+       BRAND DRILL-DOWN
+    ═══════════════════════════════════════════ */
+    .brand-hero {
+      padding: 20px 16px 12px; display: flex; align-items: center; gap: 14px;
+    }
+    .brand-avatar {
+      width: 56px; height: 56px; border-radius: 16px;
+      background: linear-gradient(135deg, var(--duo-red), var(--duo-orange));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; font-weight: 900; color: white;
+      flex-shrink: 0; border-bottom: 3px solid rgba(0,0,0,0.2);
+    }
+    .brand-hero-info h2 { font-size: 20px; font-weight: 900; color: var(--snow); }
+    .brand-hero-info p  { font-size: 13px; font-weight: 700; color: var(--wolf); margin-top: 3px; }
+    .brand-stat-row {
+      display: flex; gap: 8px;
+      margin: 0 16px 14px;
+    }
+    .brand-stat-chip {
+      flex: 1; background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 12px; padding: 10px 8px;
+      text-align: center;
+    }
+    .brand-stat-chip .bsc-val { font-size: 20px; font-weight: 900; color: var(--duo-red); }
+    .brand-stat-chip .bsc-lbl { font-size: 10px; font-weight: 900; color: var(--wolf); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+    .brand-product-item {
+      display: flex; align-items: center;
+      padding: 12px 16px; border-bottom: 2px solid var(--card-border);
+      cursor: pointer; transition: background 0.1s;
+    }
+    .brand-product-item:last-child { border-bottom: none; }
+    .brand-product-item:active { background: rgba(255,255,255,0.03); }
+    .bpi-rank {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: rgba(255,75,75,0.12); color: var(--duo-red);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 900; margin-right: 10px; flex-shrink: 0;
+    }
+    .bpi-info { flex: 1; min-width: 0; }
+    .bpi-info strong { font-size: 14px; font-weight: 800; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bpi-info span { font-size: 12px; color: var(--wolf); font-weight: 700; }
+    .bpi-pct { font-size: 16px; font-weight: 900; color: var(--duo-red); flex-shrink: 0; margin-left: 8px; }
+
+    /* ═══════════════════════════════════════════
+       COMMUNITY VALIDATION
+    ═══════════════════════════════════════════ */
+    .verify-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(28,176,246,0.08);
+      border: 1.5px solid rgba(28,176,246,0.25);
+      border-radius: 20px; padding: 5px 11px;
+      font-size: 12px; font-weight: 900; color: var(--duo-blue);
+      cursor: pointer; font-family: 'Nunito', sans-serif;
+      transition: all 0.15s;
+    }
+    .verify-btn:active { transform: scale(0.95); }
+    .verify-btn.confirmed { background: rgba(88,204,2,0.12); border-color: rgba(88,204,2,0.3); color: var(--duo-green); }
+    .verified-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(88,204,2,0.1); border: 1.5px solid rgba(88,204,2,0.25);
+      border-radius: 8px; padding: 2px 8px;
+      font-size: 11px; font-weight: 900; color: var(--duo-green);
+    }
+    .unverified-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(255,200,0,0.1); border: 1.5px solid rgba(255,200,0,0.25);
+      border-radius: 8px; padding: 2px 8px;
+      font-size: 11px; font-weight: 900; color: var(--duo-yellow);
+    }
+
+    /* ═══════════════════════════════════════════
+       COMMUNITY TAB
+    ═══════════════════════════════════════════ */
+    .community-header {
+      padding: 22px 16px 8px;
+    }
+    .community-header h2 { font-size: 22px; font-weight: 900; color: var(--snow); }
+    .community-header p { font-size: 14px; color: var(--wolf); font-weight: 700; margin-top: 4px; }
+    .community-stats-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 10px; margin: 0 16px 16px;
+    }
+    .community-stat-card {
+      background: var(--card-bg); border: 2px solid var(--card-border);
+      border-radius: 14px; padding: 14px 12px; text-align: center;
+    }
+    .community-stat-card .csv { font-size: 26px; font-weight: 900; }
+    .community-stat-card .csl { font-size: 11px; font-weight: 900; color: var(--wolf); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 3px; }
+    .contributor-item {
+      display: flex; align-items: center;
+      padding: 12px 16px; border-bottom: 2px solid var(--card-border);
+    }
+    .contributor-item:last-child { border-bottom: none; }
+    .contributor-rank {
+      width: 30px; height: 30px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 900; margin-right: 10px;
+      flex-shrink: 0; border-bottom: 2px solid transparent;
+    }
+    .contributor-info { flex: 1; min-width: 0; }
+    .contributor-info strong { font-size: 14px; font-weight: 900; display: block; color: var(--snow); }
+    .contributor-info span  { font-size: 12px; font-weight: 700; color: var(--wolf); }
+    .contributor-badge {
+      font-size: 11px; font-weight: 900; padding: 3px 8px; border-radius: 8px;
+      text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;
+    }
+    .badge-scout  { background: rgba(88,204,2,0.12);  color: var(--duo-green); }
+    .badge-pro    { background: rgba(28,176,246,0.12); color: var(--duo-blue); }
+    .badge-elite  { background: rgba(255,200,0,0.12);  color: var(--duo-yellow); }
+    .activity-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 16px; border-bottom: 1.5px solid var(--card-border);
+    }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--duo-green); margin-top: 5px; flex-shrink: 0;
+    }
+    .activity-text { font-size: 13px; font-weight: 700; color: var(--hare); line-height: 1.4; }
+    .activity-text strong { color: var(--snow); }
+    .activity-time { font-size: 11px; color: var(--wolf); font-weight: 800; margin-top: 2px; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <div id="header">
+    <div class="header-left">
+      <div class="header-mascot">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="40" height="40" rx="20" fill="#58CC02"/>
+          <rect x="0" y="40" width="40" height="3" rx="2" fill="#3d8e02"/>
+          <!-- Cart body -->
+          <path d="M9 12h2.5l3.8 9.5h10.4l2.6-6.5H14" stroke="#0d1a1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Wheels -->
+          <circle cx="16" cy="24.5" r="1.8" fill="#0d1a1f"/>
+          <circle cx="24" cy="24.5" r="1.8" fill="#0d1a1f"/>
+          <!-- Down-trend arrow on cart body -->
+          <path d="M17 17l2.5 2.5 2.5-1.5 2 2" stroke="#0d1a1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h1>FullCarts</h1>
+    </div>
+    <div class="header-stats">
+      <div class="header-stat"><span class="fire">🔥</span> <span id="streak-count">7</span></div>
+      <div class="header-stat"><span class="xp">⚡</span> <span id="xp-count">250</span></div>
+      <button class="info-btn" onclick="showAbout()" title="About & Transparency" style="font-size:13px;font-weight:900;color:var(--wolf);border:1.5px solid var(--card-border);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center">?</button>
+    </div>
+  </div>
+  <div id="content"></div>
+
+  <!-- Share Card Overlay -->
+  <div id="share-overlay" onclick="if(event.target===this)closeShare()">
+    <div class="share-hint"><strong>Screenshot this card</strong> and post it to Reddit!</div>
+    <div id="share-card">
+      <div class="sc-header">
+        <div>
+          <div class="logo">FullCarts</div>
+          <div class="tagline">FREE COMMUNITY SHRINKFLATION TRACKER</div>
+        </div>
+      </div>
+      <div class="sc-body" id="sc-body"><!-- filled by JS --></div>
+      <div class="sc-footer">
+        <span class="sc-url">fullcarts.app</span>
+        <span class="sc-cta">Free · Open · Community</span>
+      </div>
+    </div>
+    <button class="btn-duo btn-green share-close-btn" onclick="closeShare()">Close</button>
+  </div>
+
+  <!-- About / Transparency Sheet -->
+  <div id="about-overlay" onclick="if(event.target===this)hideAbout()">
+    <div id="about-sheet">
+      <div class="about-handle"></div>
+      <div class="about-logo-row">
+        <div class="about-logo-icon">
+          <svg width="26" height="26" viewBox="0 0 40 40" fill="none"><path d="M9 12h2.5l3.8 9.5h10.4l2.6-6.5H14" stroke="#0d1a1f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="24.5" r="2" fill="#0d1a1f"/><circle cx="24" cy="24.5" r="2" fill="#0d1a1f"/><path d="M17 17l2.5 2.5 2.5-1.5 2 2" stroke="#0d1a1f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <h2>FullCarts</h2>
+          <p>Community shrinkflation tracker</p>
+        </div>
+      </div>
+
+      <div class="about-section">
+        <h3>What we are</h3>
+        <p>FullCarts is a community-powered database tracking shrinkflation, skimpflation, and hidden price hikes across US grocery products. Every data point is submitted and validated by real shoppers. We exist to make the invisible visible — and to hold the companies responsible accountable.</p>
+      </div>
+
+      <div class="about-section">
+        <h3>One simple rule</h3>
+        <div class="about-commitment">
+          <p>We only ever amplify voices that are on the shopper's side. That's the whole filter. No cost to use. No ads. No paywalls. The data is always open and always free to download.</p>
+        </div>
+        <div class="about-commitment">
+          <p>All submissions are anonymized before storage and go through community validation before surfacing at the top of results. You can see exactly where every data point came from.</p>
+        </div>
+        <div class="about-nope">
+          <p>We don't work with companies that have a financial interest in making this data disappear, look better than it is, or go away. The community would notice — and so would we.</p>
+        </div>
+      </div>
+
+      <div class="about-section">
+        <h3>Who we work with</h3>
+        <p style="margin-bottom:10px">Our goal is reach and accountability — not revenue. The only relationships we pursue are ones that make the data stronger or get it in front of more people.</p>
+        <div class="about-commitment">
+          <p>Consumer advocacy organizations, academic researchers, and public interest journalists can access the full anonymized dataset — for a fee that covers our operating costs only.</p>
+        </div>
+        <div class="about-data-access">
+          <p>Down the road, we plan to recognize brands and retailers who have a verified track record of transparency — no hidden size cuts, public commitments to stability, willing to be monitored by this community. That program doesn't exist yet. When it does, the criteria and the list will be fully public.</p>
+        </div>
+        <p>Any organization we work with gets published here. If you ever see a name on that list that shouldn't be there, tell us.</p>
+      </div>
+
+      <div class="about-section">
+        <h3>The data</h3>
+        <p>Every product entry, shrink event, and community submission is open and queryable. Download the full current dataset — no sign-up required.</p>
+        <button class="btn-duo btn-blue" style="width:100%;margin-top:10px" onclick="downloadDataset()">Download Full Dataset (CSV)</button>
+      </div>
+
+      <div class="about-section">
+        <h3>Get in touch</h3>
+        <p>Advocacy orgs, researchers, journalists, or anyone with data that should be in here — reach out.</p>
+        <div style="background:rgba(255,255,255,0.04);border:1.5px solid var(--card-border);border-radius:10px;padding:10px 14px;margin-top:8px;font-size:13px;font-weight:800;color:var(--snow)">
+          hello@fullcarts.app
+        </div>
+      </div>
+
+      <button class="btn-duo" style="width:100%;background:var(--card-bg);border:2px solid var(--card-border);color:var(--snow);border-bottom:4px solid #0a1517;margin-top:4px" onclick="hideAbout()">Close</button>
+    </div>
+  </div>
+  <nav id="nav">
+    <button class="nav-item active" id="nav-home" onclick="navigate('home')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="nav-item" id="nav-scanner" onclick="navigate('scanner')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="2.5" height="16" rx="1" fill="currentColor"/><rect x="6" y="4" width="1.5" height="16" rx="1" fill="currentColor"/><rect x="9.5" y="4" width="2.5" height="16" rx="1" fill="currentColor"/><rect x="14" y="4" width="1.5" height="16" rx="1" fill="currentColor"/><rect x="17.5" y="4" width="1.5" height="16" rx="1" fill="currentColor"/><rect x="21" y="4" width="1.5" height="16" rx="1" fill="currentColor"/></svg>
+      <span>Scan</span>
+    </button>
+    <button class="nav-item" id="nav-leaderboard" onclick="navigate('leaderboard')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none"><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M17 3H7l1 8a4 4 0 008 0l1-8z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M7 3H4a1 1 0 00-1 1v1a4 4 0 004 4" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M17 3h3a1 1 0 011 1v1a4 4 0 01-4 4" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      <span>Shame</span>
+    </button>
+    <button class="nav-item" id="nav-report" onclick="navigate('report')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><line x1="4" y1="22" x2="4" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>Report</span>
+    </button>
+    <button class="nav-item" id="nav-community" onclick="navigate('community')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>Scout</span>
+    </button>
+  </nav>
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+// ── Shrink type taxonomy ──────────────────────────────────
+const SHRINK_TYPES = {
+  'shrinkflation': { label:'Shrinkflation', emoji:'📉', cls:'type-shrinkflation', desc:'Package physically got smaller' },
+  'skimpflation':  { label:'Skimpflation',  emoji:'🥄', cls:'type-skimpflation',  desc:'Quality or ingredients reduced' },
+  'downsizing':    { label:'Downsizing',    emoji:'📦', cls:'type-downsizing',    desc:'Redesigned to appear same size' },
+  'count-cut':     { label:'Count Cut',     emoji:'🔢', cls:'type-count-cut',     desc:'Fewer items in the pack' },
+  'price-hike':    { label:'Price Hike',    emoji:'💸', cls:'type-price-hike',    desc:'Same size, higher price' },
+};
+
+const PRODUCTS = [
+  { name:"Tropicana Pure Premium OJ", brand:"Tropicana", upc:"048500205020", category:"Beverages", currentSize:52, unit:"fl oz", repeatOffender:true, type:"shrinkflation",
+    companyResponse:{ status:"deflected", quote:"We've adjusted some of our product sizes as part of ongoing portfolio management to deliver the best value to consumers.", source:"Tropicana Communications, Q1 2022", url:null } },
+  { name:"Doritos Nacho Cheese", brand:"Frito-Lay", upc:"028400090506", category:"Snacks", currentSize:9.25, unit:"oz", repeatOffender:true, type:"downsizing",
+    companyResponse:{ status:"deflected", quote:"Frito-Lay periodically evaluates our product portfolio and packaging to meet evolving consumer preferences and market conditions.", source:"Frito-Lay PR Statement, 2022", url:null } },
+  { name:"Gatorade Thirst Quencher", brand:"Gatorade", upc:"052000337842", category:"Beverages", currentSize:28, unit:"fl oz", repeatOffender:false, type:"shrinkflation", companyResponse:null },
+  { name:"Bounty Select-A-Size", brand:"Bounty", upc:"037000753599", category:"Paper Goods", currentSize:83, unit:"sheets", repeatOffender:true, type:"count-cut",
+    companyResponse:{ status:"deflected", quote:"We are always looking for ways to balance product quality with rising raw material and production costs while keeping products accessible.", source:"P&G Investor Relations, FY2023", url:null } },
+  { name:"Hellmann's Real Mayonnaise", brand:"Unilever", upc:"048001214823", category:"Condiments", currentSize:32, unit:"oz", repeatOffender:true, type:"shrinkflation", fightingBack:true,
+    companyResponse:{ status:"restored", quote:"Following consumer feedback, we have returned Hellmann's Real Mayonnaise to its original 32oz size across all US retail channels.", source:"Unilever Consumer Affairs, Jan 2024", url:null } },
+  { name:"Skippy Creamy Peanut Butter", brand:"Hormel", upc:"037600107556", category:"Pantry", currentSize:16.3, unit:"oz", repeatOffender:true, type:"downsizing", companyResponse:null },
+  { name:"Folgers Classic Roast", brand:"Folgers", upc:"025500012237", category:"Beverages", currentSize:43.5, unit:"oz", repeatOffender:true, type:"downsizing", companyResponse:null },
+  { name:"Charmin Ultra Soft", brand:"P&G", upc:"030772031674", category:"Paper Goods", currentSize:244, unit:"sheets", repeatOffender:true, type:"downsizing",
+    companyResponse:{ status:"deflected", quote:"We continuously look for opportunities to improve efficiency and deliver value, which sometimes results in changes to product configurations.", source:"P&G Spokesperson, 2022", url:null } },
+  { name:"Wheat Thins Original", brand:"Nabisco", upc:"044000001803", category:"Snacks", currentSize:9.1, unit:"oz", repeatOffender:false, type:"shrinkflation", companyResponse:null },
+  { name:"Tide Pods Laundry", brand:"P&G", upc:"037000805403", category:"Household", currentSize:57, unit:"count", repeatOffender:false, type:"count-cut", companyResponse:null },
+  { name:"Jif Creamy Peanut Butter", brand:"J.M. Smucker", upc:"051500280027", category:"Pantry", currentSize:16, unit:"oz", repeatOffender:false, type:"shrinkflation", companyResponse:null },
+  { name:"Breyers Natural Vanilla Ice Cream", brand:"Breyers", upc:"077567221827", category:"Dairy", currentSize:1.5, unit:"qt", repeatOffender:true, type:"shrinkflation",
+    companyResponse:{ status:"deflected", quote:"Unilever has made adjustments to certain ice cream sizes to reflect the realities of ingredient and logistics costs in today's environment.", source:"Unilever Annual Report, 2022", url:null } },
+  { name:"Häagen-Dazs Vanilla", brand:"Nestlé", upc:"074570940219", category:"Dairy", currentSize:14, unit:"fl oz", repeatOffender:true, type:"shrinkflation",
+    companyResponse:{ status:"deflected", quote:"The 14 fl oz size aligns our US product with global sizing standards for the brand and allows us to maintain our quality standards.", source:"Nestlé USA Media Statement, 2021", url:null } },
+  { name:"Cottonelle Ultra Clean", brand:"Kimberly-Clark", upc:"036000044569", category:"Paper Goods", currentSize:141, unit:"sheets", repeatOffender:true, type:"count-cut", companyResponse:null },
+  { name:"Kraft Mac & Cheese Original", brand:"Kraft Heinz", upc:"021000009480", category:"Pantry", currentSize:7.25, unit:"oz", repeatOffender:false, type:"shrinkflation",
+    companyResponse:{ status:"deflected", quote:"We are committed to providing families with quality, affordable meals and regularly evaluate ways to do so in a challenging cost environment.", source:"Kraft Heinz Communications, 2023", url:null } },
+  { name:"Lay's Classic Potato Chips", brand:"Frito-Lay", upc:"028400090414", category:"Snacks", currentSize:7.75, unit:"oz", repeatOffender:false, type:"downsizing", companyResponse:null },
+  { name:"Cheerios Original", brand:"General Mills", upc:"016000275287", category:"Cereal", currentSize:18, unit:"oz", repeatOffender:true, type:"downsizing",
+    companyResponse:{ status:"deflected", quote:"General Mills is committed to transparency and continues to evaluate our portfolio to provide consumers with the best value possible given current market conditions.", source:"General Mills Spokesperson, 2022", url:null } },
+  { name:"Dawn Dish Soap Original", brand:"P&G", upc:"037000291008", category:"Household", currentSize:19.4, unit:"fl oz", repeatOffender:false, type:"shrinkflation", companyResponse:null },
+  { name:"Oreo Original", brand:"Nabisco", upc:"044000021541", category:"Snacks", currentSize:13.29, unit:"oz", repeatOffender:true, type:"shrinkflation",
+    companyResponse:{ status:"deflected", quote:"Mondelez International regularly reviews product configurations across our portfolio to best serve consumers and retail partners.", source:"Mondelez IR Statement, 2021", url:null } },
+  { name:"Huggies Snug & Dry Size 4", brand:"Kimberly-Clark", upc:"036000426137", category:"Baby", currentSize:132, unit:"count", repeatOffender:true, type:"count-cut", companyResponse:null },
+  { name:"Scott 1000 Toilet Paper", brand:"Kimberly-Clark", upc:"054000000285", category:"Paper Goods", currentSize:1000, unit:"sheets", repeatOffender:true, type:"skimpflation",
+    companyResponse:{ status:"deflected", quote:"We are always looking for ways to deliver value to consumers, which may involve changes to product specifications over time.", source:"Kimberly-Clark Spokesperson, 2021", url:null } },
+  { name:"Kirkland Signature Almonds", brand:"Costco", upc:"096619144372", category:"Snacks", currentSize:48, unit:"oz", repeatOffender:false, type:"shrinkflation", companyResponse:null },
+  { name:"Stove Top Stuffing Mix", brand:"Kraft Heinz", upc:"043000275535", category:"Pantry", currentSize:6, unit:"oz", repeatOffender:false, type:"shrinkflation", companyResponse:null },
+  { name:"Yoplait Original Strawberry", brand:"General Mills", upc:"070470001011", category:"Dairy", currentSize:6, unit:"oz", repeatOffender:true, type:"skimpflation", companyResponse:null },
+  { name:"Red Bull Energy Drink", brand:"Red Bull", upc:"611269991023", category:"Beverages", currentSize:8.4, unit:"fl oz", repeatOffender:false, type:"price-hike", companyResponse:null },
+];
+
+const EVENTS = [
+  { upc:"048500205020", date:"2022-01-01", oldSize:64, newSize:52, unit:"fl oz", pct:18.75, priceBefore:3.99, priceAfter:4.99, type:"shrinkflation", notes:"New carton design debuted same quarter." },
+  { upc:"048500205020", date:"2019-06-01", oldSize:89, newSize:64, unit:"fl oz", pct:28.09, priceBefore:4.49, priceAfter:3.99, type:"shrinkflation", notes:"Earlier reduction from 89oz jug to 64oz carton." },
+  { upc:"052000337842", date:"2021-03-01", oldSize:32, newSize:28, unit:"fl oz", pct:12.5, priceBefore:1.79, priceAfter:1.99, type:"shrinkflation", notes:"Price went up too. Double whammy!" },
+  { upc:"037000753599", date:"2023-01-01", oldSize:99, newSize:83, unit:"sheets", pct:16.16, priceBefore:4.29, priceAfter:4.49, type:"count-cut", notes:"Package looked identical. Sneaky!" },
+  { upc:"037000753599", date:"2020-06-01", oldSize:110, newSize:99, unit:"sheets", pct:10, priceBefore:3.99, priceAfter:4.29, type:"count-cut", notes:"First documented reduction." },
+  { upc:"048001214823", date:"2022-06-01", oldSize:32, newSize:30, unit:"oz", pct:6.25, priceBefore:5.49, priceAfter:5.29, type:"shrinkflation", notes:"Was 36oz before 2018. Keeps shrinking!" },
+  { upc:"048001214823", date:"2018-01-01", oldSize:36, newSize:32, unit:"oz", pct:11.11, priceBefore:4.99, priceAfter:5.49, type:"shrinkflation", notes:"First modern-era reduction." },
+  { upc:"037600107556", date:"2021-09-01", oldSize:18, newSize:16.3, unit:"oz", pct:9.44, priceBefore:3.99, priceAfter:4.19, type:"downsizing", notes:"Deeper dent in the bottom of the jar to hide the change." },
+  { upc:"025500012237", date:"2021-01-01", oldSize:51, newSize:43.5, unit:"oz", pct:14.71, priceBefore:11.99, priceAfter:11.99, type:"downsizing", notes:"Same price, smaller canister. Classic move." },
+  { upc:"030772031674", date:"2022-03-01", oldSize:284, newSize:244, unit:"sheets", pct:14.08, priceBefore:18.99, priceAfter:19.99, type:"downsizing", notes:"Package grew TALLER while sheets dropped. Optical illusion!" },
+  { upc:"030772031674", date:"2019-06-01", oldSize:308, newSize:284, unit:"sheets", pct:7.79, priceBefore:16.99, priceAfter:18.99, type:"downsizing", notes:"Prior reduction." },
+  { upc:"044000001803", date:"2023-02-01", oldSize:10, newSize:9.1, unit:"oz", pct:9, priceBefore:4.29, priceAfter:4.29, type:"shrinkflation", notes:"Box dimensions unchanged." },
+  { upc:"037000805403", date:"2021-11-01", oldSize:72, newSize:57, unit:"count", pct:20.83, priceBefore:19.99, priceAfter:21.99, type:"count-cut", notes:"Lost 15 pods! Bag looks the same." },
+  { upc:"051500280027", date:"2022-04-01", oldSize:18, newSize:16, unit:"oz", pct:11.11, priceBefore:3.99, priceAfter:4.39, type:"shrinkflation", notes:"Jar got a redesign and a diet." },
+  { upc:"077567221827", date:"2022-01-01", oldSize:1.75, newSize:1.5, unit:"qt", pct:14.29, priceBefore:5.99, priceAfter:6.29, type:"shrinkflation", notes:"Third reduction in a decade!" },
+  { upc:"077567221827", date:"2018-01-01", oldSize:2, newSize:1.75, unit:"qt", pct:12.5, priceBefore:5.49, priceAfter:5.99, type:"shrinkflation", notes:"Second reduction." },
+  { upc:"074570940219", date:"2021-06-01", oldSize:16, newSize:14, unit:"fl oz", pct:12.5, priceBefore:5.49, priceAfter:5.99, type:"shrinkflation", notes:'The "pint" is no longer a pint!' },
+  { upc:"036000044569", date:"2023-01-01", oldSize:162, newSize:141, unit:"sheets", pct:12.96, priceBefore:17.99, priceAfter:18.99, type:"count-cut", notes:"21 fewer sheets per roll." },
+  { upc:"021000009480", date:"2023-06-01", oldSize:7.5, newSize:7.25, unit:"oz", pct:3.33, priceBefore:1.79, priceAfter:1.89, type:"shrinkflation", notes:"First reduction of the blue box in decades!" },
+  { upc:"016000275287", date:"2022-01-01", oldSize:20.35, newSize:18, unit:"oz", pct:11.55, priceBefore:5.29, priceAfter:5.49, type:"downsizing", notes:"Box same height. Interior bag is smaller." },
+  { upc:"037000291008", date:"2022-09-01", oldSize:21.6, newSize:19.4, unit:"fl oz", pct:10, priceBefore:3.79, priceAfter:3.99, type:"shrinkflation", notes:"Identical bottle silhouette." },
+  { upc:"044000021541", date:"2021-01-01", oldSize:14.3, newSize:13.29, unit:"oz", pct:7.06, priceBefore:4.99, priceAfter:5.49, type:"shrinkflation", notes:"Fewer cookies per row." },
+  { upc:"036000426137", date:"2022-06-01", oldSize:144, newSize:132, unit:"count", pct:8.33, priceBefore:42.99, priceAfter:44.99, type:"count-cut", notes:"Same bag, fewer diapers." },
+  { upc:"054000000285", date:"2021-03-01", oldSize:1000, newSize:1000, unit:"sheets", pct:18, priceBefore:17.99, priceAfter:19.99, type:"skimpflation", notes:"Count stayed, but each sheet got physically smaller. 4.5in to 4.1in!" },
+  { upc:"028400090414", date:"2022-11-01", oldSize:8, newSize:7.75, unit:"oz", pct:3.13, priceBefore:4.79, priceAfter:4.99, type:"downsizing", notes:"More air, fewer chips." },
+  { upc:"043000275535", date:"2022-01-01", oldSize:6.5, newSize:6, unit:"oz", pct:7.69, priceBefore:3.29, priceAfter:3.49, type:"shrinkflation", notes:"Servings dropped from 6 to 5.5." },
+];
+
+const EMOJI_MAP = {
+  "Beverages":"🥤","Snacks":"🍿","Paper Goods":"🧻","Condiments":"🫙",
+  "Pantry":"🥜","Household":"🧴","Dairy":"🍦","Cereal":"🥣",
+  "Baby":"👶","Default":"🛒"
+};
+
+// ── News articles ─────────────────────────────────────────
+const NEWS = [
+  { id:1, headline:"Biden calls out shrinkflation in Super Bowl ad, urging brands to 'stop it'", source:"CBS News", sourceColor:"#1a6abf", date:"Feb 2024", type:"shrinkflation", summary:"The White House released a social media video targeting Snickers, Doritos and other snacks that have gotten smaller while prices stayed the same.", url:"https://www.cbsnews.com/news/biden-super-bowl-shrinkflation-ad/", tag:"Policy" },
+  { id:2, headline:"Shrinkflation is 'still with us' — and consumers are furious", source:"BBC News", sourceColor:"#bb1919", date:"Jan 2024", type:"shrinkflation", summary:"Consumer groups across the US and UK say shrinkflation shows no signs of slowing, with new cases emerging weekly in household staples.", url:"https://www.bbc.com/news/business-67977626", tag:"Consumer" },
+  { id:3, headline:"Skimpflation: When quality quietly drops without the package changing", source:"NPR", sourceColor:"#3d7ab5", date:"Nov 2023", type:"skimpflation", summary:"A growing number of products are using cheaper ingredients or reducing service quality without changing the price or appearance — a trend economists call skimpflation.", url:"https://www.npr.org/2023/11/skimpflation", tag:"Analysis" },
+  { id:4, headline:"Congress grills grocery CEOs over shrinkflation at Senate hearing", source:"The Hill", sourceColor:"#1c7a1c", date:"Mar 2024", type:"shrinkflation", summary:"Senators pressed executives from major CPG companies on why product sizes have been reduced while retail prices have held steady or increased.", url:"https://thehill.com/policy/shrinkflation-hearing", tag:"Policy" },
+  { id:5, headline:"Charmin, Bounty, and Cottonelle quietly cut sheet counts again", source:"Consumer Reports", sourceColor:"#cc0000", date:"Feb 2024", type:"count-cut", summary:"An investigation found that three major tissue brands reduced sheets-per-roll for the second time in three years, with packaging designed to obscure the change.", url:"https://www.consumerreports.org/shrinkflation/paper-products", tag:"Investigation" },
+  { id:6, headline:"The hidden cost of 'downsizing': How redesigned packaging fools shoppers", source:"Washington Post", sourceColor:"#1c1c1c", date:"Oct 2023", type:"downsizing", summary:"Manufacturers are increasingly using taller, narrower packaging and indented bottle bases to make products appear the same size while delivering less.", url:"https://www.washingtonpost.com/business/2023/downsizing-packaging", tag:"Analysis" },
+  { id:7, headline:"Tropicana OJ is now 52oz. It was 89oz in 2010.", source:"NY Post", sourceColor:"#e8000d", date:"Jan 2024", type:"shrinkflation", summary:"A viral Reddit post tracking Tropicana orange juice size reductions over 14 years sparked renewed outrage over the decade-long slow squeeze.", url:"https://nypost.com/2024/01/tropicana-shrinkflation", tag:"Viral" },
+  { id:8, headline:"Skimpflation hits fast food: smaller portions, same menu price", source:"Reuters", sourceColor:"#ff8000", date:"Dec 2023", type:"skimpflation", summary:"Fast food chains and packaged food companies are both reducing portion sizes and substituting cheaper ingredients in a practice consumers are increasingly calling out online.", url:"https://www.reuters.com/business/skimpflation-food", tag:"Industry" },
+  { id:9, headline:"FTC begins looking into whether shrinkflation violates consumer protection laws", source:"Bloomberg", sourceColor:"#0066cc", date:"Apr 2024", type:"shrinkflation", summary:"The Federal Trade Commission is examining whether certain shrinkflation practices — particularly deceptive packaging — could constitute unfair or deceptive business practices.", url:"https://www.bloomberg.com/news/ftc-shrinkflation-probe", tag:"Policy" },
+  { id:10, headline:"Grocery prices are falling — but package sizes aren't recovering", source:"Wall Street Journal", sourceColor:"#0274b6", date:"Mar 2024", type:"price-hike", summary:"Despite easing inflation, most CPG brands that reduced package sizes over the past three years show no signs of restoring original product sizes.", url:"https://www.wsj.com/business/grocery-sizes-not-recovering", tag:"Economy" },
+  { id:11, headline:"How to spot skimpflation: ingredients lists are your best weapon", source:"The Guardian", sourceColor:"#005689", date:"Feb 2024", type:"skimpflation", summary:"Consumer advocates explain what to look for in ingredient changes, serving size modifications, and texture shifts that signal a product's quality has been quietly reduced.", url:"https://www.theguardian.com/food/skimpflation-guide", tag:"Consumer" },
+  { id:12, headline:"Doritos, Oreos, Lay's: the snack shrink is real and accelerating", source:"CNN Business", sourceColor:"#cc0001", date:"Jan 2024", type:"downsizing", summary:"Data from retail tracking firms shows that the average snack package has lost 7% of its contents since 2019 while shelf prices increased 12% over the same period.", url:"https://www.cnn.com/business/snack-shrink", tag:"Data" },
+];
+
+const CATEGORIES = ["All", ...new Set(PRODUCTS.map(p => p.category))];
+
+// ── Community contributors (mock data) ────────────────────
+const CONTRIBUTORS = [
+  { username:'shrink_detective_42', reports:47, verified:39, streak:21, level:'Elite' },
+  { username:'cart_watcher',        reports:38, verified:31, streak:14, level:'Elite' },
+  { username:'grocery_vigilante',   reports:29, verified:24, streak: 9, level:'Pro' },
+  { username:'oz_counter',          reports:22, verified:17, streak: 6, level:'Pro' },
+  { username:'PackageLiesAccount',  reports:18, verified:14, streak: 4, level:'Pro' },
+  { username:'less_chips_more_air', reports:14, verified:10, streak: 3, level:'Scout' },
+  { username:'redditor_9182',       reports:11, verified: 8, streak: 2, level:'Scout' },
+  { username:'invisible_shrink',    reports: 8, verified: 5, streak: 1, level:'Scout' },
+];
+
+// ── Recent community activity (mock feed) ─────────────────
+const ACTIVITY_FEED = [
+  { user:'shrink_detective_42', action:'flagged',   product:'Cheerios 18oz → 16oz',  brand:'General Mills', ago:'2m ago' },
+  { user:'cart_watcher',        action:'confirmed', product:'Doritos 9.25oz',         brand:'Frito-Lay',     ago:'11m ago' },
+  { user:'grocery_vigilante',   action:'flagged',   product:'Tide Pods 57ct → 52ct',  brand:'P&G',           ago:'34m ago' },
+  { user:'oz_counter',          action:'confirmed', product:'Tropicana 52fl oz',       brand:'Tropicana',     ago:'1h ago' },
+  { user:'PackageLiesAccount',  action:'flagged',   product:'Bounty 83 sheets',        brand:'Bounty',        ago:'2h ago' },
+  { user:'less_chips_more_air', action:'confirmed', product:'Skippy 16.3oz',           brand:'Hormel',        ago:'3h ago' },
+  { user:'redditor_9182',       action:'flagged',   product:'Oreo 13.29oz',            brand:'Nabisco',       ago:'5h ago' },
+  { user:'invisible_shrink',    action:'confirmed', product:'Breyers 1.5qt',           brand:'Breyers',       ago:'6h ago' },
+];
+
+// ── Community confirmation counts ─────────────────────────
+const CONFIRM_COUNTS = {};
+PRODUCTS.forEach(p => {
+  // Seed with realistic counts based on product notoriety
+  const base = p.repeatOffender ? Math.floor(Math.random() * 12) + 3 : Math.floor(Math.random() * 6);
+  CONFIRM_COUNTS[p.upc] = base;
+});
+const USER_CONFIRMED = new Set(); // upcs the current user confirmed this session
+
+// ============================================================
+// STATE
+// ============================================================
+let currentScreen = 'home';
+let currentUPC = null;
+let currentBrand = null;
+let scanner = null;
+let searchQuery = '';
+let selectedCategory = 'All';
+let selectedType = 'all';
+let selectedNewsType = 'all';
+let shameMode = 'worst'; // 'worst' | 'flagged'
+let scanStatus = 'idle'; // 'idle' | 'scanning' | 'found' | 'error'
+let xp = 250;
+let streak = 7;
+
+// ============================================================
+// HELPERS
+// ============================================================
+function emoji(cat) { return EMOJI_MAP[cat] || EMOJI_MAP.Default; }
+
+// ── Product images: Open Food Facts CDN with emoji fallback ──
+function offImgUrl(upc) {
+  const b = upc.replace(/\D/g, '');
+  if (b.length === 12 || b.length === 13)
+    return `https://images.openfoodfacts.org/images/products/${b.slice(0,3)}/${b.slice(3,6)}/${b.slice(6,9)}/${b.slice(9)}/front_en.200.jpg`;
+  return null;
+}
+function imgLoaded(el) { el.classList.add('loaded'); }
+function imgErrThumb(el, fb) {
+  const wrap = el.parentNode;
+  if (wrap) { wrap.innerHTML = fb; wrap.style.background = 'rgba(88,204,2,0.1)'; }
+}
+function imgErrHero(el, fb) { el.outerHTML = `<div style="font-size:64px;margin-bottom:8px">${fb}</div>`; }
+function productThumb(upc, cat) {
+  const url = offImgUrl(upc);
+  const fb  = emoji(cat);
+  if (!url) return `<div class="product-emoji">${fb}</div>`;
+  return `<div class="product-emoji" style="background:rgba(255,255,255,0.04);overflow:hidden"><img class="prod-img" src="${url}" alt="" onload="imgLoaded(this)" onerror="imgErrThumb(this,'${fb}')"></div>`;
+}
+function productHeroImg(upc, cat) {
+  const url = offImgUrl(upc);
+  const fb  = emoji(cat);
+  if (!url) return `<div style="font-size:64px;margin-bottom:8px">${fb}</div>`;
+  return `<img class="result-prod-img" src="${url}" alt="" onload="imgLoaded(this)" onerror="imgErrHero(this,'${fb}')">`;
+}
+
+function getEvents(upc) { return EVENTS.filter(e => e.upc === upc).sort((a,b) => b.date.localeCompare(a.date)); }
+function totalShrink(upc) { return getEvents(upc).reduce((s, e) => s + e.pct, 0); }
+function fmtDate(d) { return new Date(d).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }); }
+function fmtPct(n) { return n.toFixed(1); }
+function findProduct(upc) { return PRODUCTS.find(p => p.upc === upc); }
+
+function addXP(amount) {
+  xp += amount;
+  document.getElementById('xp-count').textContent = xp;
+}
+
+// ── Community validation ───────────────────────────────────
+function confirmReport(upc) {
+  const btn = document.getElementById('confirm-btn-' + upc);
+  if (!btn) return;
+  if (USER_CONFIRMED.has(upc)) {
+    USER_CONFIRMED.delete(upc);
+    CONFIRM_COUNTS[upc] = Math.max(0, (CONFIRM_COUNTS[upc] || 0) - 1);
+    btn.classList.remove('confirmed');
+  } else {
+    USER_CONFIRMED.add(upc);
+    CONFIRM_COUNTS[upc] = (CONFIRM_COUNTS[upc] || 0) + 1;
+    addXP(5);
+    btn.classList.add('confirmed');
+  }
+  const countEl = document.getElementById('confirm-count-' + upc);
+  if (countEl) countEl.textContent = CONFIRM_COUNTS[upc] || 0;
+  // Re-render badge if threshold crossed
+  const badge = document.getElementById('verify-badge-' + upc);
+  if (badge) {
+    const count = CONFIRM_COUNTS[upc] || 0;
+    if (count >= 3) {
+      badge.className = 'verified-badge';
+      badge.textContent = 'Community Verified';
+    } else {
+      badge.className = 'unverified-badge';
+      badge.textContent = 'Unverified';
+    }
+  }
+}
+
+function verifyBadgeHTML(upc) {
+  const count = CONFIRM_COUNTS[upc] || 0;
+  if (count >= 3) return `<span id="verify-badge-${upc}" class="verified-badge">Community Verified</span>`;
+  return `<span id="verify-badge-${upc}" class="unverified-badge">Unverified</span>`;
+}
+
+function confirmBtnHTML(upc) {
+  const confirmed = USER_CONFIRMED.has(upc);
+  return `<button id="confirm-btn-${upc}" class="verify-btn ${confirmed ? 'confirmed' : ''}" onclick="confirmReport('${upc}')">
+    ${confirmed ? '&#10003;' : '+'} I&#39;ve seen this too &nbsp;<span id="confirm-count-${upc}">${CONFIRM_COUNTS[upc] || 0}</span>
+  </button>`;
+}
+
+// ── About / Transparency modal ─────────────────────────────
+function showAbout() {
+  document.getElementById('about-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function hideAbout() {
+  document.getElementById('about-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── Dataset CSV download ───────────────────────────────────
+function downloadDataset() {
+  const productRows = [
+    ['upc','name','brand','category','currentSize','unit','type','repeatOffender'],
+    ...PRODUCTS.map(p => [p.upc, p.name, p.brand, p.category, p.currentSize, p.unit, p.type, p.repeatOffender])
+  ];
+  const eventRows = [
+    ['upc','date','oldSize','newSize','unit','reductionPct','priceBefore','priceAfter','type','notes'],
+    ...EVENTS.map(e => [e.upc, e.date, e.oldSize, e.newSize, e.unit, e.pct.toFixed(2), e.priceBefore||'', e.priceAfter||'', e.type||'', (e.notes||'').replace(/,/g,' ')])
+  ];
+  const toCSV = rows => rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+  const csv = '# FullCarts Product Database\n# Free for individual use. Data partnerships: data@fullcarts.app\n# No brand partnerships. Community-submitted. Open data.\n\n## PRODUCTS\n' + toCSV(productRows) + '\n\n## SHRINK EVENTS\n' + toCSV(eventRows);
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: 'fullcarts-dataset.csv' });
+  a.click();
+}
+
+// ── Shareable report card ──────────────────────────────────
+function openShareCard(upc) {
+  const p = findProduct(upc);
+  if (!p) return;
+  const evs   = getEvents(upc);
+  const total = totalShrink(upc).toFixed(1);
+  const grade = total >= 30 ? 'F' : total >= 20 ? 'D' : total >= 10 ? 'C' : total >= 5 ? 'B' : 'A';
+  const gradeColor = { F:'#FF4B4B', D:'#FF9600', C:'#FFC800', B:'#1CB0F6', A:'#58CC02' }[grade];
+  const original = evs.length ? evs[evs.length-1].oldSize : p.currentSize;
+  const typeInfo = SHRINK_TYPES[p.type];
+  const latest   = evs[0];
+
+  document.getElementById('sc-body').innerHTML = `
+    <div class="sc-product-name">${p.name}</div>
+    <div class="sc-brand">${p.brand} · ${p.category}</div>
+    <div class="sc-grade-row">
+      <div class="sc-grade-badge" style="background:${gradeColor}">${grade}</div>
+      <div class="sc-grade-label">
+        <strong>Shrink Grade</strong>
+        ${evs.length} documented shrink${evs.length !== 1 ? 's' : ''}<br>
+        ${typeInfo ? typeInfo.emoji + ' ' + typeInfo.label : ''}
+      </div>
+    </div>
+    <div class="sc-stats">
+      <div class="sc-stat-row">
+        <span class="lbl">📦 Original size</span>
+        <span class="val">${original}${p.unit}</span>
+      </div>
+      <div class="sc-stat-row">
+        <span class="lbl">📉 Current size</span>
+        <span class="val sc-val-red">${p.currentSize}${p.unit}</span>
+      </div>
+      <div class="sc-stat-row">
+        <span class="lbl">🔻 Total shrunk</span>
+        <span class="val sc-val-red">−${total}%</span>
+      </div>
+      ${latest && latest.priceAfter ? `
+      <div class="sc-stat-row">
+        <span class="lbl">💰 Price change</span>
+        <span class="val sc-val-red">$${latest.priceBefore?.toFixed(2)||'?'} → $${latest.priceAfter.toFixed(2)}</span>
+      </div>` : ''}
+      ${p.companyResponse ? `
+      <div class="sc-stat-row">
+        <span class="lbl">🏢 Co. response</span>
+        <span class="val" style="color:${p.companyResponse.status==='acknowledged'?'#58CC02':'#FF9600'}">${p.companyResponse.status==='acknowledged'?'Acknowledged':'Deflected'}</span>
+      </div>` : `
+      <div class="sc-stat-row">
+        <span class="lbl">🏢 Co. response</span>
+        <span class="val" style="color:#777">No comment</span>
+      </div>`}
+    </div>
+  `;
+  document.getElementById('share-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeShare() {
+  document.getElementById('share-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+async function stopScanner() {
+  if (scanner) { try { await scanner.stop(); } catch(e) {} scanner = null; }
+}
+
+function progressRing(pct, size = 100, stroke = 8) {
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  const clampedPct = Math.min(pct, 100);
+  const offset = c - (clampedPct / 100) * c;
+  return `
+    <div class="shrink-meter" style="width:${size}px;height:${size}px">
+      <svg width="${size}" height="${size}">
+        <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="#2b3f48" stroke-width="${stroke}" />
+        <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="#FF4B4B" stroke-width="${stroke}"
+          stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${offset}"
+          style="transition: stroke-dashoffset 0.8s ease" />
+      </svg>
+      <div class="meter-text">−${fmtPct(pct)}%</div>
+    </div>`;
+}
+
+// ============================================================
+// ROUTING
+// ============================================================
+function navigate(screen, upc = null) {
+  if (currentScreen === 'scanner') stopScanner();
+  currentScreen = screen;
+  currentUPC = upc;
+  if (screen !== 'leaderboard') currentBrand = null;
+
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const map = { home:'nav-home', scanner:'nav-scanner', leaderboard:'nav-leaderboard', report:'nav-report', community:'nav-community', news:'nav-community' };
+  if (map[screen]) document.getElementById(map[screen])?.classList.add('active');
+
+  renderScreen();
+  window.scrollTo(0, 0);
+}
+
+function renderScreen() {
+  const el = document.getElementById('content');
+  const screens = { home:renderHome, scanner:renderScanner, result:renderResult, leaderboard:renderLeaderboard, report:renderReport, news:renderNews, community:renderCommunity, notfound:renderNotFound };
+  el.innerHTML = (screens[currentScreen] || renderHome)();
+  if (currentScreen === 'scanner') initScanner();
+}
+
+// ============================================================
+// HOME
+// ============================================================
+function renderHome() {
+  let list = searchQuery
+    ? PRODUCTS.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.brand.toLowerCase().includes(searchQuery.toLowerCase()))
+    : PRODUCTS;
+
+  if (selectedCategory !== 'All') list = list.filter(p => p.category === selectedCategory);
+  list = list.slice(0, 15);
+
+  if (selectedType !== 'all') list = list.filter(p => p.type === selectedType);
+  list = list.slice(0, 15);
+
+  const items = list.length
+    ? list.map(p => {
+        const evs = getEvents(p.upc);
+        const last = evs[0];
+        const total = totalShrink(p.upc).toFixed(0);
+        const t = SHRINK_TYPES[p.type];
+        return `
+          <div class="product-item" onclick="navigate('result','${p.upc}')">
+            ${productThumb(p.upc, p.category)}
+            <div class="product-info">
+              <strong>${p.name}</strong>
+              <span>${p.brand} · ${p.currentSize}${p.unit}</span>
+              ${t ? `<span class="type-badge ${t.cls}" style="margin-top:3px">${t.emoji} ${t.label}</span>` : ''}
+              <div class="community-signals">
+                <span><span class="signal-dot"></span>${evs.length} report${evs.length !== 1 ? 's' : ''}</span>
+                ${last ? `<span>· Last flagged ${fmtDate(last.date)}</span>` : ''}
+                ${p.companyResponse ? `<span>· ${p.companyResponse.status === 'acknowledged' ? '⚠️ Co. responded' : '🙊 Co. deflected'}</span>` : ''}
+              </div>
+            </div>
+            ${p.repeatOffender
+              ? '<span class="badge badge-red">REPEAT</span>'
+              : evs.length ? `<span class="badge badge-amber">−${total}%</span>` : ''}
+          </div>`;
+      }).join('')
+    : `<div class="empty">No products found. Try a different filter!</div>`;
+
+  const catPills = CATEGORIES.map(c =>
+    `<button class="cat-pill ${selectedCategory === c ? 'active' : ''}" onclick="selectCategory('${c}')">${c === 'All' ? '🛒 All' : emoji(c) + ' ' + c}</button>`
+  ).join('');
+
+  const typePills = [
+    { key:'all', label:'🔍 All Types' },
+    ...Object.entries(SHRINK_TYPES).map(([k,v]) => ({ key:k, label:`${v.emoji} ${v.label}` }))
+  ].map(t =>
+    `<button class="type-pill ${selectedType === t.key ? 'active-'+t.key : ''}" onclick="selectType('${t.key}')">${t.label}</button>`
+  ).join('');
+
+  return `
+    <div class="hero">
+      <div class="hero-mascot" style="font-size:0;margin-bottom:12px">
+        <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="72" height="72" rx="22" fill="rgba(88,204,2,0.12)" stroke="rgba(88,204,2,0.3)" stroke-width="2"/>
+          <path d="M16 22h5l7 17h18l5-12H26" stroke="#58CC02" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="29" cy="44" r="3" fill="#58CC02"/>
+          <circle cx="43" cy="44" r="3" fill="#58CC02"/>
+          <path d="M30 31l4 4.5 4.5-2.5 3.5 3.5" stroke="#58CC02" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2>Know what you're actually buying.</h2>
+      <p>Scan a barcode to see if your groceries shrank — and how much you're overpaying.</p>
+      <button class="btn-duo btn-green" onclick="navigate('scanner')">
+        Scan a Barcode
+      </button>
+    </div>
+
+    <div class="mission-strip">
+      <span class="mission-pill">No paywalls for shoppers</span>
+      <span class="mission-pill blue">Open data</span>
+      <span class="mission-pill amber">No brand deals</span>
+      <span class="mission-pill" style="cursor:pointer" onclick="showAbout()">Our mission</span>
+    </div>
+
+    <div class="xp-bar-wrap">
+      <div class="xp-bar-label">⚡ ${xp} XP</div>
+      <div class="xp-bar">
+        <div class="xp-bar-fill" style="width:${Math.min(xp / 500 * 100, 100)}%"></div>
+      </div>
+      <div style="font-size:12px;font-weight:900;color:#777">LVL ${Math.floor(xp / 500) + 1}</div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-bubble"><div class="num green">${PRODUCTS.length}</div><div class="lbl">Products</div></div>
+      <div class="stat-bubble"><div class="num orange">${EVENTS.length}</div><div class="lbl">Shrinks</div></div>
+      <div class="stat-bubble"><div class="num red">${PRODUCTS.filter(p=>p.repeatOffender).length}</div><div class="lbl">Repeat</div></div>
+      <div class="stat-bubble"><div class="num blue">🔥 ${streak}</div><div class="lbl">Streak</div></div>
+    </div>
+
+    <div class="search-wrap">
+      <div class="search-bar">
+        <input type="text" placeholder="Search products or brands…" value="${searchQuery}" oninput="handleSearch(this.value)" />
+        ${searchQuery ? `<button onclick="handleSearch('')">✕</button>` : ''}
+      </div>
+    </div>
+
+    <div class="category-row">${catPills}</div>
+    <div class="type-row">${typePills}</div>
+
+    ${(() => {
+      const fightingBackProducts = PRODUCTS.filter(p => p.fightingBack);
+      if (!fightingBackProducts.length || (searchQuery || selectedCategory !== 'All' || selectedType !== 'all')) return '';
+      return `
+        <div class="section-title">Fighting Back</div>
+        ${fightingBackProducts.map(p => `
+          <div class="fighting-back-banner" style="cursor:pointer" onclick="navigate('result','${p.upc}')">
+            <div class="fb-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="#58CC02" stroke-width="2" stroke-linecap="round"/><polyline points="22 4 12 14.01 9 11.01" stroke="#58CC02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div style="flex:1;min-width:0">
+              <h4>${p.name}</h4>
+              <p>${p.brand} reversed a size cut. Community still watching.</p>
+            </div>
+            <span style="font-size:11px;font-weight:900;color:var(--duo-green);white-space:nowrap">See details →</span>
+          </div>`).join('')}
+      `;
+    })()}
+
+    <div class="section-title">${searchQuery ? 'Search Results' : selectedCategory !== 'All' ? selectedCategory : 'All Products'}</div>
+    <div class="duo-card" style="padding:0">${items}</div>
+
+    <div class="tp-card">
+      <div class="tp-label">Coming Soon</div>
+      <h3>Transparency Partners</h3>
+      <p>A verified list of brands and retailers with a documented track record of no hidden size cuts — monitored by this community. Criteria and the full partner list will always be public.</p>
+    </div>
+  `;
+}
+
+function handleSearch(q) { searchQuery = q; renderScreen(); }
+function selectCategory(c) { selectedCategory = (selectedCategory === c && c !== 'All') ? 'All' : c; renderScreen(); }
+function selectType(t) { selectedType = (selectedType === t && t !== 'all') ? 'all' : t; renderScreen(); }
+
+// ============================================================
+// SCANNER
+// ============================================================
+function renderScanner() {
+  const statusText = {
+    idle:     'Starting camera…',
+    scanning: 'Scanning — hold still',
+    found:    'Barcode detected!',
+    error:    'Camera access denied',
+  }[scanStatus] || 'Starting camera…';
+
+  return `
+    <div class="scanner-wrap">
+      <div class="scanner-title">Scan a Barcode</div>
+
+      <div class="scan-status-bar scan-status-${scanStatus}">
+        <div class="scan-dot"></div>
+        <span>${statusText}</span>
+      </div>
+
+      <div id="reader"></div>
+
+      <div id="off-prefill" class="off-prefill-toast"></div>
+
+      <p class="scanner-hint" style="margin-top:12px">
+        Works with UPC-A barcodes on most grocery products.
+        Point your camera at the barcode on the back of the package.
+      </p>
+      <div class="manual-wrap" style="text-align:center;font-size:14px;color:#777;margin-top:16px">
+        No camera? <a href="#" onclick="showManual();return false;">Type barcode manually</a>
+      </div>
+      <div id="manual-entry">
+        <div class="manual-row">
+          <input type="number" id="manual-upc" placeholder="12-digit UPC…" />
+          <button onclick="lookupManual()">Go</button>
+        </div>
+      </div>
+      <div style="margin-top:20px">
+        <p style="font-size:13px;color:#777;font-weight:700;margin-bottom:10px;text-align:center">Try a demo barcode:</p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">
+          ${['048500205020','030772031674','037000805403','037600107556','074570940219'].map(upc => {
+            const p = findProduct(upc);
+            return `<button class="btn-duo btn-outline btn-sm" onclick="navigate('result','${upc}')" style="font-size:12px;padding:6px 12px">${p.brand}</button>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function setScanStatus(s) {
+  scanStatus = s;
+  const bar = document.querySelector('.scan-status-bar');
+  if (!bar) return;
+  bar.className = `scan-status-bar scan-status-${s}`;
+  const texts = { idle:'Starting camera…', scanning:'Scanning — hold still', found:'Barcode detected!', error:'Camera access denied' };
+  const dot = bar.querySelector('.scan-dot');
+  const txt = bar.querySelector('span');
+  if (txt) txt.textContent = texts[s] || '';
+}
+
+async function lookupOpenFoodFacts(upc) {
+  try {
+    const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${upc}.json`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data.status !== 1) return null;
+    const p = data.product;
+    return {
+      name:  p.product_name_en || p.product_name || null,
+      brand: p.brands || null,
+    };
+  } catch { return null; }
+}
+
+function initScanner() {
+  setTimeout(() => {
+    try {
+      scanner = new Html5Qrcode("reader");
+      scanner.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 260, height: 90 } },
+        async (code) => {
+          setScanStatus('found');
+          await stopScanner();
+          addXP(10);
+
+          // If not in our DB, try Open Food Facts pre-fill before navigating to report
+          const knownProduct = findProduct(code);
+          if (!knownProduct) {
+            const offData = await lookupOpenFoodFacts(code);
+            if (offData && (offData.name || offData.brand)) {
+              // Store for auto-fill on report screen
+              window.__offPrefill = { upc: code, ...offData };
+            }
+          }
+          navigate(knownProduct ? 'result' : 'notfound', code);
+        },
+        () => { setScanStatus('scanning'); }
+      ).then(() => {
+        setScanStatus('scanning');
+      }).catch(() => {
+        setScanStatus('error');
+        const el = document.getElementById('reader');
+        if (el) el.innerHTML = `<div style="background:var(--card-bg);border:2px solid var(--card-border);border-radius:14px;padding:28px;text-align:center;color:#777;font-size:14px;font-weight:700">
+          Camera access denied.<br><small style="color:#555">Allow camera permissions, or use manual entry below.</small></div>`;
+      });
+    } catch(e) { setScanStatus('error'); }
+  }, 150);
+}
+function showManual() { const el = document.getElementById('manual-entry'); if (el) el.style.display = 'block'; }
+function lookupManual() {
+  const upc = document.getElementById('manual-upc').value.trim();
+  if (!upc) return;
+  stopScanner();
+  addXP(10);
+  navigate(findProduct(upc) ? 'result' : 'notfound', upc);
+}
+
+// ============================================================
+// RESULT
+// ============================================================
+function renderResult() {
+  const p = findProduct(currentUPC);
+  if (!p) return renderNotFound();
+
+  const evs = getEvents(p.upc);
+  const total = totalShrink(p.upc);
+  const original = evs.length ? evs[evs.length - 1].oldSize : p.currentSize;
+  const shrinkGrade = total >= 30 ? 'F' : total >= 20 ? 'D' : total >= 10 ? 'C' : total >= 5 ? 'B' : 'A';
+  const gradeColor = { F:'#FF4B4B', D:'#FF9600', C:'#FFC800', B:'#1CB0F6', A:'#58CC02' }[shrinkGrade];
+
+  const timelineHTML = evs.length
+    ? evs.map((e, i) => `
+        <div class="timeline-item">
+          <div class="timeline-left">
+            <div class="timeline-dot"></div>
+            ${i < evs.length - 1 ? '<div class="timeline-line"></div>' : ''}
+          </div>
+          <div style="flex:1">
+            <div class="timeline-date">${fmtDate(e.date)}</div>
+            <div class="timeline-change">
+              ${e.oldSize}${e.unit} → ${e.newSize}${e.unit}
+              <span class="timeline-pct"> (−${fmtPct(e.pct)}%)</span>
+            </div>
+            <div class="timeline-detail">${e.notes}</div>
+            ${e.priceBefore && e.priceAfter
+              ? `<div class="timeline-price">$${e.priceBefore.toFixed(2)} → <strong>$${e.priceAfter.toFixed(2)}</strong></div>`
+              : ''}
+          </div>
+        </div>`).join('')
+    : `<p style="color:#777;font-size:14px;padding:8px 0">No shrinkflation events yet.</p>`;
+
+  return `
+    <button class="back-btn" onclick="navigate('home')">← BACK</button>
+
+    <div class="result-hero">
+      ${productHeroImg(p.upc, p.category)}
+      <h2>${p.name}</h2>
+      <div class="sub">${p.brand} · ${p.category}</div>
+      ${(() => { const t = SHRINK_TYPES[p.type]; return t ? `<span class="type-badge ${t.cls}" style="margin:6px auto 0;display:inline-block">${t.emoji} ${t.label}</span>` : ''; })()}
+      ${p.repeatOffender ? `<div class="repeat-badge">🔁 SERIAL SHRINKER</div>` : ''}
+    </div>
+
+    <div style="text-align:center;margin-top:16px">
+      ${progressRing(Math.min(total, 100))}
+      <div style="font-size:14px;color:#777;font-weight:800;margin-top:-4px">TOTAL SHRINK</div>
+    </div>
+
+    <div style="text-align:center;margin:12px 0 4px">
+      <div style="display:inline-block;background:${gradeColor};color:white;font-size:16px;font-weight:900;padding:6px 20px;border-radius:12px;border-bottom:3px solid rgba(0,0,0,0.2);letter-spacing:1px">
+        SHRINK GRADE: ${shrinkGrade}
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-value red">${evs.length}×</div>
+        <div class="stat-label">Times Shrunk</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value orange">${original}${p.unit}</div>
+        <div class="stat-label">Original</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value blue">${p.currentSize}${p.unit}</div>
+        <div class="stat-label">Current</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value green">${evs.length && evs[0].priceAfter ? '$' + evs[0].priceAfter.toFixed(2) : '—'}</div>
+        <div class="stat-label">Latest Price</div>
+      </div>
+    </div>
+
+    <div class="section-title">Shrink Timeline</div>
+    <div class="duo-card" style="padding:14px 16px">${timelineHTML}</div>
+
+    ${(() => {
+      const cr = p.companyResponse;
+      if (!cr) return `
+        <div class="company-response-card">
+          <div class="cr-header">
+            <h4>🏢 ${p.brand}'s Official Response</h4>
+            <span class="cr-badge no-comment">No Comment</span>
+          </div>
+          <div class="cr-none">${p.brand} has not issued a public response to this product change. <a href="https://reddit.com/r/shrinkflation" target="_blank" style="color:var(--duo-blue)">Help us track it →</a></div>
+        </div>`;
+      const statusMap = {
+        acknowledged: { cls:'acknowledged', txt:'Acknowledged' },
+        deflected:    { cls:'deflected',    txt:'Deflected' },
+        restored:     { cls:'restored',     txt:'Restored Sizing' },
+      };
+      const { cls: badgeCls, txt: badgeTxt } = statusMap[cr.status] || statusMap.deflected;
+      const restoredBanner = cr.status === 'restored' ? `
+        <div class="fighting-back-banner" style="margin:0 0 10px">
+          <div class="fb-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="#58CC02" stroke-width="2" stroke-linecap="round"/><polyline points="22 4 12 14.01 9 11.01" stroke="#58CC02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <h4 style="font-size:12px;font-weight:900;color:var(--duo-green)">Sizing Restored</h4>
+            <p style="font-size:11px;font-weight:700;color:var(--hare);margin-top:1px">This brand reversed a prior reduction. Community monitoring continues.</p>
+          </div>
+        </div>` : '';
+      return `
+        <div class="company-response-card">
+          <div class="cr-header">
+            <h4>&#x1F3E2; ${p.brand}'s Official Response</h4>
+            <span class="cr-badge ${badgeCls}">${badgeTxt}</span>
+          </div>
+          <div class="cr-body">
+            ${restoredBanner}
+            <div class="cr-quote">"${cr.quote}"</div>
+            <div class="cr-source">— ${cr.source}</div>
+          </div>
+        </div>`;
+    })()}
+
+    <div style="padding:0 16px 4px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      ${verifyBadgeHTML(p.upc)}
+      ${confirmBtnHTML(p.upc)}
+    </div>
+
+    <div style="padding:8px 16px 16px;display:flex;flex-direction:column;gap:10px">
+      <button class="btn-duo btn-green btn-sm" onclick="navigate('report')" style="width:100%">
+        Flag a Change (+25 XP)
+      </button>
+      <button class="btn-duo btn-sm" style="width:100%;background:var(--card-bg);border:2px solid var(--card-border);color:var(--snow);border-bottom:4px solid #0a1517;font-size:14px" onclick="openShareCard('${p.upc}')">
+        Share This on Reddit
+      </button>
+    </div>
+  `;
+}
+
+// ============================================================
+// LEADERBOARD (Shame View)
+// ============================================================
+function renderLeaderboard() {
+  if (currentBrand) return renderBrandDrilldown();
+
+  // ── Build brand-level aggregates ──────────────────────────
+  const brandMap = {};
+  PRODUCTS.forEach(p => {
+    const evs = getEvents(p.upc);
+    if (!evs.length) return;
+    if (!brandMap[p.brand]) brandMap[p.brand] = { brand: p.brand, products: [], totalPct: 0, eventCount: 0, reportCount: 0 };
+    const pct = totalShrink(p.upc);
+    brandMap[p.brand].products.push({ ...p, pct, evCount: evs.length });
+    brandMap[p.brand].totalPct   += pct;
+    brandMap[p.brand].eventCount += evs.length;
+    brandMap[p.brand].reportCount += CONFIRM_COUNTS[p.upc] || 0;
+  });
+  const brands = Object.values(brandMap);
+
+  let ranked;
+  if (shameMode === 'worst') {
+    // Worst offenders: avg % shrink across all brand's products
+    ranked = brands
+      .map(b => ({ ...b, score: b.totalPct / b.products.length }))
+      .sort((a, b) => b.score - a.score);
+  } else {
+    // Top flagged: most community reports
+    ranked = brands
+      .sort((a, b) => b.reportCount - a.reportCount);
+  }
+
+  const rankClass = (i) => ['gold','silver','bronze'][i] || 'normal';
+
+  const toggle = `
+    <div class="shame-toggle">
+      <button class="shame-btn ${shameMode === 'worst' ? 'active' : ''}" onclick="shameMode='worst';renderScreen()">Worst Offenders</button>
+      <button class="shame-btn ${shameMode === 'flagged' ? 'active' : ''}" onclick="shameMode='flagged';renderScreen()">Most Flagged</button>
+    </div>`;
+
+  const subtitle = shameMode === 'worst'
+    ? 'Brands ranked by average product shrinkage'
+    : 'Brands ranked by community report volume';
+
+  return `
+    <div class="leaderboard-hero">
+      <div class="trophy" style="font-size:48px;margin-bottom:6px">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none"><path d="M8 21h8M12 17v4" stroke="#FFC800" stroke-width="2" stroke-linecap="round"/><path d="M17 3H7l1 8a4 4 0 008 0l1-8z" fill="rgba(255,200,0,0.15)" stroke="#FFC800" stroke-width="2" stroke-linejoin="round"/><path d="M7 3H4a1 1 0 00-1 1v1a4 4 0 004 4" stroke="#FFC800" stroke-width="2" stroke-linejoin="round"/><path d="M17 3h3a1 1 0 011 1v1a4 4 0 01-4 4" stroke="#FFC800" stroke-width="2" stroke-linejoin="round"/></svg>
+      </div>
+      <h2>The Shame List</h2>
+      <p>${subtitle}</p>
+    </div>
+
+    ${toggle}
+
+    <div class="duo-card" style="padding:0;margin-top:10px">
+      ${ranked.map((b, i) => {
+        const worstProduct = b.products.sort((x, y) => y.pct - x.pct)[0];
+        const score = shameMode === 'worst'
+          ? `−${fmtPct(b.score)}% avg`
+          : `${b.reportCount} flags`;
+        return `
+          <div class="rank-item" onclick="currentBrand='${b.brand}';renderScreen()">
+            <div class="rank-num ${rankClass(i)}">${i + 1}</div>
+            <div class="brand-avatar" style="width:40px;height:40px;font-size:14px;border-radius:12px;margin-right:10px;flex-shrink:0">
+              ${b.brand.slice(0,2).toUpperCase()}
+            </div>
+            <div class="rank-info">
+              <strong>${b.brand}</strong>
+              <span>${b.products.length} product${b.products.length > 1 ? 's' : ''} · ${b.eventCount} shrink event${b.eventCount > 1 ? 's' : ''}</span>
+            </div>
+            <div class="rank-pct">${score}</div>
+          </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+function renderBrandDrilldown() {
+  const brandProducts = PRODUCTS
+    .filter(p => p.brand === currentBrand && getEvents(p.upc).length > 0)
+    .map(p => ({ ...p, pct: totalShrink(p.upc), evCount: getEvents(p.upc).length }))
+    .sort((a, b) => b.pct - a.pct);
+
+  const totalEvents = brandProducts.reduce((s, p) => s + p.evCount, 0);
+  const avgPct = brandProducts.length
+    ? (brandProducts.reduce((s, p) => s + p.pct, 0) / brandProducts.length).toFixed(1)
+    : 0;
+  const worstPct = brandProducts.length ? fmtPct(brandProducts[0].pct) : '0';
+
+  return `
+    <button class="back-btn" onclick="currentBrand=null;renderScreen()">← BACK TO SHAME LIST</button>
+
+    <div class="brand-hero">
+      <div class="brand-avatar">${currentBrand.slice(0,2).toUpperCase()}</div>
+      <div class="brand-hero-info">
+        <h2>${currentBrand}</h2>
+        <p>${brandProducts.length} flagged product${brandProducts.length > 1 ? 's' : ''} tracked by community</p>
+      </div>
+    </div>
+
+    <div class="brand-stat-row">
+      <div class="brand-stat-chip">
+        <div class="bsc-val">−${worstPct}%</div>
+        <div class="bsc-lbl">Worst Shrink</div>
+      </div>
+      <div class="brand-stat-chip">
+        <div class="bsc-val">−${avgPct}%</div>
+        <div class="bsc-lbl">Avg Shrink</div>
+      </div>
+      <div class="brand-stat-chip">
+        <div class="bsc-val">${totalEvents}</div>
+        <div class="bsc-lbl">Events</div>
+      </div>
+    </div>
+
+    <div class="section-title">Products — Worst to Best</div>
+    <div class="duo-card" style="padding:0">
+      ${brandProducts.map((p, i) => `
+        <div class="brand-product-item" onclick="navigate('result','${p.upc}')">
+          <div class="bpi-rank">#${i + 1}</div>
+          ${productThumb(p.upc, p.category)}
+          <div class="bpi-info" style="margin-left:10px">
+            <strong>${p.name}</strong>
+            <span>${p.currentSize}${p.unit} · ${p.evCount} shrink${p.evCount > 1 ? 's' : ''}</span>
+          </div>
+          <div class="bpi-pct">−${fmtPct(p.pct)}%</div>
+        </div>`).join('')}
+    </div>
+  `;
+}
+
+// ============================================================
+// REPORT
+// ============================================================
+let redditImportOpen = false;
+let redditTab = 'url';
+let lastParsed = null;
+let showCelebration = false;
+let lastSubmission = null;
+
+function renderReport() {
+  if (showCelebration) return renderCelebration();
+  return `
+    <div class="report-hero">
+      <div class="icon" style="animation:bounce 2s infinite;font-size:0;margin-bottom:8px">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="14" fill="rgba(88,204,2,0.1)" stroke="rgba(88,204,2,0.25)" stroke-width="1.5"/><path d="M10 15h3.5l4.5 11h12l3.2-8H17" stroke="#58CC02" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="19" cy="29.5" r="2" fill="#58CC02"/><circle cx="29" cy="29.5" r="2" fill="#58CC02"/></svg>
+      </div>
+      <h2>Flag a Shrink!</h2>
+      <p>Spotted something getting smaller? You'll earn <strong style="color:#FFC800">+25 XP</strong> for every verified report.</p>
+    </div>
+
+    <div id="success-msg" class="success-msg">
+      🎉 Nice catch! +25 XP earned! We'll review your report within 48 hours.
+    </div>
+
+    <!-- Reddit Import Panel -->
+    <div class="reddit-import">
+      <div class="reddit-import-header" onclick="toggleRedditImport()">
+        <div class="reddit-logo">🤖</div>
+        <div style="flex:1">
+          <h3>Import from Reddit</h3>
+          <p>Paste a r/shrinkflation post — AI fills the form for you</p>
+        </div>
+        <button class="demo-pill" onclick="event.stopPropagation();runDemo()">▶ Demo</button>
+        <div class="reddit-chevron" id="reddit-chevron">▼</div>
+      </div>
+      <div class="reddit-import-body" id="reddit-body">
+        <div class="reddit-tabs">
+          <button class="reddit-tab active" id="tab-url" onclick="switchRedditTab('url')">🔗 Post URL</button>
+          <button class="reddit-tab" id="tab-paste" onclick="switchRedditTab('paste')">📋 Paste Text</button>
+        </div>
+        <div id="reddit-url-panel">
+          <div class="reddit-input-wrap">
+            <input type="url" id="reddit-url" placeholder="https://reddit.com/r/shrinkflation/comments/…" />
+          </div>
+          <button class="reddit-fetch-btn" id="reddit-fetch-btn" onclick="fetchRedditPost()">Fetch &amp; Auto-Fill ✨</button>
+        </div>
+        <div id="reddit-paste-panel" style="display:none">
+          <div class="reddit-input-wrap">
+            <textarea id="reddit-paste" rows="5" placeholder="Paste the Reddit post title and/or body here…&#10;&#10;e.g. 'Tropicana OJ went from 52oz down to 46oz, same price!'"></textarea>
+          </div>
+          <button class="reddit-fetch-btn" onclick="parseRedditPaste()">Parse &amp; Auto-Fill ✨</button>
+        </div>
+        <div class="parse-loading" id="parse-loading">⏳ Fetching post…</div>
+        <div class="parse-result" id="parse-result"></div>
+      </div>
+    </div>
+
+    <div class="divider">or fill in manually</div>
+
+    <div class="form-group">
+      <label>Product Name *</label>
+      <input type="text" id="r-name" placeholder="e.g. Skippy Creamy Peanut Butter" />
+    </div>
+    <div class="form-group">
+      <label>Brand</label>
+      <input type="text" id="r-brand" placeholder="e.g. Hormel" />
+    </div>
+    <div class="form-group">
+      <label>Barcode (UPC)</label>
+      <input type="text" id="r-upc" placeholder="12-digit barcode (optional)" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Old Size</label>
+        <input type="text" id="r-old" placeholder="e.g. 18oz" />
+      </div>
+      <div class="form-group">
+        <label>New Size</label>
+        <input type="text" id="r-new" placeholder="e.g. 16.3oz" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Price Before</label>
+        <input type="text" id="r-price-before" placeholder="e.g. $3.99" />
+      </div>
+      <div class="form-group">
+        <label>Price After</label>
+        <input type="text" id="r-price-after" placeholder="e.g. $4.29" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>When noticed?</label>
+      <input type="month" id="r-date" />
+    </div>
+    <div class="form-group">
+      <label>Type of Shrinkflation</label>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px">
+        ${Object.entries(SHRINK_TYPES).map(([k,v]) =>
+          `<button type="button" class="type-pill" id="rtype-${k}" onclick="selectReportType('${k}')">${v.emoji} ${v.label}</button>`
+        ).join('')}
+      </div>
+      <input type="hidden" id="r-type" value="" />
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="r-notes" rows="3" placeholder="How did you spot it? Packaging changes, price shift…"></textarea>
+    </div>
+    <div class="submit-wrap">
+      <button class="btn-duo btn-green" onclick="submitReport()">Submit Report</button>
+    </div>
+  `;
+}
+
+// ── Reddit Import UI ───────────────────────────────────────
+function toggleRedditImport() {
+  redditImportOpen = !redditImportOpen;
+  const body    = document.getElementById('reddit-body');
+  const chevron = document.getElementById('reddit-chevron');
+  if (body)    body.className    = 'reddit-import-body' + (redditImportOpen ? ' open' : '');
+  if (chevron) chevron.className = 'reddit-chevron'     + (redditImportOpen ? ' open' : '');
+}
+
+function switchRedditTab(tab) {
+  redditTab = tab;
+  document.getElementById('reddit-url-panel').style.display   = tab === 'url'   ? '' : 'none';
+  document.getElementById('reddit-paste-panel').style.display = tab === 'paste' ? '' : 'none';
+  document.getElementById('tab-url').className   = 'reddit-tab' + (tab === 'url'   ? ' active' : '');
+  document.getElementById('tab-paste').className = 'reddit-tab' + (tab === 'paste' ? ' active' : '');
+}
+
+// ── Demo auto-fill ─────────────────────────────────────────
+function runDemo() {
+  // Make sure the panel is open
+  if (!redditImportOpen) {
+    redditImportOpen = true;
+    const body    = document.getElementById('reddit-body');
+    const chevron = document.getElementById('reddit-chevron');
+    if (body)    body.className    = 'reddit-import-body open';
+    if (chevron) chevron.className = 'reddit-chevron open';
+  }
+  // Switch to paste tab so user sees the text
+  switchRedditTab('paste');
+
+  const demoPost = `Tropicana went from 52oz down to 46oz — same price $4.49!
+
+Just noticed at my local Walmart that the Tropicana Pure Premium OJ I always buy has shrunk again. It used to be 52fl oz but now it's only 46fl oz. The price is still $4.49, so we're paying more per ounce. This is ridiculous, same packaging just less juice inside.
+
+Anyone else noticed this? They just quietly redesigned the bottle so it looks the same on the shelf.`;
+
+  const ta = document.getElementById('reddit-paste');
+  if (!ta) return;
+
+  // Animate typing into the textarea
+  ta.value = '';
+  let i = 0;
+  const typing = setInterval(() => {
+    ta.value += demoPost[i++];
+    if (i >= demoPost.length) {
+      clearInterval(typing);
+      // Auto-parse after a brief pause, then auto-apply to form
+      setTimeout(() => {
+        clearParseResult();
+        const parsed = parseText(demoPost, 'https://reddit.com/r/shrinkflation/comments/demo');
+        showParseResult(parsed);
+        // Auto-apply after showing results so user sees the full flow
+        setTimeout(() => {
+          applyAutofill();
+          document.querySelector('.submit-wrap')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 1200);
+      }, 400);
+    }
+  }, 12);
+}
+
+// ── Reddit JSON fetch ──────────────────────────────────────
+async function fetchRedditPost() {
+  const raw = (document.getElementById('reddit-url').value || '').trim();
+  if (!raw) return;
+  let url = raw.replace(/\?.*$/, '').replace(/\/$/, '');
+  if (!url.endsWith('.json')) url += '.json';
+  url = url.replace('www.reddit.com', 'old.reddit.com');
+
+  const btn     = document.getElementById('reddit-fetch-btn');
+  const loading = document.getElementById('parse-loading');
+  btn.disabled = true;
+  btn.textContent = 'Fetching…';
+  loading.style.display = 'block';
+  clearParseResult();
+
+  try {
+    const res = await fetch(url, { headers: { Accept: 'application/json' } });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    const post = json[0]?.data?.children?.[0]?.data;
+    if (!post) throw new Error('Could not read post data');
+    const text = [post.title || '', post.selftext || ''].join('\n');
+    const source = 'https://reddit.com' + (post.permalink || '');
+    showParseResult(parseText(text, source));
+  } catch (e) {
+    showParseError(`Couldn't fetch that post. Try the "Paste Text" tab instead. (${e.message})`);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Fetch & Auto-Fill ✨';
+    loading.style.display = 'none';
+  }
+}
+
+// ── Paste-mode ─────────────────────────────────────────────
+function parseRedditPaste() {
+  const text = (document.getElementById('reddit-paste').value || '').trim();
+  if (!text) return;
+  clearParseResult();
+  showParseResult(parseText(text, null));
+}
+
+// ── Core parser ────────────────────────────────────────────
+function parseText(text, sourceUrl) {
+  const t  = text;
+  const tl = t.toLowerCase();
+  const result = { source: sourceUrl, raw: t };
+
+  // All size mentions
+  const sizeRx = /(\d+\.?\d*)\s*(fl\.?\s*oz|fluid\s*oz|oz|lbs?|pounds?|g(?:rams?)?|ml|liters?|litres?|count|ct\.?|pk\.?|pack|sheets?|rolls?|pods?|qt\.?|quarts?|pt\.?|pints?)/gi;
+
+  // "from X to Y" / "was X now Y" transitions
+  const fromToRx = /(?:from|was|went from|originally|used to be|before[:\s]*)[\s:]*([\d.]+\s*(?:fl\.?\s*oz|oz|lbs?|g|ml|count|ct|sheets?|qt|pint|pack|pods?))\s*(?:to|now|→|->|down to|reduced to|now[:\s]*)\s*([\d.]+\s*(?:fl\.?\s*oz|oz|lbs?|g|ml|count|ct|sheets?|qt|pint|pack|pods?))/gi;
+  const transitions = [];
+  let m;
+  while ((m = fromToRx.exec(tl)) !== null) {
+    const os = parseSizeStr(m[1]);
+    const ns = parseSizeStr(m[2]);
+    if (os && ns) transitions.push({ old: os, new: ns });
+  }
+
+  const allSizes = [];
+  const sizeRx2 = /(\d+\.?\d*)\s*(fl\.?\s*oz|fluid\s*oz|oz|lbs?|pounds?|g(?:rams?)?|ml|liters?|count|ct\.?|sheets?|rolls?|pods?|qt\.?|pints?)/gi;
+  while ((m = sizeRx2.exec(t)) !== null) {
+    allSizes.push({ val: parseFloat(m[1]), unit: normaliseUnit(m[2]), idx: m.index });
+  }
+
+  if (transitions.length) {
+    result.oldSize = transitions[0].old.str; result.oldConf = 'high';
+    result.newSize = transitions[0].new.str; result.newConf = 'high';
+  } else if (allSizes.length >= 2) {
+    result.oldSize = `${allSizes[0].val}${allSizes[0].unit}`; result.oldConf = 'med';
+    result.newSize = `${allSizes[1].val}${allSizes[1].unit}`; result.newConf = 'med';
+  } else if (allSizes.length === 1) {
+    result.newSize = `${allSizes[0].val}${allSizes[0].unit}`; result.newConf = 'low';
+  }
+
+  // Prices
+  const priceFromTo = /(?:from|was)\s*\$\s*([\d.]+)\s*(?:to|now)\s*\$\s*([\d.]+)/i.exec(t);
+  if (priceFromTo) {
+    result.priceBefore = `$${parseFloat(priceFromTo[1]).toFixed(2)}`; result.priceConf = 'high';
+    result.priceAfter  = `$${parseFloat(priceFromTo[2]).toFixed(2)}`;
+  } else {
+    const priceRx = /\$\s*(\d+\.\d{2})/g; const prices = [];
+    while ((m = priceRx.exec(t)) !== null) prices.push(parseFloat(m[1]));
+    if (prices.length >= 2) {
+      result.priceBefore = `$${prices[0].toFixed(2)}`; result.priceConf = 'med';
+      result.priceAfter  = `$${prices[1].toFixed(2)}`;
+    } else if (prices.length === 1) {
+      result.priceAfter = `$${prices[0].toFixed(2)}`; result.priceConf = 'low';
+    }
+  }
+
+  // Known brands
+  const knownBrands = ['Tropicana','Frito-Lay','Gatorade','Bounty','Hellmann\'s','Skippy','Folgers','Charmin','Nabisco','Tide','Jif','Breyers','Häagen-Dazs','Cottonelle','Kraft','Lay\'s','Lays','Cheerios','General Mills','Dawn','Oreo','Huggies','Scott','Kirkland','Costco','Heinz','Kellogg\'s','Campbell\'s','Del Monte','Dole','Quaker','Pepperidge Farm','Nature Valley','Nutella','Prego','Ragu','Smucker\'s','Welch\'s','Green Giant','Birds Eye','Stouffer\'s','Chobani','Yoplait','Dannon','Philadelphia','Hormel','Red Bull','Monster','Goya','Barilla','Classico','Hunt\'s'];
+  for (const brand of knownBrands) {
+    if (t.toLowerCase().includes(brand.toLowerCase())) {
+      result.brand = brand; result.brandConf = 'high'; break;
+    }
+  }
+
+  // Product name from first line
+  const firstLine = t.split(/\n/)[0].trim();
+  const cleaned = firstLine
+    .replace(sizeRx, '').replace(/\bwent\b.*/i,'').replace(/\bshrunk\b.*/i,'')
+    .replace(/\bfrom\b.*/i,'').replace(/[→\-–—].*/g,'').replace(/\s{2,}/g,' ').trim();
+  if (cleaned.length > 3 && cleaned.length < 80) {
+    result.product = cleaned; result.productConf = cleaned.length > 12 ? 'med' : 'low';
+  }
+
+  result.notes = t.length > 400 ? t.slice(0, 400) + '…' : t;
+  return result;
+}
+
+function normaliseUnit(u) {
+  const map = { 'floz':'fl oz','fl.oz':'fl oz','fluidoz':'fl oz','oz':'oz','lbs':'lbs','lb':'lb','pounds':'lbs','pound':'lb','grams':'g','gram':'g','ml':'ml','liters':'L','litres':'L','liter':'L','count':'ct','ct.':'ct','pack':'pk','sheets':'sheets','sheet':'sheets','rolls':'rolls','roll':'rolls','pods':'pods','pod':'pods','qt.':'qt','quarts':'qt','quart':'qt','pt.':'pt','pints':'pt','pint':'pt' };
+  return map[u.toLowerCase().replace(/\s+/g,'')] || u.toLowerCase().replace(/\s+/g,'');
+}
+
+function parseSizeStr(s) {
+  const m = /^([\d.]+)\s*(.+)$/.exec(s.trim());
+  if (!m) return null;
+  const unit = normaliseUnit(m[2]);
+  return { val: parseFloat(m[1]), unit, str: `${m[1]}${unit}` };
+}
+
+// ── Render parse results ───────────────────────────────────
+function clearParseResult() {
+  const el = document.getElementById('parse-result');
+  if (el) { el.className = 'parse-result'; el.innerHTML = ''; }
+}
+
+function confBadge(c) {
+  if (!c) return '';
+  const map = { high:['conf-high','✓ High'], med:['conf-med','~ Med'], low:['conf-low','? Low'] };
+  const [cls, label] = map[c] || ['conf-low','?'];
+  return `<span class="confidence ${cls}">${label}</span>`;
+}
+
+function showParseResult(p) {
+  const el = document.getElementById('parse-result');
+  if (!el) return;
+  lastParsed = p;
+
+  const fields = [
+    p.product      && { label:'Product',  val: p.product,      conf: p.productConf },
+    p.brand        && { label:'Brand',    val: p.brand,        conf: p.brandConf },
+    p.oldSize      && { label:'Old Size', val: p.oldSize,      conf: p.oldConf },
+    p.newSize      && { label:'New Size', val: p.newSize,      conf: p.newConf },
+    p.priceBefore  && { label:'Was',      val: p.priceBefore,  conf: p.priceConf },
+    p.priceAfter   && { label:'Now',      val: p.priceAfter,   conf: p.priceConf },
+  ].filter(Boolean);
+
+  if (!fields.length) {
+    showParseError("Couldn't extract details. Try pasting more of the post, or fill in manually.");
+    return;
+  }
+
+  el.className = 'parse-result success';
+  el.innerHTML = `
+    <div style="font-size:13px;font-weight:900;color:var(--duo-green);margin-bottom:8px">
+      ✨ Detected ${fields.length} field${fields.length > 1 ? 's' : ''} — review and apply:
+    </div>
+    ${fields.map(f => `
+      <div class="parse-field">
+        <span class="field-label">${f.label}</span>
+        <span class="field-val">${f.val}</span>
+        ${confBadge(f.conf)}
+      </div>`).join('')}
+    <button class="autofill-btn" onclick="applyAutofill()">Apply to Form ↓</button>
+  `;
+}
+
+function showParseError(msg) {
+  const el = document.getElementById('parse-result');
+  if (!el) return;
+  el.className = 'parse-result error';
+  el.innerHTML = `<div style="font-size:14px;font-weight:700;color:var(--duo-red)">⚠️ ${msg}</div>`;
+}
+
+function applyAutofill() {
+  if (!lastParsed) return;
+  const p = lastParsed;
+  const setFld = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+  setFld('r-name',        p.product);
+  setFld('r-brand',       p.brand);
+  setFld('r-old',         p.oldSize);
+  setFld('r-new',         p.newSize);
+  setFld('r-price-before',p.priceBefore);
+  setFld('r-price-after', p.priceAfter);
+  setFld('r-notes',       p.notes);
+
+  ['r-name','r-brand','r-old','r-new','r-price-before','r-price-after','r-notes'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value) {
+      el.style.borderColor = 'var(--duo-green)';
+      setTimeout(() => { el.style.borderColor = ''; }, 2000);
+    }
+  });
+  document.getElementById('r-name')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function selectReportType(key) {
+  document.getElementById('r-type').value = key;
+  Object.keys(SHRINK_TYPES).forEach(k => {
+    const btn = document.getElementById('rtype-' + k);
+    if (!btn) return;
+    const v = SHRINK_TYPES[k];
+    btn.className = 'type-pill' + (k === key ? ` active-${k}` : '');
+  });
+}
+
+function submitReport() {
+  const name = document.getElementById('r-name').value.trim();
+  if (!name) { alert('Please enter a product name!'); return; }
+
+  // Capture the data before clearing
+  lastSubmission = {
+    name,
+    brand:       (document.getElementById('r-brand')?.value || '').trim(),
+    oldSize:     (document.getElementById('r-old')?.value   || '').trim(),
+    newSize:     (document.getElementById('r-new')?.value   || '').trim(),
+    priceBefore: (document.getElementById('r-price-before')?.value || '').trim(),
+    priceAfter:  (document.getElementById('r-price-after')?.value  || '').trim(),
+    type:        (document.getElementById('r-type')?.value  || ''),
+    xpEarned:    25,
+  };
+
+  addXP(25);
+  lastParsed = null;
+  showCelebration = true;
+  renderScreen();
+  window.scrollTo(0, 0);
+}
+
+function reportAnother() {
+  showCelebration = false;
+  lastSubmission  = null;
+  redditImportOpen = false;
+  renderScreen();
+  window.scrollTo(0, 0);
+}
+
+function toggleMemeUpvote(btn) {
+  btn.classList.toggle('voted');
+  const numEl = btn.querySelector('.upvote-num');
+  if (!numEl) return;
+  const base = parseInt(btn.dataset.base || '0', 10);
+  numEl.textContent = btn.classList.contains('voted') ? (base + 1).toLocaleString() : base.toLocaleString();
+}
+
+// ─── Celebration screen ────────────────────────────────────
+const SHRINK_JOKES = [
+  { text: "\"We've improved the packaging!\"\n\nTranslation: We kept the box the same size and reduced the product by 15%. Your eyes are not deceiving you. You're just being gaslit by a snack company. 😂", votes: 42100, award: '🏆' },
+  { text: "POV: You bought a 'Family Size' bag of chips, opened it, and it's 60% air.\n\nThe family? Disappointed. The air? Living its best life. 💀", votes: 67800, award: '🥇' },
+  { text: "Cereal companies after reducing the box size for the 4th time: \"Same great taste, same great value!\"\n\nSame great audacity, actually. 👀", votes: 31200, award: '⭐' },
+  { text: "The real shrinkflation victim is my trust. I now hold every package up to the light before buying. My therapist says this is a 'trauma response.' I say it's due diligence.", votes: 89400, award: '🎖️' },
+  { text: "Corporations: *removes 20% of the product*\nAlso corporations: *charges 10% more*\n\nWe're not just losing product. We're paying a premium to be gaslit. Incredible. Respect the hustle. Hate the game. 😤", votes: 54700, award: '💎' },
+  { text: "My grandfather: \"Back in my day, a candy bar was THIS big.\"\n\nMe in 2030: \"Back in MY day, a candy bar was THIS big.\"\n\nMy grandkid: *holding a single M&M* \"Really?\"", votes: 18300, award: '🥈' },
+];
+
+function renderCelebration() {
+  const sub  = lastSubmission || {};
+  const joke = SHRINK_JOKES[Math.floor(Math.random() * SHRINK_JOKES.length)];
+  const typeInfo = sub.type ? SHRINK_TYPES[sub.type] : null;
+  const confetti = ['🎉','✨','🏆','⚡','🔥','💥','🎊','⭐'].map((e, i) =>
+    `<span class="confetti-dot" style="animation-delay:${i * 0.08}s;animation-duration:${1 + i * 0.1}s">${e}</span>`
+  ).join('');
+
+  // Build receipt rows
+  const rows = [
+    { l: '📦 Product',    v: sub.name,        cls: '' },
+    sub.brand   && { l: '🏭 Brand',      v: sub.brand,       cls: '' },
+    sub.oldSize && sub.newSize && {
+      l: '📉 Size Change',
+      v: `${sub.oldSize} → ${sub.newSize}`,
+      cls: 'red'
+    },
+    sub.priceBefore && sub.priceAfter && {
+      l: '💰 Price Change',
+      v: `${sub.priceBefore} → ${sub.priceAfter}`,
+      cls: 'red'
+    },
+    typeInfo && { l: '🏷️ Type',        v: `${typeInfo.emoji} ${typeInfo.label}`, cls: '' },
+    { l: '✅ Status',      v: 'Under Review',  cls: 'green' },
+    { l: '⚡ XP Earned',   v: `+${sub.xpEarned} XP`, cls: 'green' },
+  ].filter(Boolean);
+
+  return `
+    <div class="celebrate-wrap">
+      <!-- XP burst -->
+      <div class="xp-burst">
+        <div class="xp-burst-badge">
+          <span class="xp-num">+${sub.xpEarned || 25}</span>
+          <span class="xp-lbl">XP</span>
+        </div>
+        <h3>Nice catch, Detective! 🕵️</h3>
+        <p>You're helping shoppers everywhere fight back.</p>
+        <div class="confetti-row">${confetti}</div>
+      </div>
+
+      <!-- Receipt summary -->
+      <div class="receipt-card">
+        <div class="receipt-title">📋 Your Report Summary</div>
+        ${rows.map(r => `
+          <div class="receipt-row">
+            <span class="lbl">${r.l}</span>
+            <span class="val ${r.cls}">${r.v}</span>
+          </div>`).join('')}
+      </div>
+
+      <!-- Reddit meme card -->
+      <div class="reddit-meme-card">
+        <div class="reddit-meme-header">
+          <span style="font-size:16px">🤖</span>
+          r/shrinkflation &nbsp;·&nbsp; Posted by u/FullCarts_Bot
+        </div>
+        <div class="reddit-meme-body">
+          <div class="reddit-meme-text">${joke.text.replace(/\n/g, '<br>')}</div>
+          <div class="reddit-meme-footer">
+            <button class="upvote-btn" data-base="${joke.votes}" onclick="toggleMemeUpvote(this)">
+              ▲ <span class="upvote-num">${joke.votes.toLocaleString()}</span>
+            </button>
+            <span style="font-size:14px;font-weight:800;color:var(--wolf)">💬 Share</span>
+            <span class="meme-award" title="Award">${joke.award}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="celebrate-actions">
+        <button class="btn-duo btn-green" onclick="reportAnother()">Report Another Shrink (+25 XP)</button>
+        <button class="btn-duo btn-blue"  onclick="navigate('leaderboard')">View The Shame List</button>
+        <button class="btn-duo" style="background:var(--card-bg);border:2px solid var(--card-border);color:var(--snow);border-bottom:4px solid #0a1517" onclick="navigate('home')">Back to Home</button>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// COMMUNITY (Scout Tab)
+// ============================================================
+function renderCommunity() {
+  const badgeCls = { Elite:'badge-elite', Pro:'badge-pro', Scout:'badge-scout' };
+  const rankCls  = (i) => ['gold','silver','bronze'][i] || 'normal';
+  const totalReports  = CONTRIBUTORS.reduce((s, c) => s + c.reports, 0);
+  const totalVerified = CONTRIBUTORS.reduce((s, c) => s + c.verified, 0);
+  const totalConfirms = Object.values(CONFIRM_COUNTS).reduce((s, v) => s + v, 0);
+
+  return `
+    <div class="community-header">
+      <h2>Scout Board</h2>
+      <p>The community keeping brands accountable</p>
+    </div>
+
+    <div class="community-stats-grid">
+      <div class="community-stat-card">
+        <div class="csv green">${PRODUCTS.length + totalReports}</div>
+        <div class="csl">Total Reports</div>
+      </div>
+      <div class="community-stat-card">
+        <div class="csv" style="color:var(--duo-blue)">${totalVerified}</div>
+        <div class="csl">Verified</div>
+      </div>
+      <div class="community-stat-card">
+        <div class="csv" style="color:var(--duo-orange)">${CONTRIBUTORS.length}</div>
+        <div class="csl">Active Scouts</div>
+      </div>
+      <div class="community-stat-card">
+        <div class="csv" style="color:var(--duo-yellow)">${totalConfirms}</div>
+        <div class="csl">Confirmations</div>
+      </div>
+    </div>
+
+    <div class="section-title">Top Contributors</div>
+    <div class="duo-card" style="padding:0">
+      ${CONTRIBUTORS.map((c, i) => `
+        <div class="contributor-item">
+          <div class="contributor-rank ${rankCls(i)}">${i + 1}</div>
+          <div class="contributor-info">
+            <strong>u/${c.username}</strong>
+            <span>${c.reports} reports · ${c.verified} verified · ${c.streak}d streak</span>
+          </div>
+          <span class="contributor-badge ${badgeCls[c.level] || 'badge-scout'}">${c.level}</span>
+        </div>`).join('')}
+    </div>
+
+    <div class="section-title" style="margin-top:8px">Recent Activity</div>
+    <div class="duo-card" style="padding:0">
+      ${ACTIVITY_FEED.map(a => `
+        <div class="activity-item">
+          <div class="activity-dot" style="background:${a.action === 'flagged' ? 'var(--duo-red)' : 'var(--duo-green)'}"></div>
+          <div>
+            <div class="activity-text">
+              <strong>u/${a.user}</strong> ${a.action === 'flagged' ? 'flagged' : 'confirmed'} — ${a.product} · <span style="color:var(--wolf)">${a.brand}</span>
+            </div>
+            <div class="activity-time">${a.ago}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+
+    <div class="section-title" style="margin-top:8px">How to Earn Badges</div>
+    <div class="duo-card" style="padding:14px 16px">
+      <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;font-weight:700;color:var(--hare)">
+        <div style="display:flex;align-items:center;gap:10px"><span class="contributor-badge badge-scout">Scout</span> Submit 5+ community reports</div>
+        <div style="display:flex;align-items:center;gap:10px"><span class="contributor-badge badge-pro">Pro</span> 20+ reports, 70% verification rate</div>
+        <div style="display:flex;align-items:center;gap:10px"><span class="contributor-badge badge-elite">Elite</span> 40+ reports, 80% verification rate, 14-day streak</div>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// NEWS
+// ============================================================
+function selectNewsType(t) { selectedNewsType = t; renderScreen(); }
+
+function renderNews() {
+  const pills = [
+    { key:'all', label:'📰 All' },
+    ...Object.entries(SHRINK_TYPES).map(([k,v]) => ({ key:k, label:`${v.emoji} ${v.label}` }))
+  ];
+
+  let articles = selectedNewsType === 'all'
+    ? NEWS
+    : NEWS.filter(n => n.type === selectedNewsType);
+
+  const pillsHTML = pills.map(p => {
+    const isActive = selectedNewsType === p.key;
+    const activeCls = isActive
+      ? (p.key === 'all' ? 'active' : `active-${p.key}`)
+      : '';
+    return `<button class="news-pill ${activeCls}" onclick="selectNewsType('${p.key}')">${p.label}</button>`;
+  }).join('');
+
+  const cardsHTML = articles.length ? articles.map(a => {
+    const typeInfo = SHRINK_TYPES[a.type];
+    return `
+      <a class="news-card" href="${a.url}" target="_blank" rel="noopener">
+        <div class="news-card-top">
+          <span class="news-source-badge" style="background:${a.sourceColor}20;color:${a.sourceColor};border:1.5px solid ${a.sourceColor}40">${a.source}</span>
+          ${typeInfo ? `<span class="news-type-dot" style="background:${typeInfo.cls.includes('shrinkflation') ? '#FF4B4B' : typeInfo.cls.includes('skimpflation') ? '#CE82FF' : typeInfo.cls.includes('downsizing') ? '#FF9600' : typeInfo.cls.includes('count') ? '#1CB0F6' : '#FFC800'}">${typeInfo.emoji}</span>` : ''}
+          <span class="news-meta" style="margin-left:auto">${a.date}</span>
+        </div>
+        <div class="news-headline">${a.headline}</div>
+        <div class="news-summary">${a.summary}</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+          <span style="font-size:11px;font-weight:800;background:rgba(88,204,2,0.1);color:var(--duo-green);border:1.5px solid rgba(88,204,2,0.25);border-radius:6px;padding:2px 7px">${a.tag}</span>
+          <span style="font-size:11px;color:var(--wolf);font-weight:700;margin-left:auto">Read article →</span>
+        </div>
+      </a>`;
+  }).join('') : `<div style="text-align:center;padding:48px 20px;color:var(--wolf);font-weight:800">No articles for this type yet.</div>`;
+
+  return `
+    <div class="news-header">
+      <h2>📰 Shrink News</h2>
+      <p>Latest coverage of shrinkflation &amp; hidden price hikes</p>
+    </div>
+    <div class="news-filter-row">${pillsHTML}</div>
+    <div>${cardsHTML}</div>
+  `;
+}
+
+// ============================================================
+// NOT FOUND
+// ============================================================
+function renderNotFound() {
+  return `
+    <button class="back-btn" onclick="navigate('home')">← BACK</button>
+    <div class="not-found">
+      <div class="icon">🤔</div>
+      <h2>Not in the database… yet!</h2>
+      <p>This barcode isn't tracked. Be the first to add it and earn <strong style="color:#FFC800">+25 XP!</strong></p>
+      <button class="btn-duo btn-green btn-sm" onclick="navigate('report')">🚩 Report It</button>
+    </div>
+  `;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderScreen();
+</script>
+</body>
+</html>

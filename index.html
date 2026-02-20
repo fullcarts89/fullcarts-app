@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FullCarts — Community Shrinkflation Tracker</title>
+  <meta name="description" content="FullCarts is a free, community-powered database tracking shrinkflation, skimpflation, and hidden price hikes across US grocery products. Built by shoppers, for shoppers.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green:        #58CC02;
+      --green-dark:   #3d8e02;
+      --green-light:  #d7ffb8;
+      --blue:         #1CB0F6;
+      --blue-dark:    #1580b5;
+      --red:          #FF4B4B;
+      --orange:       #FF9600;
+      --yellow:       #FFC800;
+      --bg:           #0d1a1f;
+      --surface:      #131F24;
+      --card:         #1a2c33;
+      --border:       #2b3f48;
+      --text:         #FFFFFF;
+      --muted:        #AFAFAF;
+      --faint:        #4B4B4B;
+      --max:          1120px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+    }
+
+    /* ── NAV ──────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(13,26,31,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: var(--max); margin: 0 auto;
+      padding: 0 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; color: var(--text);
+    }
+    .nav-logo-icon {
+      width: 36px; height: 36px;
+      background: var(--green);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      border-bottom: 3px solid var(--green-dark);
+    }
+    .nav-logo-text { font-size: 20px; font-weight: 900; letter-spacing: -0.3px; }
+    .nav-links {
+      display: flex; align-items: center; gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none; color: var(--muted);
+      font-size: 14px; font-weight: 800;
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--green);
+      color: #0d1a1f !important;
+      padding: 8px 20px; border-radius: 10px;
+      font-weight: 900 !important;
+      border-bottom: 3px solid var(--green-dark);
+      transition: transform 0.1s, border-bottom-width 0.1s !important;
+    }
+    .nav-cta:hover { transform: translateY(-1px); color: #0d1a1f !important; }
+    .nav-cta:active { transform: translateY(2px); border-bottom-width: 1px !important; }
+
+    /* ── HERO ─────────────────────────────────────── */
+    .hero {
+      max-width: var(--max); margin: 0 auto;
+      padding: 96px 32px 80px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 64px; align-items: center;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(88,204,2,0.1);
+      border: 1.5px solid rgba(88,204,2,0.25);
+      border-radius: 20px; padding: 5px 14px;
+      font-size: 12px; font-weight: 900;
+      color: var(--green); letter-spacing: 0.5px;
+      text-transform: uppercase; margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: 52px; font-weight: 900;
+      line-height: 1.1; letter-spacing: -1.5px;
+      color: var(--text); margin-bottom: 20px;
+    }
+    .hero h1 span {
+      background: linear-gradient(90deg, var(--green), var(--blue));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      font-size: 18px; font-weight: 700; color: var(--muted);
+      line-height: 1.6; margin-bottom: 32px; max-width: 480px;
+    }
+    .hero-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--green); color: #0d1a1f;
+      font-family: 'Nunito', sans-serif;
+      font-size: 16px; font-weight: 900;
+      padding: 14px 28px; border-radius: 14px;
+      border: none; border-bottom: 4px solid var(--green-dark);
+      cursor: pointer; text-decoration: none;
+      transition: transform 0.1s, border-bottom-width 0.1s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); }
+    .btn-primary:active { transform: translateY(2px); border-bottom-width: 1px; }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: var(--text);
+      font-family: 'Nunito', sans-serif;
+      font-size: 15px; font-weight: 800;
+      padding: 13px 24px; border-radius: 14px;
+      border: 2px solid var(--border);
+      cursor: pointer; text-decoration: none;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-secondary:hover { border-color: var(--muted); color: var(--text); }
+    .hero-trust {
+      display: flex; align-items: center; gap: 16px; margin-top: 24px;
+      font-size: 13px; font-weight: 800; color: var(--faint);
+    }
+    .trust-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--border); }
+
+    /* ── HERO VISUAL ──────────────────────────────── */
+    .hero-visual { position: relative; }
+    .hero-phone-wrap {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+      max-width: 300px; margin: 0 auto;
+    }
+    .phone-top-bar {
+      background: var(--bg);
+      padding: 12px 20px;
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .phone-logo-dot {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: var(--green);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .phone-top-bar span { font-size: 15px; font-weight: 900; }
+    .phone-content { padding: 0; }
+    .phone-stat-row {
+      display: flex; justify-content: space-around;
+      padding: 14px 16px; border-bottom: 1px solid var(--border);
+    }
+    .phone-stat .psv { font-size: 20px; font-weight: 900; }
+    .phone-stat .psl { font-size: 10px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+    .phone-product-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 14px; border-bottom: 1px solid var(--border);
+    }
+    .phone-product-row:last-child { border-bottom: none; }
+    .pp-thumb {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: rgba(255,75,75,0.1); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pp-info { flex: 1; min-width: 0; }
+    .pp-info strong { font-size: 12px; font-weight: 800; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pp-info span { font-size: 11px; color: var(--muted); font-weight: 700; }
+    .pp-pct { font-size: 13px; font-weight: 900; color: var(--red); flex-shrink: 0; }
+    .hero-badge {
+      position: absolute; bottom: -12px; right: -12px;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 16px; padding: 12px 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .hero-badge .hb-val { font-size: 22px; font-weight: 900; color: var(--red); }
+    .hero-badge .hb-lbl { font-size: 11px; font-weight: 800; color: var(--muted); }
+
+    /* ── STATS TICKER ─────────────────────────────── */
+    .stats-banner {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stats-banner-inner {
+      max-width: var(--max); margin: 0 auto; padding: 0 32px;
+      display: flex; justify-content: space-around; align-items: center;
+      height: 80px;
+    }
+    .stat-item { text-align: center; }
+    .stat-item .si-val { font-size: 28px; font-weight: 900; }
+    .stat-item .si-lbl { font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+    .stat-divider { width: 1px; height: 40px; background: var(--border); }
+
+    /* ── SECTION SHELL ────────────────────────────── */
+    .section { padding: 80px 32px; max-width: var(--max); margin: 0 auto; }
+    .section-label {
+      font-size: 12px; font-weight: 900; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--green); margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: 38px; font-weight: 900; line-height: 1.15;
+      letter-spacing: -0.8px; margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 17px; font-weight: 700; color: var(--muted);
+      max-width: 580px; line-height: 1.6; margin-bottom: 48px;
+    }
+    .section-divider {
+      border: none; border-top: 1px solid var(--border);
+    }
+
+    /* ── HOW IT WORKS ─────────────────────────────── */
+    .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+    .step-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 20px; padding: 28px 24px;
+    }
+    .step-num {
+      width: 40px; height: 40px; border-radius: 12px;
+      background: rgba(88,204,2,0.12);
+      border: 2px solid rgba(88,204,2,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 900; color: var(--green);
+      margin-bottom: 16px;
+    }
+    .step-card h3 { font-size: 17px; font-weight: 900; margin-bottom: 8px; }
+    .step-card p  { font-size: 14px; font-weight: 700; color: var(--muted); line-height: 1.6; }
+
+    /* ── DATA PREVIEW ─────────────────────────────── */
+    .data-section { background: var(--surface); }
+    .data-section .section { border: none; }
+    .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .data-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 16px; overflow: hidden;
+    }
+    .data-card-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .data-card-header h4 { font-size: 13px; font-weight: 900; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; }
+    .data-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 16px; border-bottom: 1px solid var(--border);
+    }
+    .data-row:last-child { border-bottom: none; }
+    .dr-rank {
+      width: 24px; height: 24px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 900; flex-shrink: 0;
+    }
+    .dr-rank.gold   { background: var(--yellow); color: #4a3000; }
+    .dr-rank.silver { background: #c0c0c0; color: #4a4a4a; }
+    .dr-rank.bronze { background: #cd7f32; color: #3a1800; }
+    .dr-rank.norm   { background: var(--border); color: var(--muted); }
+    .dr-info { flex: 1; min-width: 0; }
+    .dr-info strong { font-size: 13px; font-weight: 800; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .dr-info span   { font-size: 11px; color: var(--muted); font-weight: 700; }
+    .dr-pct { font-size: 14px; font-weight: 900; color: var(--red); flex-shrink: 0; }
+    .dr-pct.green   { color: var(--green); }
+
+    /* ── WHO WE WORK WITH ─────────────────────────── */
+    .partner-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+    .partner-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 20px; padding: 28px 24px;
+      position: relative; overflow: hidden;
+    }
+    .partner-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    }
+    .partner-card.green::before { background: var(--green); }
+    .partner-card.blue::before  { background: var(--blue); }
+    .partner-card.yellow::before{ background: var(--yellow); }
+    .partner-card.dashed { border-style: dashed; }
+    .pc-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 14px;
+    }
+    .pc-icon.green  { background: rgba(88,204,2,0.12); }
+    .pc-icon.blue   { background: rgba(28,176,246,0.12); }
+    .pc-icon.yellow { background: rgba(255,200,0,0.12); }
+    .partner-card h3 { font-size: 16px; font-weight: 900; margin-bottom: 8px; }
+    .partner-card p  { font-size: 13px; font-weight: 700; color: var(--muted); line-height: 1.6; }
+    .coming-soon-tag {
+      display: inline-block; margin-top: 12px;
+      font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--muted); background: var(--border);
+      padding: 3px 8px; border-radius: 6px;
+    }
+
+    /* ── TRANSPARENCY BLOCK ───────────────────────── */
+    .transparency-block {
+      background: var(--surface);
+    }
+    .transparency-inner {
+      max-width: var(--max); margin: 0 auto; padding: 80px 32px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start;
+    }
+    .commitment-list { display: flex; flex-direction: column; gap: 14px; }
+    .commitment-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px 16px;
+      background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 14px;
+    }
+    .commitment-check {
+      width: 22px; height: 22px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .commitment-check.green  { background: rgba(88,204,2,0.15); }
+    .commitment-check.red    { background: rgba(255,75,75,0.12); }
+    .commitment-item p { font-size: 14px; font-weight: 700; color: var(--muted); line-height: 1.5; }
+    .commitment-item p strong { color: var(--text); }
+
+    /* ── REDDIT SECTION ───────────────────────────── */
+    .reddit-section {
+      max-width: var(--max); margin: 0 auto; padding: 0 32px 80px;
+    }
+    .reddit-cards { display: flex; flex-direction: column; gap: 12px; max-width: 640px; }
+    .reddit-post {
+      background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 14px; padding: 16px;
+    }
+    .rp-header {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+      font-size: 12px; font-weight: 800; color: var(--muted);
+    }
+    .rp-dot { width: 20px; height: 20px; border-radius: 6px; background: #ff4500; display: flex; align-items: center; justify-content: center; }
+    .rp-title { font-size: 14px; font-weight: 800; color: var(--text); line-height: 1.4; margin-bottom: 8px; }
+    .rp-footer { display: flex; align-items: center; gap: 14px; font-size: 12px; font-weight: 800; color: var(--muted); }
+    .rp-upvotes { color: #ff4500; }
+    .validated-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(88,204,2,0.1); border: 1.5px solid rgba(88,204,2,0.25);
+      border-radius: 8px; padding: 2px 8px;
+      font-size: 11px; font-weight: 900; color: var(--green);
+    }
+
+    /* ── CTA SECTION ──────────────────────────────── */
+    .cta-section {
+      text-align: center; padding: 96px 32px;
+      max-width: var(--max); margin: 0 auto;
+    }
+    .cta-section h2 {
+      font-size: 44px; font-weight: 900; letter-spacing: -1px;
+      line-height: 1.15; margin-bottom: 16px;
+    }
+    .cta-section p {
+      font-size: 17px; font-weight: 700; color: var(--muted);
+      max-width: 500px; margin: 0 auto 36px; line-height: 1.6;
+    }
+    .cta-actions { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+
+    /* ── FOOTER ───────────────────────────────────── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    .footer-inner {
+      max-width: var(--max); margin: 0 auto; padding: 48px 32px 32px;
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
+    }
+    .footer-brand p { font-size: 13px; font-weight: 700; color: var(--muted); margin-top: 10px; max-width: 280px; line-height: 1.6; }
+    .footer-col h4 { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin-bottom: 14px; }
+    .footer-col a  { display: block; font-size: 14px; font-weight: 700; color: var(--muted); text-decoration: none; margin-bottom: 8px; transition: color 0.15s; }
+    .footer-col a:hover { color: var(--text); }
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding: 20px 32px;
+      max-width: var(--max); margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 12px; font-weight: 700; color: var(--faint);
+    }
+
+    /* ── RESPONSIVE ───────────────────────────────── */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; gap: 48px; padding: 64px 24px; }
+      .hero h1 { font-size: 38px; }
+      .hero-visual { order: -1; }
+      .hero-phone-wrap { max-width: 260px; }
+      .steps { grid-template-columns: 1fr; }
+      .data-grid { grid-template-columns: 1fr; }
+      .partner-grid { grid-template-columns: 1fr; }
+      .transparency-inner { grid-template-columns: 1fr; gap: 40px; padding: 60px 24px; }
+      .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .section { padding: 60px 24px; }
+      .section-title { font-size: 28px; }
+      .nav-links { display: none; }
+      .stats-banner-inner { flex-wrap: wrap; height: auto; padding: 20px 24px; gap: 16px; justify-content: center; }
+      .cta-section { padding: 64px 24px; }
+      .cta-section h2 { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">
+      <div class="nav-logo-icon">
+        <svg width="22" height="22" viewBox="0 0 40 40" fill="none">
+          <path d="M7 10h3l5 12h13l3.5-9H13" stroke="#0d1a1f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="15" cy="25.5" r="2.2" fill="#0d1a1f"/>
+          <circle cx="25" cy="25.5" r="2.2" fill="#0d1a1f"/>
+          <path d="M16 16l3 3.5 3.5-2 2.5 2.5" stroke="#0d1a1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="nav-logo-text">FullCarts</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#how-it-works">How It Works</a></li>
+      <li><a href="#data">The Data</a></li>
+      <li><a href="#mission">Our Mission</a></li>
+      <li><a href="#data-access">For Researchers</a></li>
+      <li><a href="fullcarts.html" class="nav-cta">Open App</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<div class="hero">
+  <div class="hero-copy">
+    <div class="hero-eyebrow">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2.5"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2.5"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+      Community-powered · Free forever
+    </div>
+    <h1>They made it smaller.<br>We <span>made it public.</span></h1>
+    <p class="hero-sub">FullCarts tracks shrinkflation, skimpflation, and hidden price hikes across US grocery products — submitted and verified by real shoppers like you.</p>
+    <div class="hero-actions">
+      <a href="fullcarts.html" class="btn-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="2.5" height="16" rx="1" fill="currentColor"/><rect x="6" y="4" width="1.5" height="16" rx="1" fill="currentColor"/><rect x="9.5" y="4" width="2.5" height="16" rx="1" fill="currentColor"/><rect x="14" y="4" width="1.5" height="16" rx="1" fill="currentColor"/><rect x="17.5" y="4" width="1.5" height="16" rx="1" fill="currentColor"/><rect x="21" y="4" width="1.5" height="16" rx="1" fill="currentColor"/></svg>
+        Scan a Barcode
+      </a>
+      <a href="#data" class="btn-secondary">
+        Browse the Data
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <div class="hero-trust">
+      <span>No ads</span>
+      <div class="trust-dot"></div>
+      <span>No sign-up</span>
+      <div class="trust-dot"></div>
+      <span>Open data</span>
+      <div class="trust-dot"></div>
+      <span>Community verified</span>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="hero-phone-wrap">
+      <div class="phone-top-bar">
+        <div class="phone-logo-dot">
+          <svg width="16" height="16" viewBox="0 0 40 40" fill="none"><path d="M9 12h2.5l3.8 9.5h10.4l2.6-6.5H14" stroke="#0d1a1f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="24.5" r="2" fill="#0d1a1f"/><circle cx="24" cy="24.5" r="2" fill="#0d1a1f"/></svg>
+        </div>
+        <span>FullCarts</span>
+      </div>
+      <div class="phone-stat-row">
+        <div class="phone-stat"><div class="psv" style="color:#58CC02">25</div><div class="psl">Products</div></div>
+        <div class="phone-stat"><div class="psv" style="color:#FF9600">27</div><div class="psl">Shrinks</div></div>
+        <div class="phone-stat"><div class="psv" style="color:#FF4B4B">14</div><div class="psl">Repeat</div></div>
+      </div>
+      <div class="phone-content">
+        <div class="phone-product-row">
+          <div class="pp-thumb">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.96-1.61L23 6H6" stroke="#FF4B4B" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="20.5" r="1.5" fill="#FF4B4B"/><circle cx="18.5" cy="20.5" r="1.5" fill="#FF4B4B"/></svg>
+          </div>
+          <div class="pp-info"><strong>Tropicana OJ</strong><span>Tropicana · 2 shrinks</span></div>
+          <div class="pp-pct">−47%</div>
+        </div>
+        <div class="phone-product-row">
+          <div class="pp-thumb">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.96-1.61L23 6H6" stroke="#FF9600" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="20.5" r="1.5" fill="#FF9600"/><circle cx="18.5" cy="20.5" r="1.5" fill="#FF9600"/></svg>
+          </div>
+          <div class="pp-info"><strong>Charmin Ultra Soft</strong><span>P&G · 2 shrinks</span></div>
+          <div class="pp-pct">−21%</div>
+        </div>
+        <div class="phone-product-row">
+          <div class="pp-thumb">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.96-1.61L23 6H6" stroke="#FFC800" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="20.5" r="1.5" fill="#FFC800"/><circle cx="18.5" cy="20.5" r="1.5" fill="#FFC800"/></svg>
+          </div>
+          <div class="pp-info"><strong>Breyers Ice Cream</strong><span>Breyers · 2 shrinks</span></div>
+          <div class="pp-pct">−27%</div>
+        </div>
+        <div class="phone-product-row">
+          <div class="pp-thumb">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.96-1.61L23 6H6" stroke="#58CC02" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="20.5" r="1.5" fill="#58CC02"/><circle cx="18.5" cy="20.5" r="1.5" fill="#58CC02"/></svg>
+          </div>
+          <div class="pp-info"><strong>Hellmann's Mayo</strong><span>Unilever · Restored</span></div>
+          <div class="pp-pct green">Restored</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-badge">
+      <div class="hb-val">−18.75%</div>
+      <div class="hb-lbl">Tropicana since 2019</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ STATS BANNER ═══════════════ -->
+<div class="stats-banner">
+  <div class="stats-banner-inner">
+    <div class="stat-item">
+      <div class="si-val" style="color:#58CC02">25+</div>
+      <div class="si-lbl">Products Tracked</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="si-val" style="color:#FF9600">27+</div>
+      <div class="si-lbl">Shrink Events Documented</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="si-val" style="color:#FF4B4B">14</div>
+      <div class="si-lbl">Repeat Offenders</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <div class="si-val" style="color:#1CB0F6">100%</div>
+      <div class="si-lbl">Free, Always</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ HOW IT WORKS ═══════════════ -->
+<div id="how-it-works">
+  <div class="section">
+    <div class="section-label">How It Works</div>
+    <h2 class="section-title">Built on community intelligence.</h2>
+    <p class="section-sub">Every data point comes from real shoppers. The community submits, the community validates, and the data stays open for everyone.</p>
+
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3>Scan or Search</h3>
+        <p>Point your camera at any grocery barcode. FullCarts instantly checks if that product is in the database and shows you its full shrink history.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3>Report What You Find</h3>
+        <p>Spotted a size reduction? Submit a report in under a minute. Paste a Reddit post URL and our parser auto-fills the form. Earn XP for every verified submission.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3>Community Validates</h3>
+        <p>Other shoppers confirm reports with an "I've seen this too" tap. Three independent confirmations earns a Verified badge. No single person controls the data.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ═══════════════ DATA PREVIEW ═══════════════ -->
+<div class="data-section" id="data">
+  <div class="section">
+    <div class="section-label">The Data</div>
+    <h2 class="section-title">Open, queryable, and free to download.</h2>
+    <p class="section-sub">No paywall. No sign-up. Every product, every shrink event, every company response — available as a CSV right now.</p>
+
+    <div class="data-grid">
+      <div class="data-card">
+        <div class="data-card-header">
+          <h4>Worst Offenders by Brand</h4>
+          <span style="font-size:11px;font-weight:800;color:#FF4B4B">Avg % shrink</span>
+        </div>
+        <div class="data-row">
+          <div class="dr-rank gold">1</div>
+          <div class="dr-info"><strong>Tropicana</strong><span>2 products · 2 events</span></div>
+          <div class="dr-pct">−47.8%</div>
+        </div>
+        <div class="data-row">
+          <div class="dr-rank silver">2</div>
+          <div class="dr-info"><strong>Breyers</strong><span>1 product · 2 events</span></div>
+          <div class="dr-pct">−27.0%</div>
+        </div>
+        <div class="data-row">
+          <div class="dr-rank bronze">3</div>
+          <div class="dr-info"><strong>P&amp;G</strong><span>4 products · 5 events</span></div>
+          <div class="dr-pct">−21.4%</div>
+        </div>
+        <div class="data-row">
+          <div class="dr-rank norm">4</div>
+          <div class="dr-info"><strong>Kimberly-Clark</strong><span>3 products · 3 events</span></div>
+          <div class="dr-pct">−13.4%</div>
+        </div>
+        <div class="data-row">
+          <div class="dr-rank norm">5</div>
+          <div class="dr-info"><strong>Frito-Lay</strong><span>2 products · 2 events</span></div>
+          <div class="dr-pct">−6.2%</div>
+        </div>
+      </div>
+
+      <div class="data-card">
+        <div class="data-card-header">
+          <h4>Recent Activity</h4>
+          <span style="font-size:11px;font-weight:800;color:#58CC02">Community verified</span>
+        </div>
+        <div class="data-row">
+          <div class="dr-info"><strong>Tide Pods 57ct → 52ct</strong><span>P&G · Household · Nov 2021</span></div>
+          <div class="dr-pct">−20.8%</div>
+        </div>
+        <div class="data-row">
+          <div class="dr-info"><strong>Tropicana OJ 64oz → 52oz</strong><span>Tropicana · Beverages · Jan 2022</span></div>
+          <div class="dr-pct">−18.8%</div>
+        </div>
+        <div class="data-row">
+          <div class="dr-info"><strong>Charmin 284 → 244 sheets</strong><span>P&G · Paper Goods · Mar 2022</span></div>
+          <div class="dr-pct">−14.1%</div>
+        </div>
+        <div class="data-row">
+          <div class="dr-info"><strong>Folgers 51oz → 43.5oz</strong><span>Folgers · Beverages · Jan 2021</span></div>
+          <div class="dr-pct">−14.7%</div>
+        </div>
+        <div class="data-row">
+          <div class="dr-info" style="color:#58CC02"><strong>Hellmann's 30oz → 32oz</strong><span style="color:#58CC02">Unilever · Restored size · 2024</span></div>
+          <div class="dr-pct green">Restored</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;display:flex;gap:14px;flex-wrap:wrap">
+      <a href="fullcarts.html" class="btn-primary">Browse All Products</a>
+      <button class="btn-secondary" onclick="downloadCSV()">Download Full Dataset (CSV)</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ REDDIT POSTS ═══════════════ -->
+<div class="reddit-section">
+  <div class="section-label" style="margin-bottom:12px">From the Community</div>
+  <h2 class="section-title" style="margin-bottom:8px">Where the data comes from.</h2>
+  <p class="section-sub">Shoppers across Reddit have been documenting shrinkflation for years. FullCarts turns those posts into structured, searchable, verifiable data.</p>
+
+  <div class="reddit-cards">
+    <div class="reddit-post">
+      <div class="rp-header">
+        <div class="rp-dot">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="white"><circle cx="10" cy="10" r="10" fill="white"/><path d="M16.67 10a1.46 1.46 0 00-2.47-1 7.12 7.12 0 00-3.85-1.23l.65-3.08 2.13.45a1 1 0 101-1h-.07l-2.38-.5a.26.26 0 00-.31.2l-.73 3.44a7.14 7.14 0 00-3.89 1.23 1.46 1.46 0 10-1.61 2.39 2.89 2.89 0 000 .44c0 2.24 2.61 4.06 5.83 4.06s5.83-1.82 5.83-4.06a2.89 2.89 0 000-.44 1.46 1.46 0 00.77-1.9z" fill="#ff4500"/></svg>
+        </div>
+        r/shrinkflation &nbsp;·&nbsp; u/grocery_vigilante &nbsp;·&nbsp; 3 days ago
+      </div>
+      <div class="rp-title">Tropicana OJ went from 52oz to 46oz at my local Walmart — same $4.49 price. That's now 40% less than the original 89oz jug from 2010.</div>
+      <div class="rp-footer">
+        <span class="rp-upvotes">▲ 4,821</span>
+        <span>💬 312 comments</span>
+        <span class="validated-tag">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          Verified in FullCarts
+        </span>
+      </div>
+    </div>
+    <div class="reddit-post">
+      <div class="rp-header">
+        <div class="rp-dot">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="white"><circle cx="10" cy="10" r="10" fill="white"/><path d="M16.67 10a1.46 1.46 0 00-2.47-1 7.12 7.12 0 00-3.85-1.23l.65-3.08 2.13.45a1 1 0 101-1h-.07l-2.38-.5a.26.26 0 00-.31.2l-.73 3.44a7.14 7.14 0 00-3.89 1.23 1.46 1.46 0 10-1.61 2.39 2.89 2.89 0 000 .44c0 2.24 2.61 4.06 5.83 4.06s5.83-1.82 5.83-4.06a2.89 2.89 0 000-.44 1.46 1.46 0 00.77-1.9z" fill="#ff4500"/></svg>
+        </div>
+        r/Frugal &nbsp;·&nbsp; u/oz_counter &nbsp;·&nbsp; 1 week ago
+      </div>
+      <div class="rp-title">Tide Pods went from 72 count to 57. Bag looks IDENTICAL. I only noticed because I weighed it. That's 21% fewer pods at a higher price.</div>
+      <div class="rp-footer">
+        <span class="rp-upvotes">▲ 11,203</span>
+        <span>💬 891 comments</span>
+        <span class="validated-tag">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          Verified in FullCarts
+        </span>
+      </div>
+    </div>
+    <div class="reddit-post">
+      <div class="rp-header">
+        <div class="rp-dot">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="white"><circle cx="10" cy="10" r="10" fill="white"/><path d="M16.67 10a1.46 1.46 0 00-2.47-1 7.12 7.12 0 00-3.85-1.23l.65-3.08 2.13.45a1 1 0 101-1h-.07l-2.38-.5a.26.26 0 00-.31.2l-.73 3.44a7.14 7.14 0 00-3.89 1.23 1.46 1.46 0 10-1.61 2.39 2.89 2.89 0 000 .44c0 2.24 2.61 4.06 5.83 4.06s5.83-1.82 5.83-4.06a2.89 2.89 0 000-.44 1.46 1.46 0 00.77-1.9z" fill="#ff4500"/></svg>
+        </div>
+        r/personalfinance &nbsp;·&nbsp; u/cart_watcher &nbsp;·&nbsp; 2 weeks ago
+      </div>
+      <div class="rp-title">Charmin package grew TALLER but has 40 fewer sheets. They made the tube wider so the rolls look bigger. This is next-level deception.</div>
+      <div class="rp-footer">
+        <span class="rp-upvotes">▲ 28,400</span>
+        <span>💬 2,104 comments</span>
+        <span class="validated-tag">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          Verified in FullCarts
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ TRANSPARENCY ═══════════════ -->
+<div class="transparency-block" id="mission">
+  <div class="transparency-inner">
+    <div>
+      <div class="section-label">Our Mission</div>
+      <h2 class="section-title" style="font-size:34px">One rule: we're on the shopper's side.</h2>
+      <p style="font-size:15px;font-weight:700;color:var(--muted);line-height:1.7;margin-bottom:28px">We exist to make the invisible visible. Every shrink event we document is one more data point that makes it harder for companies to quietly take from shoppers. The data is public, the process is open, and the community controls it.</p>
+      <a href="fullcarts.html" class="btn-primary" style="display:inline-flex">Open the App</a>
+    </div>
+
+    <div class="commitment-list">
+      <div class="commitment-item">
+        <div class="commitment-check green">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#58CC02" stroke-width="3" stroke-linecap="round"/></svg>
+        </div>
+        <p><strong>No cost to shoppers.</strong> No ads, no premium tiers, no paywalls. The app and all its data are free to use.</p>
+      </div>
+      <div class="commitment-item">
+        <div class="commitment-check green">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#58CC02" stroke-width="3" stroke-linecap="round"/></svg>
+        </div>
+        <p><strong>Open data.</strong> Every submission is anonymized and publicly downloadable as a CSV. No sign-up required.</p>
+      </div>
+      <div class="commitment-item">
+        <div class="commitment-check green">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#58CC02" stroke-width="3" stroke-linecap="round"/></svg>
+        </div>
+        <p><strong>Community validated.</strong> Reports require multiple independent confirmations before earning a Verified badge.</p>
+      </div>
+      <div class="commitment-item">
+        <div class="commitment-check green">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#58CC02" stroke-width="3" stroke-linecap="round"/></svg>
+        </div>
+        <p><strong>Transparent about money.</strong> We work with advocacy orgs, researchers, and journalists who want to use the data to hold companies accountable — for a fee that covers operating costs only.</p>
+      </div>
+      <div class="commitment-item">
+        <div class="commitment-check red">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="#FF4B4B" stroke-width="3" stroke-linecap="round"/><line x1="6" y1="6" x2="18" y2="18" stroke="#FF4B4B" stroke-width="3" stroke-linecap="round"/></svg>
+        </div>
+        <p><strong>No deals that compromise the data.</strong> We don't work with companies that have a financial interest in what this data says.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ WHO WE WORK WITH ═══════════════ -->
+<div id="data-access">
+  <div class="section">
+    <div class="section-label">Who We Work With</div>
+    <h2 class="section-title">Amplifying voices on the shopper's side.</h2>
+    <p class="section-sub">We're building toward an ecosystem where consumer-aligned organizations get the tools they need, and brands with a verified track record of transparency get recognized for it.</p>
+
+    <div class="partner-grid">
+      <div class="partner-card green">
+        <div class="pc-icon green">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z" stroke="#58CC02" stroke-width="2" stroke-linejoin="round"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" stroke="#58CC02" stroke-width="2" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Researchers &amp; Journalists</h3>
+        <p>Academic institutions, public interest journalism, and advocacy organizations can access the full anonymized dataset via API or bulk CSV download — for a fee that covers server costs only.</p>
+        <a href="mailto:hello@fullcarts.app" style="display:inline-block;margin-top:14px;font-size:13px;font-weight:900;color:var(--green);text-decoration:none">Get in touch →</a>
+      </div>
+
+      <div class="partner-card blue">
+        <div class="pc-icon blue">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="#1CB0F6" stroke-width="2"/><circle cx="9" cy="7" r="4" stroke="#1CB0F6" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="#1CB0F6" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Consumer Advocacy Orgs</h3>
+        <p>Organizations working on food pricing transparency, consumer rights, or grocery policy can use our data to strengthen their case. We'll co-publish findings and list all partners publicly.</p>
+        <a href="mailto:hello@fullcarts.app" style="display:inline-block;margin-top:14px;font-size:13px;font-weight:900;color:var(--blue);text-decoration:none">Partner with us →</a>
+      </div>
+
+      <div class="partner-card yellow dashed">
+        <div class="pc-icon yellow">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="#FFC800" stroke-width="2" stroke-linecap="round"/><polyline points="22 4 12 14.01 9 11.01" stroke="#FFC800" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Transparency Partners</h3>
+        <p>A future program for brands and retailers with a verified, community-monitored record of no hidden size cuts. Criteria and the full partner list will always be public. No pay-to-play.</p>
+        <span class="coming-soon-tag">Coming Soon</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ CTA ═══════════════ -->
+<hr class="section-divider">
+<div class="cta-section">
+  <h2>The data only gets better<br>when more people use it.</h2>
+  <p>Every scan, every report, every confirmation makes the database more accurate and harder to ignore. Takes 60 seconds.</p>
+  <div class="cta-actions">
+    <a href="fullcarts.html" class="btn-primary" style="font-size:17px;padding:16px 32px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="2.5" height="16" rx="1" fill="currentColor"/><rect x="6" y="4" width="1.5" height="16" rx="1" fill="currentColor"/><rect x="9.5" y="4" width="2.5" height="16" rx="1" fill="currentColor"/><rect x="14" y="4" width="1.5" height="16" rx="1" fill="currentColor"/><rect x="17.5" y="4" width="1.5" height="16" rx="1" fill="currentColor"/><rect x="21" y="4" width="1.5" height="16" rx="1" fill="currentColor"/></svg>
+      Open FullCarts
+    </a>
+    <button class="btn-secondary" onclick="downloadCSV()" style="font-size:16px;padding:15px 28px">Download Dataset</button>
+  </div>
+</div>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a class="nav-logo" href="#" style="display:inline-flex">
+        <div class="nav-logo-icon" style="width:30px;height:30px;border-radius:8px">
+          <svg width="18" height="18" viewBox="0 0 40 40" fill="none"><path d="M7 10h3l5 12h13l3.5-9H13" stroke="#0d1a1f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="15" cy="25.5" r="2.2" fill="#0d1a1f"/><circle cx="25" cy="25.5" r="2.2" fill="#0d1a1f"/></svg>
+        </div>
+        <span class="nav-logo-text" style="font-size:16px">FullCarts</span>
+      </a>
+      <p>Community-powered shrinkflation tracking. Free for shoppers, open for researchers, accountable to everyone.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <a href="fullcarts.html">Open App</a>
+      <a href="fullcarts.html#data">Browse Data</a>
+      <a href="fullcarts.html#scanner">Scan a Barcode</a>
+      <a href="fullcarts.html#report">Submit a Report</a>
+    </div>
+    <div class="footer-col">
+      <h4>Data</h4>
+      <a href="#" onclick="downloadCSV();return false">Download CSV</a>
+      <a href="mailto:hello@fullcarts.app">API Access</a>
+      <a href="fullcarts.html#community">Scout Leaderboard</a>
+    </div>
+    <div class="footer-col">
+      <h4>About</h4>
+      <a href="#mission">Our Mission</a>
+      <a href="#data-access">Who We Work With</a>
+      <a href="mailto:hello@fullcarts.app">Contact</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 FullCarts. All data open-licensed under CC BY 4.0.</span>
+    <span>Built for shoppers. Not shareholders.</span>
+  </div>
+</footer>
+
+<script>
+function downloadCSV() {
+  // Mirror the app's downloadDataset logic with static data
+  const csv = `# FullCarts Product Database
+# Free for individual use. Research & advocacy access: hello@fullcarts.app
+# Community-submitted. Open data. CC BY 4.0.
+# fullcarts.app
+
+"upc","name","brand","category","currentSize","unit","type","repeatOffender"
+"048500205020","Tropicana Pure Premium OJ","Tropicana","Beverages","52","fl oz","shrinkflation","true"
+"028400090506","Doritos Nacho Cheese","Frito-Lay","Snacks","9.25","oz","downsizing","true"
+"052000337842","Gatorade Thirst Quencher","Gatorade","Beverages","28","fl oz","shrinkflation","false"
+"037000753599","Bounty Select-A-Size","Bounty","Paper Goods","83","sheets","count-cut","true"
+"048001214823","Hellmanns Real Mayonnaise","Unilever","Condiments","32","oz","shrinkflation","true"
+"037600107556","Skippy Creamy Peanut Butter","Hormel","Pantry","16.3","oz","downsizing","true"
+"025500012237","Folgers Classic Roast","Folgers","Beverages","43.5","oz","downsizing","true"
+"030772031674","Charmin Ultra Soft","P&G","Paper Goods","244","sheets","downsizing","true"
+"044000001803","Wheat Thins Original","Nabisco","Snacks","9.1","oz","shrinkflation","false"
+"037000805403","Tide Pods Laundry","P&G","Household","57","count","count-cut","false"`;
+
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: 'fullcarts-dataset.csv' });
+  a.click();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Thumbnails
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+venv/
+.env
+
+# Scraper output
+staging_queue.json
+known_urls.txt
+
+# Apple Numbers spreadsheets (not needed in deploy)
+Database Tables/
+
+# Original file (now served as index.html)
+fullcarts-website.html
