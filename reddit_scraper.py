@@ -30,6 +30,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
+try:
+    from supabase import create_client, Client as SupabaseClient
+    HAS_SUPABASE = True
+except ImportError:
+    HAS_SUPABASE = False
+
 # ---------------------------------------------------------------------------
 # Config — override via environment variables for CI / GitHub Actions
 # ---------------------------------------------------------------------------
@@ -37,6 +43,10 @@ from typing import Optional
 REDDIT_CLIENT_ID     = os.getenv("REDDIT_CLIENT_ID",     "YOUR_CLIENT_ID")
 REDDIT_CLIENT_SECRET = os.getenv("REDDIT_CLIENT_SECRET", "YOUR_CLIENT_SECRET")
 REDDIT_USER_AGENT    = os.getenv("REDDIT_USER_AGENT",    "FullCartsBot/1.0 (by u/YOUR_USERNAME; fullcarts.app)")
+
+# Supabase — service role key (PRIVATE, never expose in frontend)
+SUPABASE_URL         = os.getenv("SUPABASE_URL",         "https://yvpfefatajcfptfjntkn.supabase.co")
+SUPABASE_KEY         = os.getenv("SUPABASE_KEY",         "")  # Set via env var — service_role key
 
 # Subreddits to monitor
 TARGET_SUBREDDITS = [
@@ -344,6 +354,26 @@ def run_scraper(dry_run: bool = False) -> None:
     if not dry_run:
         save_known_urls(KNOWN_URLS_FILE, known_urls)
         save_staging(STAGING_FILE, queue)
+
+        # Also write to Supabase if configured
+        if HAS_SUPABASE and SUPABASE_KEY:
+            try:
+                sb: SupabaseClient = create_client(SUPABASE_URL, SUPABASE_KEY)
+                # Collect all new entries (auto + review) for upsert
+                all_entries = []
+                for tier_name in ("auto", "review"):
+                    for entry in queue[tier_name]:
+                        all_entries.append(entry)
+
+                if all_entries:
+                    sb.table("reddit_staging").upsert(
+                        all_entries, on_conflict="source_url"
+                    ).execute()
+                    log.info(f"Supabase: upserted {len(all_entries)} entries to reddit_staging")
+            except Exception as exc:
+                log.warning(f"Supabase write failed (JSON fallback still saved): {exc}")
+        elif not SUPABASE_KEY:
+            log.info("SUPABASE_KEY not set — skipping database write (JSON saved locally)")
 
     # Summary
     log.info("=" * 60)

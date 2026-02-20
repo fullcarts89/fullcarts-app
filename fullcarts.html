@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
@@ -1693,7 +1694,16 @@ const SHRINK_TYPES = {
   'price-hike':    { label:'Price Hike',    emoji:'💸', cls:'type-price-hike',    desc:'Same size, higher price' },
 };
 
-const PRODUCTS = [
+// ── Supabase client ─────────────────────────────────────────
+const SUPABASE_URL = 'https://yvpfefatajcfptfjntkn.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl2cGZlZmF0YWpjZnB0ZmpudGtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2MjkxMDYsImV4cCI6MjA4NzIwNTEwNn0.EGC1p_dXGqi1ELYHB9Kh4H_iRAiWPj2wcVLl6_sXVRg';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Session ID for anonymous confirmations
+const SESSION_ID = crypto.randomUUID();
+
+// ── Data arrays (loaded from Supabase on init, fallback to hardcoded) ──
+let PRODUCTS = [
   { name:"Tropicana Pure Premium OJ", brand:"Tropicana", upc:"048500205020", category:"Beverages", currentSize:52, unit:"fl oz", repeatOffender:true, type:"shrinkflation",
     companyResponse:{ status:"deflected", quote:"We've adjusted some of our product sizes as part of ongoing portfolio management to deliver the best value to consumers.", source:"Tropicana Communications, Q1 2022", url:null } },
   { name:"Doritos Nacho Cheese", brand:"Frito-Lay", upc:"028400090506", category:"Snacks", currentSize:9.25, unit:"oz", repeatOffender:true, type:"downsizing",
@@ -1732,7 +1742,7 @@ const PRODUCTS = [
   { name:"Red Bull Energy Drink", brand:"Red Bull", upc:"611269991023", category:"Beverages", currentSize:8.4, unit:"fl oz", repeatOffender:false, type:"price-hike", companyResponse:null },
 ];
 
-const EVENTS = [
+let EVENTS = [
   { upc:"048500205020", date:"2022-01-01", oldSize:64, newSize:52, unit:"fl oz", pct:18.75, priceBefore:3.99, priceAfter:4.99, type:"shrinkflation", notes:"New carton design debuted same quarter." },
   { upc:"048500205020", date:"2019-06-01", oldSize:89, newSize:64, unit:"fl oz", pct:28.09, priceBefore:4.49, priceAfter:3.99, type:"shrinkflation", notes:"Earlier reduction from 89oz jug to 64oz carton." },
   { upc:"052000337842", date:"2021-03-01", oldSize:32, newSize:28, unit:"fl oz", pct:12.5, priceBefore:1.79, priceAfter:1.99, type:"shrinkflation", notes:"Price went up too. Double whammy!" },
@@ -1783,10 +1793,10 @@ const NEWS = [
   { id:12, headline:"Doritos, Oreos, Lay's: the snack shrink is real and accelerating", source:"CNN Business", sourceColor:"#cc0001", date:"Jan 2024", type:"downsizing", summary:"Data from retail tracking firms shows that the average snack package has lost 7% of its contents since 2019 while shelf prices increased 12% over the same period.", url:"https://www.cnn.com/business/snack-shrink", tag:"Data" },
 ];
 
-const CATEGORIES = ["All", ...new Set(PRODUCTS.map(p => p.category))];
+let CATEGORIES = ["All", ...new Set(PRODUCTS.map(p => p.category))];
 
-// ── Community contributors (mock data) ────────────────────
-const CONTRIBUTORS = [
+// ── Community contributors (loaded from Supabase on init) ──
+let CONTRIBUTORS = [
   { username:'shrink_detective_42', reports:47, verified:39, streak:21, level:'Elite' },
   { username:'cart_watcher',        reports:38, verified:31, streak:14, level:'Elite' },
   { username:'grocery_vigilante',   reports:29, verified:24, streak: 9, level:'Pro' },
@@ -1884,11 +1894,15 @@ function confirmReport(upc) {
     USER_CONFIRMED.delete(upc);
     CONFIRM_COUNTS[upc] = Math.max(0, (CONFIRM_COUNTS[upc] || 0) - 1);
     btn.classList.remove('confirmed');
+    // Remove from Supabase
+    sb.from('confirmations').delete().eq('upc', upc).eq('session_id', SESSION_ID).then(() => {});
   } else {
     USER_CONFIRMED.add(upc);
     CONFIRM_COUNTS[upc] = (CONFIRM_COUNTS[upc] || 0) + 1;
     addXP(5);
     btn.classList.add('confirmed');
+    // Save to Supabase
+    sb.from('confirmations').insert({ upc, session_id: SESSION_ID }).then(() => {});
   }
   const countEl = document.getElementById('confirm-count-' + upc);
   if (countEl) countEl.textContent = CONFIRM_COUNTS[upc] || 0;
@@ -2957,7 +2971,7 @@ function selectReportType(key) {
   });
 }
 
-function submitReport() {
+async function submitReport() {
   const name = document.getElementById('r-name').value.trim();
   if (!name) { alert('Please enter a product name!'); return; }
 
@@ -2972,6 +2986,22 @@ function submitReport() {
     type:        (document.getElementById('r-type')?.value  || ''),
     xpEarned:    25,
   };
+
+  // Save to Supabase
+  try {
+    await sb.from('submissions').insert({
+      name: lastSubmission.name,
+      brand: lastSubmission.brand || null,
+      old_size: lastSubmission.oldSize || null,
+      new_size: lastSubmission.newSize || null,
+      price_before: lastSubmission.priceBefore || null,
+      price_after: lastSubmission.priceAfter || null,
+      type: lastSubmission.type || null,
+    });
+    console.log('[FullCarts] Submission saved to Supabase');
+  } catch (err) {
+    console.warn('[FullCarts] Could not save submission:', err);
+  }
 
   addXP(25);
   lastParsed = null;
@@ -3224,9 +3254,60 @@ function renderNotFound() {
 }
 
 // ============================================================
+// SUPABASE DATA LOADER
+// ============================================================
+async function loadFromSupabase() {
+  try {
+    // Load products
+    const { data: products, error: pErr } = await sb.from('products').select('*');
+    if (!pErr && products?.length) {
+      PRODUCTS = products.map(p => ({
+        name: p.name, brand: p.brand, upc: p.upc, category: p.category,
+        currentSize: Number(p.current_size), unit: p.unit, type: p.type,
+        repeatOffender: p.repeat_offender, companyResponse: p.company_response,
+        fightingBack: p.fighting_back
+      }));
+      CATEGORIES = ["All", ...new Set(PRODUCTS.map(p => p.category))];
+    }
+
+    // Load events
+    const { data: events, error: eErr } = await sb.from('events').select('*');
+    if (!eErr && events?.length) {
+      EVENTS = events.map(e => ({
+        upc: e.upc, date: e.date, oldSize: Number(e.old_size), newSize: Number(e.new_size),
+        unit: e.unit, pct: Number(e.pct), priceBefore: Number(e.price_before),
+        priceAfter: Number(e.price_after), type: e.type, notes: e.notes
+      }));
+    }
+
+    // Load contributors
+    const { data: contribs, error: cErr } = await sb.from('contributors').select('*');
+    if (!cErr && contribs?.length) {
+      CONTRIBUTORS = contribs;
+    }
+
+    // Load confirmation counts from DB
+    const { data: confirms, error: cfErr } = await sb.from('confirmations').select('upc');
+    if (!cfErr && confirms) {
+      // Reset and rebuild from DB
+      PRODUCTS.forEach(p => { CONFIRM_COUNTS[p.upc] = 0; });
+      confirms.forEach(c => {
+        CONFIRM_COUNTS[c.upc] = (CONFIRM_COUNTS[c.upc] || 0) + 1;
+      });
+    }
+
+    console.log('[FullCarts] Loaded from Supabase:', PRODUCTS.length, 'products,', EVENTS.length, 'events');
+  } catch (err) {
+    console.warn('[FullCarts] Supabase load failed, using fallback data:', err);
+  }
+  renderScreen();
+}
+
+// ============================================================
 // INIT
 // ============================================================
-renderScreen();
+renderScreen(); // Render immediately with fallback data
+loadFromSupabase(); // Then upgrade to live data from Supabase
 </script>
 </body>
 </html>
