@@ -2303,7 +2303,8 @@ async function searchBrandProducts(brand, query) {
     return (data.products || []).filter(p => p.product_name).map(p => ({
       upc:      p.code || '',
       name:     p.product_name,
-      brand:    p.brands || brand,
+      brand:    p.brands ? p.brands.split(',')[0].trim() : brand,
+      brandFull: p.brands || brand,
       quantity: p.quantity || '',
     }));
   } catch { return []; }
@@ -2331,7 +2332,7 @@ function showProductSuggestions(products) {
     <div class="suggestion-item" onclick="selectProductSuggestion(${i})" style="padding:10px 14px;border-bottom:1px solid var(--card-border);cursor:pointer;display:flex;justify-content:space-between;align-items:center">
       <div>
         <div style="font-weight:800;font-size:14px;color:var(--snow)">${p.name}</div>
-        <div style="font-size:12px;color:var(--wolf)">${p.brand}${p.quantity ? ' · ' + p.quantity : ''}</div>
+        <div style="font-size:12px;color:var(--wolf)">${p.brandFull || p.brand}${p.quantity ? ' · ' + p.quantity : ''}</div>
       </div>
       ${p.quantity ? '<span style="font-size:11px;font-weight:800;background:rgba(88,204,2,0.1);color:var(--duo-green);border:1.5px solid rgba(88,204,2,0.25);border-radius:6px;padding:2px 8px;white-space:nowrap">' + p.quantity + '</span>' : ''}
     </div>
@@ -2347,7 +2348,9 @@ function selectProductSuggestion(idx) {
   const brandEl = document.getElementById('r-brand');
   const upcEl = document.getElementById('r-upc');
   const newSizeEl = document.getElementById('r-new');
-  if (nameEl) nameEl.value = p.name;
+  // Clean product name: strip trailing quantity (e.g. "Philadelphia nature 300g" → "Philadelphia nature")
+  const cleanName = p.name.replace(/\s*\d+[\.,]?\d*\s*(g|kg|ml|l|oz|fl\s*oz|lb|ct|count|sheets|qt|pt)\b\.?$/i, '').trim() || p.name;
+  if (nameEl) nameEl.value = cleanName;
   if (brandEl) brandEl.value = p.brand;
   if (upcEl && p.upc) upcEl.value = p.upc;
   if (newSizeEl && p.quantity) newSizeEl.value = p.quantity;
