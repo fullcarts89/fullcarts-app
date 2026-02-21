@@ -2285,15 +2285,16 @@ async function lookupOpenFoodFacts(upc) {
   } catch { return null; }
 }
 
-// ── Brand search via Open Food Facts ────────────────────────
+// ── Brand search via Open Food Facts + USDA FoodData Central ─
 let _brandSearchTimer = null;
 let _brandSuggestions = [];
+const USDA_API_KEY = 'DEMO_KEY'; // Free tier: 1000 req/hr
 
-async function searchBrandProducts(brand, query) {
+async function searchBrandProducts_OFF(brand, query) {
   if (!brand || brand.length < 2) return [];
   try {
     const brandTag = brand.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    let url = `https://world.openfoodfacts.org/api/v2/search?brands_tags=${encodeURIComponent(brandTag)}&fields=code,product_name,brands,quantity&page_size=15&sort_by=unique_scans_n`;
+    let url = `https://world.openfoodfacts.org/api/v2/search?brands_tags=${encodeURIComponent(brandTag)}&fields=code,product_name,brands,quantity&page_size=10&sort_by=unique_scans_n`;
     if (query && query.length > 1) {
       url += `&search_terms=${encodeURIComponent(query)}`;
     }
@@ -2306,8 +2307,66 @@ async function searchBrandProducts(brand, query) {
       brand:    p.brands ? p.brands.split(',')[0].trim() : brand,
       brandFull: p.brands || brand,
       quantity: p.quantity || '',
+      source:   'OFF',
     }));
   } catch { return []; }
+}
+
+async function searchBrandProducts_USDA(brand, query) {
+  if (!brand || brand.length < 2) return [];
+  try {
+    const searchTerm = query ? `${brand} ${query}` : brand;
+    const res = await fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${USDA_API_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: searchTerm,
+        dataType: ['Branded'],
+        pageSize: 8,
+      }),
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return (data.foods || []).map(f => {
+      // Build a quantity string from serving info
+      let qty = '';
+      if (f.householdServingFullText) qty = f.householdServingFullText;
+      else if (f.servingSize) qty = `${f.servingSize} ${(f.servingSizeUnit || 'g').toLowerCase()}`;
+      // Clean up description: remove brand prefix like "KRAFT, " for cleaner names
+      let name = f.description || '';
+      const brandUpper = (f.brandName || brand).toUpperCase();
+      if (name.startsWith(brandUpper + ', ')) name = name.slice(brandUpper.length + 2);
+      if (name.startsWith(brandUpper + ' ')) name = name.slice(brandUpper.length + 1);
+      // Title case the name
+      name = name.replace(/\b\w+/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+      return {
+        upc:      f.gtinUpc || '',
+        name:     name.trim(),
+        brand:    f.brandName || (f.brandOwner ? f.brandOwner.split(',')[0].trim() : brand),
+        brandFull: f.brandOwner || f.brandName || brand,
+        quantity: qty,
+        source:   'USDA',
+        category: f.foodCategory || '',
+      };
+    }).filter(p => p.name);
+  } catch { return []; }
+}
+
+async function searchBrandProducts(brand, query) {
+  // Waterfall: try Open Food Facts first, then USDA as fallback/supplement
+  const [offResults, usdaResults] = await Promise.all([
+    searchBrandProducts_OFF(brand, query),
+    searchBrandProducts_USDA(brand, query),
+  ]);
+  // Merge: OFF results first, then unique USDA results (dedup by UPC)
+  const seen = new Set(offResults.filter(r => r.upc).map(r => r.upc));
+  const merged = [...offResults];
+  for (const u of usdaResults) {
+    if (u.upc && seen.has(u.upc)) continue;
+    if (u.upc) seen.add(u.upc);
+    merged.push(u);
+  }
+  return merged.slice(0, 15);
 }
 
 async function searchBrandSuggestions(term) {
@@ -2328,15 +2387,25 @@ function showProductSuggestions(products) {
     box.style.display = 'block';
     return;
   }
-  box.innerHTML = products.map((p, i) => `
-    <div class="suggestion-item" onclick="selectProductSuggestion(${i})" style="padding:10px 14px;border-bottom:1px solid var(--card-border);cursor:pointer;display:flex;justify-content:space-between;align-items:center">
-      <div>
-        <div style="font-weight:800;font-size:14px;color:var(--snow)">${p.name}</div>
-        <div style="font-size:12px;color:var(--wolf)">${p.brandFull || p.brand}${p.quantity ? ' · ' + p.quantity : ''}</div>
+  box.innerHTML = products.map((p, i) => {
+    const srcColor = p.source === 'USDA' ? 'rgba(30,144,255,0.15)' : 'rgba(88,204,2,0.1)';
+    const srcBorder = p.source === 'USDA' ? 'rgba(30,144,255,0.3)' : 'rgba(88,204,2,0.25)';
+    const srcText = p.source === 'USDA' ? 'color:#5ba3f5' : 'color:var(--duo-green)';
+    const badge = p.quantity
+      ? `<div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0">
+          <span style="font-size:11px;font-weight:800;background:${srcColor};${srcText};border:1.5px solid ${srcBorder};border-radius:6px;padding:2px 8px;white-space:nowrap">${p.quantity}</span>
+          <span style="font-size:9px;color:var(--wolf);opacity:0.6">${p.source || 'OFF'}</span>
+         </div>`
+      : `<span style="font-size:9px;color:var(--wolf);opacity:0.6">${p.source || 'OFF'}</span>`;
+    return `
+    <div class="suggestion-item" onclick="selectProductSuggestion(${i})" style="padding:10px 14px;border-bottom:1px solid var(--card-border);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px">
+      <div style="min-width:0;flex:1">
+        <div style="font-weight:800;font-size:14px;color:var(--snow);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div>
+        <div style="font-size:12px;color:var(--wolf);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.brandFull || p.brand}${p.quantity ? ' · ' + p.quantity : ''}</div>
       </div>
-      ${p.quantity ? '<span style="font-size:11px;font-weight:800;background:rgba(88,204,2,0.1);color:var(--duo-green);border:1.5px solid rgba(88,204,2,0.25);border-radius:6px;padding:2px 8px;white-space:nowrap">' + p.quantity + '</span>' : ''}
-    </div>
-  `).join('');
+      ${badge}
+    </div>`;
+  }).join('');
   box.style.display = 'block';
   window.__productSuggestions = products;
 }
