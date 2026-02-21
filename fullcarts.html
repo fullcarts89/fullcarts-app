@@ -1473,31 +1473,50 @@
     .bpi-pct { font-size: 16px; font-weight: 900; color: var(--duo-red); flex-shrink: 0; margin-left: 8px; }
 
     /* ═══════════════════════════════════════════
-       COMMUNITY VALIDATION
+       UPVOTE & FLAG SYSTEM
     ═══════════════════════════════════════════ */
-    .verify-btn {
+    .upvote-btn {
       display: inline-flex; align-items: center; gap: 5px;
-      background: rgba(28,176,246,0.08);
-      border: 1.5px solid rgba(28,176,246,0.25);
-      border-radius: 20px; padding: 5px 11px;
-      font-size: 12px; font-weight: 900; color: var(--duo-blue);
+      background: rgba(255,150,0,0.08);
+      border: 1.5px solid rgba(255,150,0,0.25);
+      border-radius: 20px; padding: 6px 14px;
+      font-size: 13px; font-weight: 900; color: var(--duo-orange);
       cursor: pointer; font-family: 'Nunito', sans-serif;
       transition: all 0.15s;
     }
-    .verify-btn:active { transform: scale(0.95); }
-    .verify-btn.confirmed { background: rgba(88,204,2,0.12); border-color: rgba(88,204,2,0.3); color: var(--duo-green); }
-    .verified-badge {
+    .upvote-btn:active { transform: scale(0.95); }
+    .upvote-btn.upvoted { background: rgba(255,150,0,0.15); border-color: rgba(255,150,0,0.4); color: var(--duo-orange); }
+    .upvote-badge {
       display: inline-flex; align-items: center; gap: 4px;
-      background: rgba(88,204,2,0.1); border: 1.5px solid rgba(88,204,2,0.25);
+      background: rgba(255,150,0,0.1); border: 1.5px solid rgba(255,150,0,0.25);
       border-radius: 8px; padding: 2px 8px;
-      font-size: 11px; font-weight: 900; color: var(--duo-green);
+      font-size: 11px; font-weight: 900; color: var(--duo-orange);
     }
-    .unverified-badge {
-      display: inline-flex; align-items: center; gap: 4px;
-      background: rgba(255,200,0,0.1); border: 1.5px solid rgba(255,200,0,0.25);
-      border-radius: 8px; padding: 2px 8px;
-      font-size: 11px; font-weight: 900; color: var(--duo-yellow);
+    .upvote-badge.hot {
+      background: rgba(255,75,75,0.1); border-color: rgba(255,75,75,0.25);
+      color: var(--duo-red);
     }
+    #flag-overlay {
+      position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;
+      display:none;align-items:flex-end;justify-content:center;
+    }
+    #flag-overlay.open { display:flex; }
+    .flag-modal {
+      background:var(--card-bg);border:2px solid var(--card-border);
+      border-radius:18px 18px 0 0;padding:20px;width:100%;max-width:430px;
+      max-height:70vh;overflow-y:auto;
+    }
+    .flag-modal-header h3 { font-size:18px;font-weight:900;color:var(--snow); }
+    .flag-modal-header p { font-size:13px;color:var(--wolf);font-weight:700;margin-top:4px; }
+    .flag-options { display:flex;flex-direction:column;gap:8px;margin-top:14px; }
+    .flag-option {
+      background:rgba(255,255,255,0.04);border:2px solid var(--card-border);
+      border-radius:12px;padding:12px 16px;text-align:left;
+      font-size:14px;font-weight:800;color:var(--snow);cursor:pointer;
+      font-family:'Nunito',sans-serif;transition:all 0.15s;
+    }
+    .flag-option:active { transform:scale(0.98); }
+    .flag-option.selected { border-color:var(--duo-red);background:rgba(255,75,75,0.08); }
 
     /* ═══════════════════════════════════════════
        COMMUNITY TAB
@@ -1569,11 +1588,11 @@
           <path d="M17 17l2.5 2.5 2.5-1.5 2 2" stroke="#0d1a1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <h1>FullCarts</h1>
+      <h1 onclick="handleLogoTap()">FullCarts</h1>
     </div>
     <div class="header-stats">
-      <div class="header-stat"><span class="fire">🔥</span> <span id="streak-count">7</span></div>
-      <div class="header-stat"><span class="xp">⚡</span> <span id="xp-count">250</span></div>
+      <div class="header-stat"><span style="color:var(--duo-green)">📊</span> <span id="products-count">0</span></div>
+      <span id="admin-badge" style="display:none;font-size:10px;font-weight:900;color:var(--duo-red);background:rgba(255,75,75,0.12);padding:2px 6px;border-radius:6px">ADMIN</span>
       <button class="info-btn" onclick="showAbout()" title="About & Transparency" style="font-size:13px;font-weight:900;color:var(--wolf);border:1.5px solid var(--card-border);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center">?</button>
     </div>
   </div>
@@ -1623,7 +1642,7 @@
           <p>We only ever amplify voices that are on the shopper's side. That's the whole filter. No cost to use. No ads. No paywalls. The data is always open and always free to download.</p>
         </div>
         <div class="about-commitment">
-          <p>All submissions are anonymized before storage and go through community validation before surfacing at the top of results. You can see exactly where every data point came from.</p>
+          <p>All submissions are anonymous and go live immediately. The community can upvote reports and flag errors for review.</p>
         </div>
         <div class="about-nope">
           <p>We don't work with companies that have a financial interest in making this data disappear, look better than it is, or go away. The community would notice — and so would we.</p>
@@ -1659,6 +1678,28 @@
       <button class="btn-duo" style="width:100%;background:var(--card-bg);border:2px solid var(--card-border);color:var(--snow);border-bottom:4px solid #0a1517;margin-top:4px" onclick="hideAbout()">Close</button>
     </div>
   </div>
+
+  <!-- Flag Error Overlay -->
+  <div id="flag-overlay" onclick="if(event.target===this)closeFlagModal()">
+    <div class="flag-modal">
+      <div class="flag-modal-header">
+        <h3>🚩 Flag an Error</h3>
+        <p id="flag-product-name"></p>
+      </div>
+      <div class="flag-options" id="flag-options">
+        <button class="flag-option" onclick="selectFlagReason(this,'wrong_size')">📏 Wrong size listed</button>
+        <button class="flag-option" onclick="selectFlagReason(this,'wrong_brand')">🏭 Wrong brand</button>
+        <button class="flag-option" onclick="selectFlagReason(this,'duplicate')">📋 Duplicate entry</button>
+        <button class="flag-option" onclick="selectFlagReason(this,'outdated')">📅 Outdated info</button>
+        <button class="flag-option" onclick="selectFlagReason(this,'other')">💬 Other</button>
+      </div>
+      <div id="flag-detail-wrap" style="display:none;margin-top:10px">
+        <textarea id="flag-detail" rows="3" placeholder="Tell us what's wrong (optional)..." style="width:100%;background:var(--card-bg);border:2px solid var(--card-border);border-radius:10px;padding:10px;color:var(--snow);font-family:'Nunito',sans-serif;font-size:14px;resize:none"></textarea>
+      </div>
+      <button class="btn-duo btn-sm" id="flag-submit-btn" style="width:100%;margin-top:10px;display:none;background:rgba(255,75,75,0.15);border:2px solid rgba(255,75,75,0.3);color:var(--duo-red);border-bottom:4px solid rgba(255,75,75,0.2);font-size:14px" onclick="submitFlag()">Submit Flag</button>
+    </div>
+  </div>
+
   <nav id="nav">
     <button class="nav-item active" id="nav-home" onclick="navigate('home')">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
@@ -1701,8 +1742,9 @@ const SUPABASE_URL = 'https://yvpfefatajcfptfjntkn.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl2cGZlZmF0YWpjZnB0ZmpudGtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2MjkxMDYsImV4cCI6MjA4NzIwNTEwNn0.EGC1p_dXGqi1ELYHB9Kh4H_iRAiWPj2wcVLl6_sXVRg';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Session ID for anonymous confirmations
-const SESSION_ID = crypto.randomUUID();
+// Session ID — persisted so upvote state survives page reloads
+const SESSION_ID = localStorage.getItem('fc_session') || crypto.randomUUID();
+localStorage.setItem('fc_session', SESSION_ID);
 
 // ── Data arrays (loaded from Supabase on init, fallback to hardcoded) ──
 let PRODUCTS = [
@@ -1797,38 +1839,38 @@ const NEWS = [
 
 let CATEGORIES = ["All", ...new Set(PRODUCTS.map(p => p.category))];
 
-// ── Community contributors (loaded from Supabase on init) ──
-let CONTRIBUTORS = [
-  { username:'shrink_detective_42', reports:47, verified:39, streak:21, level:'Elite' },
-  { username:'cart_watcher',        reports:38, verified:31, streak:14, level:'Elite' },
-  { username:'grocery_vigilante',   reports:29, verified:24, streak: 9, level:'Pro' },
-  { username:'oz_counter',          reports:22, verified:17, streak: 6, level:'Pro' },
-  { username:'PackageLiesAccount',  reports:18, verified:14, streak: 4, level:'Pro' },
-  { username:'less_chips_more_air', reports:14, verified:10, streak: 3, level:'Scout' },
-  { username:'redditor_9182',       reports:11, verified: 8, streak: 2, level:'Scout' },
-  { username:'invisible_shrink',    reports: 8, verified: 5, streak: 1, level:'Scout' },
-];
+// ── Activity feed (populated from Supabase) ──────────────
+let ACTIVITY_FEED = [];
 
-// ── Recent community activity (mock feed) ─────────────────
-const ACTIVITY_FEED = [
-  { user:'shrink_detective_42', action:'flagged',   product:'Cheerios 18oz → 16oz',  brand:'General Mills', ago:'2m ago' },
-  { user:'cart_watcher',        action:'confirmed', product:'Doritos 9.25oz',         brand:'Frito-Lay',     ago:'11m ago' },
-  { user:'grocery_vigilante',   action:'flagged',   product:'Tide Pods 57ct → 52ct',  brand:'P&G',           ago:'34m ago' },
-  { user:'oz_counter',          action:'confirmed', product:'Tropicana 52fl oz',       brand:'Tropicana',     ago:'1h ago' },
-  { user:'PackageLiesAccount',  action:'flagged',   product:'Bounty 83 sheets',        brand:'Bounty',        ago:'2h ago' },
-  { user:'less_chips_more_air', action:'confirmed', product:'Skippy 16.3oz',           brand:'Hormel',        ago:'3h ago' },
-  { user:'redditor_9182',       action:'flagged',   product:'Oreo 13.29oz',            brand:'Nabisco',       ago:'5h ago' },
-  { user:'invisible_shrink',    action:'confirmed', product:'Breyers 1.5qt',           brand:'Breyers',       ago:'6h ago' },
-];
+// ── Upvote counts (populated from Supabase) ──────────────
+const UPVOTE_COUNTS = {};
+const USER_UPVOTED = new Set();
 
-// ── Community confirmation counts ─────────────────────────
-const CONFIRM_COUNTS = {};
-PRODUCTS.forEach(p => {
-  // Seed with realistic counts based on product notoriety
-  const base = p.repeatOffender ? Math.floor(Math.random() * 12) + 3 : Math.floor(Math.random() * 6);
-  CONFIRM_COUNTS[p.upc] = base;
-});
-const USER_CONFIRMED = new Set(); // upcs the current user confirmed this session
+// ── Personal stats (persisted in localStorage) ───────────
+let personalStats = JSON.parse(localStorage.getItem('fc_stats') || '{"submissions":0,"upvotes":0,"scans":0,"firstUse":null}');
+if (!personalStats.firstUse) { personalStats.firstUse = new Date().toISOString(); }
+function saveStats() { localStorage.setItem('fc_stats', JSON.stringify(personalStats)); }
+
+// ── Admin mode ───────────────────────────────────────────
+let isAdmin = localStorage.getItem('fc_admin') === 'true';
+if (window.location.hash === '#admin') { isAdmin = true; localStorage.setItem('fc_admin', 'true'); }
+if (window.location.hash === '#noadmin') { isAdmin = false; localStorage.removeItem('fc_admin'); }
+let adminTapCount = 0;
+let adminTapTimer = null;
+function handleLogoTap() {
+  adminTapCount++;
+  clearTimeout(adminTapTimer);
+  adminTapTimer = setTimeout(() => { adminTapCount = 0; }, 2000);
+  if (adminTapCount >= 5) {
+    isAdmin = !isAdmin;
+    if (isAdmin) localStorage.setItem('fc_admin', 'true');
+    else localStorage.removeItem('fc_admin');
+    adminTapCount = 0;
+    const ab = document.getElementById('admin-badge');
+    if (ab) ab.style.display = isAdmin ? 'inline' : 'none';
+    renderScreen();
+  }
+}
 
 // ============================================================
 // STATE
@@ -1843,8 +1885,6 @@ let selectedType = 'all';
 let selectedNewsType = 'all';
 let shameMode = 'worst'; // 'worst' | 'flagged'
 let scanStatus = 'idle'; // 'idle' | 'scanning' | 'found' | 'error'
-let xp = 250;
-let streak = 7;
 
 // ============================================================
 // HELPERS
@@ -1883,56 +1923,101 @@ function fmtDate(d) { return new Date(d).toLocaleDateString('en-US', { month: 's
 function fmtPct(n) { return n.toFixed(1); }
 function findProduct(upc) { return PRODUCTS.find(p => p.upc === upc); }
 
-function addXP(amount) {
-  xp += amount;
-  document.getElementById('xp-count').textContent = xp;
-}
-
-// ── Community validation ───────────────────────────────────
-function confirmReport(upc) {
-  const btn = document.getElementById('confirm-btn-' + upc);
+// ── Upvote system ──────────────────────────────────────────
+async function toggleUpvote(upc) {
+  const btn = document.getElementById('upvote-btn-' + upc);
   if (!btn) return;
-  if (USER_CONFIRMED.has(upc)) {
-    USER_CONFIRMED.delete(upc);
-    CONFIRM_COUNTS[upc] = Math.max(0, (CONFIRM_COUNTS[upc] || 0) - 1);
-    btn.classList.remove('confirmed');
-    // Remove from Supabase
-    sb.from('confirmations').delete().eq('upc', upc).eq('session_id', SESSION_ID).then(() => {});
+  if (USER_UPVOTED.has(upc)) {
+    USER_UPVOTED.delete(upc);
+    UPVOTE_COUNTS[upc] = Math.max(0, (UPVOTE_COUNTS[upc] || 0) - 1);
+    btn.classList.remove('upvoted');
+    sb.from('upvotes').delete().eq('upc', upc).eq('session_id', SESSION_ID).then(() => {});
   } else {
-    USER_CONFIRMED.add(upc);
-    CONFIRM_COUNTS[upc] = (CONFIRM_COUNTS[upc] || 0) + 1;
-    addXP(5);
-    btn.classList.add('confirmed');
-    // Save to Supabase
-    sb.from('confirmations').insert({ upc, session_id: SESSION_ID }).then(() => {});
+    USER_UPVOTED.add(upc);
+    UPVOTE_COUNTS[upc] = (UPVOTE_COUNTS[upc] || 0) + 1;
+    btn.classList.add('upvoted');
+    personalStats.upvotes++;
+    saveStats();
+    sb.from('upvotes').upsert({ upc, session_id: SESSION_ID }, { onConflict: 'upc,session_id' }).then(() => {});
   }
-  const countEl = document.getElementById('confirm-count-' + upc);
-  if (countEl) countEl.textContent = CONFIRM_COUNTS[upc] || 0;
-  // Re-render badge if threshold crossed
-  const badge = document.getElementById('verify-badge-' + upc);
-  if (badge) {
-    const count = CONFIRM_COUNTS[upc] || 0;
-    if (count >= 3) {
-      badge.className = 'verified-badge';
-      badge.textContent = 'Community Verified';
-    } else {
-      badge.className = 'unverified-badge';
-      badge.textContent = 'Unverified';
-    }
-  }
+  const countEl = document.getElementById('upvote-count-' + upc);
+  if (countEl) countEl.textContent = UPVOTE_COUNTS[upc] || 0;
 }
 
-function verifyBadgeHTML(upc) {
-  const count = CONFIRM_COUNTS[upc] || 0;
-  if (count >= 3) return `<span id="verify-badge-${upc}" class="verified-badge">Community Verified</span>`;
-  return `<span id="verify-badge-${upc}" class="unverified-badge">Unverified</span>`;
+function upvoteCountBadge(upc) {
+  const count = UPVOTE_COUNTS[upc] || 0;
+  if (count === 0) return '';
+  const hot = count >= 10;
+  return `<span class="upvote-badge ${hot ? 'hot' : ''}">${hot ? '🔥' : '▲'} ${count} upvote${count !== 1 ? 's' : ''}</span>`;
 }
 
-function confirmBtnHTML(upc) {
-  const confirmed = USER_CONFIRMED.has(upc);
-  return `<button id="confirm-btn-${upc}" class="verify-btn ${confirmed ? 'confirmed' : ''}" onclick="confirmReport('${upc}')">
-    ${confirmed ? '&#10003;' : '+'} I&#39;ve seen this too &nbsp;<span id="confirm-count-${upc}">${CONFIRM_COUNTS[upc] || 0}</span>
+function upvoteBtnHTML(upc) {
+  const upvoted = USER_UPVOTED.has(upc);
+  const count = UPVOTE_COUNTS[upc] || 0;
+  return `<button id="upvote-btn-${upc}" class="upvote-btn ${upvoted ? 'upvoted' : ''}" onclick="toggleUpvote('${upc}')">
+    ▲ <span id="upvote-count-${upc}">${count}</span>
   </button>`;
+}
+
+// ── Flag system ────────────────────────────────────────────
+let flagUPC = null;
+let flagReason = null;
+
+function openFlagModal(upc) {
+  flagUPC = upc;
+  flagReason = null;
+  const p = findProduct(upc);
+  document.getElementById('flag-product-name').textContent = p ? `${p.name} by ${p.brand}` : upc;
+  document.querySelectorAll('.flag-option').forEach(el => el.classList.remove('selected'));
+  document.getElementById('flag-detail-wrap').style.display = 'none';
+  document.getElementById('flag-submit-btn').style.display = 'none';
+  document.getElementById('flag-detail').value = '';
+  document.getElementById('flag-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeFlagModal() {
+  document.getElementById('flag-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  flagUPC = null; flagReason = null;
+}
+
+function selectFlagReason(el, reason) {
+  flagReason = reason;
+  document.querySelectorAll('.flag-option').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('flag-detail-wrap').style.display = 'block';
+  document.getElementById('flag-submit-btn').style.display = 'block';
+}
+
+async function submitFlag() {
+  if (!flagUPC || !flagReason) return;
+  const detail = document.getElementById('flag-detail').value.trim();
+  try {
+    await sb.from('flags').insert({ upc: flagUPC, session_id: SESSION_ID, reason: flagReason, detail: detail || null });
+    closeFlagModal();
+    const toast = document.createElement('div');
+    toast.textContent = '🚩 Flag submitted — thanks for helping!';
+    toast.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--duo-red);color:white;padding:10px 20px;border-radius:12px;font-weight:900;font-size:14px;z-index:300;font-family:Nunito,sans-serif';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+  } catch (err) {
+    console.warn('[FullCarts] Flag submission failed:', err);
+    alert('Could not submit flag. Please try again.');
+  }
+}
+
+// ── Time ago helper ────────────────────────────────────────
+function timeAgo(date) {
+  const seconds = Math.floor((new Date() - date) / 1000);
+  if (seconds < 60) return 'just now';
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d ago`;
+  return fmtDate(date.toISOString());
 }
 
 // ── About / Transparency modal ─────────────────────────────
@@ -2144,19 +2229,11 @@ function renderHome() {
       <span class="mission-pill" style="cursor:pointer" onclick="showAbout()">Our mission</span>
     </div>
 
-    <div class="xp-bar-wrap">
-      <div class="xp-bar-label">⚡ ${xp} XP</div>
-      <div class="xp-bar">
-        <div class="xp-bar-fill" style="width:${Math.min(xp / 500 * 100, 100)}%"></div>
-      </div>
-      <div style="font-size:12px;font-weight:900;color:#777">LVL ${Math.floor(xp / 500) + 1}</div>
-    </div>
-
     <div class="stats-row">
       <div class="stat-bubble"><div class="num green">${PRODUCTS.length}</div><div class="lbl">Products</div></div>
       <div class="stat-bubble"><div class="num orange">${EVENTS.length}</div><div class="lbl">Shrinks</div></div>
       <div class="stat-bubble"><div class="num red">${PRODUCTS.filter(p=>p.repeatOffender).length}</div><div class="lbl">Repeat</div></div>
-      <div class="stat-bubble"><div class="num blue">🔥 ${streak}</div><div class="lbl">Streak</div></div>
+      <div class="stat-bubble"><div class="num blue">${Object.values(UPVOTE_COUNTS).reduce((s,v)=>s+v,0)}</div><div class="lbl">Upvotes</div></div>
     </div>
 
     <div class="search-wrap">
@@ -2501,7 +2578,7 @@ function initScanner() {
         async (code) => {
           setScanStatus('found');
           await stopScanner();
-          addXP(10);
+          personalStats.scans++; saveStats();
 
           // If not in our DB, try Open Food Facts pre-fill before navigating to report
           const knownProduct = findProduct(code);
@@ -2531,7 +2608,7 @@ function lookupManual() {
   const upc = document.getElementById('manual-upc').value.trim();
   if (!upc) return;
   stopScanner();
-  addXP(10);
+  personalStats.scans++; saveStats();
   navigate(findProduct(upc) ? 'result' : 'notfound', upc);
 }
 
@@ -2654,17 +2731,22 @@ function renderResult() {
     })()}
 
     <div style="padding:0 16px 4px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-      ${verifyBadgeHTML(p.upc)}
-      ${confirmBtnHTML(p.upc)}
+      ${upvoteCountBadge(p.upc)}
+      ${upvoteBtnHTML(p.upc)}
     </div>
 
     <div style="padding:8px 16px 16px;display:flex;flex-direction:column;gap:10px">
       <button class="btn-duo btn-green btn-sm" onclick="navigate('report')" style="width:100%">
-        Flag a Change (+25 XP)
+        Report a Shrink
       </button>
-      <button class="btn-duo btn-sm" style="width:100%;background:var(--card-bg);border:2px solid var(--card-border);color:var(--snow);border-bottom:4px solid #0a1517;font-size:14px" onclick="openShareCard('${p.upc}')">
-        Share This on Reddit
-      </button>
+      <div style="display:flex;gap:10px">
+        <button class="btn-duo btn-sm" style="flex:1;background:var(--card-bg);border:2px solid var(--card-border);color:var(--snow);border-bottom:4px solid #0a1517;font-size:14px" onclick="openShareCard('${p.upc}')">
+          Share on Reddit
+        </button>
+        <button class="btn-duo btn-sm" style="background:rgba(255,75,75,0.08);border:2px solid rgba(255,75,75,0.2);color:var(--duo-red);border-bottom:4px solid rgba(255,75,75,0.15);font-size:14px;padding:8px 14px" onclick="openFlagModal('${p.upc}')">
+          🚩 Flag
+        </button>
+      </div>
     </div>
   `;
 }
@@ -2685,7 +2767,7 @@ function renderLeaderboard() {
     brandMap[p.brand].products.push({ ...p, pct, evCount: evs.length });
     brandMap[p.brand].totalPct   += pct;
     brandMap[p.brand].eventCount += evs.length;
-    brandMap[p.brand].reportCount += CONFIRM_COUNTS[p.upc] || 0;
+    brandMap[p.brand].reportCount += UPVOTE_COUNTS[p.upc] || 0;
   });
   const brands = Object.values(brandMap);
 
@@ -2706,12 +2788,12 @@ function renderLeaderboard() {
   const toggle = `
     <div class="shame-toggle">
       <button class="shame-btn ${shameMode === 'worst' ? 'active' : ''}" onclick="shameMode='worst';renderScreen()">Worst Offenders</button>
-      <button class="shame-btn ${shameMode === 'flagged' ? 'active' : ''}" onclick="shameMode='flagged';renderScreen()">Most Flagged</button>
+      <button class="shame-btn ${shameMode === 'flagged' ? 'active' : ''}" onclick="shameMode='flagged';renderScreen()">Most Upvoted</button>
     </div>`;
 
   const subtitle = shameMode === 'worst'
     ? 'Brands ranked by average product shrinkage'
-    : 'Brands ranked by community report volume';
+    : 'Brands ranked by community upvotes';
 
   return `
     <div class="leaderboard-hero">
@@ -2729,7 +2811,7 @@ function renderLeaderboard() {
         const worstProduct = b.products.sort((x, y) => y.pct - x.pct)[0];
         const score = shameMode === 'worst'
           ? `−${fmtPct(b.score)}% avg`
-          : `${b.reportCount} flags`;
+          : `${b.reportCount} upvotes`;
         return `
           <div class="rank-item" onclick="currentBrand='${b.brand}';renderScreen()">
             <div class="rank-num ${rankClass(i)}">${i + 1}</div>
@@ -2817,12 +2899,12 @@ function renderReport() {
       <div class="icon" style="animation:bounce 2s infinite;font-size:0;margin-bottom:8px">
         <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="14" fill="rgba(88,204,2,0.1)" stroke="rgba(88,204,2,0.25)" stroke-width="1.5"/><path d="M10 15h3.5l4.5 11h12l3.2-8H17" stroke="#58CC02" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="19" cy="29.5" r="2" fill="#58CC02"/><circle cx="29" cy="29.5" r="2" fill="#58CC02"/></svg>
       </div>
-      <h2>Flag a Shrink!</h2>
-      <p>Spotted something getting smaller? You'll earn <strong style="color:#FFC800">+25 XP</strong> for every verified report.</p>
+      <h2>Report a Shrink!</h2>
+      <p>Spotted something getting smaller? Your report goes live immediately.</p>
     </div>
 
     <div id="success-msg" class="success-msg">
-      🎉 Nice catch! +25 XP earned! We'll review your report within 48 hours.
+      🎉 Nice catch! Your report is now live on FullCarts.
     </div>
 
     <!-- Reddit Import Panel -->
@@ -3192,39 +3274,106 @@ async function submitReport() {
   const name = document.getElementById('r-name').value.trim();
   if (!name) { alert('Please enter a product name!'); return; }
 
-  // Capture the data before clearing
-  lastSubmission = {
-    name,
-    brand:       (document.getElementById('r-brand')?.value || '').trim(),
-    oldSize:     (document.getElementById('r-old')?.value   || '').trim(),
-    newSize:     (document.getElementById('r-new')?.value   || '').trim(),
-    priceBefore: (document.getElementById('r-price-before')?.value || '').trim(),
-    priceAfter:  (document.getElementById('r-price-after')?.value  || '').trim(),
-    type:        (document.getElementById('r-type')?.value  || ''),
-    xpEarned:    25,
-  };
+  const brand       = (document.getElementById('r-brand')?.value || '').trim();
+  const upcRaw      = (document.getElementById('r-upc')?.value || '').trim();
+  const oldSizeRaw  = (document.getElementById('r-old')?.value || '').trim();
+  const newSizeRaw  = (document.getElementById('r-new')?.value || '').trim();
+  const priceBefore = (document.getElementById('r-price-before')?.value || '').trim();
+  const priceAfter  = (document.getElementById('r-price-after')?.value || '').trim();
+  const type        = (document.getElementById('r-type')?.value || 'shrinkflation');
+  const dateVal     = (document.getElementById('r-date')?.value || '');
+  const notes       = (document.getElementById('r-notes')?.value || '').trim();
 
-  // Save to Supabase
-  try {
-    await sb.from('submissions').insert({
-      name: lastSubmission.name,
-      brand: lastSubmission.brand || null,
-      old_size: lastSubmission.oldSize || null,
-      new_size: lastSubmission.newSize || null,
-      price_before: lastSubmission.priceBefore || null,
-      price_after: lastSubmission.priceAfter || null,
-      type: lastSubmission.type || null,
-    });
-    console.log('[FullCarts] Submission saved to Supabase');
-  } catch (err) {
-    console.warn('[FullCarts] Could not save submission:', err);
+  // Parse sizes
+  const parseSize = (s) => {
+    const m = s.match(/([\d.]+)\s*(.*)/);
+    if (!m) return { val: null, unit: '' };
+    return { val: parseFloat(m[1]), unit: m[2].trim() || 'oz' };
+  };
+  const oldParsed = parseSize(oldSizeRaw);
+  const newParsed = parseSize(newSizeRaw);
+  const unit = newParsed.unit || oldParsed.unit || 'oz';
+  const newSize = newParsed.val;
+  const upc = upcRaw || `FC-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;
+
+  let pct = 0;
+  if (oldParsed.val && newParsed.val && oldParsed.val > 0) {
+    pct = Math.round(((oldParsed.val - newParsed.val) / oldParsed.val) * 10000) / 100;
   }
 
-  addXP(25);
+  const category = guessCategory(name, brand, type);
+
+  lastSubmission = { name, brand, oldSize: oldSizeRaw, newSize: newSizeRaw, priceBefore, priceAfter, type };
+
+  try {
+    // 1. Upsert product — goes live immediately
+    await sb.from('products').upsert({
+      upc, name, brand: brand || null, category,
+      current_size: newSize, unit, type: type || 'shrinkflation',
+      repeat_offender: false, source: 'community'
+    }, { onConflict: 'upc' });
+
+    // 2. Insert shrink event (if we have size data)
+    if (oldParsed.val && newParsed.val) {
+      await sb.from('events').insert({
+        upc, date: dateVal ? `${dateVal}-01` : new Date().toISOString().slice(0, 10),
+        old_size: oldParsed.val, new_size: newParsed.val, unit, pct,
+        price_before: priceBefore ? parseFloat(priceBefore.replace('$', '')) : null,
+        price_after: priceAfter ? parseFloat(priceAfter.replace('$', '')) : null,
+        type: type || 'shrinkflation', notes: notes || null,
+        source: 'community', submitted_by: SESSION_ID
+      });
+    }
+
+    // 3. Audit log (fire and forget)
+    sb.from('submissions').insert({
+      name, brand: brand || null, old_size: oldSizeRaw || null, new_size: newSizeRaw || null,
+      price_before: priceBefore || null, price_after: priceAfter || null, type: type || null
+    }).then(() => {});
+
+    // 4. Push to local arrays for immediate render
+    PRODUCTS.push({
+      name, brand, upc, category, currentSize: newSize || 0, unit,
+      type: type || 'shrinkflation', repeatOffender: false, companyResponse: null, fightingBack: false
+    });
+    if (oldParsed.val && newParsed.val) {
+      EVENTS.push({
+        upc, date: dateVal ? `${dateVal}-01` : new Date().toISOString().slice(0, 10),
+        oldSize: oldParsed.val, newSize: newParsed.val, unit, pct,
+        priceBefore: priceBefore ? parseFloat(priceBefore.replace('$', '')) : null,
+        priceAfter: priceAfter ? parseFloat(priceAfter.replace('$', '')) : null,
+        type: type || 'shrinkflation', notes: notes || null
+      });
+    }
+    CATEGORIES = ["All", ...new Set(PRODUCTS.map(p => p.category))];
+
+    // 5. Update personal stats
+    personalStats.submissions++;
+    saveStats();
+
+    console.log('[FullCarts] Submission saved directly to products + events — LIVE!');
+  } catch (err) {
+    console.warn('[FullCarts] Submission error:', err);
+  }
+
   lastParsed = null;
   showCelebration = true;
   renderScreen();
   window.scrollTo(0, 0);
+}
+
+function guessCategory(name, brand, type) {
+  const text = `${name} ${brand}`.toLowerCase();
+  if (/juice|soda|water|drink|coffee|tea|gatorade|tropicana|red bull|monster|dunkin/.test(text)) return 'Beverages';
+  if (/chip|doritos|oreo|cracker|cookie|snack|pretzel|popcorn|almond|nut|lay/.test(text)) return 'Snacks';
+  if (/milk|cheese|yogurt|ice cream|butter|cream|breyers|haagen/.test(text)) return 'Dairy';
+  if (/cereal|cheerios|flakes|oat/.test(text)) return 'Cereal';
+  if (/tissue|paper|charmin|bounty|cottonelle|scott/.test(text)) return 'Paper Goods';
+  if (/soap|detergent|tide|dawn|pod|clean/.test(text)) return 'Household';
+  if (/diaper|huggie|baby|wipe/.test(text)) return 'Baby';
+  if (/ketchup|mustard|mayo|sauce|dressing|hellmann/.test(text)) return 'Condiments';
+  if (/peanut|jam|jelly|pasta|rice|flour|sugar|stuffing|mac|skippy|jif/.test(text)) return 'Pantry';
+  return 'Other';
 }
 
 function reportAnother() {
@@ -3276,20 +3425,19 @@ function renderCelebration() {
       cls: 'red'
     },
     typeInfo && { l: '🏷️ Type',        v: `${typeInfo.emoji} ${typeInfo.label}`, cls: '' },
-    { l: '✅ Status',      v: 'Under Review',  cls: 'green' },
-    { l: '⚡ XP Earned',   v: `+${sub.xpEarned} XP`, cls: 'green' },
+    { l: '✅ Status',      v: 'Live on FullCarts!',  cls: 'green' },
   ].filter(Boolean);
 
   return `
     <div class="celebrate-wrap">
-      <!-- XP burst -->
+      <!-- Celebration header -->
       <div class="xp-burst">
         <div class="xp-burst-badge">
-          <span class="xp-num">+${sub.xpEarned || 25}</span>
-          <span class="xp-lbl">XP</span>
+          <span class="xp-num">✅</span>
+          <span class="xp-lbl">LIVE</span>
         </div>
         <h3>Nice catch, Detective! 🕵️</h3>
-        <p>You're helping shoppers everywhere fight back.</p>
+        <p>Your report is live — shoppers everywhere can see it now.</p>
         <div class="confetti-row">${confetti}</div>
       </div>
 
@@ -3323,7 +3471,7 @@ function renderCelebration() {
 
       <!-- Actions -->
       <div class="celebrate-actions">
-        <button class="btn-duo btn-green" onclick="reportAnother()">Report Another Shrink (+25 XP)</button>
+        <button class="btn-duo btn-green" onclick="reportAnother()">Report Another Shrink</button>
         <button class="btn-duo btn-blue"  onclick="navigate('leaderboard')">View The Shame List</button>
         <button class="btn-duo" style="background:var(--card-bg);border:2px solid var(--card-border);color:var(--snow);border-bottom:4px solid #0a1517" onclick="navigate('home')">Back to Home</button>
       </div>
@@ -3335,11 +3483,37 @@ function renderCelebration() {
 // COMMUNITY (Scout Tab)
 // ============================================================
 function renderCommunity() {
-  const badgeCls = { Elite:'badge-elite', Pro:'badge-pro', Scout:'badge-scout' };
-  const rankCls  = (i) => ['gold','silver','bronze'][i] || 'normal';
-  const totalReports  = CONTRIBUTORS.reduce((s, c) => s + c.reports, 0);
-  const totalVerified = CONTRIBUTORS.reduce((s, c) => s + c.verified, 0);
-  const totalConfirms = Object.values(CONFIRM_COUNTS).reduce((s, v) => s + v, 0);
+  const totalUpvotes = Object.values(UPVOTE_COUNTS).reduce((s, v) => s + v, 0);
+
+  // Most upvoted products (sorted, top 10)
+  const topUpvoted = PRODUCTS
+    .map(p => ({ ...p, upvotes: UPVOTE_COUNTS[p.upc] || 0 }))
+    .filter(p => p.upvotes > 0)
+    .sort((a, b) => b.upvotes - a.upvotes)
+    .slice(0, 10);
+
+  // Personal badges
+  const badges = [];
+  if (personalStats.submissions >= 1) badges.push({ emoji: '🏅', label: 'First Report', desc: 'Submitted your first shrink report' });
+  if (personalStats.submissions >= 5) badges.push({ emoji: '🔥', label: 'On Fire', desc: '5+ reports submitted' });
+  if (personalStats.submissions >= 10) badges.push({ emoji: '⭐', label: 'Shrink Detective', desc: '10+ reports submitted' });
+  if (personalStats.submissions >= 25) badges.push({ emoji: '🏆', label: 'Elite Scout', desc: '25+ reports submitted' });
+  if (personalStats.upvotes >= 10) badges.push({ emoji: '👍', label: 'Supporter', desc: 'Upvoted 10+ products' });
+  if (personalStats.upvotes >= 50) badges.push({ emoji: '💪', label: 'Power Voter', desc: 'Upvoted 50+ products' });
+  if (personalStats.scans >= 5) badges.push({ emoji: '📷', label: 'Scanner Pro', desc: 'Scanned 5+ barcodes' });
+
+  const activityHTML = ACTIVITY_FEED.length
+    ? ACTIVITY_FEED.slice(0, 10).map(a => `
+        <div class="activity-item">
+          <div class="activity-dot" style="background:var(--duo-green)"></div>
+          <div>
+            <div class="activity-text">
+              New report: <strong>${a.product_name || 'Unknown'}</strong> ${a.brand ? '· ' + a.brand : ''} ${a.pct ? `<span style="color:var(--duo-red)">-${a.pct}%</span>` : ''}
+            </div>
+            <div class="activity-time">${a.ago}</div>
+          </div>
+        </div>`).join('')
+    : '<div style="padding:16px;text-align:center;color:var(--wolf);font-weight:700;font-size:13px">No recent activity yet. Submit a report to get started!</div>';
 
   return `
     <div class="community-header">
@@ -3349,59 +3523,138 @@ function renderCommunity() {
 
     <div class="community-stats-grid">
       <div class="community-stat-card">
-        <div class="csv green">${PRODUCTS.length + totalReports}</div>
-        <div class="csl">Total Reports</div>
+        <div class="csv green">${PRODUCTS.length}</div>
+        <div class="csl">Products Tracked</div>
       </div>
       <div class="community-stat-card">
-        <div class="csv" style="color:var(--duo-blue)">${totalVerified}</div>
-        <div class="csl">Verified</div>
+        <div class="csv" style="color:var(--duo-orange)">${totalUpvotes}</div>
+        <div class="csl">Total Upvotes</div>
       </div>
       <div class="community-stat-card">
-        <div class="csv" style="color:var(--duo-orange)">${CONTRIBUTORS.length}</div>
-        <div class="csl">Active Scouts</div>
+        <div class="csv" style="color:var(--duo-red)">${EVENTS.length}</div>
+        <div class="csl">Shrink Events</div>
       </div>
       <div class="community-stat-card">
-        <div class="csv" style="color:var(--duo-yellow)">${totalConfirms}</div>
-        <div class="csl">Confirmations</div>
+        <div class="csv" style="color:var(--duo-blue)">${PRODUCTS.filter(p => p.repeatOffender).length}</div>
+        <div class="csl">Repeat Offenders</div>
       </div>
     </div>
 
-    <div class="section-title">Top Contributors</div>
-    <div class="duo-card" style="padding:0">
-      ${CONTRIBUTORS.map((c, i) => `
-        <div class="contributor-item">
-          <div class="contributor-rank ${rankCls(i)}">${i + 1}</div>
-          <div class="contributor-info">
-            <strong>u/${c.username}</strong>
-            <span>${c.reports} reports · ${c.verified} verified · ${c.streak}d streak</span>
-          </div>
-          <span class="contributor-badge ${badgeCls[c.level] || 'badge-scout'}">${c.level}</span>
-        </div>`).join('')}
+    <!-- Your Impact -->
+    <div class="section-title">Your Impact</div>
+    <div class="duo-card" style="padding:14px 16px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center">
+        <div>
+          <div style="font-size:22px;font-weight:900;color:var(--duo-green)">${personalStats.submissions}</div>
+          <div style="font-size:11px;font-weight:900;color:var(--wolf);text-transform:uppercase">Reports</div>
+        </div>
+        <div>
+          <div style="font-size:22px;font-weight:900;color:var(--duo-orange)">${personalStats.upvotes}</div>
+          <div style="font-size:11px;font-weight:900;color:var(--wolf);text-transform:uppercase">Upvotes</div>
+        </div>
+        <div>
+          <div style="font-size:22px;font-weight:900;color:var(--duo-blue)">${personalStats.scans}</div>
+          <div style="font-size:11px;font-weight:900;color:var(--wolf);text-transform:uppercase">Scans</div>
+        </div>
+      </div>
     </div>
+
+    ${badges.length ? `
+      <div class="section-title" style="margin-top:8px">Your Badges</div>
+      <div class="duo-card" style="padding:14px 16px">
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          ${badges.map(b => `
+            <div style="background:rgba(255,255,255,0.04);border:1.5px solid var(--card-border);border-radius:12px;padding:8px 12px;text-align:center;min-width:80px">
+              <div style="font-size:24px">${b.emoji}</div>
+              <div style="font-size:11px;font-weight:900;color:var(--snow);margin-top:4px">${b.label}</div>
+              <div style="font-size:10px;color:var(--wolf);font-weight:700">${b.desc}</div>
+            </div>`).join('')}
+        </div>
+      </div>` : ''}
+
+    ${topUpvoted.length ? `
+      <div class="section-title" style="margin-top:8px">Most Upvoted</div>
+      <div class="duo-card" style="padding:0">
+        ${topUpvoted.map((p, i) => `
+          <div class="contributor-item" onclick="navigate('result','${p.upc}')" style="cursor:pointer">
+            <div class="contributor-rank ${['gold','silver','bronze'][i] || 'normal'}">${i + 1}</div>
+            <div class="contributor-info">
+              <strong>${p.name}</strong>
+              <span>${p.brand} · ${p.currentSize}${p.unit}</span>
+            </div>
+            <span style="font-size:13px;font-weight:900;color:var(--duo-orange)">▲ ${p.upvotes}</span>
+          </div>`).join('')}
+      </div>` : ''}
 
     <div class="section-title" style="margin-top:8px">Recent Activity</div>
     <div class="duo-card" style="padding:0">
-      ${ACTIVITY_FEED.map(a => `
-        <div class="activity-item">
-          <div class="activity-dot" style="background:${a.action === 'flagged' ? 'var(--duo-red)' : 'var(--duo-green)'}"></div>
-          <div>
-            <div class="activity-text">
-              <strong>u/${a.user}</strong> ${a.action === 'flagged' ? 'flagged' : 'confirmed'} — ${a.product} · <span style="color:var(--wolf)">${a.brand}</span>
-            </div>
-            <div class="activity-time">${a.ago}</div>
-          </div>
-        </div>`).join('')}
+      ${activityHTML}
     </div>
 
     <div class="section-title" style="margin-top:8px">How to Earn Badges</div>
     <div class="duo-card" style="padding:14px 16px">
       <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;font-weight:700;color:var(--hare)">
-        <div style="display:flex;align-items:center;gap:10px"><span class="contributor-badge badge-scout">Scout</span> Submit 5+ community reports</div>
-        <div style="display:flex;align-items:center;gap:10px"><span class="contributor-badge badge-pro">Pro</span> 20+ reports, 70% verification rate</div>
-        <div style="display:flex;align-items:center;gap:10px"><span class="contributor-badge badge-elite">Elite</span> 40+ reports, 80% verification rate, 14-day streak</div>
+        <div style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">🏅</span> Submit your first shrinkflation report</div>
+        <div style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">🔥</span> Submit 5+ reports</div>
+        <div style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">⭐</span> Submit 10+ reports</div>
+        <div style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">🏆</span> Submit 25+ reports</div>
+        <div style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">👍</span> Upvote 10+ products</div>
+        <div style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">📷</span> Scan 5+ barcodes</div>
       </div>
     </div>
+
+    ${isAdmin ? `
+      <div class="section-title" style="margin-top:8px;color:var(--duo-red)">Admin: Flagged Items</div>
+      <div id="admin-flags" class="duo-card" style="padding:14px 16px">
+        <button class="btn-duo btn-sm" style="width:100%;background:rgba(255,75,75,0.1);border:2px solid rgba(255,75,75,0.2);color:var(--duo-red);border-bottom:4px solid rgba(255,75,75,0.15)" onclick="loadFlags()">Load Flagged Reports</button>
+        <div id="flags-list"></div>
+      </div>
+
+      <div class="section-title" style="margin-top:8px;color:var(--duo-purple)">Admin: Reddit Review Queue</div>
+      <div id="admin-reddit" class="duo-card" style="padding:14px 16px">
+        <button class="btn-duo btn-sm" style="width:100%;background:rgba(206,130,255,0.1);border:2px solid rgba(206,130,255,0.2);color:var(--duo-purple);border-bottom:4px solid rgba(206,130,255,0.15)" onclick="loadRedditReviewQueue()">Load Review Queue</button>
+        <div id="reddit-review-list"></div>
+      </div>
+    ` : ''}
   `;
+}
+
+// ── Admin panel functions ────────────────────────────────
+async function loadFlags() {
+  const { data: flagData, error } = await sb.from('flags')
+    .select('*').eq('status', 'open')
+    .order('created_at', { ascending: false }).limit(20);
+  if (error || !flagData) {
+    document.getElementById('flags-list').innerHTML = '<p style="color:var(--wolf);margin-top:10px">Could not load flags.</p>';
+    return;
+  }
+  document.getElementById('flags-list').innerHTML = flagData.length
+    ? flagData.map(f => {
+        const p = findProduct(f.upc);
+        return `<div style="border-bottom:1px solid var(--card-border);padding:10px 0">
+          <div style="font-weight:900;color:var(--snow);font-size:13px">${p ? p.name : f.upc}</div>
+          <div style="font-size:12px;color:var(--duo-red);font-weight:700">${f.reason}${f.detail ? ' — ' + f.detail : ''}</div>
+          <div style="font-size:11px;color:var(--wolf)">${new Date(f.created_at).toLocaleString()}</div>
+        </div>`;
+      }).join('')
+    : '<p style="color:var(--wolf);margin-top:10px">No open flags. 🎉</p>';
+}
+
+async function loadRedditReviewQueue() {
+  const { data: reviewData, error } = await sb.from('reddit_staging')
+    .select('*').eq('tier', 'review').eq('status', 'pending')
+    .order('created_at', { ascending: false }).limit(20);
+  if (error || !reviewData) {
+    document.getElementById('reddit-review-list').innerHTML = '<p style="color:var(--wolf);margin-top:10px">Could not load queue.</p>';
+    return;
+  }
+  document.getElementById('reddit-review-list').innerHTML = reviewData.length
+    ? reviewData.map(r => `<div style="border-bottom:1px solid var(--card-border);padding:10px 0">
+        <div style="font-weight:900;color:var(--snow);font-size:13px">${r.brand || '?'}: ${(r.product_hint || 'Unknown').slice(0,60)}</div>
+        <div style="font-size:12px;color:var(--duo-purple);font-weight:700">${r.old_size || '?'}${r.old_unit||''} → ${r.new_size || '?'}${r.new_unit||''} | Score: ${r.score} | ${r.subreddit}</div>
+        ${r.source_url ? `<div style="font-size:11px"><a href="${r.source_url}" target="_blank" style="color:var(--duo-blue);font-weight:700">View post →</a></div>` : ''}
+      </div>`).join('')
+    : '<p style="color:var(--wolf);margin-top:10px">No items in review queue.</p>';
 }
 
 // ============================================================
@@ -3464,7 +3717,7 @@ function renderNotFound() {
     <div class="not-found">
       <div class="icon">🤔</div>
       <h2>Not in the database… yet!</h2>
-      <p>This barcode isn't tracked. Be the first to add it and earn <strong style="color:#FFC800">+25 XP!</strong></p>
+      <p>This barcode isn't tracked yet. Be the first to report it!</p>
       <button class="btn-duo btn-green btn-sm" onclick="navigate('report')">🚩 Report It</button>
     </div>
   `;
@@ -3497,23 +3750,42 @@ async function loadFromSupabase() {
       }));
     }
 
-    // Load contributors
-    const { data: contribs, error: cErr } = await sb.from('contributors').select('*');
-    if (!cErr && contribs?.length) {
-      CONTRIBUTORS = contribs;
+    // Load upvote counts
+    const { data: upvotes, error: uErr } = await sb.from('upvotes').select('upc');
+    if (!uErr && upvotes) {
+      PRODUCTS.forEach(p => { UPVOTE_COUNTS[p.upc] = 0; });
+      upvotes.forEach(u => { UPVOTE_COUNTS[u.upc] = (UPVOTE_COUNTS[u.upc] || 0) + 1; });
     }
 
-    // Load confirmation counts from DB
-    const { data: confirms, error: cfErr } = await sb.from('confirmations').select('upc');
-    if (!cfErr && confirms) {
-      // Reset and rebuild from DB
-      PRODUCTS.forEach(p => { CONFIRM_COUNTS[p.upc] = 0; });
-      confirms.forEach(c => {
-        CONFIRM_COUNTS[c.upc] = (CONFIRM_COUNTS[c.upc] || 0) + 1;
+    // Load user's own upvotes for toggle state
+    const { data: myUpvotes } = await sb.from('upvotes').select('upc').eq('session_id', SESSION_ID);
+    if (myUpvotes) { myUpvotes.forEach(u => USER_UPVOTED.add(u.upc)); }
+
+    // Load real activity feed from recent events
+    const { data: recentEvents, error: reErr } = await sb.from('events')
+      .select('upc, date, old_size, new_size, unit, pct, created_at')
+      .order('created_at', { ascending: false }).limit(10);
+    if (!reErr && recentEvents) {
+      ACTIVITY_FEED = recentEvents.map(e => {
+        const p = findProduct(e.upc);
+        return {
+          product_name: p ? p.name : 'Unknown Product',
+          brand: p ? p.brand : '',
+          pct: e.pct ? Number(e.pct).toFixed(1) : null,
+          ago: timeAgo(new Date(e.created_at))
+        };
       });
     }
 
-    console.log('[FullCarts] Loaded from Supabase:', PRODUCTS.length, 'products,', EVENTS.length, 'events');
+    // Update header product count
+    const pcEl = document.getElementById('products-count');
+    if (pcEl) pcEl.textContent = PRODUCTS.length;
+
+    // Show admin badge if active
+    const ab = document.getElementById('admin-badge');
+    if (ab) ab.style.display = isAdmin ? 'inline' : 'none';
+
+    console.log('[FullCarts] Loaded from Supabase:', PRODUCTS.length, 'products,', EVENTS.length, 'events,', (upvotes||[]).length, 'upvotes');
   } catch (err) {
     console.warn('[FullCarts] Supabase load failed, using fallback data:', err);
   }

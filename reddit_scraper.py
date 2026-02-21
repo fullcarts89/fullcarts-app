@@ -274,6 +274,66 @@ def build_entry(post, parsed: dict, tier: str) -> dict:
     }
 
 
+def promote_auto_entries(sb, log) -> int:
+    """Promote high-confidence reddit entries directly to products + events."""
+    result = sb.table("reddit_staging").select("*").eq("tier", "auto").eq("status", "pending").execute()
+    entries = result.data or []
+    promoted = 0
+
+    for entry in entries:
+        if not entry.get("old_size") or not entry.get("new_size"):
+            continue
+
+        upc = f"REDDIT-{entry['id'][:8]}"
+        old_s = float(entry["old_size"])
+        new_s = float(entry["new_size"])
+        unit = entry.get("new_unit") or entry.get("old_unit") or "oz"
+        pct = round(((old_s - new_s) / old_s) * 100, 2) if old_s > 0 else 0
+
+        product_name = (entry.get("product_hint") or "Unknown Product")[:100]
+        brand = entry.get("brand")
+
+        try:
+            # Upsert product
+            sb.table("products").upsert({
+                "upc": upc,
+                "name": product_name,
+                "brand": brand,
+                "category": "Other",
+                "current_size": new_s,
+                "unit": unit,
+                "type": "shrinkflation",
+                "repeat_offender": False,
+                "source": "reddit_bot"
+            }, on_conflict="upc").execute()
+
+            # Insert event
+            posted = entry.get("posted_utc") or datetime.now(tz=timezone.utc).isoformat()
+            sb.table("events").insert({
+                "upc": upc,
+                "date": str(posted)[:10],
+                "old_size": old_s,
+                "new_size": new_s,
+                "unit": unit,
+                "pct": pct,
+                "price_before": entry.get("old_price"),
+                "price_after": entry.get("new_price"),
+                "type": "shrinkflation",
+                "notes": f"Auto-imported from Reddit: {entry.get('source_url', '')}",
+                "source": "reddit_bot"
+            }).execute()
+
+            # Mark as promoted
+            sb.table("reddit_staging").update({"status": "promoted"}).eq("id", entry["id"]).execute()
+            promoted += 1
+            log.info(f"  Promoted: {product_name} ({brand})")
+
+        except Exception as exc:
+            log.warning(f"  Promotion failed for {entry['id']}: {exc}")
+
+    return promoted
+
+
 def run_scraper(dry_run: bool = False) -> None:
     """Main scraping entry point."""
     logging.basicConfig(
@@ -370,6 +430,10 @@ def run_scraper(dry_run: bool = False) -> None:
                         all_entries, on_conflict="source_url"
                     ).execute()
                     log.info(f"Supabase: upserted {len(all_entries)} entries to reddit_staging")
+
+                # Auto-promote high-confidence entries to products + events
+                promoted = promote_auto_entries(sb, log)
+                log.info(f"Auto-promoted {promoted} entries to products + events")
             except Exception as exc:
                 log.warning(f"Supabase write failed (JSON fallback still saved): {exc}")
         elif not SUPABASE_KEY:

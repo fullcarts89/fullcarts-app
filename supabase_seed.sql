@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS products (
   repeat_offender  boolean DEFAULT false,
   company_response jsonb,
   fighting_back    boolean DEFAULT false,
+  source           text DEFAULT 'community',
   created_at       timestamptz DEFAULT now()
 );
 
@@ -31,6 +32,8 @@ CREATE TABLE IF NOT EXISTS events (
   price_after   numeric,
   type          text,
   notes         text,
+  source        text DEFAULT 'community',
+  submitted_by  text,
   created_at    timestamptz DEFAULT now()
 );
 
@@ -73,7 +76,7 @@ CREATE TABLE IF NOT EXISTS reddit_staging (
   created_at       timestamptz DEFAULT now()
 );
 
--- ── CONTRIBUTORS ────────────────────────────────────────────
+-- ── CONTRIBUTORS (LEGACY — no longer used by frontend) ─────
 CREATE TABLE IF NOT EXISTS contributors (
   id        uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   username  text UNIQUE,
@@ -83,11 +86,31 @@ CREATE TABLE IF NOT EXISTS contributors (
   level     text DEFAULT 'Scout'
 );
 
--- ── CONFIRMATIONS ───────────────────────────────────────────
+-- ── CONFIRMATIONS (LEGACY — replaced by upvotes) ──────────
 CREATE TABLE IF NOT EXISTS confirmations (
   id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   upc        text REFERENCES products(upc) ON DELETE CASCADE,
   session_id text,
+  created_at timestamptz DEFAULT now()
+);
+
+-- ── UPVOTES (replaces confirmations) ──────────────────────
+CREATE TABLE IF NOT EXISTS upvotes (
+  id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  upc        text REFERENCES products(upc) ON DELETE CASCADE,
+  session_id text NOT NULL,
+  created_at timestamptz DEFAULT now(),
+  UNIQUE(upc, session_id)
+);
+
+-- ── FLAGS (error reporting by community) ──────────────────
+CREATE TABLE IF NOT EXISTS flags (
+  id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  upc        text REFERENCES products(upc) ON DELETE CASCADE,
+  session_id text NOT NULL,
+  reason     text NOT NULL,
+  detail     text,
+  status     text DEFAULT 'open',
   created_at timestamptz DEFAULT now()
 );
 
@@ -101,26 +124,38 @@ ALTER TABLE submissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reddit_staging ENABLE ROW LEVEL SECURITY;
 ALTER TABLE contributors ENABLE ROW LEVEL SECURITY;
 ALTER TABLE confirmations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE upvotes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE flags ENABLE ROW LEVEL SECURITY;
 
--- Products & Events: anyone can read
+-- Products & Events: anyone can read AND insert (live submissions)
 CREATE POLICY "Public read products" ON products FOR SELECT USING (true);
 CREATE POLICY "Public read events" ON events FOR SELECT USING (true);
+CREATE POLICY "Anon can insert products" ON products FOR INSERT WITH CHECK (true);
+CREATE POLICY "Anon can insert events" ON events FOR INSERT WITH CHECK (true);
 
--- Submissions: anyone can insert, only admin can read/update
+-- Submissions: anyone can insert (audit log), only admin can read
 CREATE POLICY "Anyone can submit" ON submissions FOR INSERT WITH CHECK (true);
 CREATE POLICY "Admin reads submissions" ON submissions FOR SELECT USING (auth.role() = 'authenticated');
 
 -- Reddit staging: service role only (scraper + dashboard)
 CREATE POLICY "Service role manages staging" ON reddit_staging FOR ALL USING (auth.role() = 'service_role');
--- Also allow public read so dashboard can view
 CREATE POLICY "Public read staging" ON reddit_staging FOR SELECT USING (true);
 
--- Contributors: anyone can read
+-- Contributors (legacy): anyone can read
 CREATE POLICY "Public read contributors" ON contributors FOR SELECT USING (true);
 
--- Confirmations: anyone can insert and read
+-- Confirmations (legacy): anyone can insert and read
 CREATE POLICY "Anyone can confirm" ON confirmations FOR INSERT WITH CHECK (true);
 CREATE POLICY "Public read confirmations" ON confirmations FOR SELECT USING (true);
+
+-- Upvotes: anyone can insert, read, delete (toggle)
+CREATE POLICY "Anyone can insert upvotes" ON upvotes FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public read upvotes" ON upvotes FOR SELECT USING (true);
+CREATE POLICY "Users can delete own upvotes" ON upvotes FOR DELETE USING (true);
+
+-- Flags: anyone can insert and read
+CREATE POLICY "Anyone can insert flags" ON flags FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public read flags" ON flags FOR SELECT USING (true);
 
 -- ============================================================
 -- SEED: PRODUCTS
