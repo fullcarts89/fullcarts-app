@@ -342,24 +342,36 @@
     .reddit-section {
       max-width: var(--max); margin: 0 auto; padding: 0 32px 80px;
     }
-    .reddit-cards { display: flex; flex-direction: column; gap: 12px; max-width: 640px; }
+    .reddit-cards { display: flex; flex-direction: column; gap: 14px; max-width: 640px; }
     .reddit-post {
       background: var(--card); border: 1.5px solid var(--border);
-      border-radius: 14px; padding: 16px;
+      border-radius: 14px; padding: 18px; position: relative;
     }
     .rp-header {
       display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
       font-size: 12px; font-weight: 800; color: var(--muted);
     }
-    .rp-dot { width: 20px; height: 20px; border-radius: 6px; background: #ff4500; display: flex; align-items: center; justify-content: center; }
-    .rp-title { font-size: 14px; font-weight: 800; color: var(--text); line-height: 1.4; margin-bottom: 8px; }
-    .rp-footer { display: flex; align-items: center; gap: 14px; font-size: 12px; font-weight: 800; color: var(--muted); }
-    .rp-upvotes { color: #ff4500; }
-    .validated-tag {
-      display: inline-flex; align-items: center; gap: 5px;
-      background: rgba(88,204,2,0.1); border: 1.5px solid rgba(88,204,2,0.25);
-      border-radius: 8px; padding: 2px 8px;
-      font-size: 11px; font-weight: 900; color: var(--green);
+    .rp-dot { width: 20px; height: 20px; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+    .rp-title { font-size: 14px; font-weight: 800; color: var(--text); line-height: 1.4; margin-bottom: 10px; }
+    .rp-footer { display: flex; align-items: center; gap: 14px; font-size: 12px; font-weight: 800; color: var(--muted); flex-wrap: wrap; }
+    .example-badge {
+      position: absolute; top: 12px; right: 14px;
+      font-size: 9px; font-weight: 900; letter-spacing: 0.8px; text-transform: uppercase;
+      color: var(--muted); opacity: 0.5;
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 2px 6px;
+    }
+    .rp-stat {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 12px; font-weight: 900;
+    }
+    .rp-stat.red { color: #FF4B4B; }
+    .rp-stat.orange { color: #FF9600; }
+    .rp-stat.green { color: var(--green); }
+    .rp-tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px; padding: 2px 8px;
+      font-size: 11px; font-weight: 800; color: var(--muted);
     }
 
     /* ── CTA SECTION ──────────────────────────────── */
@@ -654,62 +666,68 @@
   </div>
 </div>
 
-<!-- ═══════════════ REDDIT POSTS ═══════════════ -->
+<!-- ═══════════════ EXAMPLE REPORTS ═══════════════ -->
 <div class="reddit-section">
-  <div class="section-label" style="margin-bottom:12px">From the Community</div>
-  <h2 class="section-title" style="margin-bottom:8px">Where the data comes from.</h2>
-  <p class="section-sub">Shoppers across Reddit have been documenting shrinkflation for years. FullCarts turns those posts into structured, searchable, verifiable data.</p>
+  <div class="section-label" style="margin-bottom:12px">Real Examples</div>
+  <h2 class="section-title" style="margin-bottom:8px">What shrinkflation looks like.</h2>
+  <p class="section-sub">These are real, documented cases from our database. Every product is tracked with before-and-after sizes, dates, and percentage changes.</p>
 
   <div class="reddit-cards">
     <div class="reddit-post">
+      <span class="example-badge">From our database</span>
       <div class="rp-header">
-        <div class="rp-dot">
-          <svg width="12" height="12" viewBox="0 0 20 20" fill="white"><circle cx="10" cy="10" r="10" fill="white"/><path d="M16.67 10a1.46 1.46 0 00-2.47-1 7.12 7.12 0 00-3.85-1.23l.65-3.08 2.13.45a1 1 0 101-1h-.07l-2.38-.5a.26.26 0 00-.31.2l-.73 3.44a7.14 7.14 0 00-3.89 1.23 1.46 1.46 0 10-1.61 2.39 2.89 2.89 0 000 .44c0 2.24 2.61 4.06 5.83 4.06s5.83-1.82 5.83-4.06a2.89 2.89 0 000-.44 1.46 1.46 0 00.77-1.9z" fill="#ff4500"/></svg>
+        <div class="rp-dot" style="background:#FF4B4B">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.96-1.61L23 6H6" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
         </div>
-        r/shrinkflation &nbsp;·&nbsp; u/grocery_vigilante &nbsp;·&nbsp; 3 days ago
+        Tropicana Pure Premium OJ &nbsp;·&nbsp; Tropicana &nbsp;·&nbsp; Repeat offender
       </div>
-      <div class="rp-title">Tropicana OJ went from 64oz to 52oz at my local Walmart — same price. That's now 42% less than the original 89oz jug. Unreal.</div>
+      <div class="rp-title">Went from 89 fl oz to 52 fl oz across two reductions. Same shelf space, 42% less juice. Price went up too.</div>
       <div class="rp-footer">
-        <span class="rp-upvotes">▲ 4,821</span>
-        <span>💬 312 comments</span>
-        <span class="validated-tag">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
-          Verified in FullCarts
+        <span class="rp-stat red">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          42% smaller
         </span>
+        <span class="rp-tag">89 fl oz &rarr; 52 fl oz</span>
+        <span class="rp-tag">2 shrink events</span>
+        <span class="rp-tag">Since 2019</span>
       </div>
     </div>
     <div class="reddit-post">
+      <span class="example-badge">From our database</span>
       <div class="rp-header">
-        <div class="rp-dot">
-          <svg width="12" height="12" viewBox="0 0 20 20" fill="white"><circle cx="10" cy="10" r="10" fill="white"/><path d="M16.67 10a1.46 1.46 0 00-2.47-1 7.12 7.12 0 00-3.85-1.23l.65-3.08 2.13.45a1 1 0 101-1h-.07l-2.38-.5a.26.26 0 00-.31.2l-.73 3.44a7.14 7.14 0 00-3.89 1.23 1.46 1.46 0 10-1.61 2.39 2.89 2.89 0 000 .44c0 2.24 2.61 4.06 5.83 4.06s5.83-1.82 5.83-4.06a2.89 2.89 0 000-.44 1.46 1.46 0 00.77-1.9z" fill="#ff4500"/></svg>
+        <div class="rp-dot" style="background:#FF9600">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.96-1.61L23 6H6" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
         </div>
-        r/Frugal &nbsp;·&nbsp; u/oz_counter &nbsp;·&nbsp; 1 week ago
+        Tide Pods Laundry &nbsp;·&nbsp; P&amp;G &nbsp;·&nbsp; Count cut
       </div>
-      <div class="rp-title">Tide Pods went from 72 count to 57. Bag looks IDENTICAL. I only noticed because I weighed it. That's 21% fewer pods at a higher price.</div>
+      <div class="rp-title">Lost 15 pods in a single package redesign. The bag looks identical on the shelf. Price increased from $19.99 to $21.99.</div>
       <div class="rp-footer">
-        <span class="rp-upvotes">▲ 11,203</span>
-        <span>💬 891 comments</span>
-        <span class="validated-tag">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
-          Verified in FullCarts
+        <span class="rp-stat orange">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          21% fewer
         </span>
+        <span class="rp-tag">72 ct &rarr; 57 ct</span>
+        <span class="rp-tag">$19.99 &rarr; $21.99</span>
+        <span class="rp-tag">Nov 2021</span>
       </div>
     </div>
     <div class="reddit-post">
+      <span class="example-badge">From our database</span>
       <div class="rp-header">
-        <div class="rp-dot">
-          <svg width="12" height="12" viewBox="0 0 20 20" fill="white"><circle cx="10" cy="10" r="10" fill="white"/><path d="M16.67 10a1.46 1.46 0 00-2.47-1 7.12 7.12 0 00-3.85-1.23l.65-3.08 2.13.45a1 1 0 101-1h-.07l-2.38-.5a.26.26 0 00-.31.2l-.73 3.44a7.14 7.14 0 00-3.89 1.23 1.46 1.46 0 10-1.61 2.39 2.89 2.89 0 000 .44c0 2.24 2.61 4.06 5.83 4.06s5.83-1.82 5.83-4.06a2.89 2.89 0 000-.44 1.46 1.46 0 00.77-1.9z" fill="#ff4500"/></svg>
+        <div class="rp-dot" style="background:#58CC02">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.96-1.61L23 6H6" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
         </div>
-        r/personalfinance &nbsp;·&nbsp; u/cart_watcher &nbsp;·&nbsp; 2 weeks ago
+        Charmin Ultra Soft &nbsp;·&nbsp; P&amp;G &nbsp;·&nbsp; Repeat offender
       </div>
-      <div class="rp-title">Charmin package grew TALLER but has 40 fewer sheets. They made the tube wider so the rolls look bigger. This is next-level deception.</div>
+      <div class="rp-title">Package grew taller while sheet count dropped from 308 to 244 over two reductions. Optical illusion packaging at its finest.</div>
       <div class="rp-footer">
-        <span class="rp-upvotes">▲ 28,400</span>
-        <span>💬 2,104 comments</span>
-        <span class="validated-tag">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
-          Verified in FullCarts
+        <span class="rp-stat red">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          21% smaller
         </span>
+        <span class="rp-tag">308 &rarr; 244 sheets</span>
+        <span class="rp-tag">2 shrink events</span>
+        <span class="rp-tag">Since 2019</span>
       </div>
     </div>
   </div>
