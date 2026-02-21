@@ -626,6 +626,8 @@
     .form-group textarea::placeholder { color: var(--wolf); }
     .form-group input:focus,
     .form-group textarea:focus { border-color: var(--duo-blue); }
+    .suggestion-item:hover { background: rgba(88, 204, 2, 0.08) !important; }
+    .suggestion-item:active { background: rgba(88, 204, 2, 0.15) !important; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 16px 0; }
     .form-row .form-group { margin: 0; }
     .submit-wrap { padding: 16px; }
@@ -2063,6 +2065,7 @@ function renderScreen() {
   const screens = { home:renderHome, scanner:renderScanner, result:renderResult, leaderboard:renderLeaderboard, report:renderReport, news:renderNews, community:renderCommunity, notfound:renderNotFound };
   el.innerHTML = (screens[currentScreen] || renderHome)();
   if (currentScreen === 'scanner') initScanner();
+  if (currentScreen === 'report') initAutoFill();
 }
 
 // ============================================================
@@ -2263,16 +2266,157 @@ function setScanStatus(s) {
 
 async function lookupOpenFoodFacts(upc) {
   try {
-    const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${upc}.json`);
+    const res = await fetch(`https://world.openfoodfacts.org/api/v2/product/${upc}.json?fields=product_name_en,product_name,brands,quantity,product_quantity,serving_size,categories_tags,image_url`, {
+      headers: { 'User-Agent': 'FullCarts/1.0 (hello@fullcarts.org)' }
+    });
     if (!res.ok) return null;
     const data = await res.json();
     if (data.status !== 1) return null;
     const p = data.product;
     return {
-      name:  p.product_name_en || p.product_name || null,
-      brand: p.brands || null,
+      name:     p.product_name_en || p.product_name || null,
+      brand:    p.brands || null,
+      quantity: p.quantity || null,         // e.g. "52 fl oz"
+      weight:   p.product_quantity || null, // normalized grams
+      serving:  p.serving_size || null,
+      category: (p.categories_tags || [])[0] || null,
+      image:    p.image_url || null,
     };
   } catch { return null; }
+}
+
+// ── Brand search via Open Food Facts ────────────────────────
+let _brandSearchTimer = null;
+let _brandSuggestions = [];
+
+async function searchBrandProducts(brand, query) {
+  if (!brand || brand.length < 2) return [];
+  try {
+    const brandTag = brand.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    let url = `https://world.openfoodfacts.org/api/v2/search?brands_tags=${encodeURIComponent(brandTag)}&fields=code,product_name,brands,quantity&page_size=15&sort_by=unique_scans_n`;
+    if (query && query.length > 1) {
+      url += `&search_terms=${encodeURIComponent(query)}`;
+    }
+    const res = await fetch(url);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return (data.products || []).filter(p => p.product_name).map(p => ({
+      upc:      p.code || '',
+      name:     p.product_name,
+      brand:    p.brands || brand,
+      quantity: p.quantity || '',
+    }));
+  } catch { return []; }
+}
+
+async function searchBrandSuggestions(term) {
+  if (!term || term.length < 2) return [];
+  try {
+    const res = await fetch(`https://world.openfoodfacts.org/cgi/suggest.pl?tagtype=brands&term=${encodeURIComponent(term)}&lc=en`);
+    if (!res.ok) return [];
+    return await res.json(); // returns array of brand name strings
+  } catch { return []; }
+}
+
+// ── Auto-fill product picker logic ──────────────────────────
+function showProductSuggestions(products) {
+  let box = document.getElementById('product-suggestions');
+  if (!box) return;
+  if (!products.length) {
+    box.innerHTML = '<div style="padding:12px;color:var(--wolf);font-size:13px;text-align:center">No products found for this brand.</div>';
+    box.style.display = 'block';
+    return;
+  }
+  box.innerHTML = products.map((p, i) => `
+    <div class="suggestion-item" onclick="selectProductSuggestion(${i})" style="padding:10px 14px;border-bottom:1px solid var(--card-border);cursor:pointer;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-weight:800;font-size:14px;color:var(--snow)">${p.name}</div>
+        <div style="font-size:12px;color:var(--wolf)">${p.brand}${p.quantity ? ' · ' + p.quantity : ''}</div>
+      </div>
+      ${p.quantity ? '<span style="font-size:11px;font-weight:800;background:rgba(88,204,2,0.1);color:var(--duo-green);border:1.5px solid rgba(88,204,2,0.25);border-radius:6px;padding:2px 8px;white-space:nowrap">' + p.quantity + '</span>' : ''}
+    </div>
+  `).join('');
+  box.style.display = 'block';
+  window.__productSuggestions = products;
+}
+
+function selectProductSuggestion(idx) {
+  const p = window.__productSuggestions?.[idx];
+  if (!p) return;
+  const nameEl = document.getElementById('r-name');
+  const brandEl = document.getElementById('r-brand');
+  const upcEl = document.getElementById('r-upc');
+  const newSizeEl = document.getElementById('r-new');
+  if (nameEl) nameEl.value = p.name;
+  if (brandEl) brandEl.value = p.brand;
+  if (upcEl && p.upc) upcEl.value = p.upc;
+  if (newSizeEl && p.quantity) newSizeEl.value = p.quantity;
+  // Highlight filled fields
+  [nameEl, brandEl, upcEl, newSizeEl].forEach(el => {
+    if (el && el.value) {
+      el.style.borderColor = 'var(--duo-green)';
+      setTimeout(() => { el.style.borderColor = ''; }, 2000);
+    }
+  });
+  hideProductSuggestions();
+}
+
+function hideProductSuggestions() {
+  const box = document.getElementById('product-suggestions');
+  if (box) box.style.display = 'none';
+}
+
+function initAutoFill() {
+  // Apply barcode scan prefill if available
+  if (window.__offPrefill) {
+    const pf = window.__offPrefill;
+    const nameEl = document.getElementById('r-name');
+    const brandEl = document.getElementById('r-brand');
+    const upcEl = document.getElementById('r-upc');
+    const newSizeEl = document.getElementById('r-new');
+    if (nameEl && pf.name) nameEl.value = pf.name;
+    if (brandEl && pf.brand) brandEl.value = pf.brand;
+    if (upcEl && pf.upc) upcEl.value = pf.upc;
+    if (newSizeEl && pf.quantity) newSizeEl.value = pf.quantity;
+    window.__offPrefill = null; // clear after use
+  }
+
+  // Brand field: on change, search for products by that brand
+  const brandEl = document.getElementById('r-brand');
+  const nameEl = document.getElementById('r-name');
+  if (!brandEl) return;
+
+  brandEl.addEventListener('input', () => {
+    clearTimeout(_brandSearchTimer);
+    _brandSearchTimer = setTimeout(async () => {
+      const brand = brandEl.value.trim();
+      if (brand.length < 2) { hideProductSuggestions(); return; }
+      const products = await searchBrandProducts(brand, nameEl?.value?.trim());
+      showProductSuggestions(products);
+    }, 500); // debounce 500ms
+  });
+
+  // Also trigger when name field changes (if brand is already filled)
+  if (nameEl) {
+    nameEl.addEventListener('input', () => {
+      clearTimeout(_brandSearchTimer);
+      _brandSearchTimer = setTimeout(async () => {
+        const brand = brandEl.value.trim();
+        const query = nameEl.value.trim();
+        if (brand.length < 2) return;
+        if (query.length < 2) return;
+        const products = await searchBrandProducts(brand, query);
+        showProductSuggestions(products);
+      }, 600);
+    });
+  }
+
+  // Close suggestions on click outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#product-suggestions') && !e.target.closest('#r-brand') && !e.target.closest('#r-name')) {
+      hideProductSuggestions();
+    }
+  });
 }
 
 function initScanner() {
@@ -2292,7 +2436,7 @@ function initScanner() {
           if (!knownProduct) {
             const offData = await lookupOpenFoodFacts(code);
             if (offData && (offData.name || offData.brand)) {
-              // Store for auto-fill on report screen
+              // Store for auto-fill on report screen (now includes quantity/size)
               window.__offPrefill = { upc: code, ...offData };
             }
           }
@@ -2648,9 +2792,10 @@ function renderReport() {
       <label>Product Name *</label>
       <input type="text" id="r-name" placeholder="e.g. Skippy Creamy Peanut Butter" />
     </div>
-    <div class="form-group">
-      <label>Brand</label>
-      <input type="text" id="r-brand" placeholder="e.g. Hormel" />
+    <div class="form-group" style="position:relative">
+      <label>Brand <span style="font-size:11px;color:var(--duo-green);font-weight:700">— type to search products</span></label>
+      <input type="text" id="r-brand" placeholder="e.g. Kraft, Tropicana, Frito-Lay" autocomplete="off" />
+      <div id="product-suggestions" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:var(--card-bg);border:2px solid var(--duo-green);border-radius:12px;max-height:240px;overflow-y:auto;margin-top:4px;box-shadow:0 8px 32px rgba(0,0,0,0.4)"></div>
     </div>
     <div class="form-group">
       <label>Barcode (UPC)</label>
