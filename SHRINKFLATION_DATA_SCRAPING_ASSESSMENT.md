@@ -149,7 +149,19 @@ You already use this for UPC lookups. It can also be mined for historical produc
 
 **Implementation idea:** For products in your database, periodically query Open Food Facts to check if the listed weight has changed. Flag discrepancies as potential shrinkflation events.
 
-### 3e. News Article Scraping
+### 3e. Mouse Print (mouseprint.org)
+
+A long-running consumer advocacy site documenting product downsizing weekly with photo evidence.
+
+| Aspect | Details |
+|--------|---------|
+| **Data** | Weekly documented examples with old vs. new packaging photos |
+| **API** | No public API — HTML scraping of `/category/downsiz/` |
+| **Active** | Yes, through 2026 |
+
+**Implementation idea:** Scrape the downsizing category pages for product names, brands, and size changes. Good curated source with journalist-verified data.
+
+### 3f. News Article Scraping
 
 Major news outlets frequently publish shrinkflation stories with specific product examples.
 
@@ -161,7 +173,20 @@ Major news outlets frequently publish shrinkflation stories with specific produc
 
 **Implementation idea:** A `news_scraper.py` that fetches shrinkflation headlines and uses NLP to extract product/brand/size mentions, similar to the Reddit parser.
 
-### 3f. Social Media Beyond Reddit
+### 3g. Reddit RSS Feeds (No Auth, Lightweight)
+
+Reddit still supports RSS feeds — no API key or OAuth needed.
+
+| Aspect | Details |
+|--------|---------|
+| **URL format** | `https://www.reddit.com/r/shrinkflation.rss` |
+| **Filtering** | Sort by `new`, `hot`, `top`; time range via `?t=week`; multi-sub via `r/shrinkflation+skimpflation.rss` |
+| **Limit** | 100 posts per feed request |
+| **Best for** | Lightweight ongoing monitoring / alerting, not bulk data |
+
+**Implementation idea:** A simple RSS poller that checks every hour for new r/shrinkflation posts and feeds them into the existing NLP pipeline. Complements the heavier PRAW/public JSON scrapers.
+
+### 3h. Social Media Beyond Reddit
 
 | Platform | Approach | Difficulty |
 |----------|----------|-----------|
@@ -265,7 +290,30 @@ CREATE TABLE IF NOT EXISTS source_staging (
 
 ---
 
-## 5. Prioritized Roadmap
+## 5. Legal & Ethical Considerations
+
+Reddit is actively litigating against scrapers (Reddit v. Perplexity AI, Oct 2025). Here's where each approach falls on the risk spectrum:
+
+| Method | Legal Risk | Notes |
+|--------|-----------|-------|
+| Reddit API (authenticated, within limits) | **Low** | Safest approach — follow ToS |
+| Reddit RSS feeds | **Low** | Public endpoints, no auth bypass |
+| Arctic Shift / PullPush archives | **Low** | Pre-archived data, no direct Reddit scraping |
+| Reddit public JSON (`/r/shrinkflation.json`) | **Low-Medium** | Unofficial but public; no auth bypass |
+| Open Food Facts / BLS APIs | **Very Low** | Open data with explicit APIs |
+| Direct web scraping with proxy rotation | **High** | Circumvention risk, DMCA 1201 |
+
+**Best practices for FullCarts:**
+- Use the official API (PRAW) as the primary method — you're non-commercial and within free tier
+- Never store Reddit usernames — your scrapers already do this correctly
+- Set a descriptive User-Agent (`FullCartsBot/1.0 (fullcarts.org)`) — already done
+- Respect rate limits and `robots.txt`
+- Use Arctic Shift for historical data instead of scraping Reddit directly
+- Keep records of data provenance (source URLs, scrape timestamps) — your `reddit_staging` table already handles this
+
+---
+
+## 6. Prioritized Roadmap
 
 | Priority | Task | Effort | Impact |
 |----------|------|--------|--------|
@@ -281,7 +329,7 @@ CREATE TABLE IF NOT EXISTS source_staging (
 
 ---
 
-## 6. Summary
+## 7. Summary
 
 Your existing infrastructure is well-designed. The most impactful next step is simply **deploying what you already have** — the public Reddit scraper via GitHub Actions and running the historical backfill. After that, expanding to news RSS feeds and Open Food Facts monitoring would give you the broadest coverage with the least effort.
 
@@ -302,3 +350,9 @@ The Reddit scraping approach (public JSON + Pullpush for history, PRAW for ongoi
 - [The Shrink List — Shrinkflation Tracker](https://theshrinklist.com/)
 - [Shrinkflation Statistics 2025 — Capital One Shopping](https://capitaloneshopping.com/research/shrinkflation-statistics/)
 - [CivicScience: Shrinkflation Consumer Trends 2025](https://civicscience.com/shrinkflation-in-2025-quality-is-key-for-loyal-customers/)
+- [Mouse Print — Product Downsizing Documentation](https://www.mouseprint.org/category/downsiz/)
+- [BLS: Measuring Shrinkflation and Its Impact on Inflation](https://www.bls.gov/opub/btn/volume-12/measuring-shrinkflation-and-its-impact-on-inflation.htm)
+- [Open Food Facts API Documentation](https://openfoodfacts.github.io/openfoodfacts-server/api/)
+- [Arctic Shift API Documentation](https://github.com/ArthurHeitmann/arctic_shift/blob/master/api/README.md)
+- [Reddit's Legal Battle Over Data Scraping](https://opentools.ai/news/reddits-legal-battle-over-data-scraping-flips-the-script-in-ais-data-dilemma)
+- [PRAW Documentation](https://praw.readthedocs.io/)
