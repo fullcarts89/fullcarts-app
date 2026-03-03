@@ -72,7 +72,8 @@ fullcarts-app/
 │   │   ├── supabase_client.py    # Lazy-init Supabase client
 │   │   └── nlp.py                # NLP parser (brands, sizes, prices)
 │   ├── scrapers/
-│   │   └── (scrapers import from lib/)
+│   │   ├── news_scraper.py        # Google News RSS (no API key)
+│   │   └── openfoodfacts_scraper.py  # OFF weight-change monitor
 │   ├── jobs/
 │   │   ├── change_detector.py    # Compare versions → create events
 │   │   └── promote_staging.py    # Staging → normalized tables
@@ -80,6 +81,7 @@ fullcarts-app/
 │
 ├── .github/workflows/
 │   ├── scrape_reddit.yml         # Every 6h: scrape + detect
+│   ├── scrape_sources.yml        # Every 12h: news RSS + Open Food Facts
 │   └── detect_changes.yml        # Every 12h: promote + detect
 │
 ├── reddit_public_scraper.py      # Public Reddit scraper (no API key)
@@ -507,7 +509,35 @@ The schema is designed to support category analytics via:
 
 ---
 
-## Running Locally
+## Running via GitHub Actions (Recommended)
+
+Everything runs on GitHub's servers — nothing on your machine.
+
+### One-time setup
+
+1. Go to your repo → **Settings → Secrets and variables → Actions**
+2. Add two repository secrets:
+   - `SUPABASE_URL` = `https://yvpfefatajcfptfjntkn.supabase.co`
+   - `SUPABASE_KEY` = your Supabase service role key
+3. Go to **Actions** tab and enable workflows if prompted
+
+### Workflows
+
+| Workflow | Schedule | What it does |
+|----------|----------|-------------|
+| `scrape_reddit.yml` | Every 6 hours | Scrapes r/shrinkflation + runs change detection |
+| `scrape_sources.yml` | Every 12 hours | Google News RSS + Open Food Facts monitor + change detection |
+| `detect_changes.yml` | Every 12 hours | Promotes staging entries + runs change detection |
+
+All three can also be triggered manually from the **Actions** tab with `workflow_dispatch`.
+
+### First run: seed historical data
+
+Go to **Actions → Scrape Reddit → Run workflow** and select `backfill` mode. This pulls all historical r/shrinkflation posts (2017–2025) via the Pullpush archive.
+
+---
+
+## Running Locally (Optional)
 
 ```bash
 # Install Python dependencies
@@ -519,6 +549,10 @@ export SUPABASE_KEY=<your-service-role-key>
 
 python reddit_public_scraper.py --recent
 
+# Run non-Reddit scrapers
+python -m backend.scrapers.news_scraper
+python -m backend.scrapers.openfoodfacts_scraper
+
 # Run change detection
 python -m backend.jobs.change_detector
 
@@ -528,4 +562,6 @@ python -m backend.jobs.promote_staging
 # Dry run (see what would happen)
 python -m backend.jobs.change_detector --dry-run
 python -m backend.jobs.promote_staging --dry-run
+python -m backend.scrapers.news_scraper --dry-run
+python -m backend.scrapers.openfoodfacts_scraper --dry-run
 ```
