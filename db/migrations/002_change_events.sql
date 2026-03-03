@@ -205,11 +205,13 @@ BEGIN
   END LOOP;
 
   -- Update product's current_size to the latest version
-  UPDATE products SET
-    current_size = v_prev.size,
-    unit         = v_prev.unit,
-    updated_at   = now()
-  WHERE upc = p_upc AND v_prev IS NOT NULL;
+  IF v_prev IS NOT NULL THEN
+    UPDATE products SET
+      current_size = v_prev.size,
+      unit         = v_prev.unit,
+      updated_at   = now()
+    WHERE upc = p_upc;
+  END IF;
 
   RETURN created;
 END;
