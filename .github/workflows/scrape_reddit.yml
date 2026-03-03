@@ -1,0 +1,60 @@
+name: Scrape Reddit
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  workflow_dispatch:        # Manual trigger
+    inputs:
+      mode:
+        description: 'Scrape mode'
+        required: true
+        default: 'recent'
+        type: choice
+        options:
+          - recent
+          - backfill
+          - promote-only
+
+permissions:
+  contents: read
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r backend/requirements.txt
+
+      - name: Run Reddit public scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          MODE="${{ github.event.inputs.mode || 'recent' }}"
+          python reddit_public_scraper.py --${MODE}
+
+      - name: Run change detection
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python -m backend.jobs.change_detector
+
+      - name: Upload scraper artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scraper-output-${{ github.run_number }}
+          path: |
+            known_urls_public.txt
+            public_staging.json
+          retention-days: 7
+          if-no-files-found: ignore

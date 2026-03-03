@@ -1,0 +1,47 @@
+name: Detect Changes
+
+on:
+  schedule:
+    - cron: '30 */12 * * *'  # Every 12 hours, offset from scraper
+  workflow_dispatch:
+    inputs:
+      upc:
+        description: 'Specific product UPC to scan (leave empty for all)'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r backend/requirements.txt
+
+      - name: Promote pending staging entries
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python -m backend.jobs.promote_staging --include-reviewed
+
+      - name: Run change detection
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          if [ -n "${{ github.event.inputs.upc }}" ]; then
+            python -m backend.jobs.change_detector --upc "${{ github.event.inputs.upc }}"
+          else
+            python -m backend.jobs.change_detector
+          fi
