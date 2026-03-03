@@ -161,10 +161,11 @@ CREATE OR REPLACE FUNCTION detect_changes_for_product(p_upc text)
 RETURNS integer
 LANGUAGE plpgsql AS $$
 DECLARE
-  v_cur   record;
-  v_prev  record;
-  v_class jsonb;
-  created integer := 0;
+  v_cur    record;
+  v_prev   record;
+  v_class  jsonb;
+  created  integer := 0;
+  is_first boolean := true;
 BEGIN
   FOR v_cur IN
     SELECT id, observed_date, size, unit, price, price_per_unit
@@ -172,7 +173,7 @@ BEGIN
     WHERE product_upc = p_upc
     ORDER BY observed_date ASC
   LOOP
-    IF v_prev IS NOT NULL AND v_prev.size IS DISTINCT FROM v_cur.size THEN
+    IF NOT is_first AND v_prev.size IS DISTINCT FROM v_cur.size THEN
       -- Check if we already have a change_event for this pair
       IF NOT EXISTS (
         SELECT 1 FROM change_events
@@ -202,10 +203,11 @@ BEGIN
       END IF;
     END IF;
     v_prev := v_cur;
+    is_first := false;
   END LOOP;
 
   -- Update product's current_size to the latest version
-  IF v_prev IS NOT NULL THEN
+  IF NOT is_first THEN
     UPDATE products SET
       current_size = v_prev.size,
       unit         = v_prev.unit,
