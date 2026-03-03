@@ -19,6 +19,7 @@ Usage:
   python -m backend.scrapers.openfoodfacts_scraper --upc 048500205020
 """
 
+import os
 import sys
 import re
 import time
@@ -118,10 +119,10 @@ def search_off_by_name(name: str, brand: str | None = None) -> list[dict]:
         return []
 
 
-def check_product(sb, product: dict, dry_run: bool = False) -> bool:
+def check_product(sb, product: dict, dry_run: bool = False) -> dict | None:
     """Check a single product against Open Food Facts.
 
-    Returns True if a discrepancy was found and recorded.
+    Returns a dict with discrepancy details if found, else None.
     """
     upc = product["upc"]
     current_size = product.get("current_size")
@@ -143,7 +144,7 @@ def check_product(sb, product: dict, dry_run: bool = False) -> bool:
         time.sleep(0.5)
 
     if not off_product:
-        return False
+        return None
 
     # Extract weight from OFF
     quantity = off_product.get("quantity") or ""
@@ -166,23 +167,23 @@ def check_product(sb, product: dict, dry_run: bool = False) -> bool:
 
     if off_size is None:
         log.debug(f"  No weight data for {upc} on OFF")
-        return False
+        return None
 
     # Compare units — only meaningful if same unit type
     if off_unit and unit and off_unit.lower() != unit.lower():
         log.debug(f"  Unit mismatch for {upc}: ours={unit}, OFF={off_unit}")
-        return False
+        return None
 
     # Check for meaningful discrepancy (OFF reports different size)
     if current_size is None:
-        return False
+        return None
 
     current_size = float(current_size)
     diff_pct = ((off_size - current_size) / current_size * 100) if current_size > 0 else 0
 
     # Only flag if OFF size is notably different (>2% threshold)
     if abs(diff_pct) < 2.0:
-        return False
+        return None
 
     off_name = off_product.get("product_name", "")
     off_brands = off_product.get("brands", "")
@@ -191,8 +192,15 @@ def check_product(sb, product: dict, dry_run: bool = False) -> bool:
     log.info(f"    OFF:       {off_size} {off_unit} — '{off_name}' ({off_brands})")
     log.info(f"    Delta:     {diff_pct:+.1f}%")
 
+    detail = {
+        "name": name, "brand": brand, "upc": upc,
+        "current_size": current_size, "unit": unit,
+        "off_size": off_size, "off_unit": off_unit or unit,
+        "delta": diff_pct,
+    }
+
     if dry_run:
-        return True
+        return detail
 
     # Record as a new product_version
     try:
@@ -208,10 +216,37 @@ def check_product(sb, product: dict, dry_run: bool = False) -> bool:
         }, on_conflict="product_upc,observed_date,source").execute()
 
         log.info(f"    Recorded new version for {upc}")
-        return True
+        return detail
     except Exception as exc:
         log.warning(f"    Failed to record version for {upc}: {exc}")
-        return False
+        return None
+
+
+def write_step_summary(discrepancy_list: list[dict], total_checked: int, dry_run: bool):
+    """Write a GitHub Actions Step Summary with discrepancy details."""
+    summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if not summary_path:
+        return
+
+    lines = []
+    mode = "DRY RUN" if dry_run else "Live"
+    lines.append(f"## Open Food Facts Monitor Results ({mode})\n")
+    lines.append(f"**{total_checked}** products checked, "
+                 f"**{len(discrepancy_list)}** discrepancies found\n")
+
+    if discrepancy_list:
+        lines.append("| # | Product | Brand | FullCarts Size | OFF Size | Delta |")
+        lines.append("|---|---------|-------|---------------|----------|-------|")
+        for i, d in enumerate(discrepancy_list, 1):
+            lines.append(f"| {i} | {d['name'][:40]} | {d['brand'] or '—'} "
+                         f"| {d['current_size']} {d['unit']} "
+                         f"| {d['off_size']} {d['off_unit']} "
+                         f"| {d['delta']:+.1f}% |")
+    else:
+        lines.append("*No discrepancies found.*\n")
+
+    with open(summary_path, "a") as f:
+        f.write("\n".join(lines) + "\n")
 
 
 def run(upc: str | None = None, dry_run: bool = False):
@@ -231,18 +266,22 @@ def run(upc: str | None = None, dry_run: bool = False):
     products.sort(key=lambda p: (p["upc"].startswith("REDDIT-"), p["upc"]))
 
     discrepancies = 0
+    discrepancy_list = []
     checked = 0
 
     for product in products:
         checked += 1
-        if check_product(sb, product, dry_run=dry_run):
+        detail = check_product(sb, product, dry_run=dry_run)
+        if detail:
             discrepancies += 1
+            discrepancy_list.append(detail)
 
         # Progress logging every 25 products
         if checked % 25 == 0:
             log.info(f"  Progress: {checked}/{len(products)} checked, {discrepancies} discrepancies")
 
     log.info(f"\nDone: checked {checked} products, found {discrepancies} discrepancies")
+    write_step_summary(discrepancy_list, checked, dry_run)
 
 
 def main():

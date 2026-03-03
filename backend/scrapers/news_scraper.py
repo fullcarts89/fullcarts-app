@@ -14,6 +14,7 @@ Usage:
   python -m backend.scrapers.news_scraper --query "shrinkflation cereal"
 """
 
+import os
 import sys
 import time
 import logging
@@ -143,6 +144,39 @@ def build_staging_entry(article: dict, parsed: dict, tier: str) -> dict:
     }
 
 
+def write_step_summary(entries: list[dict], stats: dict, dry_run: bool):
+    """Write a GitHub Actions Step Summary with a table of staged entries."""
+    summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if not summary_path:
+        return
+
+    lines = []
+    mode = "DRY RUN" if dry_run else "Live"
+    lines.append(f"## News Scraper Results ({mode})\n")
+    lines.append(f"**{stats['articles']}** articles scanned, "
+                 f"**{stats['relevant']}** relevant, "
+                 f"**{len(entries)}** staged "
+                 f"(auto: {stats['auto']}, review: {stats['review']}, "
+                 f"discard: {stats['discard']})\n")
+
+    if entries:
+        lines.append("| # | Tier | Title | Brand | Product | Old Size | New Size |")
+        lines.append("|---|------|-------|-------|---------|----------|----------|")
+        for i, e in enumerate(entries, 1):
+            tier = e.get("tier", "").upper()
+            title = (e.get("title") or "")[:60]
+            brand = e.get("brand") or "—"
+            product = e.get("product_hint") or "—"
+            old_sz = f"{e['old_size']} {e['old_unit']}" if e.get("old_size") else "—"
+            new_sz = f"{e['new_size']} {e['new_unit']}" if e.get("new_size") else "—"
+            lines.append(f"| {i} | {tier} | {title} | {brand} | {product} | {old_sz} | {new_sz} |")
+    else:
+        lines.append("*No entries matched the staging criteria.*\n")
+
+    with open(summary_path, "a") as f:
+        f.write("\n".join(lines) + "\n")
+
+
 def run(queries: list[str] | None = None, dry_run: bool = False):
     """Scrape Google News RSS for shrinkflation articles."""
     queries = queries or DEFAULT_QUERIES
@@ -182,6 +216,8 @@ def run(queries: list[str] | None = None, dry_run: bool = False):
     log.info(f"\nTotal: {stats['articles']} articles, {stats['relevant']} relevant")
     log.info(f"  auto:{stats['auto']}  review:{stats['review']}  discard:{stats['discard']}")
     log.info(f"  Entries to stage: {len(all_entries)}")
+
+    write_step_summary(all_entries, stats, dry_run)
 
     if dry_run:
         log.info("[DRY RUN] Skipping Supabase upsert")
