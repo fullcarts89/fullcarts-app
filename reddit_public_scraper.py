@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-FullCarts Public Reddit Scraper
-================================
-No API key required — uses Reddit's public JSON endpoints + Pullpush archive.
+FullCarts Reddit Scraper
+========================
+Uses Reddit's OAuth API (app-only client-credentials) + Pullpush archive.
+Falls back to public JSON endpoints if no OAuth credentials are set.
 
 Modes:
   --backfill     One-time historical scrape of ALL r/shrinkflation posts (2017–present)
@@ -10,7 +11,7 @@ Modes:
   --promote-only Skip scraping, just promote staged entries to products/events
 
 Data flow:
-  Reddit JSON / Pullpush API
+  Reddit OAuth API / Pullpush API
     → parse title + selftext for product/size/brand
     → score confidence (auto / review / discard)
     → upsert to reddit_staging table in Supabase
@@ -24,6 +25,8 @@ Setup:
   pip install requests supabase
   export SUPABASE_URL=https://yvpfefatajcfptfjntkn.supabase.co
   export SUPABASE_KEY=<your-service-role-key>
+  export REDDIT_CLIENT_ID=<your-reddit-app-client-id>
+  export REDDIT_CLIENT_SECRET=<your-reddit-app-client-secret>
   python reddit_public_scraper.py --backfill
 """
 
@@ -52,9 +55,15 @@ except ImportError:
 SUPABASE_URL = os.getenv("SUPABASE_URL", "https://yvpfefatajcfptfjntkn.supabase.co")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 
+# Reddit OAuth credentials (create a "script" app at https://www.reddit.com/prefs/apps/)
+REDDIT_CLIENT_ID = os.getenv("REDDIT_CLIENT_ID", "")
+REDDIT_CLIENT_SECRET = os.getenv("REDDIT_CLIENT_SECRET", "")
+
 USER_AGENT = "FullCartsBot/1.0 (fullcarts.org community shrinkflation tracker)"
 
-# Reddit public JSON
+# Reddit API URLs
+REDDIT_OAUTH_TOKEN_URL = "https://www.reddit.com/api/v1/access_token"
+REDDIT_OAUTH_BASE = "https://oauth.reddit.com"
 REDDIT_JSON_URL = "https://www.reddit.com/r/shrinkflation/{listing}.json"
 
 # Pullpush archive API (Pushshift successor)
@@ -320,17 +329,63 @@ def save_known_urls(path: Path, urls: set) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Reddit public JSON fetcher
+# Reddit OAuth helper
+# ---------------------------------------------------------------------------
+
+_oauth_token_cache: dict = {"token": None, "expires_at": 0}
+
+
+def get_reddit_oauth_token() -> Optional[str]:
+    """Obtain an app-only OAuth2 bearer token from Reddit (client credentials flow)."""
+    if not REDDIT_CLIENT_ID or not REDDIT_CLIENT_SECRET:
+        return None
+
+    now = time.time()
+    if _oauth_token_cache["token"] and now < _oauth_token_cache["expires_at"]:
+        return _oauth_token_cache["token"]
+
+    log = logging.getLogger("fullcarts")
+    try:
+        resp = requests.post(
+            REDDIT_OAUTH_TOKEN_URL,
+            auth=(REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET),
+            data={"grant_type": "client_credentials"},
+            headers={"User-Agent": USER_AGENT},
+            timeout=15,
+        )
+        resp.raise_for_status()
+        body = resp.json()
+        token = body["access_token"]
+        expires_in = body.get("expires_in", 3600)
+        _oauth_token_cache["token"] = token
+        _oauth_token_cache["expires_at"] = now + expires_in - 60  # refresh 60s early
+        log.info("Reddit OAuth token acquired")
+        return token
+    except Exception as e:
+        log.warning(f"Reddit OAuth token request failed: {e}")
+        return None
+
+
+# ---------------------------------------------------------------------------
+# Reddit fetcher (OAuth preferred, public JSON fallback)
 # ---------------------------------------------------------------------------
 
 def fetch_reddit_json(listing: str = "new", after: str = None, limit: int = 100) -> list:
-    """Fetch posts from Reddit's public JSON endpoint."""
-    url = REDDIT_JSON_URL.format(listing=listing)
+    """Fetch posts from Reddit. Uses OAuth API if credentials are set, else public JSON."""
     params = {"limit": min(limit, 100), "raw_json": 1}
     if after:
         params["after"] = after
 
-    headers = {"User-Agent": USER_AGENT}
+    token = get_reddit_oauth_token()
+    if token:
+        url = f"{REDDIT_OAUTH_BASE}/r/shrinkflation/{listing}"
+        headers = {
+            "User-Agent": USER_AGENT,
+            "Authorization": f"Bearer {token}",
+        }
+    else:
+        url = REDDIT_JSON_URL.format(listing=listing)
+        headers = {"User-Agent": USER_AGENT}
 
     try:
         resp = requests.get(url, params=params, headers=headers, timeout=30)
@@ -339,12 +394,12 @@ def fetch_reddit_json(listing: str = "new", after: str = None, limit: int = 100)
         children = data.get("data", {}).get("children", [])
         return [c["data"] for c in children if c.get("kind") == "t3"]
     except Exception as e:
-        logging.getLogger("fullcarts").warning(f"Reddit JSON fetch failed: {e}")
+        logging.getLogger("fullcarts").warning(f"Reddit fetch failed: {e}")
         return []
 
 
 def fetch_all_reddit_pages(listing: str = "new", max_pages: int = 10) -> list:
-    """Paginate through Reddit's public JSON to get up to ~1000 posts."""
+    """Paginate through Reddit to get up to ~1000 posts."""
     log = logging.getLogger("fullcarts")
     all_posts = []
     after = None
