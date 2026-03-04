@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
-FullCarts Public Reddit Scraper
-================================
-No API key required — uses Reddit's public JSON endpoints + Pullpush archive.
+FullCarts Reddit Scraper
+========================
+Uses the Arctic Shift archive API (no Reddit credentials needed).
 
 Modes:
   --backfill     One-time historical scrape of ALL r/shrinkflation posts (2017–present)
-  --recent       Fetch latest ~1000 posts from Reddit's public JSON (default)
+  --recent       Fetch posts from the last 7 days via Arctic Shift (default)
   --promote-only Skip scraping, just promote staged entries to products/events
 
 Data flow:
-  Reddit JSON / Pullpush API
+  Arctic Shift API
     → parse title + selftext for product/size/brand
     → score confidence (auto / review / discard)
     → upsert to reddit_staging table in Supabase
@@ -35,7 +35,6 @@ import logging
 import argparse
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
 
 import requests
 
@@ -54,11 +53,8 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 
 USER_AGENT = "FullCartsBot/1.0 (fullcarts.org community shrinkflation tracker)"
 
-# Reddit public JSON
-REDDIT_JSON_URL = "https://www.reddit.com/r/shrinkflation/{listing}.json"
-
-# Pullpush archive API (Pushshift successor)
-PULLPUSH_URL = "https://api.pullpush.io/reddit/search/submission/"
+# Arctic Shift API (Pushshift/Pullpush successor) — no Reddit credentials needed
+ARCTIC_SHIFT_URL = "https://arctic-shift.photon-reddit.com/api/posts/search"
 
 # Output for local fallback
 OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", "."))
@@ -320,58 +316,15 @@ def save_known_urls(path: Path, urls: set) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Reddit public JSON fetcher
+# Arctic Shift archive fetcher (no Reddit credentials needed)
 # ---------------------------------------------------------------------------
 
-def fetch_reddit_json(listing: str = "new", after: str = None, limit: int = 100) -> list:
-    """Fetch posts from Reddit's public JSON endpoint."""
-    url = REDDIT_JSON_URL.format(listing=listing)
-    params = {"limit": min(limit, 100), "raw_json": 1}
-    if after:
-        params["after"] = after
-
-    headers = {"User-Agent": USER_AGENT}
-
-    try:
-        resp = requests.get(url, params=params, headers=headers, timeout=30)
-        resp.raise_for_status()
-        data = resp.json()
-        children = data.get("data", {}).get("children", [])
-        return [c["data"] for c in children if c.get("kind") == "t3"]
-    except Exception as e:
-        logging.getLogger("fullcarts").warning(f"Reddit JSON fetch failed: {e}")
-        return []
-
-
-def fetch_all_reddit_pages(listing: str = "new", max_pages: int = 10) -> list:
-    """Paginate through Reddit's public JSON to get up to ~1000 posts."""
-    log = logging.getLogger("fullcarts")
-    all_posts = []
-    after = None
-
-    for page in range(max_pages):
-        posts = fetch_reddit_json(listing=listing, after=after)
-        if not posts:
-            break
-        all_posts.extend(posts)
-        after = f"t3_{posts[-1]['id']}"
-        log.info(f"  Page {page + 1}: fetched {len(posts)} posts (total: {len(all_posts)})")
-        time.sleep(2)  # Be polite
-
-    return all_posts
-
-
-# ---------------------------------------------------------------------------
-# Pullpush archive fetcher (for historical backfill)
-# ---------------------------------------------------------------------------
-
-def fetch_pullpush_batch(before_utc: int = None, after_utc: int = 0, size: int = 100) -> list:
-    """Fetch a batch of posts from Pullpush archive API."""
+def fetch_arctic_shift_batch(before_utc: int = None, after_utc: int = 0, limit: int = 100) -> list:
+    """Fetch a batch of posts from Arctic Shift API."""
     params = {
         "subreddit": "shrinkflation",
-        "size": size,
+        "limit": min(limit, 100),
         "sort": "desc",
-        "sort_type": "created_utc",
     }
     if before_utc:
         params["before"] = before_utc
@@ -381,25 +334,25 @@ def fetch_pullpush_batch(before_utc: int = None, after_utc: int = 0, size: int =
     headers = {"User-Agent": USER_AGENT}
 
     try:
-        resp = requests.get(PULLPUSH_URL, params=params, headers=headers, timeout=30)
+        resp = requests.get(ARCTIC_SHIFT_URL, params=params, headers=headers, timeout=30)
         resp.raise_for_status()
         return resp.json().get("data", [])
     except Exception as e:
-        logging.getLogger("fullcarts").warning(f"Pullpush fetch failed: {e}")
+        logging.getLogger("fullcarts").warning(f"Arctic Shift fetch failed: {e}")
         return []
 
 
-def fetch_all_pullpush(log) -> list:
-    """Paginate through ALL historical posts via Pullpush."""
+def fetch_all_arctic_shift(log) -> list:
+    """Paginate through ALL historical posts via Arctic Shift."""
     all_posts = []
     before_utc = None  # Start from most recent
     batch_num = 0
 
     while True:
         batch_num += 1
-        posts = fetch_pullpush_batch(before_utc=before_utc, size=100)
+        posts = fetch_arctic_shift_batch(before_utc=before_utc, limit=100)
         if not posts:
-            log.info(f"  Pullpush: no more posts after batch {batch_num}")
+            log.info(f"  Arctic Shift: no more posts after batch {batch_num}")
             break
 
         all_posts.extend(posts)
@@ -408,11 +361,11 @@ def fetch_all_pullpush(log) -> list:
         before_utc = int(oldest_ts)
 
         oldest_date = datetime.utcfromtimestamp(oldest_ts).strftime("%Y-%m-%d")
-        log.info(f"  Pullpush batch {batch_num}: {len(posts)} posts "
+        log.info(f"  Arctic Shift batch {batch_num}: {len(posts)} posts "
                  f"(total: {len(all_posts)}, oldest: {oldest_date})")
 
-        # Rate limit: Pullpush recommends ~1 req/sec
-        time.sleep(1.5)
+        # Rate limit: be polite
+        time.sleep(0.5)
 
         # Safety valve
         if batch_num > 500:
@@ -608,23 +561,44 @@ def upsert_to_supabase(sb: "SupabaseClient", entries: list, log) -> int:
     return upserted
 
 
+def fetch_recent_arctic_shift(log, days: int = 7) -> list:
+    """Fetch recent posts from the last N days via Arctic Shift API."""
+    after_utc = int(time.time()) - (days * 86400)
+    all_posts = []
+    before_utc = None
+    batch_num = 0
+
+    while True:
+        batch_num += 1
+        posts = fetch_arctic_shift_batch(before_utc=before_utc, after_utc=after_utc, limit=100)
+        if not posts:
+            break
+
+        all_posts.extend(posts)
+        oldest_ts = min(p["created_utc"] for p in posts)
+        before_utc = int(oldest_ts)
+
+        log.info(f"  Arctic Shift batch {batch_num}: {len(posts)} posts (total: {len(all_posts)})")
+        time.sleep(0.5)
+
+        if batch_num > 50:
+            break
+
+    return all_posts
+
+
 def run_recent(log):
-    """Fetch latest posts from Reddit's public JSON."""
+    """Fetch recent posts via Arctic Shift API (last 7 days)."""
     log.info("=" * 60)
-    log.info("MODE: Recent posts (Reddit public JSON)")
+    log.info("MODE: Recent posts (Arctic Shift API — last 7 days)")
     log.info("=" * 60)
 
     known_urls = load_known_urls(KNOWN_URLS_FILE)
-    all_posts = []
 
-    # Fetch from both 'new' and 'hot' listings
-    for listing in ("new", "hot", "top"):
-        log.info(f"\nFetching r/shrinkflation/{listing}...")
-        posts = fetch_all_reddit_pages(listing=listing, max_pages=10)
-        all_posts.extend(posts)
-        time.sleep(2)
+    log.info("\nFetching recent r/shrinkflation posts from Arctic Shift...")
+    all_posts = fetch_recent_arctic_shift(log, days=7)
 
-    # Deduplicate by permalink
+    # Deduplicate by id
     seen_ids = set()
     unique_posts = []
     for p in all_posts:
@@ -665,19 +639,19 @@ def run_recent(log):
 
 
 def run_backfill(log):
-    """Historical backfill via Pullpush archive API."""
+    """Historical backfill via Arctic Shift archive API."""
     log.info("=" * 60)
-    log.info("MODE: Historical backfill (Pullpush archive)")
+    log.info("MODE: Historical backfill (Arctic Shift archive)")
     log.info("=" * 60)
 
     known_urls = load_known_urls(KNOWN_URLS_FILE)
 
-    log.info("\nFetching ALL historical posts from Pullpush...")
-    all_posts = fetch_all_pullpush(log)
+    log.info("\nFetching ALL historical posts from Arctic Shift...")
+    all_posts = fetch_all_arctic_shift(log)
     log.info(f"\nTotal historical posts fetched: {len(all_posts)}")
 
     if not all_posts:
-        log.warning("No posts returned from Pullpush — API may be down")
+        log.warning("No posts returned from Arctic Shift — API may be down")
         return
 
     # Sort by date for nice logging
@@ -754,9 +728,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="FullCarts Public Reddit Scraper (no API key needed)")
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--backfill", action="store_true",
-                       help="Historical backfill of ALL r/shrinkflation posts via Pullpush")
+                       help="Historical backfill of ALL r/shrinkflation posts via Arctic Shift")
     group.add_argument("--recent", action="store_true",
-                       help="Fetch latest ~1000 posts from Reddit public JSON (default)")
+                       help="Fetch recent posts from the last 7 days via Arctic Shift (default)")
     group.add_argument("--promote-only", action="store_true",
                        help="Skip scraping, just promote staged auto entries")
     args = parser.parse_args()
