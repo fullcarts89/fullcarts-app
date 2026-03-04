@@ -1845,8 +1845,8 @@ const SHRINK_TYPES = {
 };
 
 // ── Supabase client ─────────────────────────────────────────
-const SUPABASE_URL = 'https://yvpfefatajcfptfjntkn.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl2cGZlZmF0YWpjZnB0ZmpudGtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2MjkxMDYsImV4cCI6MjA4NzIwNTEwNn0.EGC1p_dXGqi1ELYHB9Kh4H_iRAiWPj2wcVLl6_sXVRg';
+const SUPABASE_URL = 'https://ntyhbapphnzlariakgrw.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50eWhiYXBwaG56bGFyaWFrZ3J3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NTE5ODcsImV4cCI6MjA4ODEyNzk4N30.oaW846y2YzVjfgPjtOqz-cS8TB3UkkY12oytSuHEA3k';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Session ID — persisted so upvote state survives page reloads
@@ -1960,8 +1960,17 @@ function saveStats() { localStorage.setItem('fc_stats', JSON.stringify(personalS
 
 // ── Admin mode ───────────────────────────────────────────
 let isAdmin = localStorage.getItem('fc_admin') === 'true';
-if (window.location.hash === '#admin') { isAdmin = true; localStorage.setItem('fc_admin', 'true'); }
-if (window.location.hash === '#noadmin') { isAdmin = false; localStorage.removeItem('fc_admin'); }
+const _urlParams = new URLSearchParams(window.location.search);
+const _hash = window.location.hash;
+if (_hash === '#admin' || _urlParams.get('admin') === '1') { isAdmin = true; localStorage.setItem('fc_admin', 'true'); }
+if (_hash === '#noadmin' || _urlParams.get('admin') === '0') { isAdmin = false; localStorage.removeItem('fc_admin'); }
+window.addEventListener('hashchange', () => {
+  if (window.location.hash === '#admin') { isAdmin = true; localStorage.setItem('fc_admin', 'true'); }
+  if (window.location.hash === '#noadmin') { isAdmin = false; localStorage.removeItem('fc_admin'); }
+  const ab = document.getElementById('admin-badge');
+  if (ab) ab.style.display = isAdmin ? 'inline' : 'none';
+  renderScreen();
+});
 let adminTapCount = 0;
 let adminTapTimer = null;
 function handleLogoTap() {

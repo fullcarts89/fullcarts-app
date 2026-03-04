@@ -186,7 +186,7 @@ products (1) ──── (N) product_versions (1) ──── (0..1) change_ev
 
 Supabase auto-generates REST endpoints for all tables and views. The base URL is:
 ```
-https://yvpfefatajcfptfjntkn.supabase.co/rest/v1/
+https://ntyhbapphnzlariakgrw.supabase.co/rest/v1/
 ```
 
 All requests require headers:
@@ -517,7 +517,7 @@ Everything runs on GitHub's servers — nothing on your machine.
 
 1. Go to your repo → **Settings → Secrets and variables → Actions**
 2. Add two repository secrets:
-   - `SUPABASE_URL` = `https://yvpfefatajcfptfjntkn.supabase.co`
+   - `SUPABASE_URL` = `https://ntyhbapphnzlariakgrw.supabase.co`
    - `SUPABASE_KEY` = your Supabase service role key
 3. Go to **Actions** tab and enable workflows if prompted
 
@@ -544,7 +544,7 @@ Go to **Actions → Scrape Reddit → Run workflow** and select `backfill` mode.
 pip install -r backend/requirements.txt
 
 # Run public Reddit scraper (no API key needed)
-export SUPABASE_URL=https://yvpfefatajcfptfjntkn.supabase.co
+export SUPABASE_URL=https://ntyhbapphnzlariakgrw.supabase.co
 export SUPABASE_KEY=<your-service-role-key>
 
 python reddit_public_scraper.py --recent
