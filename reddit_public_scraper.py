@@ -2,16 +2,15 @@
 """
 FullCarts Reddit Scraper
 ========================
-Uses Reddit's OAuth API (app-only client-credentials) + Pullpush archive.
-Falls back to public JSON endpoints if no OAuth credentials are set.
+Uses the Pullpush archive API (no Reddit credentials needed).
 
 Modes:
   --backfill     One-time historical scrape of ALL r/shrinkflation posts (2017–present)
-  --recent       Fetch latest ~1000 posts from Reddit's public JSON (default)
+  --recent       Fetch posts from the last 7 days via Pullpush (default)
   --promote-only Skip scraping, just promote staged entries to products/events
 
 Data flow:
-  Reddit OAuth API / Pullpush API
+  Pullpush API
     → parse title + selftext for product/size/brand
     → score confidence (auto / review / discard)
     → upsert to reddit_staging table in Supabase
@@ -25,8 +24,6 @@ Setup:
   pip install requests supabase
   export SUPABASE_URL=https://yvpfefatajcfptfjntkn.supabase.co
   export SUPABASE_KEY=<your-service-role-key>
-  export REDDIT_CLIENT_ID=<your-reddit-app-client-id>
-  export REDDIT_CLIENT_SECRET=<your-reddit-app-client-secret>
   python reddit_public_scraper.py --backfill
 """
 
@@ -38,7 +35,6 @@ import logging
 import argparse
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
 
 import requests
 
@@ -55,18 +51,9 @@ except ImportError:
 SUPABASE_URL = os.getenv("SUPABASE_URL", "https://yvpfefatajcfptfjntkn.supabase.co")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 
-# Reddit OAuth credentials (create a "script" app at https://www.reddit.com/prefs/apps/)
-REDDIT_CLIENT_ID = os.getenv("REDDIT_CLIENT_ID", "")
-REDDIT_CLIENT_SECRET = os.getenv("REDDIT_CLIENT_SECRET", "")
-
 USER_AGENT = "FullCartsBot/1.0 (fullcarts.org community shrinkflation tracker)"
 
-# Reddit API URLs
-REDDIT_OAUTH_TOKEN_URL = "https://www.reddit.com/api/v1/access_token"
-REDDIT_OAUTH_BASE = "https://oauth.reddit.com"
-REDDIT_JSON_URL = "https://www.reddit.com/r/shrinkflation/{listing}.json"
-
-# Pullpush archive API (Pushshift successor)
+# Pullpush archive API (Pushshift successor) — no Reddit credentials needed
 PULLPUSH_URL = "https://api.pullpush.io/reddit/search/submission/"
 
 # Output for local fallback
@@ -329,95 +316,7 @@ def save_known_urls(path: Path, urls: set) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Reddit OAuth helper
-# ---------------------------------------------------------------------------
-
-_oauth_token_cache: dict = {"token": None, "expires_at": 0}
-
-
-def get_reddit_oauth_token() -> Optional[str]:
-    """Obtain an app-only OAuth2 bearer token from Reddit (client credentials flow)."""
-    if not REDDIT_CLIENT_ID or not REDDIT_CLIENT_SECRET:
-        return None
-
-    now = time.time()
-    if _oauth_token_cache["token"] and now < _oauth_token_cache["expires_at"]:
-        return _oauth_token_cache["token"]
-
-    log = logging.getLogger("fullcarts")
-    try:
-        resp = requests.post(
-            REDDIT_OAUTH_TOKEN_URL,
-            auth=(REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET),
-            data={"grant_type": "client_credentials"},
-            headers={"User-Agent": USER_AGENT},
-            timeout=15,
-        )
-        resp.raise_for_status()
-        body = resp.json()
-        token = body["access_token"]
-        expires_in = body.get("expires_in", 3600)
-        _oauth_token_cache["token"] = token
-        _oauth_token_cache["expires_at"] = now + expires_in - 60  # refresh 60s early
-        log.info("Reddit OAuth token acquired")
-        return token
-    except Exception as e:
-        log.warning(f"Reddit OAuth token request failed: {e}")
-        return None
-
-
-# ---------------------------------------------------------------------------
-# Reddit fetcher (OAuth preferred, public JSON fallback)
-# ---------------------------------------------------------------------------
-
-def fetch_reddit_json(listing: str = "new", after: str = None, limit: int = 100) -> list:
-    """Fetch posts from Reddit. Uses OAuth API if credentials are set, else public JSON."""
-    params = {"limit": min(limit, 100), "raw_json": 1}
-    if after:
-        params["after"] = after
-
-    token = get_reddit_oauth_token()
-    if token:
-        url = f"{REDDIT_OAUTH_BASE}/r/shrinkflation/{listing}"
-        headers = {
-            "User-Agent": USER_AGENT,
-            "Authorization": f"Bearer {token}",
-        }
-    else:
-        url = REDDIT_JSON_URL.format(listing=listing)
-        headers = {"User-Agent": USER_AGENT}
-
-    try:
-        resp = requests.get(url, params=params, headers=headers, timeout=30)
-        resp.raise_for_status()
-        data = resp.json()
-        children = data.get("data", {}).get("children", [])
-        return [c["data"] for c in children if c.get("kind") == "t3"]
-    except Exception as e:
-        logging.getLogger("fullcarts").warning(f"Reddit fetch failed: {e}")
-        return []
-
-
-def fetch_all_reddit_pages(listing: str = "new", max_pages: int = 10) -> list:
-    """Paginate through Reddit to get up to ~1000 posts."""
-    log = logging.getLogger("fullcarts")
-    all_posts = []
-    after = None
-
-    for page in range(max_pages):
-        posts = fetch_reddit_json(listing=listing, after=after)
-        if not posts:
-            break
-        all_posts.extend(posts)
-        after = f"t3_{posts[-1]['id']}"
-        log.info(f"  Page {page + 1}: fetched {len(posts)} posts (total: {len(all_posts)})")
-        time.sleep(2)  # Be polite
-
-    return all_posts
-
-
-# ---------------------------------------------------------------------------
-# Pullpush archive fetcher (for historical backfill)
+# Pullpush archive fetcher (no Reddit credentials needed)
 # ---------------------------------------------------------------------------
 
 def fetch_pullpush_batch(before_utc: int = None, after_utc: int = 0, size: int = 100) -> list:
@@ -663,23 +562,44 @@ def upsert_to_supabase(sb: "SupabaseClient", entries: list, log) -> int:
     return upserted
 
 
+def fetch_recent_pullpush(log, days: int = 7) -> list:
+    """Fetch recent posts from the last N days via Pullpush API."""
+    after_utc = int(time.time()) - (days * 86400)
+    all_posts = []
+    before_utc = None
+    batch_num = 0
+
+    while True:
+        batch_num += 1
+        posts = fetch_pullpush_batch(before_utc=before_utc, after_utc=after_utc, size=100)
+        if not posts:
+            break
+
+        all_posts.extend(posts)
+        oldest_ts = min(p["created_utc"] for p in posts)
+        before_utc = int(oldest_ts)
+
+        log.info(f"  Pullpush batch {batch_num}: {len(posts)} posts (total: {len(all_posts)})")
+        time.sleep(1.5)
+
+        if batch_num > 50:
+            break
+
+    return all_posts
+
+
 def run_recent(log):
-    """Fetch latest posts from Reddit's public JSON."""
+    """Fetch recent posts via Pullpush API (last 7 days)."""
     log.info("=" * 60)
-    log.info("MODE: Recent posts (Reddit public JSON)")
+    log.info("MODE: Recent posts (Pullpush API — last 7 days)")
     log.info("=" * 60)
 
     known_urls = load_known_urls(KNOWN_URLS_FILE)
-    all_posts = []
 
-    # Fetch from both 'new' and 'hot' listings
-    for listing in ("new", "hot", "top"):
-        log.info(f"\nFetching r/shrinkflation/{listing}...")
-        posts = fetch_all_reddit_pages(listing=listing, max_pages=10)
-        all_posts.extend(posts)
-        time.sleep(2)
+    log.info("\nFetching recent r/shrinkflation posts from Pullpush...")
+    all_posts = fetch_recent_pullpush(log, days=7)
 
-    # Deduplicate by permalink
+    # Deduplicate by id
     seen_ids = set()
     unique_posts = []
     for p in all_posts:
