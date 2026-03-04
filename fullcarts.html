@@ -1960,8 +1960,17 @@ function saveStats() { localStorage.setItem('fc_stats', JSON.stringify(personalS
 
 // ── Admin mode ───────────────────────────────────────────
 let isAdmin = localStorage.getItem('fc_admin') === 'true';
-if (window.location.hash === '#admin') { isAdmin = true; localStorage.setItem('fc_admin', 'true'); }
-if (window.location.hash === '#noadmin') { isAdmin = false; localStorage.removeItem('fc_admin'); }
+const _urlParams = new URLSearchParams(window.location.search);
+const _hash = window.location.hash;
+if (_hash === '#admin' || _urlParams.get('admin') === '1') { isAdmin = true; localStorage.setItem('fc_admin', 'true'); }
+if (_hash === '#noadmin' || _urlParams.get('admin') === '0') { isAdmin = false; localStorage.removeItem('fc_admin'); }
+window.addEventListener('hashchange', () => {
+  if (window.location.hash === '#admin') { isAdmin = true; localStorage.setItem('fc_admin', 'true'); }
+  if (window.location.hash === '#noadmin') { isAdmin = false; localStorage.removeItem('fc_admin'); }
+  const ab = document.getElementById('admin-badge');
+  if (ab) ab.style.display = isAdmin ? 'inline' : 'none';
+  renderScreen();
+});
 let adminTapCount = 0;
 let adminTapTimer = null;
 function handleLogoTap() {
