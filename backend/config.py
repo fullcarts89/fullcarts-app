@@ -5,7 +5,7 @@ All secrets come from environment variables — never hardcode.
 import os
 
 # Supabase
-SUPABASE_URL = os.getenv("SUPABASE_URL", "https://yvpfefatajcfptfjntkn.supabase.co")
+SUPABASE_URL = os.getenv("SUPABASE_URL", "https://ntyhbapphnzlariakgrw.supabase.co")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")  # service_role key
 
 # Reddit API (optional — only for PRAW scraper)

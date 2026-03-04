@@ -22,7 +22,7 @@ Privacy: No usernames are stored — only post URLs + timestamps.
 
 Setup:
   pip install requests supabase
-  export SUPABASE_URL=https://yvpfefatajcfptfjntkn.supabase.co
+  export SUPABASE_URL=https://ntyhbapphnzlariakgrw.supabase.co
   export SUPABASE_KEY=<your-service-role-key>
   python reddit_public_scraper.py --backfill
 """
@@ -48,7 +48,7 @@ except ImportError:
 # Config
 # ---------------------------------------------------------------------------
 
-SUPABASE_URL = os.getenv("SUPABASE_URL", "https://yvpfefatajcfptfjntkn.supabase.co")
+SUPABASE_URL = os.getenv("SUPABASE_URL", "https://ntyhbapphnzlariakgrw.supabase.co")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 
 USER_AGENT = "FullCartsBot/1.0 (fullcarts.org community shrinkflation tracker)"

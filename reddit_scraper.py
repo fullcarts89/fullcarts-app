@@ -45,7 +45,7 @@ REDDIT_CLIENT_SECRET = os.getenv("REDDIT_CLIENT_SECRET", "YOUR_CLIENT_SECRET")
 REDDIT_USER_AGENT    = os.getenv("REDDIT_USER_AGENT",    "FullCartsBot/1.0 (by u/YOUR_USERNAME; fullcarts.app)")
 
 # Supabase — service role key (PRIVATE, never expose in frontend)
-SUPABASE_URL         = os.getenv("SUPABASE_URL",         "https://yvpfefatajcfptfjntkn.supabase.co")
+SUPABASE_URL         = os.getenv("SUPABASE_URL",         "https://ntyhbapphnzlariakgrw.supabase.co")
 SUPABASE_KEY         = os.getenv("SUPABASE_KEY",         "")  # Set via env var — service_role key
 
 # Subreddits to monitor
