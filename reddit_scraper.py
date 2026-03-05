@@ -262,11 +262,39 @@ _IMAGE_DOMAINS = {"i.redd.it", "i.imgur.com", "imgur.com", "preview.redd.it"}
 
 
 def _extract_image_url_praw(post) -> str | None:
-    """Return a direct image URL from a PRAW post object, or None."""
+    """Return a direct image URL from a PRAW post object, or None.
+
+    Handles direct image links, gallery posts (media_metadata), and
+    preview images.
+    """
     url = getattr(post, "url", "") or ""
     post_hint = getattr(post, "post_hint", "") or ""
+
+    # Direct image link (i.redd.it, imgur, etc.)
     if post_hint == "image" or any(d in url for d in _IMAGE_DOMAINS):
         return url[:500] if url else None
+
+    # Reddit gallery posts: images stored in media_metadata
+    media_meta = getattr(post, "media_metadata", None)
+    if media_meta and isinstance(media_meta, dict):
+        for item in media_meta.values():
+            if item.get("status") != "valid" and item.get("e") != "Image":
+                continue
+            src = item.get("s", {})
+            img_url = src.get("u") or src.get("gif")
+            if img_url:
+                return img_url.replace("&amp;", "&")[:500]
+
+    # Fallback: Reddit preview images
+    preview = getattr(post, "preview", None)
+    if preview and isinstance(preview, dict):
+        images = preview.get("images", [])
+        if images:
+            src = images[0].get("source", {})
+            img_url = src.get("url")
+            if img_url:
+                return img_url.replace("&amp;", "&")[:500]
+
     return None
 
 

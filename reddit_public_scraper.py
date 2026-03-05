@@ -441,11 +441,42 @@ _IMAGE_DOMAINS = {"i.redd.it", "i.imgur.com", "imgur.com", "preview.redd.it"}
 
 
 def _extract_image_url(post: dict) -> str | None:
-    """Return a direct image URL from an Arctic Shift post dict, or None."""
+    """Return a direct image URL from an Arctic Shift post dict, or None.
+
+    Handles direct image links, gallery posts (media_metadata), and
+    preview images.
+    """
     url = post.get("url") or ""
     post_hint = post.get("post_hint") or ""
+
+    # Direct image link (i.redd.it, imgur, etc.)
     if post_hint == "image" or any(d in url for d in _IMAGE_DOMAINS):
         return url[:500] if url else None
+
+    # Reddit gallery posts: images stored in media_metadata
+    media_meta = post.get("media_metadata")
+    if media_meta and isinstance(media_meta, dict):
+        # Pick the first image from the gallery
+        for item in media_meta.values():
+            if item.get("status") != "valid" and item.get("e") != "Image":
+                continue
+            # Prefer the source (full-res) image
+            src = item.get("s", {})
+            img_url = src.get("u") or src.get("gif")
+            if img_url:
+                # Reddit HTML-encodes URLs in media_metadata
+                return img_url.replace("&amp;", "&")[:500]
+
+    # Fallback: Reddit preview images (available on many image posts)
+    preview = post.get("preview", {})
+    if isinstance(preview, dict):
+        images = preview.get("images", [])
+        if images:
+            src = images[0].get("source", {})
+            img_url = src.get("url")
+            if img_url:
+                return img_url.replace("&amp;", "&")[:500]
+
     return None
 
 
