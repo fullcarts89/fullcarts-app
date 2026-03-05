@@ -3836,8 +3836,10 @@ function renderReviewCard() {
     </div>
 
     <div class="review-card" id="review-current-card">
-      <div class="review-card-brand">${escapeHTML(r.brand || 'Unknown Brand')}</div>
-      <div class="review-card-name">${escapeHTML((r.product_hint || 'Unknown Product').slice(0, 80))}</div>
+      <div class="review-card-brand">${escapeHTML(r.subreddit || 'ALL')}</div>
+      <div class="review-card-name">${escapeHTML(r.title || 'No title')}</div>
+      ${r.body ? `<div style="font-size:13px;color:var(--wolf);margin:6px 0 10px;padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:8px;max-height:120px;overflow-y:auto;line-height:1.4;white-space:pre-wrap">${escapeHTML(r.body.slice(0, 500))}</div>` : ''}
+      ${r.image_url ? `<div style="margin:8px 0;text-align:center"><img src="${escapeHTML(r.image_url)}" alt="Reddit post image" style="max-width:100%;max-height:300px;border-radius:8px;object-fit:contain" onerror="this.parentElement.style.display='none'"></div>` : ''}
 
       ${oldS && newS ? `
         <div class="review-card-sizes">
