@@ -594,6 +594,7 @@ def upsert_to_supabase(sb: "SupabaseClient", entries: list, log) -> int:
 
     # Batch in chunks of 50
     upserted = 0
+    first_error_logged = False
     for i in range(0, len(entries), 50):
         batch = entries[i:i + 50]
         try:
@@ -602,7 +603,9 @@ def upsert_to_supabase(sb: "SupabaseClient", entries: list, log) -> int:
             ).execute()
             upserted += len(batch)
         except Exception as exc:
-            log.warning(f"  Supabase upsert failed for batch {i // 50 + 1}: {exc}")
+            if not first_error_logged:
+                log.warning(f"  Supabase batch upsert failed (batch {i // 50 + 1}): {exc}")
+                first_error_logged = True
             # Try one by one
             for entry in batch:
                 try:
@@ -611,7 +614,10 @@ def upsert_to_supabase(sb: "SupabaseClient", entries: list, log) -> int:
                     ).execute()
                     upserted += 1
                 except Exception as exc2:
-                    log.warning(f"    Single upsert failed: {entry.get('source_url', '?')[:60]} — {exc2}")
+                    # Log first few failures with full detail
+                    if upserted == 0 and i == 0:
+                        log.warning(f"    Single upsert failed: {exc2}")
+                        log.warning(f"    Entry keys: {list(entry.keys())}")
 
     return upserted
 

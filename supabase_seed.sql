@@ -72,6 +72,7 @@ CREATE TABLE IF NOT EXISTS reddit_staging (
   fields_found     integer,
   score            integer,
   num_comments     integer,
+  date_noticed     date,
   status           text DEFAULT 'pending',
   created_at       timestamptz DEFAULT now()
 );
