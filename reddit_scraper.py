@@ -261,6 +261,7 @@ def build_entry(post, parsed: dict, tier: str) -> dict:
         "scraped_utc":   datetime.now(tz=timezone.utc).isoformat(),
         "tier":          tier,
         "title":         post.title[:200],
+        "body":          (post.selftext or "")[:2000],
         "brand":         parsed["brand"],
         "product_hint":  parsed["product_hint"],
         "old_size":      parsed["old_size"],

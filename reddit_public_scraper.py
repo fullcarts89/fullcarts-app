@@ -452,6 +452,7 @@ def build_entry(post: dict, parsed: dict, tier: str) -> dict:
         "tier": tier,
         "status": "pending",
         "title": (post.get("title") or "")[:200],
+        "body": (post.get("selftext") or "")[:2000],
         "brand": parsed["brand"],
         "product_hint": parsed["product_hint"],
         "old_size": parsed["old_size"],
