@@ -33,6 +33,7 @@ import json
 import time
 import logging
 import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -359,7 +360,7 @@ def fetch_arctic_shift_batch(subreddit: str = "shrinkflation", before_utc: int =
     headers = {"User-Agent": USER_AGENT}
 
     try:
-        resp = requests.get(ARCTIC_SHIFT_URL, params=params, headers=headers, timeout=30)
+        resp = requests.get(ARCTIC_SHIFT_URL, params=params, headers=headers, timeout=15)
         resp.raise_for_status()
         return resp.json().get("data", [])
     except Exception as e:
@@ -367,40 +368,53 @@ def fetch_arctic_shift_batch(subreddit: str = "shrinkflation", before_utc: int =
         return []
 
 
+def _fetch_all_one_sub(sub: str) -> list:
+    """Fetch all historical posts for a single subreddit (thread-safe)."""
+    log = logging.getLogger("fullcarts")
+    is_dedicated = sub.lower() in DEDICATED_SUBREDDITS
+    max_batches = 500 if is_dedicated else 100
+
+    log.info(f"\n  --- r/{sub} (max {max_batches} batches) ---")
+    before_utc = None
+    posts_out = []
+
+    for batch_num in range(1, max_batches + 1):
+        posts = fetch_arctic_shift_batch(subreddit=sub, before_utc=before_utc, limit=100)
+        if not posts:
+            log.info(f"  r/{sub}: no more posts after batch {batch_num}")
+            break
+
+        posts_out.extend(posts)
+        oldest_ts = min(p["created_utc"] for p in posts)
+        before_utc = int(oldest_ts)
+
+        oldest_date = datetime.utcfromtimestamp(oldest_ts).strftime("%Y-%m-%d")
+        log.info(f"  r/{sub} batch {batch_num}: {len(posts)} posts "
+                 f"(sub total: {len(posts_out)}, oldest: {oldest_date})")
+
+        time.sleep(0.3)
+
+    log.info(f"  r/{sub}: {len(posts_out)} posts fetched")
+    return posts_out
+
+
 def fetch_all_arctic_shift(log, subreddits: list = None) -> list:
-    """Paginate through ALL historical posts via Arctic Shift for each subreddit."""
+    """Paginate through ALL historical posts via Arctic Shift (parallel)."""
     subreddits = subreddits or ALL_SUBREDDITS
     all_posts = []
 
-    for sub in subreddits:
-        log.info(f"\n  --- r/{sub} ---")
-        before_utc = None
-        batch_num = 0
-        sub_count = 0
-
-        while True:
-            batch_num += 1
-            posts = fetch_arctic_shift_batch(subreddit=sub, before_utc=before_utc, limit=100)
-            if not posts:
-                log.info(f"  r/{sub}: no more posts after batch {batch_num}")
-                break
-
-            all_posts.extend(posts)
-            sub_count += len(posts)
-            oldest_ts = min(p["created_utc"] for p in posts)
-            before_utc = int(oldest_ts)
-
-            oldest_date = datetime.utcfromtimestamp(oldest_ts).strftime("%Y-%m-%d")
-            log.info(f"  r/{sub} batch {batch_num}: {len(posts)} posts "
-                     f"(sub total: {sub_count}, oldest: {oldest_date})")
-
-            time.sleep(0.5)
-
-            if batch_num > 500:
-                log.warning(f"  r/{sub}: hit 500 batch safety limit — stopping")
-                break
-
-        log.info(f"  r/{sub}: {sub_count} posts fetched")
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        futures = {
+            pool.submit(_fetch_all_one_sub, sub): sub
+            for sub in subreddits
+        }
+        for fut in as_completed(futures):
+            sub = futures[fut]
+            try:
+                posts = fut.result()
+                all_posts.extend(posts)
+            except Exception as e:
+                log.warning(f"  r/{sub}: fetch failed — {e}")
 
     return all_posts
 
@@ -602,36 +616,47 @@ def upsert_to_supabase(sb: "SupabaseClient", entries: list, log) -> int:
     return upserted
 
 
+def _fetch_recent_one_sub(sub: str, after_utc: int, max_batches: int = 20) -> list:
+    """Fetch recent posts for a single subreddit (thread-safe)."""
+    log = logging.getLogger("fullcarts")
+    log.info(f"\n  --- r/{sub} (recent, max {max_batches} batches) ---")
+    before_utc = None
+    posts_out = []
+
+    for batch_num in range(1, max_batches + 1):
+        posts = fetch_arctic_shift_batch(subreddit=sub, before_utc=before_utc, after_utc=after_utc, limit=100)
+        if not posts:
+            break
+
+        posts_out.extend(posts)
+        oldest_ts = min(p["created_utc"] for p in posts)
+        before_utc = int(oldest_ts)
+
+        log.info(f"  r/{sub} batch {batch_num}: {len(posts)} posts (sub total: {len(posts_out)})")
+        time.sleep(0.3)
+
+    log.info(f"  r/{sub}: {len(posts_out)} recent posts fetched")
+    return posts_out
+
+
 def fetch_recent_arctic_shift(log, days: int = 7, subreddits: list = None) -> list:
-    """Fetch recent posts from the last N days via Arctic Shift API for each subreddit."""
+    """Fetch recent posts from the last N days via Arctic Shift API (parallel)."""
     subreddits = subreddits or ALL_SUBREDDITS
     after_utc = int(time.time()) - (days * 86400)
     all_posts = []
 
-    for sub in subreddits:
-        log.info(f"\n  --- r/{sub} (last {days} days) ---")
-        before_utc = None
-        batch_num = 0
-        sub_count = 0
-
-        while True:
-            batch_num += 1
-            posts = fetch_arctic_shift_batch(subreddit=sub, before_utc=before_utc, after_utc=after_utc, limit=100)
-            if not posts:
-                break
-
-            all_posts.extend(posts)
-            sub_count += len(posts)
-            oldest_ts = min(p["created_utc"] for p in posts)
-            before_utc = int(oldest_ts)
-
-            log.info(f"  r/{sub} batch {batch_num}: {len(posts)} posts (sub total: {sub_count})")
-            time.sleep(0.5)
-
-            if batch_num > 50:
-                break
-
-        log.info(f"  r/{sub}: {sub_count} recent posts fetched")
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        futures = {
+            pool.submit(_fetch_recent_one_sub, sub, after_utc): sub
+            for sub in subreddits
+        }
+        for fut in as_completed(futures):
+            sub = futures[fut]
+            try:
+                posts = fut.result()
+                all_posts.extend(posts)
+            except Exception as e:
+                log.warning(f"  r/{sub}: fetch failed — {e}")
 
     return all_posts
 
