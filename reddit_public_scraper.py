@@ -236,9 +236,9 @@ def parse_text(text: str) -> dict:
 
     text_lower = text.lower()
 
-    # Brand detection
+    # Brand detection (word-boundary match to avoid "gain" in "agressive and")
     for brand in KNOWN_BRANDS:
-        if brand in text_lower:
+        if re.search(r"(?<![a-z])" + re.escape(brand) + r"(?![a-z])", text_lower):
             result["brand"] = brand.title()
             result["fields_found"] += 1
             break
@@ -313,12 +313,20 @@ def parse_text(text: str) -> dict:
     return result
 
 
-def confidence_tier(parsed: dict, subreddit: str = "") -> str:
-    """Assign a confidence tier."""
+def confidence_tier(parsed: dict, subreddit: str = "", text: str = "") -> str:
+    """Assign a confidence tier.
+
+    Auto-tier now requires shrinkflation keywords to prevent off-topic posts
+    from being auto-promoted.
+    """
     f = parsed["fields_found"]
-    if f >= TIER_AUTO_THRESHOLD and parsed["brand"] and parsed["explicit_from_to"]:
+    has_kw = bool(SHRINK_KEYWORDS.search(text)) if text else True  # backwards compat
+    if f >= TIER_AUTO_THRESHOLD and parsed["brand"] and parsed["explicit_from_to"] and has_kw:
         return "auto"
-    if f >= TIER_REVIEW_THRESHOLD:
+    if f >= TIER_REVIEW_THRESHOLD and has_kw:
+        return "review"
+    # Strong signal without keywords still goes to review
+    if f >= TIER_AUTO_THRESHOLD and parsed["explicit_from_to"]:
         return "review"
     # Posts from dedicated shrinkflation subs are inherently relevant (mostly
     # image posts where product/size info lives in the photo, not the title).
@@ -501,8 +509,8 @@ def promote_auto_entries(sb: "SupabaseClient", log) -> int:
                 "source": "reddit_bot"
             }, on_conflict="upc").execute()
 
-            # Insert event — use the post month as the date
-            sb.table("events").insert({
+            # Upsert event (prevent duplicates)
+            sb.table("events").upsert({
                 "upc": upc,
                 "date": date_noticed,
                 "old_size": old_s,
@@ -514,7 +522,7 @@ def promote_auto_entries(sb: "SupabaseClient", log) -> int:
                 "type": "shrinkflation",
                 "notes": f"Auto-imported from r/shrinkflation: {entry.get('source_url', '')}",
                 "source": "reddit_bot"
-            }).execute()
+            }, on_conflict="upc,date,source").execute()
 
             # Mark as promoted
             sb.table("reddit_staging").update({"status": "promoted"}).eq("id", entry["id"]).execute()
@@ -571,7 +579,7 @@ def process_posts(posts: list, known_urls: set, log) -> tuple:
                 continue
 
         parsed = parse_text(full_text)
-        tier = confidence_tier(parsed, subreddit=subreddit)
+        tier = confidence_tier(parsed, subreddit=subreddit, text=full_text)
         stats[tier] += 1
 
         if tier != "discard":

@@ -112,9 +112,9 @@ def promote_entry(sb, entry, dry_run=False):
             "created_by": "promote_staging",
         }, on_conflict="product_upc,observed_date,source").execute()
 
-        # Also insert into legacy events table for backward compatibility
+        # Also upsert into legacy events table for backward compatibility
         pct = round(((old_size - new_size) / old_size) * 100, 2) if old_size > 0 else 0
-        sb.table("events").insert({
+        sb.table("events").upsert({
             "upc": upc,
             "date": date_after,
             "old_size": old_size,
@@ -126,7 +126,7 @@ def promote_entry(sb, entry, dry_run=False):
             "type": "shrinkflation",
             "notes": f"Auto-imported from r/shrinkflation: {source_url}",
             "source": "reddit_bot",
-        }).execute()
+        }, on_conflict="upc,date,source").execute()
 
         # Mark staging entry as promoted
         sb.table("reddit_staging").update(

@@ -152,7 +152,8 @@ def parse_text(text: str) -> dict:
 
     Returns dict with keys:
         brand, product_hint, old_size, new_size, old_unit, new_unit,
-        old_price, new_price, fields_found, explicit_from_to
+        old_price, new_price, fields_found, explicit_from_to,
+        has_shrink_keywords
     """
     result = {
         "brand": None,
@@ -165,13 +166,14 @@ def parse_text(text: str) -> dict:
         "new_price": None,
         "fields_found": 0,
         "explicit_from_to": False,
+        "has_shrink_keywords": bool(SHRINK_KEYWORDS.search(text)),
     }
 
     text_lower = text.lower()
 
-    # Brand detection
+    # Brand detection (word-boundary match to avoid "gain" in "agressive and")
     for brand in KNOWN_BRANDS:
-        if brand in text_lower:
+        if re.search(r"(?<![a-z])" + re.escape(brand) + r"(?![a-z])", text_lower):
             result["brand"] = brand.title()
             result["fields_found"] += 1
             break
@@ -241,12 +243,20 @@ def parse_text(text: str) -> dict:
     return result
 
 
-def confidence_tier(parsed: dict) -> str:
-    """Assign auto / review / discard based on extracted signal strength."""
+def confidence_tier(parsed: dict, text: str = "") -> str:
+    """Assign auto / review / discard based on extracted signal strength.
+
+    Auto-tier now requires shrinkflation keywords to prevent off-topic posts
+    that happen to contain a brand name + size numbers from being auto-promoted.
+    """
     f = parsed["fields_found"]
-    if f >= TIER_AUTO_THRESHOLD and parsed["brand"] and parsed["explicit_from_to"]:
+    has_kw = parsed.get("has_shrink_keywords", False) or has_shrink_keywords(text)
+    if f >= TIER_AUTO_THRESHOLD and parsed["brand"] and parsed["explicit_from_to"] and has_kw:
         return "auto"
-    if f >= TIER_REVIEW_THRESHOLD:
+    if f >= TIER_REVIEW_THRESHOLD and has_kw:
+        return "review"
+    # Without keywords, only keep in review if very strong signal
+    if f >= TIER_AUTO_THRESHOLD and parsed["explicit_from_to"]:
         return "review"
     return "discard"
 

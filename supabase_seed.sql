@@ -34,7 +34,8 @@ CREATE TABLE IF NOT EXISTS events (
   notes         text,
   source        text DEFAULT 'community',
   submitted_by  text,
-  created_at    timestamptz DEFAULT now()
+  created_at    timestamptz DEFAULT now(),
+  UNIQUE(upc, date, source)
 );
 
 -- ── SUBMISSIONS ─────────────────────────────────────────────
