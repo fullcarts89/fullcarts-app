@@ -8,6 +8,9 @@ import os
 SUPABASE_URL = os.getenv("SUPABASE_URL", "https://ntyhbapphnzlariakgrw.supabase.co")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")  # service_role key
 
+# Anthropic API (for vision analysis of product images)
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+
 # Reddit API (optional — only for PRAW scraper)
 REDDIT_CLIENT_ID     = os.getenv("REDDIT_CLIENT_ID", "")
 REDDIT_CLIENT_SECRET = os.getenv("REDDIT_CLIENT_SECRET", "")

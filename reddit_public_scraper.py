@@ -45,6 +45,12 @@ try:
 except ImportError:
     HAS_SUPABASE = False
 
+try:
+    from backend.lib.vision import analyze_image, should_analyze, merge_vision_into_parsed
+    HAS_VISION = True
+except ImportError:
+    HAS_VISION = False
+
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
@@ -462,7 +468,10 @@ def build_entry(post: dict, parsed: dict, tier: str) -> dict:
         "posted_utc": datetime.utcfromtimestamp(created_utc).isoformat() if created_utc else None,
         "scraped_utc": datetime.now(tz=timezone.utc).isoformat(),
         "tier": tier,
-        "status": "pending",
+        # status is NOT included here — the DB default ('pending') applies on
+        # first insert, and omitting it from the upsert payload ensures that
+        # re-scraping the same source_url does not reset an already-promoted,
+        # dismissed, or rejected record back to 'pending'.
         "title": (post.get("title") or "")[:200],
         "body": (post.get("selftext") or "")[:2000],
         "image_url": _extract_image_url(post),
@@ -593,11 +602,32 @@ def process_posts(posts: list, known_urls: set, log) -> tuple:
                 continue
 
         parsed = parse_text(full_text)
+
+        # Vision analysis: if text parsing is weak and post has an image,
+        # use Claude vision to extract product details from the photo.
+        image_url = _extract_image_url(post)
+        vision_result = None
+        if HAS_VISION and should_analyze(parsed, image_url):
+            vision_result = analyze_image(image_url, title)
+            if vision_result:
+                parsed = merge_vision_into_parsed(parsed, vision_result)
+                stats.setdefault("vision_analyzed", 0)
+                stats["vision_analyzed"] += 1
+
         tier = confidence_tier(parsed, subreddit=subreddit, text=full_text)
+
+        # Visual-only shrinkflation: vision confirmed shrinkflation but no
+        # numbers could be extracted. Force to review tier for human judgment.
+        if vision_result and vision_result.get("visual_only") and tier == "discard":
+            tier = "review"
         stats[tier] += 1
 
         if tier != "discard":
             entry = build_entry(post, parsed, tier)
+            # Attach vision metadata if available
+            if vision_result:
+                entry["ai_description"] = vision_result.get("description")
+                entry["visual_only"] = bool(vision_result.get("visual_only"))
             entries.append(entry)
 
             ts = post.get("created_utc", 0)
@@ -739,6 +769,8 @@ def run_recent(log):
     log.info(f"Recent scrape complete — seen:{stats['seen']}  dupes:{stats['skipped_dup']}  "
              f"no-keyword:{stats['no_keyword']}")
     log.info(f"  auto:{stats['auto']}  review:{stats['review']}  discard:{stats['discard']}")
+    if stats.get("vision_analyzed"):
+        log.info(f"  vision analyzed: {stats['vision_analyzed']} images")
 
 
 def run_backfill(log):
@@ -791,6 +823,8 @@ def run_backfill(log):
     log.info(f"Backfill complete — seen:{stats['seen']}  dupes:{stats['skipped_dup']}  "
              f"no-keyword:{stats['no_keyword']}")
     log.info(f"  auto:{stats['auto']}  review:{stats['review']}  discard:{stats['discard']}")
+    if stats.get("vision_analyzed"):
+        log.info(f"  vision analyzed: {stats['vision_analyzed']} images")
 
     # Year-by-year breakdown
     year_counts = {}
