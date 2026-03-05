@@ -5,7 +5,7 @@ FullCarts Reddit Scraper
 Uses the Arctic Shift archive API (no Reddit credentials needed).
 
 Modes:
-  --backfill     One-time historical scrape of ALL r/shrinkflation posts (2017–present)
+  --backfill     One-time historical scrape of ALL posts from target subreddits (2017–present)
   --recent       Fetch posts from the last 7 days via Arctic Shift (default)
   --promote-only Skip scraping, just promote staged entries to products/events
 
@@ -63,6 +63,27 @@ KNOWN_URLS_FILE = OUTPUT_DIR / "known_urls_public.txt"
 # Confidence thresholds
 TIER_AUTO_THRESHOLD = 3    # fields found → auto-accept
 TIER_REVIEW_THRESHOLD = 1  # fields found → review queue
+
+# ---------------------------------------------------------------------------
+# Target subreddits
+# ---------------------------------------------------------------------------
+# "dedicated" subs: every post is likely relevant → review tier floor
+# "general" subs: require keyword match + fields_found >= 1, and min score
+#                 to filter noise from high-volume communities
+
+DEDICATED_SUBREDDITS = ["shrinkflation"]
+
+GENERAL_SUBREDDITS = [
+    "grocery",
+    "Costco",
+    "traderjoes",
+    "mildlyinfuriating",
+]
+
+ALL_SUBREDDITS = DEDICATED_SUBREDDITS + GENERAL_SUBREDDITS
+
+# Minimum post score for general subreddits (filters low-quality noise)
+MIN_SCORE_GENERAL = 5
 
 # ---------------------------------------------------------------------------
 # Known brands (reused from existing scraper)
@@ -298,9 +319,9 @@ def confidence_tier(parsed: dict, subreddit: str = "") -> str:
         return "auto"
     if f >= TIER_REVIEW_THRESHOLD:
         return "review"
-    # Posts from r/shrinkflation are inherently relevant (mostly image posts
-    # where product/size info lives in the photo, not the title text).
-    if subreddit.lower() == "shrinkflation":
+    # Posts from dedicated shrinkflation subs are inherently relevant (mostly
+    # image posts where product/size info lives in the photo, not the title).
+    if subreddit.lower() in DEDICATED_SUBREDDITS:
         return "review"
     return "discard"
 
@@ -323,10 +344,10 @@ def save_known_urls(path: Path, urls: set) -> None:
 # Arctic Shift archive fetcher (no Reddit credentials needed)
 # ---------------------------------------------------------------------------
 
-def fetch_arctic_shift_batch(before_utc: int = None, after_utc: int = 0, limit: int = 100) -> list:
+def fetch_arctic_shift_batch(subreddit: str = "shrinkflation", before_utc: int = None, after_utc: int = 0, limit: int = 100) -> list:
     """Fetch a batch of posts from Arctic Shift API."""
     params = {
-        "subreddit": "shrinkflation",
+        "subreddit": subreddit,
         "limit": min(limit, 100),
         "sort": "desc",
     }
@@ -346,35 +367,40 @@ def fetch_arctic_shift_batch(before_utc: int = None, after_utc: int = 0, limit: 
         return []
 
 
-def fetch_all_arctic_shift(log) -> list:
-    """Paginate through ALL historical posts via Arctic Shift."""
+def fetch_all_arctic_shift(log, subreddits: list = None) -> list:
+    """Paginate through ALL historical posts via Arctic Shift for each subreddit."""
+    subreddits = subreddits or ALL_SUBREDDITS
     all_posts = []
-    before_utc = None  # Start from most recent
-    batch_num = 0
 
-    while True:
-        batch_num += 1
-        posts = fetch_arctic_shift_batch(before_utc=before_utc, limit=100)
-        if not posts:
-            log.info(f"  Arctic Shift: no more posts after batch {batch_num}")
-            break
+    for sub in subreddits:
+        log.info(f"\n  --- r/{sub} ---")
+        before_utc = None
+        batch_num = 0
+        sub_count = 0
 
-        all_posts.extend(posts)
-        # Next batch: go before the oldest post in this batch
-        oldest_ts = min(p["created_utc"] for p in posts)
-        before_utc = int(oldest_ts)
+        while True:
+            batch_num += 1
+            posts = fetch_arctic_shift_batch(subreddit=sub, before_utc=before_utc, limit=100)
+            if not posts:
+                log.info(f"  r/{sub}: no more posts after batch {batch_num}")
+                break
 
-        oldest_date = datetime.utcfromtimestamp(oldest_ts).strftime("%Y-%m-%d")
-        log.info(f"  Arctic Shift batch {batch_num}: {len(posts)} posts "
-                 f"(total: {len(all_posts)}, oldest: {oldest_date})")
+            all_posts.extend(posts)
+            sub_count += len(posts)
+            oldest_ts = min(p["created_utc"] for p in posts)
+            before_utc = int(oldest_ts)
 
-        # Rate limit: be polite
-        time.sleep(0.5)
+            oldest_date = datetime.utcfromtimestamp(oldest_ts).strftime("%Y-%m-%d")
+            log.info(f"  r/{sub} batch {batch_num}: {len(posts)} posts "
+                     f"(sub total: {sub_count}, oldest: {oldest_date})")
 
-        # Safety valve
-        if batch_num > 500:
-            log.warning("  Hit 500 batch safety limit — stopping")
-            break
+            time.sleep(0.5)
+
+            if batch_num > 500:
+                log.warning(f"  r/{sub}: hit 500 batch safety limit — stopping")
+                break
+
+        log.info(f"  r/{sub}: {sub_count} posts fetched")
 
     return all_posts
 
@@ -512,12 +538,23 @@ def process_posts(posts: list, known_urls: set, log) -> tuple:
         selftext = post.get("selftext", "") or ""
         full_text = f"{title}\n{selftext}"
 
-        # For r/shrinkflation, most posts are relevant — but still filter for other subs
+        # Dedicated subs: every post is likely relevant
+        # General subs: require keyword match + minimum score to filter noise
         subreddit = post.get("subreddit", "").lower()
-        if subreddit != "shrinkflation" and not SHRINK_KEYWORDS.search(full_text):
-            stats["no_keyword"] += 1
-            new_urls.add(url)
-            continue
+        is_dedicated = subreddit in DEDICATED_SUBREDDITS
+
+        if not is_dedicated:
+            # Score gate: skip low-engagement posts from general subs
+            score = post.get("score", 0)
+            if score < MIN_SCORE_GENERAL:
+                stats["no_keyword"] += 1
+                new_urls.add(url)
+                continue
+            # Keyword gate: must mention shrinkflation concepts
+            if not SHRINK_KEYWORDS.search(full_text):
+                stats["no_keyword"] += 1
+                new_urls.add(url)
+                continue
 
         parsed = parse_text(full_text)
         tier = confidence_tier(parsed, subreddit=subreddit)
@@ -565,28 +602,36 @@ def upsert_to_supabase(sb: "SupabaseClient", entries: list, log) -> int:
     return upserted
 
 
-def fetch_recent_arctic_shift(log, days: int = 7) -> list:
-    """Fetch recent posts from the last N days via Arctic Shift API."""
+def fetch_recent_arctic_shift(log, days: int = 7, subreddits: list = None) -> list:
+    """Fetch recent posts from the last N days via Arctic Shift API for each subreddit."""
+    subreddits = subreddits or ALL_SUBREDDITS
     after_utc = int(time.time()) - (days * 86400)
     all_posts = []
-    before_utc = None
-    batch_num = 0
 
-    while True:
-        batch_num += 1
-        posts = fetch_arctic_shift_batch(before_utc=before_utc, after_utc=after_utc, limit=100)
-        if not posts:
-            break
+    for sub in subreddits:
+        log.info(f"\n  --- r/{sub} (last {days} days) ---")
+        before_utc = None
+        batch_num = 0
+        sub_count = 0
 
-        all_posts.extend(posts)
-        oldest_ts = min(p["created_utc"] for p in posts)
-        before_utc = int(oldest_ts)
+        while True:
+            batch_num += 1
+            posts = fetch_arctic_shift_batch(subreddit=sub, before_utc=before_utc, after_utc=after_utc, limit=100)
+            if not posts:
+                break
 
-        log.info(f"  Arctic Shift batch {batch_num}: {len(posts)} posts (total: {len(all_posts)})")
-        time.sleep(0.5)
+            all_posts.extend(posts)
+            sub_count += len(posts)
+            oldest_ts = min(p["created_utc"] for p in posts)
+            before_utc = int(oldest_ts)
 
-        if batch_num > 50:
-            break
+            log.info(f"  r/{sub} batch {batch_num}: {len(posts)} posts (sub total: {sub_count})")
+            time.sleep(0.5)
+
+            if batch_num > 50:
+                break
+
+        log.info(f"  r/{sub}: {sub_count} recent posts fetched")
 
     return all_posts
 
@@ -595,11 +640,12 @@ def run_recent(log):
     """Fetch recent posts via Arctic Shift API (last 7 days)."""
     log.info("=" * 60)
     log.info("MODE: Recent posts (Arctic Shift API — last 7 days)")
+    log.info(f"Subreddits: {', '.join(ALL_SUBREDDITS)}")
     log.info("=" * 60)
 
     known_urls = load_known_urls(KNOWN_URLS_FILE)
 
-    log.info("\nFetching recent r/shrinkflation posts from Arctic Shift...")
+    log.info("\nFetching recent posts from Arctic Shift...")
     all_posts = fetch_recent_arctic_shift(log, days=7)
 
     # Deduplicate by id
@@ -646,6 +692,7 @@ def run_backfill(log):
     """Historical backfill via Arctic Shift archive API."""
     log.info("=" * 60)
     log.info("MODE: Historical backfill (Arctic Shift archive)")
+    log.info(f"Subreddits: {', '.join(ALL_SUBREDDITS)}")
     log.info("=" * 60)
 
     known_urls = load_known_urls(KNOWN_URLS_FILE)
