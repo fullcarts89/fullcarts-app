@@ -373,7 +373,12 @@ def fetch_all_arctic_shift(log, subreddits: list = None) -> list:
     all_posts = []
 
     for sub in subreddits:
-        log.info(f"\n  --- r/{sub} ---")
+        is_dedicated = sub.lower() in DEDICATED_SUBREDDITS
+        # Dedicated subs: exhaust the archive (500 batches ≈ 50k posts)
+        # General subs: cap at 100 batches (10k posts) to stay within timeout
+        max_batches = 500 if is_dedicated else 100
+
+        log.info(f"\n  --- r/{sub} (max {max_batches} batches) ---")
         before_utc = None
         batch_num = 0
         sub_count = 0
@@ -396,8 +401,8 @@ def fetch_all_arctic_shift(log, subreddits: list = None) -> list:
 
             time.sleep(0.5)
 
-            if batch_num > 500:
-                log.warning(f"  r/{sub}: hit 500 batch safety limit — stopping")
+            if batch_num >= max_batches:
+                log.warning(f"  r/{sub}: hit {max_batches} batch limit — stopping")
                 break
 
         log.info(f"  r/{sub}: {sub_count} posts fetched")
