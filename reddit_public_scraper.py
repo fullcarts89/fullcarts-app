@@ -462,7 +462,10 @@ def build_entry(post: dict, parsed: dict, tier: str) -> dict:
         "posted_utc": datetime.utcfromtimestamp(created_utc).isoformat() if created_utc else None,
         "scraped_utc": datetime.now(tz=timezone.utc).isoformat(),
         "tier": tier,
-        "status": "pending",
+        # status is NOT included here — the DB default ('pending') applies on
+        # first insert, and omitting it from the upsert payload ensures that
+        # re-scraping the same source_url does not reset an already-promoted,
+        # dismissed, or rejected record back to 'pending'.
         "title": (post.get("title") or "")[:200],
         "body": (post.get("selftext") or "")[:2000],
         "image_url": _extract_image_url(post),
