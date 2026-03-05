@@ -252,6 +252,18 @@ def save_staging(path: Path, queue: dict) -> None:
 # Core scraping logic
 # ---------------------------------------------------------------------------
 
+_IMAGE_DOMAINS = {"i.redd.it", "i.imgur.com", "imgur.com", "preview.redd.it"}
+
+
+def _extract_image_url_praw(post) -> str | None:
+    """Return a direct image URL from a PRAW post object, or None."""
+    url = getattr(post, "url", "") or ""
+    post_hint = getattr(post, "post_hint", "") or ""
+    if post_hint == "image" or any(d in url for d in _IMAGE_DOMAINS):
+        return url[:500] if url else None
+    return None
+
+
 def build_entry(post, parsed: dict, tier: str) -> dict:
     """Build a staging entry from a Reddit post + parsed signals."""
     return {
@@ -262,6 +274,7 @@ def build_entry(post, parsed: dict, tier: str) -> dict:
         "tier":          tier,
         "title":         post.title[:200],
         "body":          (post.selftext or "")[:2000],
+        "image_url":     _extract_image_url_praw(post),
         "brand":         parsed["brand"],
         "product_hint":  parsed["product_hint"],
         "old_size":      parsed["old_size"],

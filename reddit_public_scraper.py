@@ -431,6 +431,18 @@ def fetch_all_arctic_shift(log, subreddits: list = None) -> list:
 # Entry builder
 # ---------------------------------------------------------------------------
 
+_IMAGE_DOMAINS = {"i.redd.it", "i.imgur.com", "imgur.com", "preview.redd.it"}
+
+
+def _extract_image_url(post: dict) -> str | None:
+    """Return a direct image URL from an Arctic Shift post dict, or None."""
+    url = post.get("url") or ""
+    post_hint = post.get("post_hint") or ""
+    if post_hint == "image" or any(d in url for d in _IMAGE_DOMAINS):
+        return url[:500] if url else None
+    return None
+
+
 def build_entry(post: dict, parsed: dict, tier: str) -> dict:
     """Build a staging entry from a Reddit post + parsed signals."""
     created_utc = post.get("created_utc", 0)
@@ -453,6 +465,7 @@ def build_entry(post: dict, parsed: dict, tier: str) -> dict:
         "status": "pending",
         "title": (post.get("title") or "")[:200],
         "body": (post.get("selftext") or "")[:2000],
+        "image_url": _extract_image_url(post),
         "brand": parsed["brand"],
         "product_hint": parsed["product_hint"],
         "old_size": parsed["old_size"],
