@@ -3977,7 +3977,8 @@ async function approveReviewItem() {
     }
 
     // 3. Mark as promoted in staging (uses RPC to bypass RLS)
-    await sb.rpc('update_staging_status', { row_id: r.id, new_status: 'promoted' });
+    const { error: rpcErr } = await sb.rpc('update_staging_status', { row_id: r.id, new_status: 'promoted' });
+    if (rpcErr) throw new Error(`RPC failed: ${rpcErr.message}`);
 
     reviewSessionStats.approved++;
 
@@ -4006,10 +4007,11 @@ async function approveReviewItem() {
 async function skipReviewItem() {
   const r = reviewQueue[reviewIndex];
 
-  try {
-    await sb.rpc('update_staging_status', { row_id: r.id, new_status: 'dismissed' });
-  } catch (e) {
-    console.warn('Skip update failed:', e);
+  const { error: rpcErr } = await sb.rpc('update_staging_status', { row_id: r.id, new_status: 'dismissed' });
+  if (rpcErr) {
+    console.error('Skip RPC failed:', rpcErr.message);
+    alert('Failed to update status — check that the update_staging_status RPC function exists.\n\n' + rpcErr.message);
+    return;
   }
 
   reviewSessionStats.skipped++;
@@ -4033,11 +4035,11 @@ async function rejectReviewItem() {
   const btn = document.querySelector('.review-btn-reject');
   if (btn) { btn.textContent = '⏳...'; btn.style.pointerEvents = 'none'; }
 
-  try {
-    await sb.rpc('update_staging_status', { row_id: r.id, new_status: 'rejected' });
-  } catch (e) {
-    console.warn('Reject update failed:', e);
+  const { error: rpcErr } = await sb.rpc('update_staging_status', { row_id: r.id, new_status: 'rejected' });
+  if (rpcErr) {
+    console.error('Reject RPC failed:', rpcErr.message);
     if (btn) { btn.textContent = '❌ Error'; btn.style.pointerEvents = ''; }
+    alert('Failed to update status — check that the update_staging_status RPC function exists.\n\n' + rpcErr.message);
     setTimeout(() => { if (btn) btn.textContent = '🚫 Reject'; }, 2000);
     return;
   }

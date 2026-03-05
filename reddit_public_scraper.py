@@ -682,24 +682,26 @@ def upsert_to_supabase(sb: "SupabaseClient", entries: list, log) -> int:
         batch = entries[i:i + 50]
         try:
             sb.table("reddit_staging").upsert(
-                batch, on_conflict="source_url"
+                batch, on_conflict="source_url",
+                ignore_duplicates=True
             ).execute()
             upserted += len(batch)
         except Exception as exc:
             if not first_error_logged:
-                log.warning(f"  Supabase batch upsert failed (batch {i // 50 + 1}): {exc}")
+                log.warning(f"  Supabase batch insert failed (batch {i // 50 + 1}): {exc}")
                 first_error_logged = True
             # Try one by one
             for entry in batch:
                 try:
                     sb.table("reddit_staging").upsert(
-                        entry, on_conflict="source_url"
+                        entry, on_conflict="source_url",
+                        ignore_duplicates=True
                     ).execute()
                     upserted += 1
                 except Exception as exc2:
                     # Log first few failures with full detail
                     if upserted == 0 and i == 0:
-                        log.warning(f"    Single upsert failed: {exc2}")
+                        log.warning(f"    Single insert failed: {exc2}")
                         log.warning(f"    Entry keys: {list(entry.keys())}")
 
     return upserted
