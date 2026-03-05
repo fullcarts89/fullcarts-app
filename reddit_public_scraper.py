@@ -291,12 +291,16 @@ def parse_text(text: str) -> dict:
     return result
 
 
-def confidence_tier(parsed: dict) -> str:
+def confidence_tier(parsed: dict, subreddit: str = "") -> str:
     """Assign a confidence tier."""
     f = parsed["fields_found"]
     if f >= TIER_AUTO_THRESHOLD and parsed["brand"] and parsed["explicit_from_to"]:
         return "auto"
     if f >= TIER_REVIEW_THRESHOLD:
+        return "review"
+    # Posts from r/shrinkflation are inherently relevant (mostly image posts
+    # where product/size info lives in the photo, not the title text).
+    if subreddit.lower() == "shrinkflation":
         return "review"
     return "discard"
 
@@ -516,7 +520,7 @@ def process_posts(posts: list, known_urls: set, log) -> tuple:
             continue
 
         parsed = parse_text(full_text)
-        tier = confidence_tier(parsed)
+        tier = confidence_tier(parsed, subreddit=subreddit)
         stats[tier] += 1
 
         if tier != "discard":
