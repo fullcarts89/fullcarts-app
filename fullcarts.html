@@ -1635,6 +1635,10 @@
       background:rgba(88,204,2,0.15);color:var(--duo-green);
       border-bottom-color:rgba(88,204,2,0.2) !important;
     }
+    .review-btn-reject {
+      background:rgba(255,68,68,0.15);color:#ff4444;
+      border-bottom-color:rgba(255,68,68,0.2) !important;
+    }
     .review-edit-fields {
       display:flex;flex-direction:column;gap:8px;margin:10px 0;
       animation:reviewSlideIn 0.2s ease-out;
@@ -3760,7 +3764,7 @@ async function loadFlags() {
 let reviewQueue = [];
 let reviewIndex = 0;
 let reviewEditing = false;
-let reviewSessionStats = { approved: 0, skipped: 0 };
+let reviewSessionStats = { approved: 0, skipped: 0, rejected: 0 };
 
 async function loadRedditReviewQueue() {
   const container = document.getElementById('reddit-review-container');
@@ -3781,7 +3785,7 @@ async function loadRedditReviewQueue() {
   reviewQueue = reviewData;
   reviewIndex = 0;
   reviewEditing = false;
-  reviewSessionStats = { approved: 0, skipped: 0 };
+  reviewSessionStats = { approved: 0, skipped: 0, rejected: 0 };
 
   if (!reviewQueue.length) {
     container.innerHTML = `<div class="review-done-card">
@@ -3804,6 +3808,7 @@ function renderReviewCard() {
       <p>You reviewed ${reviewQueue.length} items</p>
       <div class="review-session-stats">
         <span style="background:rgba(88,204,2,0.12);color:var(--duo-green)">✅ ${reviewSessionStats.approved} approved</span>
+        <span style="background:rgba(255,68,68,0.12);color:#ff4444">🚫 ${reviewSessionStats.rejected} rejected</span>
         <span style="background:rgba(255,255,255,0.06);color:var(--hare)">⏭ ${reviewSessionStats.skipped} skipped</span>
       </div>
       <button class="btn-duo btn-sm" style="margin:16px auto 0;background:rgba(206,130,255,0.1);border:2px solid rgba(206,130,255,0.2);color:var(--duo-purple);border-bottom:4px solid rgba(206,130,255,0.15)" onclick="loadRedditReviewQueue()">Load More</button>
@@ -3827,6 +3832,7 @@ function renderReviewCard() {
       <span>${reviewIndex + 1} / ${reviewQueue.length}</span>
       <div class="review-progress-bar"><div class="review-progress-fill" style="width:${progress}%"></div></div>
       <span style="color:var(--duo-green)">✅${reviewSessionStats.approved}</span>
+      <span style="color:#ff4444">🚫${reviewSessionStats.rejected}</span>
     </div>
 
     <div class="review-card" id="review-current-card">
@@ -3857,6 +3863,7 @@ function renderReviewCard() {
       <div id="review-edit-area"></div>
 
       <div class="review-actions">
+        <button class="review-btn-reject" onclick="rejectReviewItem()">🚫 Reject</button>
         <button class="review-btn-skip" onclick="skipReviewItem()">⏭ Skip</button>
         <button class="review-btn-edit" onclick="toggleReviewEdit()">✏️ Edit</button>
         <button class="review-btn-approve" onclick="approveReviewItem()">✅ Approve</button>
@@ -3951,9 +3958,9 @@ async function approveReviewItem() {
       source: 'reddit_bot'
     }, { onConflict: 'upc' });
 
-    // 2. Insert event (if we have size data)
+    // 2. Upsert event (if we have size data) — prevents duplicates
     if (oldSize && newSize) {
-      await sb.from('events').insert({
+      await sb.from('events').upsert({
         upc,
         date: dateNoticed,
         old_size: oldSize,
@@ -3963,7 +3970,7 @@ async function approveReviewItem() {
         type: 'shrinkflation',
         notes: `Reviewed & approved from r/shrinkflation: ${r.source_url || ''}`,
         source: 'reddit_bot'
-      });
+      }, { onConflict: 'upc,date,source' });
     }
 
     // 3. Mark as promoted in staging
@@ -4016,6 +4023,37 @@ async function skipReviewItem() {
     reviewEditing = false;
     renderReviewCard();
   }, 200);
+}
+
+async function rejectReviewItem() {
+  const r = reviewQueue[reviewIndex];
+  const btn = document.querySelector('.review-btn-reject');
+  if (btn) { btn.textContent = '⏳...'; btn.style.pointerEvents = 'none'; }
+
+  try {
+    await sb.from('reddit_staging').update({ status: 'rejected' }).eq('id', r.id);
+  } catch (e) {
+    console.warn('Reject update failed:', e);
+    if (btn) { btn.textContent = '❌ Error'; btn.style.pointerEvents = ''; }
+    setTimeout(() => { if (btn) btn.textContent = '🚫 Reject'; }, 2000);
+    return;
+  }
+
+  reviewSessionStats.rejected++;
+
+  const card = document.getElementById('review-current-card');
+  if (card) {
+    card.style.transition = 'all 0.2s';
+    card.style.borderColor = '#ff4444';
+    card.style.opacity = '0.3';
+    card.style.transform = 'scale(0.95)';
+  }
+
+  setTimeout(() => {
+    reviewIndex++;
+    reviewEditing = false;
+    renderReviewCard();
+  }, 250);
 }
 
 // ── Touch swipe for review cards ──────────────────────────

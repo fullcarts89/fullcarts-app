@@ -151,9 +151,9 @@ def parse_text(text: str) -> dict:
 
     text_lower = text.lower()
 
-    # Brand detection
+    # Brand detection (word-boundary match to avoid "gain" in "agressive and")
     for brand in KNOWN_BRANDS:
-        if brand in text_lower:
+        if re.search(r"(?<![a-z])" + re.escape(brand) + r"(?![a-z])", text_lower):
             result["brand"] = brand.title()
             result["fields_found"] += 1
             break
@@ -199,17 +199,20 @@ def parse_text(text: str) -> dict:
     return result
 
 
-def confidence_tier(parsed: dict) -> str:
+def confidence_tier(parsed: dict, text: str = "") -> str:
     """
     Assign a confidence tier based on how many signal fields were extracted.
-    auto   → ≥ TIER_AUTO_THRESHOLD fields + known brand + explicit from→to
-    review → ≥ TIER_REVIEW_THRESHOLD fields
+    auto   → ≥ TIER_AUTO_THRESHOLD fields + known brand + explicit from→to + shrink keywords
+    review → ≥ TIER_REVIEW_THRESHOLD fields + shrink keywords
     discard → noise / off-topic
     """
     f = parsed["fields_found"]
-    if f >= TIER_AUTO_THRESHOLD and parsed["brand"] and parsed["explicit_from_to"]:
+    has_kw = bool(SHRINK_KEYWORDS.search(text)) if text else True  # backwards compat
+    if f >= TIER_AUTO_THRESHOLD and parsed["brand"] and parsed["explicit_from_to"] and has_kw:
         return "auto"
-    if f >= TIER_REVIEW_THRESHOLD:
+    if f >= TIER_REVIEW_THRESHOLD and has_kw:
+        return "review"
+    if f >= TIER_AUTO_THRESHOLD and parsed["explicit_from_to"]:
         return "review"
     return "discard"
 
@@ -307,9 +310,9 @@ def promote_auto_entries(sb, log) -> int:
                 "source": "reddit_bot"
             }, on_conflict="upc").execute()
 
-            # Insert event
+            # Upsert event (prevent duplicates)
             posted = entry.get("posted_utc") or datetime.now(tz=timezone.utc).isoformat()
-            sb.table("events").insert({
+            sb.table("events").upsert({
                 "upc": upc,
                 "date": str(posted)[:10],
                 "old_size": old_s,
@@ -321,7 +324,7 @@ def promote_auto_entries(sb, log) -> int:
                 "type": "shrinkflation",
                 "notes": f"Auto-imported from Reddit: {entry.get('source_url', '')}",
                 "source": "reddit_bot"
-            }).execute()
+            }, on_conflict="upc,date,source").execute()
 
             # Mark as promoted
             sb.table("reddit_staging").update({"status": "promoted"}).eq("id", entry["id"]).execute()
@@ -393,7 +396,7 @@ def run_scraper(dry_run: bool = False) -> None:
                 continue
 
             parsed = parse_text(full_text)
-            tier   = confidence_tier(parsed)
+            tier   = confidence_tier(parsed, text=full_text)
             stats[tier] += 1
 
             if not dry_run and tier != "discard":
