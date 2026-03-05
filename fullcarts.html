@@ -3976,8 +3976,8 @@ async function approveReviewItem() {
       }, { onConflict: 'upc,date,source' });
     }
 
-    // 3. Mark as promoted in staging
-    await sb.from('reddit_staging').update({ status: 'promoted' }).eq('id', r.id);
+    // 3. Mark as promoted in staging (uses RPC to bypass RLS)
+    await sb.rpc('update_staging_status', { row_id: r.id, new_status: 'promoted' });
 
     reviewSessionStats.approved++;
 
@@ -4007,7 +4007,7 @@ async function skipReviewItem() {
   const r = reviewQueue[reviewIndex];
 
   try {
-    await sb.from('reddit_staging').update({ status: 'dismissed' }).eq('id', r.id);
+    await sb.rpc('update_staging_status', { row_id: r.id, new_status: 'dismissed' });
   } catch (e) {
     console.warn('Skip update failed:', e);
   }
@@ -4034,7 +4034,7 @@ async function rejectReviewItem() {
   if (btn) { btn.textContent = '⏳...'; btn.style.pointerEvents = 'none'; }
 
   try {
-    await sb.from('reddit_staging').update({ status: 'rejected' }).eq('id', r.id);
+    await sb.rpc('update_staging_status', { row_id: r.id, new_status: 'rejected' });
   } catch (e) {
     console.warn('Reject update failed:', e);
     if (btn) { btn.textContent = '❌ Error'; btn.style.pointerEvents = ''; }
