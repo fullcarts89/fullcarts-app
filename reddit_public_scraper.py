@@ -1020,43 +1020,63 @@ def run_backfill_images(log):
 
     sb = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-    # Fetch rows with null image_url that have a source_url
-    rows = (sb.table("reddit_staging")
-            .select("id, source_url")
-            .is_("image_url", "null")
-            .not_.is_("source_url", "null")
-            .limit(500)
-            .execute()).data or []
+    # Count total rows needing backfill
+    all_null = (sb.table("reddit_staging")
+                .select("id", count="exact")
+                .is_("image_url", "null")
+                .not_.is_("source_url", "null")
+                .execute())
+    total = all_null.count or 0
+    log.info(f"Found {total} rows with missing image_url")
 
-    log.info(f"Found {len(rows)} rows with missing image_url")
     fixed = 0
+    processed = 0
+    batch_size = 200
 
-    for i, row in enumerate(rows):
-        source_url = row.get("source_url") or ""
-        # Extract permalink from full Reddit URL
-        permalink = source_url
-        if "reddit.com" in source_url:
-            # https://www.reddit.com/r/shrinkflation/comments/xxx/... -> /r/shrinkflation/comments/xxx/...
-            parts = source_url.split("reddit.com", 1)
-            if len(parts) == 2:
-                permalink = parts[1]
+    while True:
+        # Always query from start — fixed rows drop out of the null filter
+        rows = (sb.table("reddit_staging")
+                .select("id, source_url")
+                .is_("image_url", "null")
+                .not_.is_("source_url", "null")
+                .limit(batch_size)
+                .execute()).data or []
 
-        img_url = _extract_image_url_from_reddit_json(permalink)
-        if img_url:
-            sb.table("reddit_staging").update({"image_url": img_url}).eq("id", row["id"]).execute()
-            fixed += 1
-            log.info(f"  [{i+1}/{len(rows)}] Fixed: {permalink[:60]}...")
-        else:
-            log.debug(f"  [{i+1}/{len(rows)}] No image found: {permalink[:60]}...")
+        if not rows:
+            break
 
-        # Rate-limit: Reddit allows ~60 req/min for unauthenticated
-        if (i + 1) % 30 == 0:
-            log.info(f"  ... rate-limit pause (30 requests done)")
-            time.sleep(5)
-        else:
-            time.sleep(1)
+        fixed_this_batch = 0
+        for row in rows:
+            processed += 1
+            source_url = row.get("source_url") or ""
+            permalink = source_url
+            if "reddit.com" in source_url:
+                parts = source_url.split("reddit.com", 1)
+                if len(parts) == 2:
+                    permalink = parts[1]
 
-    log.info(f"\nBackfill complete: fixed {fixed}/{len(rows)} rows")
+            img_url = _extract_image_url_from_reddit_json(permalink)
+            if img_url:
+                sb.table("reddit_staging").update({"image_url": img_url}).eq("id", row["id"]).execute()
+                fixed += 1
+                fixed_this_batch += 1
+                log.info(f"  [{processed}/{total}] Fixed: {permalink[:60]}...")
+            else:
+                log.info(f"  [{processed}/{total}] No image: {permalink[:60]}...")
+
+            # Rate-limit: Reddit allows ~60 req/min unauthenticated
+            if processed % 30 == 0:
+                log.info(f"  ... rate-limit pause ({processed} done, {fixed} fixed)")
+                time.sleep(5)
+            else:
+                time.sleep(1)
+
+        # If nothing was fixed this batch, remaining rows are truly imageless — stop
+        if fixed_this_batch == 0:
+            log.info(f"No images found in last batch of {len(rows)} — stopping")
+            break
+
+    log.info(f"\nBackfill complete: fixed {fixed}/{total} rows")
 
 
 def run_promote_only(log):
