@@ -1836,6 +1836,23 @@
       cursor:pointer;font-family:'Nunito',sans-serif;
     }
     .admin-edit-product-btn:active { transform:scale(0.97); }
+
+    /* Toast notifications */
+    .fc-toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); padding: 10px 20px; border-radius: 12px; font-size: 13px; font-weight: 800; color: white; z-index: 9999; animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards; max-width: 360px; text-align: center; }
+    .fc-toast.success { background: var(--duo-green); }
+    .fc-toast.error { background: var(--duo-red); }
+    .fc-toast.info { background: var(--duo-blue); }
+    @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+    @keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
+
+    /* Loading bar */
+    .fc-loading-bar { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 9999; overflow: hidden; }
+    .fc-loading-bar::after { content: ''; display: block; width: 40%; height: 100%; background: var(--duo-green); animation: loadSlide 1.2s ease-in-out infinite; }
+    @keyframes loadSlide { 0% { transform: translateX(-100%); } 100% { transform: translateX(350%); } }
+
+    /* Empty state */
+    .empty-state { padding: 32px 16px; text-align: center; }
+    .empty-state p { font-size: 14px; color: var(--wolf); font-weight: 700; margin-bottom: 12px; }
   </style>
 </head>
 <body>
@@ -2005,6 +2022,17 @@
 
 <script>
 // ============================================================
+// TOAST NOTIFICATIONS
+// ============================================================
+function showToast(message, type = 'info') {
+  const t = document.createElement('div');
+  t.className = `fc-toast ${type}`;
+  t.textContent = message;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+// ============================================================
 // DATA
 // ============================================================
 // ── Shrink type taxonomy ──────────────────────────────────
@@ -2159,12 +2187,13 @@ function saveStats() { localStorage.setItem('fc_stats', JSON.stringify(personalS
 
 // ── Admin mode ───────────────────────────────────────────
 let isAdmin = localStorage.getItem('fc_admin') === 'true';
+const ADMIN_SECRET = 'fc-shrink-admin-2026';
 const _urlParams = new URLSearchParams(window.location.search);
 const _hash = window.location.hash;
-if (_hash === '#admin' || _urlParams.get('admin') === '1') { isAdmin = true; localStorage.setItem('fc_admin', 'true'); }
+if (_hash === '#admin-' + ADMIN_SECRET || _urlParams.get('admin') === '1') { isAdmin = true; localStorage.setItem('fc_admin', 'true'); }
 if (_hash === '#noadmin' || _urlParams.get('admin') === '0') { isAdmin = false; localStorage.removeItem('fc_admin'); }
 window.addEventListener('hashchange', () => {
-  if (window.location.hash === '#admin') { isAdmin = true; localStorage.setItem('fc_admin', 'true'); }
+  if (window.location.hash === '#admin-' + ADMIN_SECRET) { isAdmin = true; localStorage.setItem('fc_admin', 'true'); }
   if (window.location.hash === '#noadmin') { isAdmin = false; localStorage.removeItem('fc_admin'); }
   const ab = document.getElementById('admin-badge');
   if (ab) ab.style.display = isAdmin ? 'inline' : 'none';
@@ -2339,7 +2368,6 @@ async function submitFlag() {
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 3000);
   } catch (err) {
-    console.warn('[FullCarts] Flag submission failed:', err);
     alert('Could not submit flag. Please try again.');
   }
 }
@@ -2397,8 +2425,8 @@ function openShareCard(upc) {
   const latest   = evs[0];
 
   document.getElementById('sc-body').innerHTML = `
-    <div class="sc-product-name">${p.name}</div>
-    <div class="sc-brand">${p.brand} · ${p.category}</div>
+    <div class="sc-product-name">${escapeHTML(p.name)}</div>
+    <div class="sc-brand">${escapeHTML(p.brand)} · ${escapeHTML(p.category)}</div>
     <div class="sc-grade-row">
       <div class="sc-grade-badge" style="background:${gradeColor}">${grade}</div>
       <div class="sc-grade-label">
@@ -2474,6 +2502,10 @@ function navigate(screen, upc = null) {
   currentUPC = upc;
   if (screen !== 'leaderboard') currentBrand = null;
 
+  // Update URL hash for bookmarkable routes (skip for sub-screens like result/notfound)
+  const hashRoutes = { home:'home', scanner:'scanner', leaderboard:'shame', report:'report', community:'community', news:'news' };
+  if (hashRoutes[screen]) window.location.hash = hashRoutes[screen];
+
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   const map = { home:'nav-home', scanner:'nav-scanner', leaderboard:'nav-leaderboard', report:'nav-report', community:'nav-community', news:'nav-community', evidence:'nav-community' };
   if (map[screen]) document.getElementById(map[screen])?.classList.add('active');
@@ -2509,8 +2541,8 @@ function renderHome() {
           <div class="product-item" onclick="navigate('result','${p.upc}')">
             ${productThumb(p.upc, p.category)}
             <div class="product-info">
-              <strong>${p.name}</strong>
-              <span>${p.brand} · ${p.currentSize}${p.unit}</span>
+              <strong>${escapeHTML(p.name)}</strong>
+              <span>${escapeHTML(p.brand)} · ${p.currentSize}${escapeHTML(p.unit)}</span>
               ${t ? `<span class="type-badge ${t.cls}" style="margin-top:3px">${t.emoji} ${t.label}</span>` : ''}
               <div class="community-signals">
                 <span><span class="signal-dot"></span>${evs.length} report${evs.length !== 1 ? 's' : ''}</span>
@@ -2634,8 +2666,8 @@ function renderHome() {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="#58CC02" stroke-width="2" stroke-linecap="round"/><polyline points="22 4 12 14.01 9 11.01" stroke="#58CC02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
             <div style="flex:1;min-width:0">
-              <h4>${p.name}</h4>
-              <p>${p.brand} reversed a size cut. Community still watching.</p>
+              <h4>${escapeHTML(p.name)}</h4>
+              <p>${escapeHTML(p.brand)} reversed a size cut. Community still watching.</p>
             </div>
             <span style="font-size:11px;font-weight:900;color:var(--duo-green);white-space:nowrap">See details →</span>
           </div>`).join('')}
@@ -2668,7 +2700,12 @@ function renderHome() {
   `;
 }
 
-function handleSearch(q) { searchQuery = q; renderScreen(); }
+let _searchDebounce = null;
+function handleSearch(q) {
+  searchQuery = q;
+  clearTimeout(_searchDebounce);
+  _searchDebounce = setTimeout(() => renderScreen(), 200);
+}
 function selectCategory(c) { selectedCategory = (selectedCategory === c && c !== 'All') ? 'All' : c; renderScreen(); }
 function selectType(t) { selectedType = (selectedType === t && t !== 'all') ? 'all' : t; renderScreen(); }
 
@@ -2754,10 +2791,9 @@ async function lookupOpenFoodFacts(upc) {
   } catch { return null; }
 }
 
-// ── Brand search via Open Food Facts + USDA FoodData Central ─
+// ── Brand search via Open Food Facts ──────────────────────────
 let _brandSearchTimer = null;
 let _brandSuggestions = [];
-const USDA_API_KEY = 'DEMO_KEY'; // Free tier: 1000 req/hr
 
 async function searchBrandProducts_OFF(brand, query) {
   if (!brand || brand.length < 2) return [];
@@ -2781,61 +2817,8 @@ async function searchBrandProducts_OFF(brand, query) {
   } catch { return []; }
 }
 
-async function searchBrandProducts_USDA(brand, query) {
-  if (!brand || brand.length < 2) return [];
-  try {
-    const searchTerm = query ? `${brand} ${query}` : brand;
-    const res = await fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${USDA_API_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        query: searchTerm,
-        dataType: ['Branded'],
-        pageSize: 8,
-      }),
-    });
-    if (!res.ok) return [];
-    const data = await res.json();
-    return (data.foods || []).map(f => {
-      // Build a quantity string from serving info
-      let qty = '';
-      if (f.householdServingFullText) qty = f.householdServingFullText;
-      else if (f.servingSize) qty = `${f.servingSize} ${(f.servingSizeUnit || 'g').toLowerCase()}`;
-      // Clean up description: remove brand prefix like "KRAFT, " for cleaner names
-      let name = f.description || '';
-      const brandUpper = (f.brandName || brand).toUpperCase();
-      if (name.startsWith(brandUpper + ', ')) name = name.slice(brandUpper.length + 2);
-      if (name.startsWith(brandUpper + ' ')) name = name.slice(brandUpper.length + 1);
-      // Title case the name
-      name = name.replace(/\b\w+/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
-      return {
-        upc:      f.gtinUpc || '',
-        name:     name.trim(),
-        brand:    f.brandName || (f.brandOwner ? f.brandOwner.split(',')[0].trim() : brand),
-        brandFull: f.brandOwner || f.brandName || brand,
-        quantity: qty,
-        source:   'USDA',
-        category: f.foodCategory || '',
-      };
-    }).filter(p => p.name);
-  } catch { return []; }
-}
-
 async function searchBrandProducts(brand, query) {
-  // Waterfall: try Open Food Facts first, then USDA as fallback/supplement
-  const [offResults, usdaResults] = await Promise.all([
-    searchBrandProducts_OFF(brand, query),
-    searchBrandProducts_USDA(brand, query),
-  ]);
-  // Merge: OFF results first, then unique USDA results (dedup by UPC)
-  const seen = new Set(offResults.filter(r => r.upc).map(r => r.upc));
-  const merged = [...offResults];
-  for (const u of usdaResults) {
-    if (u.upc && seen.has(u.upc)) continue;
-    if (u.upc) seen.add(u.upc);
-    merged.push(u);
-  }
-  return merged.slice(0, 15);
+  return searchBrandProducts_OFF(brand, query);
 }
 
 async function searchBrandSuggestions(term) {
@@ -2857,9 +2840,9 @@ function showProductSuggestions(products) {
     return;
   }
   box.innerHTML = products.map((p, i) => {
-    const srcColor = p.source === 'USDA' ? 'rgba(30,144,255,0.15)' : 'rgba(88,204,2,0.1)';
-    const srcBorder = p.source === 'USDA' ? 'rgba(30,144,255,0.3)' : 'rgba(88,204,2,0.25)';
-    const srcText = p.source === 'USDA' ? 'color:#5ba3f5' : 'color:var(--duo-green)';
+    const srcColor = 'rgba(88,204,2,0.1)';
+    const srcBorder = 'rgba(88,204,2,0.25)';
+    const srcText = 'color:var(--duo-green)';
     const badge = p.quantity
       ? `<div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0">
           <span style="font-size:11px;font-weight:800;background:${srcColor};${srcText};border:1.5px solid ${srcBorder};border-radius:6px;padding:2px 8px;white-space:nowrap">${p.quantity}</span>
@@ -2869,8 +2852,8 @@ function showProductSuggestions(products) {
     return `
     <div class="suggestion-item" onclick="selectProductSuggestion(${i})" style="padding:10px 14px;border-bottom:1px solid var(--card-border);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px">
       <div style="min-width:0;flex:1">
-        <div style="font-weight:800;font-size:14px;color:var(--snow);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</div>
-        <div style="font-size:12px;color:var(--wolf);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.brandFull || p.brand}${p.quantity ? ' · ' + p.quantity : ''}</div>
+        <div style="font-weight:800;font-size:14px;color:var(--snow);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHTML(p.name)}</div>
+        <div style="font-size:12px;color:var(--wolf);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHTML(p.brandFull || p.brand)}${p.quantity ? ' · ' + escapeHTML(p.quantity) : ''}</div>
       </div>
       ${badge}
     </div>`;
@@ -3043,8 +3026,8 @@ function renderResult() {
 
     <div class="result-hero">
       ${productHeroImg(p.upc, p.category)}
-      <h2>${p.name}</h2>
-      <div class="sub">${p.brand} · ${p.category}</div>
+      <h2>${escapeHTML(p.name)}</h2>
+      <div class="sub">${escapeHTML(p.brand)} · ${escapeHTML(p.category)}</div>
       ${(() => { const t = SHRINK_TYPES[p.type]; return t ? `<span class="type-badge ${t.cls}" style="margin:6px auto 0;display:inline-block">${t.emoji} ${t.label}</span>` : ''; })()}
       ${p.repeatOffender ? `<div class="repeat-badge">🔁 SERIAL SHRINKER</div>` : ''}
       ${isAdmin ? `<button class="admin-edit-product-btn" style="margin-top:8px" onclick="openProductEdit('${escapeHTML(p.upc)}')">✏️ Edit Product</button>` : ''}
@@ -3088,10 +3071,10 @@ function renderResult() {
       if (!cr) return `
         <div class="company-response-card">
           <div class="cr-header">
-            <h4>🏢 ${p.brand}'s Official Response</h4>
+            <h4>🏢 ${escapeHTML(p.brand)}'s Official Response</h4>
             <span class="cr-badge no-comment">No Comment</span>
           </div>
-          <div class="cr-none">${p.brand} has not issued a public response to this product change. <a href="https://reddit.com/r/shrinkflation" target="_blank" style="color:var(--duo-blue)">Help us track it →</a></div>
+          <div class="cr-none">${escapeHTML(p.brand)} has not issued a public response to this product change. <a href="https://reddit.com/r/shrinkflation" target="_blank" style="color:var(--duo-blue)">Help us track it →</a></div>
         </div>`;
       const statusMap = {
         acknowledged: { cls:'acknowledged', txt:'Acknowledged' },
@@ -3112,13 +3095,13 @@ function renderResult() {
       return `
         <div class="company-response-card">
           <div class="cr-header">
-            <h4>&#x1F3E2; ${p.brand}'s Official Response</h4>
+            <h4>&#x1F3E2; ${escapeHTML(p.brand)}'s Official Response</h4>
             <span class="cr-badge ${badgeCls}">${badgeTxt}</span>
           </div>
           <div class="cr-body">
             ${restoredBanner}
-            <div class="cr-quote">"${cr.quote}"</div>
-            <div class="cr-source">— ${cr.source}</div>
+            <div class="cr-quote">"${escapeHTML(cr.quote)}"</div>
+            <div class="cr-source">— ${escapeHTML(cr.source)}</div>
           </div>
         </div>`;
     })()}
@@ -3224,13 +3207,13 @@ function renderLeaderboard() {
           ? `−${fmtPct(b.score)}% avg`
           : `${b.reportCount} upvotes`;
         return `
-          <div class="rank-item" onclick="currentBrand='${b.brand}';renderScreen()">
+          <div class="rank-item" data-brand="${escapeHTML(b.brand)}" onclick="currentBrand=this.dataset.brand;renderScreen()">
             <div class="rank-num ${rankClass(i)}">${i + 1}</div>
             <div class="brand-avatar" style="width:40px;height:40px;font-size:14px;border-radius:12px;margin-right:10px;flex-shrink:0">
-              ${b.brand.slice(0,2).toUpperCase()}
+              ${escapeHTML(b.brand.slice(0,2).toUpperCase())}
             </div>
             <div class="rank-info">
-              <strong>${b.brand}</strong>
+              <strong>${escapeHTML(b.brand)}</strong>
               <span>${b.products.length} product${b.products.length > 1 ? 's' : ''} · ${b.eventCount} shrink event${b.eventCount > 1 ? 's' : ''}</span>
             </div>
             <div class="rank-pct">${score}</div>
@@ -3256,9 +3239,9 @@ function renderBrandDrilldown() {
     <button class="back-btn" onclick="currentBrand=null;renderScreen()">← BACK TO SHAME LIST</button>
 
     <div class="brand-hero">
-      <div class="brand-avatar">${currentBrand.slice(0,2).toUpperCase()}</div>
+      <div class="brand-avatar">${escapeHTML(currentBrand.slice(0,2).toUpperCase())}</div>
       <div class="brand-hero-info">
-        <h2>${currentBrand}</h2>
+        <h2>${escapeHTML(currentBrand)}</h2>
         <p>${brandProducts.length} flagged product${brandProducts.length > 1 ? 's' : ''} tracked by community</p>
       </div>
     </div>
@@ -3285,8 +3268,8 @@ function renderBrandDrilldown() {
           <div class="bpi-rank">#${i + 1}</div>
           ${productThumb(p.upc, p.category)}
           <div class="bpi-info" style="margin-left:10px">
-            <strong>${p.name}</strong>
-            <span>${p.currentSize}${p.unit} · ${p.evCount} shrink${p.evCount > 1 ? 's' : ''}</span>
+            <strong>${escapeHTML(p.name)}</strong>
+            <span>${p.currentSize}${escapeHTML(p.unit)} · ${p.evCount} shrink${p.evCount > 1 ? 's' : ''}</span>
           </div>
           <div class="bpi-pct">−${fmtPct(p.pct)}%</div>
         </div>`).join('')}
@@ -3762,15 +3745,14 @@ async function submitReport() {
     personalStats.submissions++;
     saveStats();
 
-    console.log('[FullCarts] Submission saved directly to products + events — LIVE!');
+    lastParsed = null;
+    showCelebration = true;
+    renderScreen();
+    window.scrollTo(0, 0);
+    return;
   } catch (err) {
-    console.warn('[FullCarts] Submission error:', err);
+    showToast('Submission failed — please try again.', 'error');
   }
-
-  lastParsed = null;
-  showCelebration = true;
-  renderScreen();
-  window.scrollTo(0, 0);
 }
 
 function guessCategory(name, brand, type) {
@@ -3919,7 +3901,7 @@ function renderCommunity() {
           <div class="activity-dot" style="background:var(--duo-green)"></div>
           <div style="flex:1">
             <div class="activity-text">
-              New report: <strong>${a.product_name || 'Unknown'}</strong> ${a.brand ? '· ' + a.brand : ''} ${a.pct ? `<span style="color:var(--duo-red)">-${a.pct}%</span>` : ''}
+              New report: <strong>${escapeHTML(a.product_name || 'Unknown')}</strong> ${a.brand ? '· ' + escapeHTML(a.brand) : ''} ${a.pct ? `<span style="color:var(--duo-red)">-${a.pct}%</span>` : ''}
             </div>
             <div class="activity-time">${a.ago}</div>
           </div>
@@ -3991,8 +3973,8 @@ function renderCommunity() {
           <div class="contributor-item" onclick="navigate('result','${p.upc}')" style="cursor:pointer">
             <div class="contributor-rank ${['gold','silver','bronze'][i] || 'normal'}">${i + 1}</div>
             <div class="contributor-info">
-              <strong>${p.name}</strong>
-              <span>${p.brand} · ${p.currentSize}${p.unit}</span>
+              <strong>${escapeHTML(p.name)}</strong>
+              <span>${escapeHTML(p.brand)} · ${p.currentSize}${escapeHTML(p.unit)}</span>
             </div>
             <span style="font-size:13px;font-weight:900;color:var(--duo-orange)">▲ ${p.upvotes}</span>
           </div>`).join('')}
@@ -4070,10 +4052,10 @@ async function loadFlags() {
   document.getElementById('flags-list').innerHTML = flagData.length
     ? flagData.map(f => {
         const p = findProduct(f.upc);
-        return `<div style="border-bottom:1px solid var(--card-border);padding:10px 0;cursor:pointer;display:flex;align-items:center;gap:8px" onclick="navigate('result','${f.upc}')">
+        return `<div style="border-bottom:1px solid var(--card-border);padding:10px 0;cursor:pointer;display:flex;align-items:center;gap:8px" onclick="navigate('result','${escapeHTML(f.upc)}')">
           <div style="flex:1">
-            <div style="font-weight:900;color:var(--snow);font-size:13px">${p ? p.name : f.upc}</div>
-            <div style="font-size:12px;color:var(--duo-red);font-weight:700">${f.reason}${f.detail ? ' — ' + f.detail : ''}</div>
+            <div style="font-weight:900;color:var(--snow);font-size:13px">${p ? escapeHTML(p.name) : escapeHTML(f.upc)}</div>
+            <div style="font-size:12px;color:var(--duo-red);font-weight:700">${escapeHTML(f.reason)}${f.detail ? ' — ' + escapeHTML(f.detail) : ''}</div>
             <div style="font-size:11px;color:var(--wolf)">${new Date(f.created_at).toLocaleString()}</div>
           </div>
           <span style="font-size:11px;font-weight:900;color:var(--duo-blue);flex-shrink:0">→</span>
@@ -4539,7 +4521,6 @@ async function approveReviewItem() {
     }, 250);
 
   } catch (err) {
-    console.error('Approve failed:', err);
     if (btn) { btn.textContent = '❌ Error'; btn.style.pointerEvents = ''; }
     setTimeout(() => { if (btn) btn.textContent = '✅ Approve'; }, 2000);
   }
@@ -4550,7 +4531,6 @@ async function skipReviewItem() {
 
   const { error: rpcErr } = await sb.rpc('update_staging_status', { row_id: r.id, new_status: 'dismissed' });
   if (rpcErr) {
-    console.warn('Skip RPC failed, trying direct update:', rpcErr.message);
     const { error: directErr } = await sb.from('reddit_staging').update({ status: 'dismissed' }).eq('id', r.id);
     if (directErr) {
       alert('Failed to update status — both RPC and direct update failed.\n\n' + rpcErr.message + '\n' + directErr.message);
@@ -4627,21 +4607,31 @@ async function rejectReviewItem() {
 // ── Touch swipe for review cards ──────────────────────────
 let reviewTouchStartX = 0;
 let reviewTouchStartY = 0;
-document.addEventListener('touchstart', (e) => {
+let _swipeListenersAttached = false;
+
+function _onReviewTouchStart(e) {
   if (!e.target.closest('#review-current-card')) return;
   reviewTouchStartX = e.touches[0].clientX;
   reviewTouchStartY = e.touches[0].clientY;
-}, { passive: true });
-
-document.addEventListener('touchend', (e) => {
+}
+function _onReviewTouchEnd(e) {
   if (!e.target.closest('#review-current-card')) return;
+  if (reviewEditing) return;
   const dx = e.changedTouches[0].clientX - reviewTouchStartX;
   const dy = Math.abs(e.changedTouches[0].clientY - reviewTouchStartY);
-  if (dy > Math.abs(dx)) return; // vertical scroll, not swipe
-  if (Math.abs(dx) < 60) return; // too short
-  if (dx < 0) approveReviewItem(); // swipe left = approve (next)
-  else skipReviewItem(); // swipe right = skip
-}, { passive: true });
+  if (dy > Math.abs(dx)) return;
+  if (Math.abs(dx) < 60) return;
+  if (dx < 0) approveReviewItem();
+  else skipReviewItem();
+}
+
+function attachSwipeListeners() {
+  if (_swipeListenersAttached) return;
+  document.addEventListener('touchstart', _onReviewTouchStart, { passive: true });
+  document.addEventListener('touchend', _onReviewTouchEnd, { passive: true });
+  _swipeListenersAttached = true;
+}
+attachSwipeListeners();
 
 // ============================================================
 // EVIDENCE WALL
@@ -4962,6 +4952,10 @@ function renderNotFound() {
 // SUPABASE DATA LOADER
 // ============================================================
 async function loadFromSupabase() {
+  // Show loading bar
+  const loadBar = document.createElement('div');
+  loadBar.className = 'fc-loading-bar';
+  document.body.appendChild(loadBar);
   try {
     // Load products
     const { data: products, error: pErr } = await sb.from('products').select('*');
@@ -5090,7 +5084,9 @@ async function loadFromSupabase() {
 
     console.log('[FullCarts] Loaded from Supabase:', PRODUCTS.length, 'products,', EVENTS.length, 'events,', (upvotes||[]).length, 'upvotes,', EVIDENCE_WALL.length, 'evidence,', stagingTotal, 'staged');
   } catch (err) {
-    console.warn('[FullCarts] Supabase load failed, using fallback data:', err);
+    // Supabase load failed, using fallback data
+  } finally {
+    loadBar.remove();
   }
   renderScreen();
 }
@@ -5510,8 +5506,14 @@ function showToast(msg, color) {
 // ============================================================
 // INIT
 // ============================================================
-renderScreen(); // Render immediately with fallback data
-loadFromSupabase(); // Then upgrade to live data from Supabase
+// Read hash route on page load
+const HASH_TO_SCREEN = { home:'home', scanner:'scanner', shame:'leaderboard', report:'report', community:'community', news:'news', data:'home' };
+const initHash = window.location.hash.replace('#', '');
+if (HASH_TO_SCREEN[initHash]) {
+  currentScreen = HASH_TO_SCREEN[initHash];
+}
+renderScreen();
+loadFromSupabase();
 </script>
 </body>
 </html>

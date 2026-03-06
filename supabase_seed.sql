@@ -208,7 +208,7 @@ CREATE POLICY "Admin reads submissions" ON submissions FOR SELECT USING (auth.ro
 
 -- Reddit staging: service role only (scraper + dashboard)
 CREATE POLICY "Service role manages staging" ON reddit_staging FOR ALL USING (auth.role() = 'service_role');
-CREATE POLICY "Public read staging" ON reddit_staging FOR SELECT USING (true);
+CREATE POLICY "Public read promoted staging" ON reddit_staging FOR SELECT USING (status = 'promoted');
 
 -- Contributors (legacy): anyone can read
 CREATE POLICY "Public read contributors" ON contributors FOR SELECT USING (true);
@@ -241,6 +241,13 @@ CREATE POLICY "Service role manages news_articles" ON news_articles FOR ALL USIN
 ALTER TABLE article_product_links ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public read article_product_links" ON article_product_links FOR SELECT USING (true);
 CREATE POLICY "Anon can insert article_product_links" ON article_product_links FOR INSERT WITH CHECK (true);
+
+-- ── INDEXES ─────────────────────────────────────────────────
+CREATE INDEX IF NOT EXISTS idx_events_upc ON events(upc);
+CREATE INDEX IF NOT EXISTS idx_upvotes_upc ON upvotes(upc);
+CREATE INDEX IF NOT EXISTS idx_flags_status ON flags(status);
+CREATE INDEX IF NOT EXISTS idx_staging_tier_status ON reddit_staging(tier, status);
+CREATE INDEX IF NOT EXISTS idx_staging_source_url ON reddit_staging(source_url);
 
 -- ============================================================
 -- SEED: PRODUCTS

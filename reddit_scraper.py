@@ -136,6 +136,20 @@ SHRINK_KEYWORDS = re.compile(
 # NLP parser — ported from FullCarts JS parseText()
 # ---------------------------------------------------------------------------
 
+def normalize_unit(u: str) -> str:
+    """Normalize unit string to canonical form (matches reddit_public_scraper)."""
+    if not u:
+        return "oz"
+    u = u.lower().strip().rstrip("s")
+    mapping = {
+        "fl oz": "fl oz", "fl. oz": "fl oz", "ounce": "oz",
+        "pound": "lb", "gram": "g", "liter": "l",
+        "pint": "pt", "quart": "qt", "gallon": "gal",
+        "sheet": "sheets", "roll": "rolls", "piece": "ct",
+        "sq ft": "sq ft", "sq. ft": "sq ft",
+    }
+    return mapping.get(u, u)
+
 def parse_text(text: str) -> dict:
     """
     Extract shrinkflation signals from a block of text.
@@ -167,9 +181,9 @@ def parse_text(text: str) -> dict:
     m = FROM_TO_PATTERN.search(text)
     if m:
         result["old_size"] = float(m.group(1))
-        result["old_unit"] = (m.group(2) or "oz").lower().rstrip("s")
+        result["old_unit"] = normalize_unit(m.group(2) or "oz")
         result["new_size"] = float(m.group(3))
-        result["new_unit"] = (m.group(4) or result["old_unit"]).lower().rstrip("s")
+        result["new_unit"] = normalize_unit(m.group(4) or result["old_unit"])
         result["explicit_from_to"] = True
         result["fields_found"] += 2
 
@@ -178,15 +192,15 @@ def parse_text(text: str) -> dict:
         units = UNIT_PATTERN.findall(text)
         if len(units) >= 2:
             result["old_size"] = float(units[0][0])
-            result["old_unit"] = units[0][1].lower().rstrip("s")
+            result["old_unit"] = normalize_unit(units[0][1])
             result["new_size"] = float(units[-1][0])
-            result["new_unit"] = units[-1][1].lower().rstrip("s")
+            result["new_unit"] = normalize_unit(units[-1][1])
             # Only count if sizes actually differ
             if result["old_size"] != result["new_size"]:
                 result["fields_found"] += 1
         elif len(units) == 1:
             result["new_size"] = float(units[0][0])
-            result["new_unit"] = units[0][1].lower().rstrip("s")
+            result["new_unit"] = normalize_unit(units[0][1])
 
     # Price mentions
     prices = PRICE_PATTERN.findall(text)
