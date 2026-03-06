@@ -3978,7 +3978,17 @@ async function approveReviewItem() {
 
     // 3. Mark as promoted in staging (uses RPC to bypass RLS)
     const { error: rpcErr } = await sb.rpc('update_staging_status', { row_id: r.id, new_status: 'promoted' });
-    if (rpcErr) throw new Error(`RPC failed: ${rpcErr.message}`);
+    if (rpcErr) {
+      console.warn('RPC failed, trying direct update:', rpcErr.message);
+      const { error: directErr } = await sb.from('reddit_staging').update({ status: 'promoted' }).eq('id', r.id);
+      if (directErr) throw new Error(`Both RPC and direct update failed: ${rpcErr.message} / ${directErr.message}`);
+    }
+    // Verify the status actually changed
+    const { data: verify } = await sb.from('reddit_staging').select('status').eq('id', r.id).single();
+    if (verify && verify.status !== 'promoted') {
+      console.error(`Status verify failed: expected 'promoted', got '${verify.status}'`);
+      throw new Error('Status update did not persist — check RLS policies and RPC function in Supabase');
+    }
 
     reviewSessionStats.approved++;
 
@@ -4009,8 +4019,17 @@ async function skipReviewItem() {
 
   const { error: rpcErr } = await sb.rpc('update_staging_status', { row_id: r.id, new_status: 'dismissed' });
   if (rpcErr) {
-    console.error('Skip RPC failed:', rpcErr.message);
-    alert('Failed to update status — check that the update_staging_status RPC function exists.\n\n' + rpcErr.message);
+    console.warn('Skip RPC failed, trying direct update:', rpcErr.message);
+    const { error: directErr } = await sb.from('reddit_staging').update({ status: 'dismissed' }).eq('id', r.id);
+    if (directErr) {
+      alert('Failed to update status — both RPC and direct update failed.\n\n' + rpcErr.message + '\n' + directErr.message);
+      return;
+    }
+  }
+  // Verify
+  const { data: verify } = await sb.from('reddit_staging').select('status').eq('id', r.id).single();
+  if (verify && verify.status === 'pending') {
+    alert('Status did not change — the record is still pending. Check RLS policies and the update_staging_status RPC function in Supabase.');
     return;
   }
 
@@ -4037,9 +4056,20 @@ async function rejectReviewItem() {
 
   const { error: rpcErr } = await sb.rpc('update_staging_status', { row_id: r.id, new_status: 'rejected' });
   if (rpcErr) {
-    console.error('Reject RPC failed:', rpcErr.message);
+    console.warn('Reject RPC failed, trying direct update:', rpcErr.message);
+    const { error: directErr } = await sb.from('reddit_staging').update({ status: 'rejected' }).eq('id', r.id);
+    if (directErr) {
+      if (btn) { btn.textContent = '❌ Error'; btn.style.pointerEvents = ''; }
+      alert('Failed to update status — both RPC and direct update failed.\n\n' + rpcErr.message + '\n' + directErr.message);
+      setTimeout(() => { if (btn) btn.textContent = '🚫 Reject'; }, 2000);
+      return;
+    }
+  }
+  // Verify
+  const { data: verify } = await sb.from('reddit_staging').select('status').eq('id', r.id).single();
+  if (verify && verify.status === 'pending') {
     if (btn) { btn.textContent = '❌ Error'; btn.style.pointerEvents = ''; }
-    alert('Failed to update status — check that the update_staging_status RPC function exists.\n\n' + rpcErr.message);
+    alert('Status did not change — the record is still pending. Check RLS policies and the update_staging_status RPC function in Supabase.');
     setTimeout(() => { if (btn) btn.textContent = '🚫 Reject'; }, 2000);
     return;
   }
