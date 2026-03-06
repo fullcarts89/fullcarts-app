@@ -3864,7 +3864,7 @@ async function loadFlags() {
 // ── Review Queue State ──────────────────────────────────
 let reviewQueue = [];
 let reviewIndex = 0;
-let reviewEditing = false;
+// Edit fields are always visible in the review card
 let reviewSessionStats = { approved: 0, skipped: 0, rejected: 0 };
 
 async function loadRedditReviewQueue() {
@@ -3885,7 +3885,6 @@ async function loadRedditReviewQueue() {
 
   reviewQueue = reviewData;
   reviewIndex = 0;
-  reviewEditing = false;
   reviewSessionStats = { approved: 0, skipped: 0, rejected: 0 };
 
   if (!reviewQueue.length) {
@@ -3964,12 +3963,30 @@ function renderReviewCard() {
         ${r.source_url ? `<a href="${r.source_url}" target="_blank" rel="noopener">View Reddit post →</a>` : ''}
       </div>
 
-      <div id="review-edit-area"></div>
+      <div class="review-edit-fields" style="margin-top:8px">
+        <div class="review-edit-row">
+          <label>Name</label>
+          <input id="re-name" value="${escapeHTML(r.product_hint || r.title || '')}" placeholder="Product name">
+        </div>
+        <div class="review-edit-row">
+          <label>Brand</label>
+          <input id="re-brand" value="${escapeHTML(r.brand || '')}" placeholder="Brand">
+        </div>
+        <div class="review-edit-row">
+          <label>Old</label>
+          <input id="re-old" value="${r.old_size || ''}" placeholder="Old size" type="number" step="0.01" style="flex:1">
+          <input id="re-old-unit" value="${escapeHTML(r.old_unit || 'oz')}" placeholder="unit" style="width:55px;text-align:center">
+        </div>
+        <div class="review-edit-row">
+          <label>New</label>
+          <input id="re-new" value="${r.new_size || ''}" placeholder="New size" type="number" step="0.01" style="flex:1">
+          <input id="re-new-unit" value="${escapeHTML(r.new_unit || 'oz')}" placeholder="unit" style="width:55px;text-align:center">
+        </div>
+      </div>
 
       <div class="review-actions">
         <button class="review-btn-reject" onclick="rejectReviewItem()">🚫 Reject</button>
         <button class="review-btn-skip" onclick="skipReviewItem()">⏭ Skip</button>
-        <button class="review-btn-edit" onclick="toggleReviewEdit()">✏️ Edit</button>
         <button class="review-btn-approve" onclick="approveReviewItem()">✅ Approve</button>
       </div>
       <div style="margin-top:8px">
@@ -3990,64 +4007,21 @@ function escapeHTML(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function toggleReviewEdit() {
-  const area = document.getElementById('review-edit-area');
-  reviewEditing = !reviewEditing;
-
-  if (!reviewEditing) {
-    area.innerHTML = '';
-    return;
-  }
-
-  const r = reviewQueue[reviewIndex];
-  area.innerHTML = `
-    <div class="review-edit-fields">
-      <div class="review-edit-row">
-        <label>Name</label>
-        <input id="re-name" value="${escapeHTML(r.product_hint || '')}" placeholder="Product name">
-      </div>
-      <div class="review-edit-row">
-        <label>Brand</label>
-        <input id="re-brand" value="${escapeHTML(r.brand || '')}" placeholder="Brand">
-      </div>
-      <div class="review-edit-row">
-        <label>Old</label>
-        <input id="re-old" value="${r.old_size || ''}" placeholder="Old size" type="number" step="0.01" style="flex:1">
-        <input id="re-old-unit" value="${escapeHTML(r.old_unit || 'oz')}" placeholder="unit" style="width:55px;text-align:center">
-      </div>
-      <div class="review-edit-row">
-        <label>New</label>
-        <input id="re-new" value="${r.new_size || ''}" placeholder="New size" type="number" step="0.01" style="flex:1">
-        <input id="re-new-unit" value="${escapeHTML(r.new_unit || 'oz')}" placeholder="unit" style="width:55px;text-align:center">
-      </div>
-    </div>
-  `;
-  // Focus the first field
-  setTimeout(() => document.getElementById('re-name')?.focus(), 100);
-}
+// toggleReviewEdit removed — edit fields are always visible now
 
 async function approveReviewItem() {
   const r = reviewQueue[reviewIndex];
   const btn = document.querySelector('.review-btn-approve');
   if (btn) { btn.textContent = '⏳...'; btn.style.pointerEvents = 'none'; }
 
-  // Gather values (from edit fields if editing, otherwise from data)
+  // Always read from the visible input fields
   let prodName, brand, oldSize, newSize, oldUnit, newUnit;
-  if (reviewEditing) {
-    prodName = (document.getElementById('re-name')?.value || '').trim() || r.product_hint || 'Unknown Product';
-    brand    = (document.getElementById('re-brand')?.value || '').trim() || r.brand;
-    oldSize  = parseFloat(document.getElementById('re-old')?.value) || null;
-    newSize  = parseFloat(document.getElementById('re-new')?.value) || null;
-    oldUnit  = (document.getElementById('re-old-unit')?.value || '').trim() || r.old_unit || 'oz';
-    newUnit  = (document.getElementById('re-new-unit')?.value || '').trim() || r.new_unit || oldUnit;
-  } else {
-    prodName = (r.product_hint || 'Unknown Product').slice(0, 100);
-    brand    = r.brand;
-    oldSize  = r.old_size ? parseFloat(r.old_size) : null;
-    newSize  = r.new_size ? parseFloat(r.new_size) : null;
-    oldUnit  = r.old_unit || 'oz';
-    newUnit  = r.new_unit || oldUnit;
-  }
+  prodName = (document.getElementById('re-name')?.value || '').trim() || r.product_hint || 'Unknown Product';
+  brand    = (document.getElementById('re-brand')?.value || '').trim() || r.brand;
+  oldSize  = parseFloat(document.getElementById('re-old')?.value) || null;
+  newSize  = parseFloat(document.getElementById('re-new')?.value) || null;
+  oldUnit  = (document.getElementById('re-old-unit')?.value || '').trim() || r.old_unit || 'oz';
+  newUnit  = (document.getElementById('re-new-unit')?.value || '').trim() || r.new_unit || oldUnit;
 
   const unit = newUnit || oldUnit || 'oz';
   const upc = `REDDIT-${(r.id || '').slice(0, 8)}`;
@@ -4113,7 +4087,6 @@ async function approveReviewItem() {
 
     setTimeout(() => {
       reviewIndex++;
-      reviewEditing = false;
       renderReviewCard();
     }, 250);
 
@@ -4154,7 +4127,6 @@ async function skipReviewItem() {
 
   setTimeout(() => {
     reviewIndex++;
-    reviewEditing = false;
     renderReviewCard();
   }, 200);
 }
@@ -4196,7 +4168,6 @@ async function rejectReviewItem() {
 
   setTimeout(() => {
     reviewIndex++;
-    reviewEditing = false;
     renderReviewCard();
   }, 250);
 }
@@ -4212,7 +4183,6 @@ document.addEventListener('touchstart', (e) => {
 
 document.addEventListener('touchend', (e) => {
   if (!e.target.closest('#review-current-card')) return;
-  if (reviewEditing) return; // don't swipe while editing
   const dx = e.changedTouches[0].clientX - reviewTouchStartX;
   const dy = Math.abs(e.changedTouches[0].clientY - reviewTouchStartY);
   if (dy > Math.abs(dx)) return; // vertical scroll, not swipe
@@ -4316,7 +4286,6 @@ async function sendToEvidenceWall() {
 
     setTimeout(() => {
       reviewIndex++;
-      reviewEditing = false;
       renderReviewCard();
     }, 250);
 

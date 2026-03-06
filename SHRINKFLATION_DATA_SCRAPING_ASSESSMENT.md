@@ -383,7 +383,78 @@ Reddit is actively litigating against scrapers (Reddit v. Perplexity AI, Oct 202
 
 ---
 
-## 8. Summary
+## 8. Shrinkflation Validation Rules (r/shrinkflation Moderator Flowchart)
+
+The following decision logic comes from the r/shrinkflation subreddit moderators and should be used as the **general rule for determining whether something qualifies as shrinkflation** when reviewing scraped data or user submissions.
+
+### Decision Flowchart
+
+```
+START
+  │
+  ▼
+Do you have an example of BOTH the old and new product?
+  │
+  ├─ No → Find photos of both products → loop back
+  │
+  └─ Yes
+      │
+      ▼
+Are the products the exact same variety and size
+("family size", "value size", etc.)?
+      │
+      ├─ No → It's NOT proof of shrinkflation.
+      │
+      └─ Yes
+          │
+          ▼
+      ┌────────────────── and/or ──────────────────┐
+      │                                             │
+Do they have different                    Are the printed ingredients
+printed weights/volumes/sizes?            cheaper/worse now?
+(QUANTITY shrinkflation)                  (QUALITY shrinkflation)
+      │                                             │
+      └──────────────┬──────────────────────────────┘
+                     │
+                Either Yes?
+                     │
+                ├─ No → It's NOT proof of shrinkflation.
+                │
+                └─ Yes
+                    │
+                    ▼
+          Do you have PHOTOS of the proof
+          on BOTH products?
+                    │
+                ├─ No → It's NOT proof of shrinkflation.
+                │
+                └─ Yes → ✓ Valid shrinkflation — Post it!
+```
+
+### Key Rules Summary
+
+1. **Both versions required** — Must have an example of both the old AND new product. A single product alone is never proof.
+2. **Same variety & size** — Products must be the exact same variety and size designation (e.g. both "family size"). Comparing a regular size to a value size is not shrinkflation.
+3. **Two types of shrinkflation:**
+   - **Quantity shrinkflation** — Different printed weights, volumes, or sizes (e.g. 16 oz → 14 oz)
+   - **Quality shrinkflation** — Printed ingredients are cheaper or worse (e.g. real sugar → corn syrup)
+4. **Photo evidence required** — Must have photos showing the proof on both products. Anecdotal claims ("I know it's smaller") are not sufficient.
+5. **Not shrinkflation (redirect suggestions from mods):**
+   - "It just makes me mad" → r/mildlyInfuriating
+   - "It's unexpectedly bad quality" → r/expectationVSreality
+
+### Application to FullCarts Data Pipeline
+
+When reviewing scraped entries in the admin queue, apply these rules:
+
+- **Auto-approve** entries that have: both old/new sizes documented, same product variety, and photo evidence
+- **Send to review** entries that have partial data (e.g. only new size, no old size comparison)
+- **Reject** entries that compare different product varieties/sizes, or lack any measurable difference
+- **Route to Evidence Wall** entries that have compelling photos but lack structured data (they may still be valid once data is extracted)
+
+---
+
+## 9. Summary
 
 Your existing infrastructure is well-designed. The most impactful next step is simply **deploying what you already have** — the public Reddit scraper via GitHub Actions and running the historical backfill. After that, expanding to news RSS feeds and Open Food Facts monitoring would give you the broadest coverage with the least effort.
 
