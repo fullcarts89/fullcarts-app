@@ -441,11 +441,58 @@ def fetch_all_arctic_shift(log, subreddits: list = None) -> list:
 _IMAGE_DOMAINS = {"i.redd.it", "i.imgur.com", "imgur.com", "preview.redd.it"}
 
 
+def _extract_image_url_from_reddit_json(permalink: str) -> str | None:
+    """Fetch image URL directly from Reddit's public JSON API.
+
+    Used as a fallback when Arctic Shift doesn't include media_metadata
+    (common for gallery posts).
+    """
+    if not permalink:
+        return None
+    try:
+        json_url = f"https://www.reddit.com{permalink}.json" if permalink.startswith("/") else f"{permalink}.json"
+        resp = requests.get(json_url, headers={"User-Agent": USER_AGENT}, timeout=10)
+        if resp.status_code == 429:
+            time.sleep(2)
+            resp = requests.get(json_url, headers={"User-Agent": USER_AGENT}, timeout=10)
+        if resp.status_code != 200:
+            return None
+        data = resp.json()
+        post = data[0]["data"]["children"][0]["data"]
+
+        # Direct image
+        url = post.get("url") or ""
+        if re.search(r"\.(jpg|jpeg|png|gif|webp)(\?|$)", url, re.IGNORECASE):
+            return url[:500]
+        if any(d in url for d in _IMAGE_DOMAINS):
+            return url[:500]
+
+        # Gallery media_metadata
+        meta = post.get("media_metadata")
+        if meta and isinstance(meta, dict):
+            for item in meta.values():
+                src = item.get("s", {})
+                img_url = src.get("u") or src.get("gif")
+                if img_url:
+                    return img_url.replace("&amp;", "&")[:500]
+
+        # Preview images
+        images = post.get("preview", {}).get("images", [])
+        if images:
+            img_url = images[0].get("source", {}).get("url")
+            if img_url:
+                return img_url.replace("&amp;", "&")[:500]
+
+    except Exception as e:
+        logging.getLogger("fullcarts").debug(f"Reddit JSON fallback failed for {permalink}: {e}")
+    return None
+
+
 def _extract_image_url(post: dict) -> str | None:
     """Return a direct image URL from an Arctic Shift post dict, or None.
 
-    Handles direct image links, gallery posts (media_metadata), and
-    preview images.
+    Handles direct image links, gallery posts (media_metadata),
+    preview images, and falls back to Reddit's JSON API.
     """
     url = post.get("url") or ""
     post_hint = post.get("post_hint") or ""
@@ -459,7 +506,7 @@ def _extract_image_url(post: dict) -> str | None:
     if media_meta and isinstance(media_meta, dict):
         # Pick the first image from the gallery
         for item in media_meta.values():
-            if item.get("status") != "valid" and item.get("e") != "Image":
+            if item.get("status") != "valid" or item.get("e") not in ("Image", "AnimatedImage"):
                 continue
             # Prefer the source (full-res) image
             src = item.get("s", {})
@@ -477,6 +524,15 @@ def _extract_image_url(post: dict) -> str | None:
             img_url = src.get("url")
             if img_url:
                 return img_url.replace("&amp;", "&")[:500]
+
+    # Fallback: gallery posts or posts where Arctic Shift lacks image data
+    # Fetch directly from Reddit's JSON API
+    is_gallery = post.get("is_gallery") or "/gallery/" in url
+    permalink = post.get("permalink") or ""
+    if is_gallery or (permalink and not url.endswith(tuple(".jpg .jpeg .png .gif .webp".split()))):
+        reddit_img = _extract_image_url_from_reddit_json(permalink)
+        if reddit_img:
+            return reddit_img
 
     return None
 
@@ -952,6 +1008,57 @@ def run_backfill(log):
         log.info(f"  {year}: {year_counts[year]}")
 
 
+def run_backfill_images(log):
+    """Backfill missing image URLs for existing staging rows."""
+    log.info("=" * 60)
+    log.info("MODE: Backfill missing image URLs")
+    log.info("=" * 60)
+
+    if not HAS_SUPABASE or not SUPABASE_KEY:
+        log.error("SUPABASE_KEY required for image backfill")
+        return
+
+    sb = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+    # Fetch rows with null image_url that have a source_url
+    rows = (sb.table("reddit_staging")
+            .select("id, source_url")
+            .is_("image_url", "null")
+            .not_.is_("source_url", "null")
+            .limit(500)
+            .execute()).data or []
+
+    log.info(f"Found {len(rows)} rows with missing image_url")
+    fixed = 0
+
+    for i, row in enumerate(rows):
+        source_url = row.get("source_url") or ""
+        # Extract permalink from full Reddit URL
+        permalink = source_url
+        if "reddit.com" in source_url:
+            # https://www.reddit.com/r/shrinkflation/comments/xxx/... -> /r/shrinkflation/comments/xxx/...
+            parts = source_url.split("reddit.com", 1)
+            if len(parts) == 2:
+                permalink = parts[1]
+
+        img_url = _extract_image_url_from_reddit_json(permalink)
+        if img_url:
+            sb.table("reddit_staging").update({"image_url": img_url}).eq("id", row["id"]).execute()
+            fixed += 1
+            log.info(f"  [{i+1}/{len(rows)}] Fixed: {permalink[:60]}...")
+        else:
+            log.debug(f"  [{i+1}/{len(rows)}] No image found: {permalink[:60]}...")
+
+        # Rate-limit: Reddit allows ~60 req/min for unauthenticated
+        if (i + 1) % 30 == 0:
+            log.info(f"  ... rate-limit pause (30 requests done)")
+            time.sleep(5)
+        else:
+            time.sleep(1)
+
+    log.info(f"\nBackfill complete: fixed {fixed}/{len(rows)} rows")
+
+
 def run_promote_only(log):
     """Just promote pending auto entries — no scraping."""
     log.info("=" * 60)
@@ -987,11 +1094,15 @@ if __name__ == "__main__":
                        help="Fetch recent posts from the last 7 days via Arctic Shift (default)")
     group.add_argument("--promote-only", action="store_true",
                        help="Skip scraping, just promote staged auto entries")
+    group.add_argument("--backfill-images", action="store_true",
+                       help="Fetch missing image URLs from Reddit for staging rows")
     args = parser.parse_args()
 
     if args.backfill:
         run_backfill(log)
     elif args.promote_only:
         run_promote_only(log)
+    elif args.backfill_images:
+        run_backfill_images(log)
     else:
         run_recent(log)
