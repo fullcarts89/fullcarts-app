@@ -3925,6 +3925,13 @@ function renderReviewCard() {
     ? Math.round(((parseFloat(oldS) - parseFloat(newS)) / parseFloat(oldS)) * 10000) / 100
     : null;
   const dateNoticed = r.date_noticed || (r.posted_utc ? r.posted_utc.slice(0, 7) : '');
+  const oldP = r.old_price ? parseFloat(r.old_price) : null;
+  const newP = r.new_price ? parseFloat(r.new_price) : null;
+  const oldPPU = (oldP && oldS) ? (oldP / parseFloat(oldS)) : null;
+  const newPPU = (newP && newS) ? (newP / parseFloat(newS)) : null;
+  const ppuPct = (oldPPU && newPPU && oldPPU > 0)
+    ? Math.round(((newPPU - oldPPU) / oldPPU) * 10000) / 100
+    : null;
   const progress = Math.round(((reviewIndex) / reviewQueue.length) * 100);
 
   container.innerHTML = `
@@ -3957,6 +3964,14 @@ function renderReviewCard() {
         ${pct !== null ? `<div class="review-pct">↓ ${pct}% smaller</div>` : ''}
       ` : `<div style="font-size:13px;font-weight:700;color:var(--wolf);margin-bottom:8px;padding:10px;background:rgba(255,255,255,0.03);border-radius:8px">⚠️ No size data extracted — needs manual entry</div>`}
 
+      ${oldP || newP ? `
+        <div style="margin:6px 0 8px;padding:8px 10px;background:rgba(255,150,0,0.06);border:1px solid rgba(255,150,0,0.15);border-radius:8px;font-size:13px">
+          <span style="font-weight:700;color:var(--duo-orange)">💲 Price:</span>
+          ${oldP ? `$${oldP.toFixed(2)}` : '?'} → ${newP ? `$${newP.toFixed(2)}` : '?'}
+          ${ppuPct !== null ? `<span style="margin-left:8px;font-weight:700;color:${ppuPct > 0 ? '#ff4444' : 'var(--duo-green)'}">↑ ${Math.abs(ppuPct)}% per ${oldU}</span>` : ''}
+        </div>
+      ` : ''}
+
       <div class="review-meta">
         <span>📊 Score: ${r.score || 0}</span>
         ${dateNoticed ? `<span>📅 ${dateNoticed}</span>` : ''}
@@ -3981,6 +3996,13 @@ function renderReviewCard() {
           <label>New</label>
           <input id="re-new" value="${r.new_size || ''}" placeholder="New size" type="number" step="0.01" style="flex:1">
           <input id="re-new-unit" value="${escapeHTML(r.new_unit || 'oz')}" placeholder="unit" style="width:55px;text-align:center">
+        </div>
+        <div style="border-top:1px solid var(--card-border);margin:8px 0 4px;opacity:0.4"></div>
+        <div class="review-edit-row">
+          <label>Price</label>
+          <input id="re-old-price" value="${r.old_price || ''}" placeholder="Old price" type="number" step="0.01" style="flex:1">
+          <span style="color:var(--wolf);font-size:12px;padding:0 4px">→</span>
+          <input id="re-new-price" value="${r.new_price || ''}" placeholder="New price" type="number" step="0.01" style="flex:1">
         </div>
       </div>
 
@@ -4022,6 +4044,8 @@ async function approveReviewItem() {
   newSize  = parseFloat(document.getElementById('re-new')?.value) || null;
   oldUnit  = (document.getElementById('re-old-unit')?.value || '').trim() || r.old_unit || 'oz';
   newUnit  = (document.getElementById('re-new-unit')?.value || '').trim() || r.new_unit || oldUnit;
+  const oldPrice = parseFloat(document.getElementById('re-old-price')?.value) || null;
+  const newPrice = parseFloat(document.getElementById('re-new-price')?.value) || null;
 
   const unit = newUnit || oldUnit || 'oz';
   const upc = `REDDIT-${(r.id || '').slice(0, 8)}`;
@@ -4045,8 +4069,8 @@ async function approveReviewItem() {
       source: 'reddit_bot'
     }, { onConflict: 'upc' });
 
-    // 2. Upsert event (if we have size data) — prevents duplicates
-    if (oldSize && newSize) {
+    // 2. Upsert event (if we have size or price data) — prevents duplicates
+    if (oldSize && newSize || oldPrice && newPrice) {
       await sb.from('events').upsert({
         upc,
         date: dateNoticed,
@@ -4054,6 +4078,8 @@ async function approveReviewItem() {
         new_size: newSize,
         unit,
         pct,
+        price_before: oldPrice,
+        price_after: newPrice,
         type: 'shrinkflation',
         notes: `Reviewed & approved from r/shrinkflation: ${r.source_url || ''}`,
         source: 'reddit_bot'
