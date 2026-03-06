@@ -371,6 +371,8 @@ Reddit is actively litigating against scrapers (Reddit v. Perplexity AI, Oct 202
 | **P3** | Generalize staging table for multi-source | **Not started** | Current `reddit_staging` table works; generalize when adding more sources |
 | **P3** | YouTube Data API scraper | **Not started** | Supplementary source, low priority |
 
+| Done | Evidence Wall for visual-only shrinkflation examples | — | New `evidence_wall` table + UI; admin review queue routes image posts lacking data here |
+
 ### Known Issues / Next Steps
 
 - **PR merge pending** — Branch `claude/shrinkflation-data-scraping-QLmci` has all changes but needs to be merged to `main` via GitHub PR
