@@ -354,6 +354,8 @@ Reddit is actively litigating against scrapers (Reddit v. Perplexity AI, Oct 202
 | Done | Add ANTHROPIC_API_KEY to scraper workflow | `90c65e9` | Enables vision analysis in GitHub Actions runs |
 | Done | Fix review queue RLS policy errors | `438ec86` | Status updates were silently failing due to Row Level Security |
 | Done | Fix RPC errors + scraper re-upsert conflicts | `251733a` | RPC errors no longer swallowed; upserts don't reset reviewed items |
+| Done | Review queue status verification + direct-update fallback | `5ab1a5c` | Each approve/skip/reject verifies the status changed; falls back to direct update if RPC fails |
+| Done | Filter mod-removed "not shrinkflation" posts | `dcf2112` | Fetches top-level comments via Arctic Shift; skips posts where mod said "not an example of shrinkflation" |
 
 ### Roadmap Status Update
 
@@ -372,6 +374,7 @@ Reddit is actively litigating against scrapers (Reddit v. Perplexity AI, Oct 202
 ### Known Issues / Next Steps
 
 - **PR merge pending** — Branch `claude/shrinkflation-data-scraping-QLmci` has all changes but needs to be merged to `main` via GitHub PR
+- **RPC function deployed** — `update_staging_status` SQL function has been deployed to Supabase; review queue status updates should now persist
 - **PRAW scraper** — Not yet activated (no Reddit API credentials registered); public scraper covers the gap
 - **BLS / YouTube scrapers** — Not yet implemented; lower priority
 - **Generalized staging table** — Worth doing when a second non-Reddit source needs staging (News/OFF currently bypass staging)
