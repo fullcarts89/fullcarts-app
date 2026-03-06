@@ -500,9 +500,10 @@ def run_scraper(dry_run: bool = False) -> None:
 
                 if all_entries:
                     sb.table("reddit_staging").upsert(
-                        all_entries, on_conflict="source_url"
+                        all_entries, on_conflict="source_url",
+                        ignore_duplicates=True
                     ).execute()
-                    log.info(f"Supabase: upserted {len(all_entries)} entries to reddit_staging")
+                    log.info(f"Supabase: inserted {len(all_entries)} entries to reddit_staging (skipped existing)")
 
                 # Auto-promote high-confidence entries to products + events
                 promoted = promote_auto_entries(sb, log)
