@@ -62,6 +62,7 @@ USER_AGENT = "FullCartsBot/1.0 (fullcarts.org community shrinkflation tracker)"
 
 # Arctic Shift API (Pushshift/Pullpush successor) — no Reddit credentials needed
 ARCTIC_SHIFT_URL = "https://arctic-shift.photon-reddit.com/api/posts/search"
+ARCTIC_SHIFT_COMMENTS_URL = "https://arctic-shift.photon-reddit.com/api/comments/search"
 
 # Output for local fallback
 OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", "."))
@@ -590,6 +591,80 @@ def promote_auto_entries(sb: "SupabaseClient", log) -> int:
 
 
 # ---------------------------------------------------------------------------
+# Moderator removal detection
+# ---------------------------------------------------------------------------
+
+# Patterns that indicate a mod removed a post for not being shrinkflation
+MOD_REMOVAL_PATTERNS = re.compile(
+    r"not\s+(an?\s+)?(example|instance|case)\s+of\s+shrinkflation"
+    r"|not\s+shrinkflation"
+    r"|doesn.t\s+(qualify|count)\s+as\s+shrinkflation"
+    r"|this\s+is(n.t|\s+not)\s+shrinkflation"
+    r"|removed.*not\s+shrinkflation"
+    r"|rule\s+\d+.*not\s+shrinkflation",
+    re.IGNORECASE,
+)
+
+
+def _is_mod_removed_not_shrinkflation(post: dict) -> bool:
+    """Check if a post was removed by mods for not being shrinkflation.
+
+    Uses two signals:
+    1. Post-level: title says '[Removed by moderator]' or removed_by_category is set
+    2. Comment-level: fetches top-level comments from Arctic Shift and checks
+       if a moderator (distinguished=moderator) left a comment matching
+       removal patterns like 'Not an example of shrinkflation'.
+    """
+    post_id = post.get("id", "")
+
+    # Quick check: does the post look removed?
+    title = post.get("title", "")
+    removed_by = post.get("removed_by_category") or ""
+    selftext = post.get("selftext") or ""
+    is_removed = (
+        "[removed" in title.lower()
+        or removed_by in ("moderator", "automod")
+        or selftext == "[removed]"
+    )
+
+    # If it's not even removed, skip the comment fetch
+    if not is_removed:
+        return False
+
+    # Fetch top-level comments to check for mod explanation
+    if not post_id:
+        return False
+
+    try:
+        resp = requests.get(
+            ARCTIC_SHIFT_COMMENTS_URL,
+            params={
+                "link_id": post_id,
+                "parent_id": "",  # top-level only
+                "limit": 10,
+                "sort": "asc",
+                "fields": "author,body,distinguished",
+            },
+            headers={"User-Agent": USER_AGENT},
+            timeout=10,
+        )
+        resp.raise_for_status()
+        comments = resp.json().get("data", [])
+    except Exception:
+        return False
+
+    for comment in comments:
+        # Only check moderator-distinguished comments
+        if comment.get("distinguished") != "moderator":
+            continue
+        body = comment.get("body") or ""
+        if MOD_REMOVAL_PATTERNS.search(body):
+            return True
+
+    return False
+
+
+# ---------------------------------------------------------------------------
 # Main scraping logic
 # ---------------------------------------------------------------------------
 
@@ -597,7 +672,7 @@ def process_posts(posts: list, known_urls: set, log) -> tuple:
     """Process a list of posts, return (entries, new_urls, stats)."""
     entries = []
     new_urls = set()
-    stats = {"seen": 0, "skipped_dup": 0, "auto": 0, "review": 0, "discard": 0, "no_keyword": 0}
+    stats = {"seen": 0, "skipped_dup": 0, "mod_removed": 0, "auto": 0, "review": 0, "discard": 0, "no_keyword": 0}
 
     for post in posts:
         stats["seen"] += 1
@@ -607,6 +682,14 @@ def process_posts(posts: list, known_urls: set, log) -> tuple:
         # Dedup
         if url in known_urls:
             stats["skipped_dup"] += 1
+            continue
+
+        # Skip posts removed by mods for not being shrinkflation
+        if _is_mod_removed_not_shrinkflation(post):
+            title = post.get("title", "")
+            log.info(f"  [MOD-RM] Skipping mod-removed post: {title[:70]}")
+            stats["mod_removed"] += 1
+            new_urls.add(url)
             continue
 
         # Combine title + selftext
@@ -800,7 +883,7 @@ def run_recent(log):
     # Summary
     log.info("\n" + "=" * 60)
     log.info(f"Recent scrape complete — seen:{stats['seen']}  dupes:{stats['skipped_dup']}  "
-             f"no-keyword:{stats['no_keyword']}")
+             f"mod-removed:{stats['mod_removed']}  no-keyword:{stats['no_keyword']}")
     log.info(f"  auto:{stats['auto']}  review:{stats['review']}  discard:{stats['discard']}")
     if stats.get("vision_analyzed"):
         log.info(f"  vision analyzed: {stats['vision_analyzed']} images")
@@ -854,7 +937,7 @@ def run_backfill(log):
     # Summary
     log.info("\n" + "=" * 60)
     log.info(f"Backfill complete — seen:{stats['seen']}  dupes:{stats['skipped_dup']}  "
-             f"no-keyword:{stats['no_keyword']}")
+             f"mod-removed:{stats['mod_removed']}  no-keyword:{stats['no_keyword']}")
     log.info(f"  auto:{stats['auto']}  review:{stats['review']}  discard:{stats['discard']}")
     if stats.get("vision_analyzed"):
         log.info(f"  vision analyzed: {stats['vision_analyzed']} images")
