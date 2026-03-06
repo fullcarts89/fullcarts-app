@@ -814,6 +814,30 @@ def upsert_to_supabase(sb: "SupabaseClient", entries: list, log) -> int:
     if not entries:
         return 0
 
+    # Pre-filter: exclude entries whose source_url already has a non-pending
+    # status (promoted/dismissed/rejected). This prevents any possibility of
+    # the upsert resetting reviewed records back to 'pending'.
+    source_urls = [e["source_url"] for e in entries if e.get("source_url")]
+    reviewed_urls = set()
+    for chunk_start in range(0, len(source_urls), 200):
+        chunk = source_urls[chunk_start:chunk_start + 200]
+        try:
+            result = (sb.table("reddit_staging")
+                      .select("source_url")
+                      .in_("source_url", chunk)
+                      .neq("status", "pending")
+                      .execute())
+            reviewed_urls.update(row["source_url"] for row in (result.data or []))
+        except Exception:
+            pass  # If the check fails, proceed with all entries (safe — upsert uses ignore_duplicates)
+
+    if reviewed_urls:
+        entries = [e for e in entries if e.get("source_url") not in reviewed_urls]
+        log.info(f"  Skipped {len(reviewed_urls)} already-reviewed entries")
+
+    if not entries:
+        return 0
+
     # Batch in chunks of 50
     upserted = 0
     first_error_logged = False
