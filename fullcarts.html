@@ -3978,6 +3978,7 @@ function renderReviewCard() {
       <div id="evidence-wall-route" style="display:none;margin-top:8px;padding:12px;background:rgba(255,150,0,0.06);border:1.5px solid rgba(255,150,0,0.2);border-radius:12px">
         <div style="font-size:11px;font-weight:900;color:var(--duo-orange);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Evidence Wall Tag</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px" id="ew-tag-picker"></div>
+        <div id="ew-image-input" style="margin-bottom:10px"></div>
         <button class="review-btn-approve" style="width:100%;padding:10px;border:none;border-radius:14px;font-size:13px;font-weight:900;font-family:'Nunito',sans-serif;cursor:pointer;border-bottom:3px solid rgba(88,204,2,0.2);background:rgba(88,204,2,0.15);color:var(--duo-green)" onclick="sendToEvidenceWall()">Confirm → Evidence Wall</button>
       </div>
     </div>
@@ -4237,6 +4238,19 @@ function showEvidenceWallRoute() {
         `<button class="ew-tag-pill ${ewRouteTag === k ? 'active' : ''}" onclick="pickEwTag('${k}')" style="padding:4px 10px;border-radius:8px;font-size:11px;font-weight:800;border:1.5px solid ${ewRouteTag === k ? 'rgba(255,150,0,0.4)' : 'var(--card-border)'};background:${ewRouteTag === k ? 'rgba(255,150,0,0.15)' : 'transparent'};color:${ewRouteTag === k ? 'var(--duo-orange)' : 'var(--hare)'};cursor:pointer;font-family:'Nunito',sans-serif">${v.emoji} ${v.label}</button>`
       ).join('');
     }
+    // Show image URL input if post has no image
+    const imgInput = document.getElementById('ew-image-input');
+    const r = reviewQueue[reviewIndex];
+    if (imgInput) {
+      if (!r || !r.image_url) {
+        imgInput.innerHTML = `
+          <div style="font-size:11px;font-weight:900;color:var(--duo-orange);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Image URL (required)</div>
+          <input id="ew-manual-image" type="url" placeholder="Paste image URL (i.redd.it, imgur, etc.)" value="" style="width:100%;padding:8px 10px;background:rgba(255,255,255,0.06);border:2px solid var(--card-border);border-radius:8px;color:var(--snow);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700">
+          <div style="font-size:11px;color:var(--wolf);margin-top:4px;font-weight:700">Tip: Right-click the image on Reddit → Copy image address</div>`;
+      } else {
+        imgInput.innerHTML = '';
+      }
+    }
   }
 }
 
@@ -4246,23 +4260,72 @@ function pickEwTag(tag) {
   showEvidenceWallRoute(); // toggle on to re-render
 }
 
+async function fetchRedditImageUrl(sourceUrl) {
+  if (!sourceUrl) return null;
+  try {
+    // Convert Reddit post URL to JSON endpoint
+    let jsonUrl = sourceUrl.replace(/\/?$/, '.json');
+    if (!jsonUrl.startsWith('http')) jsonUrl = 'https://www.reddit.com' + jsonUrl;
+    const resp = await fetch(jsonUrl, { headers: { 'User-Agent': 'FullCartsBot/1.0' } });
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    const post = data?.[0]?.data?.children?.[0]?.data;
+    if (!post) return null;
+
+    // Direct image link
+    const url = post.url || '';
+    if (/\.(jpg|jpeg|png|gif|webp)(\?|$)/i.test(url)) return url;
+    if (['i.redd.it', 'i.imgur.com', 'preview.redd.it'].some(d => url.includes(d))) return url;
+
+    // Gallery: media_metadata
+    const meta = post.media_metadata;
+    if (meta && typeof meta === 'object') {
+      for (const item of Object.values(meta)) {
+        const src = item?.s;
+        const imgUrl = src?.u || src?.gif;
+        if (imgUrl) return imgUrl.replace(/&amp;/g, '&');
+      }
+    }
+
+    // Preview images
+    const prevImg = post.preview?.images?.[0]?.source?.url;
+    if (prevImg) return prevImg.replace(/&amp;/g, '&');
+
+    return null;
+  } catch (e) {
+    console.warn('Failed to fetch Reddit image:', e);
+    return null;
+  }
+}
+
 async function sendToEvidenceWall() {
   const r = reviewQueue[reviewIndex];
   if (!r) return;
 
-  // Must have an image
-  if (!r.image_url) {
-    alert('This post has no image — Evidence Wall requires a photo.');
+  const btn = document.querySelector('#evidence-wall-route button:last-child');
+  if (btn) { btn.textContent = '⏳ Fetching image...'; btn.style.pointerEvents = 'none'; }
+
+  // Get image URL: from staging record, manual input, or auto-fetch from Reddit
+  const manualImg = (document.getElementById('ew-manual-image')?.value || '').trim();
+  let imageUrl = r.image_url || manualImg;
+
+  if (!imageUrl && r.source_url) {
+    imageUrl = await fetchRedditImageUrl(r.source_url);
+  }
+
+  if (!imageUrl) {
+    alert('Could not find an image for this post. Try pasting an image URL manually.');
+    if (btn) { btn.textContent = 'Confirm → Evidence Wall'; btn.style.pointerEvents = ''; }
+    document.getElementById('ew-manual-image')?.focus();
     return;
   }
 
-  const btn = document.querySelector('#evidence-wall-route button:last-child');
-  if (btn) { btn.textContent = '⏳...'; btn.style.pointerEvents = 'none'; }
+  if (btn) { btn.textContent = '⏳...'; }
 
   try {
     // Insert into evidence_wall
     const { error: ewErr } = await sb.from('evidence_wall').insert({
-      image_url: r.image_url,
+      image_url: imageUrl,
       caption: r.title || 'Shrinkflation evidence',
       brand: r.brand || null,
       product_name: r.product_hint || null,
