@@ -1639,6 +1639,80 @@
       background:rgba(255,68,68,0.15);color:#ff4444;
       border-bottom-color:rgba(255,68,68,0.2) !important;
     }
+    .review-btn-evidence {
+      background:rgba(255,150,0,0.15);color:var(--duo-orange);
+      border-bottom-color:rgba(255,150,0,0.2) !important;
+    }
+
+    /* ═══════════════════════════════════════════
+       EVIDENCE WALL
+    ═══════════════════════════════════════════ */
+    .ew-header {
+      text-align:center;padding:24px 20px 12px;
+    }
+    .ew-header h2 { font-size:22px;font-weight:900;margin-bottom:4px; }
+    .ew-header p { font-size:14px;font-weight:700;color:var(--hare); }
+    .ew-tag-row {
+      display:flex;gap:6px;overflow-x:auto;padding:0 16px 12px;
+      -webkit-overflow-scrolling:touch;scrollbar-width:none;
+    }
+    .ew-tag-row::-webkit-scrollbar { display:none; }
+    .ew-tag-pill {
+      white-space:nowrap;padding:6px 12px;border-radius:20px;
+      font-size:12px;font-weight:800;border:2px solid var(--card-border);
+      background:transparent;color:var(--hare);cursor:pointer;
+      font-family:'Nunito',sans-serif;transition:all 0.1s;
+    }
+    .ew-tag-pill.active {
+      background:rgba(255,150,0,0.15);color:var(--duo-orange);
+      border-color:rgba(255,150,0,0.3);
+    }
+    .ew-card {
+      background:var(--card-bg);border:2px solid var(--card-border);
+      border-radius:16px;margin:0 16px 14px;overflow:hidden;
+    }
+    .ew-card-img {
+      width:100%;max-height:400px;object-fit:contain;
+      background:#0a1517;display:block;
+    }
+    .ew-card-body { padding:14px 16px; }
+    .ew-card-caption {
+      font-size:16px;font-weight:900;line-height:1.3;margin-bottom:8px;
+    }
+    .ew-card-meta {
+      display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:8px;
+    }
+    .ew-card-tag {
+      font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;
+      padding:3px 8px;border-radius:6px;
+      background:rgba(255,150,0,0.12);color:var(--duo-orange);
+      border:1.5px solid rgba(255,150,0,0.25);
+    }
+    .ew-card-brand {
+      font-size:12px;font-weight:800;color:var(--hare);
+    }
+    .ew-card-source {
+      font-size:11px;font-weight:700;color:var(--wolf);margin-left:auto;
+    }
+    .ew-card-source a { color:var(--duo-blue);text-decoration:none; }
+    .ew-card-actions {
+      display:flex;align-items:center;gap:12px;padding-top:8px;
+      border-top:1px solid var(--card-border);
+    }
+    .ew-upvote-btn {
+      display:flex;align-items:center;gap:4px;padding:6px 12px;
+      border-radius:10px;border:2px solid var(--card-border);
+      background:transparent;color:var(--hare);
+      font-size:13px;font-weight:800;cursor:pointer;
+      font-family:'Nunito',sans-serif;transition:all 0.15s;
+    }
+    .ew-upvote-btn.active {
+      background:rgba(255,150,0,0.12);color:var(--duo-orange);
+      border-color:rgba(255,150,0,0.3);
+    }
+    .ew-empty {
+      text-align:center;padding:48px 20px;color:var(--wolf);font-weight:800;
+    }
     .review-edit-fields {
       display:flex;flex-direction:column;gap:8px;margin:10px 0;
       animation:reviewSlideIn 0.2s ease-out;
@@ -1686,7 +1760,7 @@
 <div id="app">
   <div id="header">
     <div class="header-left">
-      <div class="header-mascot">
+      <a href="index.html" class="header-mascot" style="text-decoration:none" title="Back to FullCarts home">
         <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect width="40" height="40" rx="20" fill="#58CC02"/>
           <rect x="0" y="40" width="40" height="3" rx="2" fill="#3d8e02"/>
@@ -1698,7 +1772,7 @@
           <!-- Down-trend arrow on cart body -->
           <path d="M17 17l2.5 2.5 2.5-1.5 2 2" stroke="#0d1a1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-      </div>
+      </a>
       <h1 onclick="handleLogoTap()">FullCarts</h1>
     </div>
     <div class="header-stats">
@@ -1847,6 +1921,20 @@ const SHRINK_TYPES = {
   'count-cut':     { label:'Count Cut',     emoji:'🔢', cls:'type-count-cut',     desc:'Fewer items in the pack' },
   'price-hike':    { label:'Price Hike',    emoji:'💸', cls:'type-price-hike',    desc:'Same size, higher price' },
 };
+
+// ── Evidence Wall tags ──────────────────────────────────
+const EW_TAGS = {
+  'slack-fill':           { label:'Slack Fill',           emoji:'💨', desc:'Bag/box is mostly air' },
+  'paper-thin':           { label:'Paper Thin',           emoji:'📄', desc:'Product physically thinner' },
+  'spot-the-difference':  { label:'Spot the Difference',  emoji:'🔍', desc:'Old vs new side-by-side' },
+  'phantom-shrink':       { label:'Phantom Shrink',       emoji:'👻', desc:'Redesigned packaging hides the change' },
+  'the-audacity':         { label:'The Audacity',         emoji:'😤', desc:'Price went UP while size went DOWN' },
+  'caught-in-4k':         { label:'Caught in 4K',         emoji:'📸', desc:'Label/fine print reveals the truth' },
+};
+
+let EVIDENCE_WALL = [];
+let ewSelectedTag = 'all';
+let ewRouteTag = 'slack-fill';
 
 // ── Supabase client ─────────────────────────────────────────
 const SUPABASE_URL = 'https://ntyhbapphnzlariakgrw.supabase.co';
@@ -2258,7 +2346,7 @@ function navigate(screen, upc = null) {
   if (screen !== 'leaderboard') currentBrand = null;
 
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  const map = { home:'nav-home', scanner:'nav-scanner', leaderboard:'nav-leaderboard', report:'nav-report', community:'nav-community', news:'nav-community' };
+  const map = { home:'nav-home', scanner:'nav-scanner', leaderboard:'nav-leaderboard', report:'nav-report', community:'nav-community', news:'nav-community', evidence:'nav-community' };
   if (map[screen]) document.getElementById(map[screen])?.classList.add('active');
 
   renderScreen();
@@ -2267,7 +2355,7 @@ function navigate(screen, upc = null) {
 
 function renderScreen() {
   const el = document.getElementById('content');
-  const screens = { home:renderHome, scanner:renderScanner, result:renderResult, leaderboard:renderLeaderboard, report:renderReport, news:renderNews, community:renderCommunity, notfound:renderNotFound };
+  const screens = { home:renderHome, scanner:renderScanner, result:renderResult, leaderboard:renderLeaderboard, report:renderReport, news:renderNews, community:renderCommunity, evidence:renderEvidenceWall, notfound:renderNotFound };
   el.innerHTML = (screens[currentScreen] || renderHome)();
   if (currentScreen === 'scanner') initScanner();
   if (currentScreen === 'report') initAutoFill();
@@ -2355,6 +2443,19 @@ function renderHome() {
       <div class="stat-bubble"><div class="num red">${PRODUCTS.filter(p=>p.repeatOffender).length}</div><div class="lbl">Repeat</div></div>
       <div class="stat-bubble"><div class="num blue">${Object.values(UPVOTE_COUNTS).reduce((s,v)=>s+v,0)}</div><div class="lbl">Upvotes</div></div>
     </div>
+
+    ${EVIDENCE_WALL.length ? `
+    <div class="duo-card" style="margin:0 16px 12px;padding:14px 16px;cursor:pointer;border-color:rgba(255,150,0,0.25);background:rgba(255,150,0,0.04)" onclick="navigate('evidence')">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="font-size:28px">🖼️</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:900;color:var(--duo-orange)">Evidence Wall</div>
+          <div style="font-size:12px;font-weight:700;color:var(--hare)">${EVIDENCE_WALL.length} photo${EVIDENCE_WALL.length !== 1 ? 's' : ''} of shrinkflation caught in the wild</div>
+        </div>
+        <span style="font-size:11px;font-weight:900;color:var(--duo-orange)">View →</span>
+      </div>
+    </div>
+    ` : ''}
 
     <div class="search-wrap">
       <div class="search-bar">
@@ -3871,6 +3972,14 @@ function renderReviewCard() {
         <button class="review-btn-edit" onclick="toggleReviewEdit()">✏️ Edit</button>
         <button class="review-btn-approve" onclick="approveReviewItem()">✅ Approve</button>
       </div>
+      <div style="margin-top:8px">
+        <button class="review-btn-evidence" style="width:100%;padding:10px;border:none;border-radius:14px;font-size:13px;font-weight:900;font-family:'Nunito',sans-serif;cursor:pointer;border-bottom:3px solid rgba(255,150,0,0.2)" onclick="showEvidenceWallRoute()">🖼️ Send to Evidence Wall</button>
+      </div>
+      <div id="evidence-wall-route" style="display:none;margin-top:8px;padding:12px;background:rgba(255,150,0,0.06);border:1.5px solid rgba(255,150,0,0.2);border-radius:12px">
+        <div style="font-size:11px;font-weight:900;color:var(--duo-orange);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Evidence Wall Tag</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px" id="ew-tag-picker"></div>
+        <button class="review-btn-approve" style="width:100%;padding:10px;border:none;border-radius:14px;font-size:13px;font-weight:900;font-family:'Nunito',sans-serif;cursor:pointer;border-bottom:3px solid rgba(88,204,2,0.2);background:rgba(88,204,2,0.15);color:var(--duo-green)" onclick="sendToEvidenceWall()">Confirm → Evidence Wall</button>
+      </div>
     </div>
   `;
 }
@@ -4112,6 +4221,150 @@ document.addEventListener('touchend', (e) => {
 }, { passive: true });
 
 // ============================================================
+// EVIDENCE WALL
+// ============================================================
+let ewRouteOpen = false;
+
+function showEvidenceWallRoute() {
+  ewRouteOpen = !ewRouteOpen;
+  const panel = document.getElementById('evidence-wall-route');
+  if (!panel) return;
+  panel.style.display = ewRouteOpen ? '' : 'none';
+  if (ewRouteOpen) {
+    const picker = document.getElementById('ew-tag-picker');
+    if (picker) {
+      picker.innerHTML = Object.entries(EW_TAGS).map(([k, v]) =>
+        `<button class="ew-tag-pill ${ewRouteTag === k ? 'active' : ''}" onclick="pickEwTag('${k}')" style="padding:4px 10px;border-radius:8px;font-size:11px;font-weight:800;border:1.5px solid ${ewRouteTag === k ? 'rgba(255,150,0,0.4)' : 'var(--card-border)'};background:${ewRouteTag === k ? 'rgba(255,150,0,0.15)' : 'transparent'};color:${ewRouteTag === k ? 'var(--duo-orange)' : 'var(--hare)'};cursor:pointer;font-family:'Nunito',sans-serif">${v.emoji} ${v.label}</button>`
+      ).join('');
+    }
+  }
+}
+
+function pickEwTag(tag) {
+  ewRouteTag = tag;
+  showEvidenceWallRoute(); // toggle off
+  showEvidenceWallRoute(); // toggle on to re-render
+}
+
+async function sendToEvidenceWall() {
+  const r = reviewQueue[reviewIndex];
+  if (!r) return;
+
+  // Must have an image
+  if (!r.image_url) {
+    alert('This post has no image — Evidence Wall requires a photo.');
+    return;
+  }
+
+  const btn = document.querySelector('#evidence-wall-route button:last-child');
+  if (btn) { btn.textContent = '⏳...'; btn.style.pointerEvents = 'none'; }
+
+  try {
+    // Insert into evidence_wall
+    const { error: ewErr } = await sb.from('evidence_wall').insert({
+      image_url: r.image_url,
+      caption: r.title || 'Shrinkflation evidence',
+      brand: r.brand || null,
+      product_name: r.product_hint || null,
+      category: r.product_hint ? guessCategory(r.product_hint, r.brand || '', '') : null,
+      tag: ewRouteTag,
+      source_url: r.source_url || null,
+      source_type: 'reddit',
+      subreddit: r.subreddit || null,
+      date_spotted: r.date_noticed || (r.posted_utc ? r.posted_utc.slice(0, 10) : new Date().toISOString().slice(0, 10)),
+      staging_id: r.id,
+      status: 'approved'
+    });
+    if (ewErr) throw ewErr;
+
+    // Mark staging as promoted (evidence)
+    const { error: rpcErr } = await sb.rpc('update_staging_status', { row_id: r.id, new_status: 'evidence_wall' });
+    if (rpcErr) {
+      console.warn('RPC failed, trying direct update:', rpcErr.message);
+      await sb.from('reddit_staging').update({ status: 'evidence_wall' }).eq('id', r.id);
+    }
+
+    reviewSessionStats.approved++;
+    ewRouteOpen = false;
+
+    // Flash orange
+    const card = document.getElementById('review-current-card');
+    if (card) {
+      card.style.transition = 'all 0.2s';
+      card.style.borderColor = 'var(--duo-orange)';
+      card.style.transform = 'translateX(-20px)';
+      card.style.opacity = '0.5';
+    }
+
+    setTimeout(() => {
+      reviewIndex++;
+      reviewEditing = false;
+      renderReviewCard();
+    }, 250);
+
+  } catch (err) {
+    console.error('Evidence Wall send failed:', err);
+    if (btn) { btn.textContent = '❌ Error'; btn.style.pointerEvents = ''; }
+    setTimeout(() => { if (btn) btn.textContent = 'Confirm → Evidence Wall'; }, 2000);
+  }
+}
+
+function selectEwTag(tag) {
+  ewSelectedTag = tag;
+  renderScreen();
+}
+
+function renderEvidenceWall() {
+  const filtered = ewSelectedTag === 'all'
+    ? EVIDENCE_WALL
+    : EVIDENCE_WALL.filter(e => e.tag === ewSelectedTag);
+
+  const tagPills = [
+    `<button class="ew-tag-pill ${ewSelectedTag === 'all' ? 'active' : ''}" onclick="selectEwTag('all')">All</button>`,
+    ...Object.entries(EW_TAGS).map(([k, v]) =>
+      `<button class="ew-tag-pill ${ewSelectedTag === k ? 'active' : ''}" onclick="selectEwTag('${k}')">${v.emoji} ${v.label}</button>`
+    )
+  ].join('');
+
+  const cards = filtered.length
+    ? filtered.map(e => {
+        const tag = EW_TAGS[e.tag] || EW_TAGS['slack-fill'];
+        return `
+          <div class="ew-card">
+            <img class="ew-card-img" src="${escapeHTML(e.image_url)}" alt="${escapeHTML(e.caption)}" loading="lazy" onerror="this.style.display='none'">
+            <div class="ew-card-body">
+              <div class="ew-card-caption">${escapeHTML(e.caption)}</div>
+              <div class="ew-card-meta">
+                <span class="ew-card-tag">${tag.emoji} ${tag.label}</span>
+                ${e.brand ? `<span class="ew-card-brand">${escapeHTML(e.brand)}</span>` : ''}
+                ${e.product_name ? `<span class="ew-card-brand">· ${escapeHTML(e.product_name)}</span>` : ''}
+                <span class="ew-card-source">${e.source_url ? `<a href="${escapeHTML(e.source_url)}" target="_blank" rel="noopener">Source →</a>` : (e.source_type || 'reddit')}</span>
+              </div>
+              <div class="ew-card-actions">
+                <span style="font-size:12px;color:var(--wolf);font-weight:700">${e.date_spotted || ''}</span>
+                ${e.subreddit ? `<span style="font-size:11px;color:var(--wolf);font-weight:700">r/${escapeHTML(e.subreddit)}</span>` : ''}
+              </div>
+            </div>
+          </div>`;
+      }).join('')
+    : '<div class="ew-empty">No evidence yet. Review Reddit posts and route compelling photos here!</div>';
+
+  return `
+    <div class="ew-header">
+      <h2>Evidence Wall</h2>
+      <p>Visual proof that speaks for itself — no data needed.</p>
+    </div>
+    <div class="ew-tag-row">${tagPills}</div>
+    <div style="padding:0 0 16px">
+      ${cards}
+    </div>
+    <div style="text-align:center;padding:0 16px 24px">
+      <button class="btn-duo btn-outline btn-sm" onclick="navigate('home')" style="font-size:12px;padding:8px 16px">← Back to Home</button>
+    </div>
+  `;
+}
+
+// ============================================================
 // NEWS
 // ============================================================
 function selectNewsType(t) { selectedNewsType = t; renderScreen(); }
@@ -4231,6 +4484,14 @@ async function loadFromSupabase() {
       });
     }
 
+    // Load evidence wall
+    const { data: ewData, error: ewErr } = await sb.from('evidence_wall')
+      .select('*').eq('status', 'approved')
+      .order('created_at', { ascending: false }).limit(100);
+    if (!ewErr && ewData) {
+      EVIDENCE_WALL = ewData;
+    }
+
     // Update header product count
     const pcEl = document.getElementById('products-count');
     if (pcEl) pcEl.textContent = PRODUCTS.length;
@@ -4239,7 +4500,7 @@ async function loadFromSupabase() {
     const ab = document.getElementById('admin-badge');
     if (ab) ab.style.display = isAdmin ? 'inline' : 'none';
 
-    console.log('[FullCarts] Loaded from Supabase:', PRODUCTS.length, 'products,', EVENTS.length, 'events,', (upvotes||[]).length, 'upvotes');
+    console.log('[FullCarts] Loaded from Supabase:', PRODUCTS.length, 'products,', EVENTS.length, 'events,', (upvotes||[]).length, 'upvotes,', EVIDENCE_WALL.length, 'evidence');
   } catch (err) {
     console.warn('[FullCarts] Supabase load failed, using fallback data:', err);
   }

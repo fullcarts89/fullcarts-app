@@ -116,6 +116,28 @@ CREATE TABLE IF NOT EXISTS flags (
   created_at timestamptz DEFAULT now()
 );
 
+-- ── EVIDENCE WALL ─────────────────────────────────────────
+-- For surfacing clear visual examples of shrinkflation that lack
+-- structured data (no UPC, no before/after measurements).
+-- Content is routed here from the admin review queue.
+CREATE TABLE IF NOT EXISTS evidence_wall (
+  id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  image_url        text NOT NULL,
+  caption          text NOT NULL,
+  brand            text,
+  product_name     text,
+  category         text,
+  tag              text DEFAULT 'slack-fill',   -- slack-fill, paper-thin, spot-the-difference, phantom-shrink, the-audacity, caught-in-4k
+  source_url       text,
+  source_type      text DEFAULT 'reddit',       -- reddit, community, news
+  subreddit        text,
+  date_spotted     date,
+  staging_id       uuid,                        -- FK to reddit_staging row it came from (nullable)
+  status           text DEFAULT 'approved',     -- approved, hidden
+  upvotes          integer DEFAULT 0,
+  created_at       timestamptz DEFAULT now()
+);
+
 -- ============================================================
 -- ROW LEVEL SECURITY
 -- ============================================================
@@ -158,6 +180,11 @@ CREATE POLICY "Users can delete own upvotes" ON upvotes FOR DELETE USING (true);
 -- Flags: anyone can insert and read
 CREATE POLICY "Anyone can insert flags" ON flags FOR INSERT WITH CHECK (true);
 CREATE POLICY "Public read flags" ON flags FOR SELECT USING (true);
+
+-- Evidence wall: anyone can read and insert (admin inserts from review queue)
+ALTER TABLE evidence_wall ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public read evidence_wall" ON evidence_wall FOR SELECT USING (true);
+CREATE POLICY "Anyone can insert evidence_wall" ON evidence_wall FOR INSERT WITH CHECK (true);
 
 -- ============================================================
 -- SEED: PRODUCTS
