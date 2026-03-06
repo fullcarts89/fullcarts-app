@@ -3866,6 +3866,12 @@ let reviewQueue = [];
 let reviewIndex = 0;
 // Edit fields are always visible in the review card
 let reviewSessionStats = { approved: 0, skipped: 0, rejected: 0 };
+// Track processed IDs so they don't reappear if the DB update silently fails
+const reviewProcessedIds = new Set(JSON.parse(sessionStorage.getItem('reviewProcessedIds') || '[]'));
+function markReviewProcessed(id) {
+  reviewProcessedIds.add(id);
+  sessionStorage.setItem('reviewProcessedIds', JSON.stringify([...reviewProcessedIds]));
+}
 
 async function loadRedditReviewQueue() {
   const container = document.getElementById('reddit-review-container');
@@ -3883,7 +3889,7 @@ async function loadRedditReviewQueue() {
     return;
   }
 
-  reviewQueue = reviewData;
+  reviewQueue = reviewData.filter(r => !reviewProcessedIds.has(r.id));
   reviewIndex = 0;
   reviewSessionStats = { approved: 0, skipped: 0, rejected: 0 };
 
@@ -4094,12 +4100,19 @@ async function approveReviewItem() {
       if (directErr) throw new Error(`Both RPC and direct update failed: ${rpcErr.message} / ${directErr.message}`);
     }
     // Verify the status actually changed
-    const { data: verify } = await sb.from('reddit_staging').select('status').eq('id', r.id).single();
-    if (verify && verify.status !== 'promoted') {
+    const { data: verify, error: verifyErr } = await sb.from('reddit_staging').select('status').eq('id', r.id).single();
+    if (verifyErr) {
+      console.warn('Verify select blocked (likely RLS) — assuming RPC succeeded:', verifyErr.message);
+    } else if (!verify) {
+      console.warn('Verify returned null — RLS may be blocking reads on reddit_staging');
+    } else if (verify.status !== 'promoted') {
       console.error(`Status verify failed: expected 'promoted', got '${verify.status}'`);
       throw new Error('Status update did not persist — check RLS policies and RPC function in Supabase');
     }
 
+    // Mark locally so reloads from in-memory queue also skip this
+    r.status = 'promoted';
+    markReviewProcessed(r.id);
     reviewSessionStats.approved++;
 
     // Flash green
@@ -4142,6 +4155,8 @@ async function skipReviewItem() {
     return;
   }
 
+  r.status = 'dismissed';
+  markReviewProcessed(r.id);
   reviewSessionStats.skipped++;
 
   const card = document.getElementById('review-current-card');
@@ -4182,6 +4197,8 @@ async function rejectReviewItem() {
     return;
   }
 
+  r.status = 'rejected';
+  markReviewProcessed(r.id);
   reviewSessionStats.rejected++;
 
   const card = document.getElementById('review-current-card');
