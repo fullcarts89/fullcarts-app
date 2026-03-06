@@ -329,7 +329,56 @@ Reddit is actively litigating against scrapers (Reddit v. Perplexity AI, Oct 202
 
 ---
 
-## 7. Summary
+## 7. Implementation Progress Log
+
+**Last updated:** March 6, 2026
+
+### Completed Work
+
+| Status | Task | Commit(s) | Notes |
+|--------|------|-----------|-------|
+| Done | Initial Reddit public scraper + admin review queue | `39b32e8` | Tinder-style swipe UI for reviewing staged entries |
+| Done | GitHub Actions workflow for scheduled scraping (every 6h) | `809c296` | Runs `reddit_public_scraper.py --recent` on cron |
+| Done | Google News RSS + Open Food Facts scrapers | `4393798` | Multi-source pipeline with GitHub Actions workflow |
+| Done | Switch from Pullpush to Arctic Shift API | `de669a0` | Better rate limits (2000 req/min vs ~1 req/sec) |
+| Done | Parallelize Arctic Shift fetches | `0ef409b` | Fixed 30-min workflow timeout by fetching subreddits concurrently |
+| Done | Expand subreddit coverage | `801c299` | Added r/grocery, r/Costco, r/traderjoes, r/mildlyinfuriating |
+| Done | Admin mode fix (query param + hashchange) | `82eec85` | `?admin=true` now works reliably |
+| Done | Fix Supabase project connection | `62ba7f5`, `8f9ed5d` | Updated URL and anon key to correct project |
+| Done | Fix upsert failure (missing column) | `f82e8e5` | Added `date_noticed` column to reddit_staging |
+| Done | Fix spam auto-promotion + add reject button | `44a7b8f` | Prevents duplicate events; reject removes from queue |
+| Done | Store Reddit post body in staging | `e6f3e0f` | Reviewers can read full post text even if deleted on Reddit |
+| Done | Image support in review queue | `509d494` | Reddit post images displayed in admin review cards |
+| Done | Fix re-scrape resetting validated records | `aa9a2f6` | Scraper no longer overwrites approved/rejected status |
+| Done | Claude vision analysis for product images | `5a18b6f` | Uses Anthropic API to extract product info from photos |
+| Done | Add ANTHROPIC_API_KEY to scraper workflow | `90c65e9` | Enables vision analysis in GitHub Actions runs |
+| Done | Fix review queue RLS policy errors | `438ec86` | Status updates were silently failing due to Row Level Security |
+| Done | Fix RPC errors + scraper re-upsert conflicts | `251733a` | RPC errors no longer swallowed; upserts don't reset reviewed items |
+
+### Roadmap Status Update
+
+| Priority | Task | Status | Notes |
+|----------|------|--------|-------|
+| **P0** | Deploy scraper via GitHub Actions (every 6h) | **Done** | Running on schedule |
+| **P0** | Historical backfill (Arctic Shift) | **Done** | Switched from Pullpush; parallelized |
+| **P1** | Register Reddit API app (PRAW) | **Not started** | Public scraper + Arctic Shift working well as alternative |
+| **P1** | Google News RSS scraper | **Done** | Implemented in multi-source workflow |
+| **P2** | Open Food Facts weight-change monitor | **Done** | Integrated into scraper pipeline |
+| **P2** | BLS CPI data integration | **Not started** | Lower priority — macro data, not product-level |
+| **P3** | Image/OCR pipeline for Reddit photos | **Done** | Claude vision API extracts product info from images |
+| **P3** | Generalize staging table for multi-source | **Not started** | Current `reddit_staging` table works; generalize when adding more sources |
+| **P3** | YouTube Data API scraper | **Not started** | Supplementary source, low priority |
+
+### Known Issues / Next Steps
+
+- **PR merge pending** — Branch `claude/shrinkflation-data-scraping-QLmci` has all changes but needs to be merged to `main` via GitHub PR
+- **PRAW scraper** — Not yet activated (no Reddit API credentials registered); public scraper covers the gap
+- **BLS / YouTube scrapers** — Not yet implemented; lower priority
+- **Generalized staging table** — Worth doing when a second non-Reddit source needs staging (News/OFF currently bypass staging)
+
+---
+
+## 8. Summary
 
 Your existing infrastructure is well-designed. The most impactful next step is simply **deploying what you already have** — the public Reddit scraper via GitHub Actions and running the historical backfill. After that, expanding to news RSS feeds and Open Food Facts monitoring would give you the broadest coverage with the least effort.
 
