@@ -3940,7 +3940,7 @@ function renderReviewCard() {
       <div class="review-card-brand">${escapeHTML(r.subreddit || 'ALL')}</div>
       <div class="review-card-name">${escapeHTML(r.title || 'No title')}</div>
       ${r.body ? `<div style="font-size:13px;color:var(--wolf);margin:6px 0 10px;padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:8px;max-height:120px;overflow-y:auto;line-height:1.4;white-space:pre-wrap">${escapeHTML(r.body.slice(0, 500))}</div>` : ''}
-      ${r.image_url ? `<div style="margin:8px 0;text-align:center"><img src="${escapeHTML(r.image_url)}" alt="Reddit post image" style="max-width:100%;max-height:300px;border-radius:8px;object-fit:contain" onerror="this.parentElement.style.display='none'"></div>` : ''}
+      ${r.image_url ? `<div style="margin:8px 0;text-align:center"><img src="${escapeHTML(r.image_url)}" alt="Reddit post image" style="max-width:100%;max-height:300px;border-radius:8px;object-fit:contain" onerror="this.parentElement.style.display='none'"></div>` : (r.source_url ? `<div id="review-img-placeholder" style="margin:8px 0;text-align:center;padding:16px;background:rgba(255,255,255,0.03);border:2px dashed var(--card-border);border-radius:8px"><div style="font-size:12px;color:var(--wolf);margin-bottom:8px">📷 No image scraped — check the Reddit post</div><a href="${escapeHTML(r.source_url.startsWith('http') ? r.source_url : 'https://www.reddit.com' + r.source_url)}" target="_blank" rel="noopener" style="display:inline-block;padding:6px 14px;background:rgba(206,130,255,0.1);border:1.5px solid rgba(206,130,255,0.2);border-radius:8px;font-size:12px;font-weight:800;color:var(--duo-purple);text-decoration:none;font-family:'Nunito',sans-serif">Open Reddit Post ↗</a></div>` : '')}
       ${r.ai_description ? `<div style="font-size:13px;color:var(--hare);margin:6px 0 10px;padding:8px 10px;background:rgba(88,204,2,0.06);border:1px solid rgba(88,204,2,0.15);border-radius:8px;line-height:1.4"><span style="font-weight:700;color:var(--duo-green)">🤖 AI:</span> ${escapeHTML(r.ai_description)}${r.visual_only ? ' <span style="font-weight:700;color:var(--duo-purple)">(visual evidence only)</span>' : ''}</div>` : ''}
 
       ${oldS && newS ? `
@@ -4260,67 +4260,22 @@ function pickEwTag(tag) {
   showEvidenceWallRoute(); // toggle on to re-render
 }
 
-async function fetchRedditImageUrl(sourceUrl) {
-  if (!sourceUrl) return null;
-  try {
-    // Convert Reddit post URL to JSON endpoint
-    let jsonUrl = sourceUrl.replace(/\/?$/, '.json');
-    if (!jsonUrl.startsWith('http')) jsonUrl = 'https://www.reddit.com' + jsonUrl;
-    const resp = await fetch(jsonUrl, { headers: { 'User-Agent': 'FullCartsBot/1.0' } });
-    if (!resp.ok) return null;
-    const data = await resp.json();
-    const post = data?.[0]?.data?.children?.[0]?.data;
-    if (!post) return null;
-
-    // Direct image link
-    const url = post.url || '';
-    if (/\.(jpg|jpeg|png|gif|webp)(\?|$)/i.test(url)) return url;
-    if (['i.redd.it', 'i.imgur.com', 'preview.redd.it'].some(d => url.includes(d))) return url;
-
-    // Gallery: media_metadata
-    const meta = post.media_metadata;
-    if (meta && typeof meta === 'object') {
-      for (const item of Object.values(meta)) {
-        const src = item?.s;
-        const imgUrl = src?.u || src?.gif;
-        if (imgUrl) return imgUrl.replace(/&amp;/g, '&');
-      }
-    }
-
-    // Preview images
-    const prevImg = post.preview?.images?.[0]?.source?.url;
-    if (prevImg) return prevImg.replace(/&amp;/g, '&');
-
-    return null;
-  } catch (e) {
-    console.warn('Failed to fetch Reddit image:', e);
-    return null;
-  }
-}
-
 async function sendToEvidenceWall() {
   const r = reviewQueue[reviewIndex];
   if (!r) return;
 
-  const btn = document.querySelector('#evidence-wall-route button:last-child');
-  if (btn) { btn.textContent = '⏳ Fetching image...'; btn.style.pointerEvents = 'none'; }
-
-  // Get image URL: from staging record, manual input, or auto-fetch from Reddit
+  // Get image URL: from staging record or manual input
   const manualImg = (document.getElementById('ew-manual-image')?.value || '').trim();
-  let imageUrl = r.image_url || manualImg;
-
-  if (!imageUrl && r.source_url) {
-    imageUrl = await fetchRedditImageUrl(r.source_url);
-  }
+  const imageUrl = r.image_url || manualImg;
 
   if (!imageUrl) {
-    alert('Could not find an image for this post. Try pasting an image URL manually.');
-    if (btn) { btn.textContent = 'Confirm → Evidence Wall'; btn.style.pointerEvents = ''; }
+    alert('Paste an image URL first. Right-click the photo on Reddit → Copy image address.');
     document.getElementById('ew-manual-image')?.focus();
     return;
   }
 
-  if (btn) { btn.textContent = '⏳...'; }
+  const btn = document.querySelector('#evidence-wall-route button:last-child');
+  if (btn) { btn.textContent = '⏳...'; btn.style.pointerEvents = 'none'; }
 
   try {
     // Insert into evidence_wall
