@@ -126,7 +126,9 @@ def build_staging_entry(article: dict, parsed: dict, tier: str) -> dict:
         "posted_utc": pubdate_iso,
         "scraped_utc": datetime.now(tz=timezone.utc).isoformat(),
         "tier": tier,
-        "status": "pending",
+        # status is NOT included — the DB default ('pending') applies on
+        # first insert, and omitting it ensures re-scraping the same
+        # source_url does not reset an already-reviewed record.
         "title": article["title"][:200],
         "brand": parsed["brand"],
         "product_hint": parsed["product_hint"],
@@ -227,13 +229,39 @@ def run(queries: list[str] | None = None, dry_run: bool = False):
         log.info("No entries to upsert")
         return
 
+    # Pre-filter: skip entries whose source_url already has a non-pending
+    # status (promoted/dismissed/rejected/evidence_wall) so we never
+    # accidentally overwrite a reviewed record.
+    source_urls = [e["source_url"] for e in all_entries if e.get("source_url")]
+    reviewed_urls: set[str] = set()
+    for chunk_start in range(0, len(source_urls), 200):
+        chunk = source_urls[chunk_start:chunk_start + 200]
+        try:
+            result = (sb.table("reddit_staging")
+                      .select("source_url")
+                      .in_("source_url", chunk)
+                      .neq("status", "pending")
+                      .execute())
+            reviewed_urls.update(row["source_url"] for row in (result.data or []))
+        except Exception:
+            pass  # If the check fails, ignore_duplicates still protects us
+
+    if reviewed_urls:
+        all_entries = [e for e in all_entries if e.get("source_url") not in reviewed_urls]
+        log.info(f"  Skipped {len(reviewed_urls)} already-reviewed entries")
+
+    if not all_entries:
+        log.info("All entries already reviewed — nothing to upsert")
+        return
+
     # Upsert to reddit_staging (same table, same pipeline)
     upserted = 0
     for i in range(0, len(all_entries), 50):
         batch = all_entries[i:i + 50]
         try:
             sb.table("reddit_staging").upsert(
-                batch, on_conflict="source_url"
+                batch, on_conflict="source_url",
+                ignore_duplicates=True
             ).execute()
             upserted += len(batch)
         except Exception as exc:
@@ -241,7 +269,8 @@ def run(queries: list[str] | None = None, dry_run: bool = False):
             for entry in batch:
                 try:
                     sb.table("reddit_staging").upsert(
-                        entry, on_conflict="source_url"
+                        entry, on_conflict="source_url",
+                        ignore_duplicates=True
                     ).execute()
                     upserted += 1
                 except Exception as exc2:
