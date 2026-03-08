@@ -56,15 +56,133 @@ def _strip_cols(record: dict, table_name: str, sb) -> dict:
     return {k: v for k, v in record.items() if k in known or k in ("id", "created_at")}
 
 
+def _promote_news_article(sb, entry, dry_run=False):
+    """Promote a news-sourced staging entry to the news_articles table.
+
+    If the entry also has structured size data, it gets the normal product
+    promotion too (handled by the caller). This function handles the
+    news_articles insert and auto-links to any matching product.
+
+    Returns True if the news article was successfully created.
+    """
+    source_url = entry.get("source_url", "")
+    title = (entry.get("title") or "")[:200]
+
+    if not source_url:
+        return False
+
+    if dry_run:
+        log.info(f"  [DRY RUN] Would create news article: {title[:60]}")
+        return True
+
+    try:
+        # Determine article type from the NLP tier/fields
+        article_type = "shrinkflation"  # default
+        if entry.get("product_hint"):
+            hint_lower = (entry["product_hint"] or "").lower()
+            if "skimpflation" in hint_lower:
+                article_type = "skimpflation"
+            elif "downsiz" in hint_lower:
+                article_type = "downsizing"
+
+        # Build tags from title keywords
+        tags = []
+        title_lower = title.lower()
+        for tag_word in ("policy", "investigation", "consumer", "analysis",
+                         "data", "viral", "industry", "economy"):
+            if tag_word in title_lower:
+                tags.append(tag_word.capitalize())
+        if not tags:
+            tags.append("News")
+
+        # Parse outlet from subreddit field or title
+        outlet = None
+        if "—" in title:
+            outlet = title.rsplit("—", 1)[-1].strip()
+        elif " - " in title:
+            outlet = title.rsplit(" - ", 1)[-1].strip()
+
+        # Parse published_at
+        published_at = entry.get("posted_utc")
+
+        article_record = {
+            "url": source_url,
+            "title": title.split(" — ")[0].split(" - ")[0].strip() if outlet else title,
+            "outlet": outlet,
+            "published_at": published_at,
+            "summary": (entry.get("title") or "")[:500],
+            "article_type": article_type,
+            "tags": tags if tags else None,
+            "staging_id": entry.get("id"),
+            "products_extracted": 1 if entry.get("old_size") and entry.get("new_size") else 0,
+            "status": "active",
+        }
+
+        result = sb.table("news_articles").upsert(
+            _strip_cols(article_record, "news_articles", sb),
+            on_conflict="url",
+        ).execute()
+
+        log.info(f"  News article created: {title[:60]} ({outlet or 'unknown outlet'})")
+        return True
+
+    except Exception as exc:
+        log.warning(f"  News article creation failed for {source_url[:60]}: {exc}")
+        return False
+
+
+def _link_article_to_product(sb, entry, upc, dry_run=False):
+    """Link a news article to a product via article_product_links."""
+    source_url = entry.get("source_url", "")
+    if not source_url or dry_run:
+        return
+
+    try:
+        # Look up the article ID by URL
+        result = sb.table("news_articles").select("id").eq("url", source_url).limit(1).execute()
+        if not result.data:
+            return
+
+        article_id = result.data[0]["id"]
+        context = f"Mentioned in article: {(entry.get('title') or '')[:100]}"
+
+        sb.table("article_product_links").upsert(
+            _strip_cols({
+                "article_id": article_id,
+                "product_upc": upc,
+                "context": context,
+            }, "article_product_links", sb),
+            on_conflict="article_id,product_upc",
+        ).execute()
+
+        log.info(f"  Linked article to product {upc}")
+
+    except Exception as exc:
+        log.warning(f"  Article-product link failed: {exc}")
+
+
 def promote_entry(sb, entry, dry_run=False):
     """Promote a single staging entry to products + product_versions.
 
+    If the entry is a news article (source_type='news'), also creates a
+    news_articles record and links it to the product.
+
     Returns True if successfully promoted.
     """
+    is_news = entry.get("source_type") == "news" or entry.get("subreddit") == "google_news"
+
     old_size = entry.get("old_size")
     new_size = entry.get("new_size")
 
+    # News articles without size data still get promoted to news_articles table
     if not old_size or not new_size:
+        if is_news:
+            success = _promote_news_article(sb, entry, dry_run=dry_run)
+            if success and not dry_run:
+                sb.table("reddit_staging").update(
+                    {"status": "promoted"}
+                ).eq("id", entry["id"]).execute()
+            return success
         return False
 
     old_size = float(old_size)
@@ -162,6 +280,11 @@ def promote_entry(sb, entry, dry_run=False):
 
         # Run change detection for this product
         detect_changes_for_product(sb, upc)
+
+        # If this is a news article, also create a news_articles record and link it
+        if is_news:
+            _promote_news_article(sb, entry, dry_run=dry_run)
+            _link_article_to_product(sb, entry, upc, dry_run=dry_run)
 
         log.info(f"  Promoted: {product_name} ({brand}) "
                  f"— {old_size}{unit} → {new_size}{unit} [{date_noticed}]")

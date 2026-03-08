@@ -126,6 +126,7 @@ def build_staging_entry(article: dict, parsed: dict, tier: str) -> dict:
         "posted_utc": pubdate_iso,
         "scraped_utc": datetime.now(tz=timezone.utc).isoformat(),
         "tier": tier,
+        "source_type": "news",
         # status is NOT included — the DB default ('pending') applies on
         # first insert, and omitting it ensures re-scraping the same
         # source_url does not reset an already-reviewed record.
