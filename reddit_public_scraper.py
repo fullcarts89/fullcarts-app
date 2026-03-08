@@ -546,11 +546,11 @@ def _extract_image_url_from_reddit_json(permalink: str) -> str | None:
     return None
 
 
-def _extract_image_url(post: dict) -> str | None:
+def _extract_image_url(post: dict, skip_reddit_fallback: bool = False) -> str | None:
     """Return a direct image URL from an Arctic Shift post dict, or None.
 
     Handles direct image links, gallery posts (media_metadata),
-    preview images, and falls back to Reddit's JSON API.
+    preview images, and optionally falls back to Reddit's JSON API.
     """
     url = post.get("url") or ""
     post_hint = post.get("post_hint") or ""
@@ -584,13 +584,14 @@ def _extract_image_url(post: dict) -> str | None:
                 return img_url.replace("&amp;", "&")[:500]
 
     # Fallback: gallery posts or posts where Arctic Shift lacks image data
-    # Fetch directly from Reddit's JSON API
-    is_gallery = post.get("is_gallery") or "/gallery/" in url
-    permalink = post.get("permalink") or ""
-    if is_gallery or (permalink and not url.endswith(tuple(".jpg .jpeg .png .gif .webp".split()))):
-        reddit_img = _extract_image_url_from_reddit_json(permalink)
-        if reddit_img:
-            return reddit_img
+    # Fetch directly from Reddit's JSON API (slow — skipped during backfill)
+    if not skip_reddit_fallback:
+        is_gallery = post.get("is_gallery") or "/gallery/" in url
+        permalink = post.get("permalink") or ""
+        if is_gallery or (permalink and not url.endswith(tuple(".jpg .jpeg .png .gif .webp".split()))):
+            reddit_img = _extract_image_url_from_reddit_json(permalink)
+            if reddit_img:
+                return reddit_img
 
     return None
 
@@ -614,7 +615,8 @@ def detect_region(text: str, subreddit: str = "") -> str:
 
 
 def build_entry(post: dict, parsed: dict, tier: str,
-                has_vision: bool = False) -> dict:
+                has_vision: bool = False,
+                skip_reddit_fallback: bool = False) -> dict:
     """Build a staging entry from a Reddit post + parsed signals."""
     created_utc = post.get("created_utc", 0)
     permalink = post.get("permalink", "")
@@ -642,7 +644,7 @@ def build_entry(post: dict, parsed: dict, tier: str,
         # dismissed, or rejected record back to 'pending'.
         "title": (post.get("title") or "")[:200],
         "body": (post.get("selftext") or "")[:2000],
-        "image_url": _extract_image_url(post),
+        "image_url": _extract_image_url(post, skip_reddit_fallback=skip_reddit_fallback),
         "brand": parsed["brand"],
         "product_hint": parsed["product_hint"],
         "old_size": parsed["old_size"],
@@ -806,7 +808,7 @@ def process_posts(posts: list, known_urls: set, log, skip_vision: bool = False) 
 
         # Vision analysis: if text parsing is weak and post has an image,
         # use Claude vision to extract product details from the photo.
-        image_url = _extract_image_url(post)
+        image_url = _extract_image_url(post, skip_reddit_fallback=skip_vision)
         vision_result = None
         if not skip_vision and HAS_VISION and should_analyze(parsed, image_url):
             vision_result = analyze_image(image_url, title)
@@ -824,7 +826,8 @@ def process_posts(posts: list, known_urls: set, log, skip_vision: bool = False) 
         stats[tier] += 1
 
         if tier != "discard":
-            entry = build_entry(post, parsed, tier, has_vision=bool(vision_result))
+            entry = build_entry(post, parsed, tier, has_vision=bool(vision_result),
+                                skip_reddit_fallback=skip_vision)
             # Attach vision metadata if available
             if vision_result:
                 entry["ai_description"] = vision_result.get("description")
