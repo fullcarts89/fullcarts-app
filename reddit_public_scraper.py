@@ -30,6 +30,7 @@ Setup:
 import os
 import re
 import json
+import signal
 import time
 import logging
 import argparse
@@ -71,6 +72,13 @@ KNOWN_URLS_FILE = OUTPUT_DIR / "known_urls_public.txt"
 # Confidence thresholds
 TIER_AUTO_THRESHOLD = 3    # fields found → auto-accept
 TIER_REVIEW_THRESHOLD = 1  # fields found → review queue
+
+# Time budget: stop processing new posts before the CI timeout kills us.
+# This leaves time for upsert, triage, and saving known_urls.
+MAX_PROCESSING_MINUTES = int(os.getenv("MAX_PROCESSING_MINUTES", "50"))
+
+# Global start time — set in main
+_START_TIME = None
 
 # ---------------------------------------------------------------------------
 # Target subreddits
@@ -756,6 +764,14 @@ def _is_mod_removed_not_shrinkflation(post: dict) -> bool:
 # Main scraping logic
 # ---------------------------------------------------------------------------
 
+def _time_remaining() -> float:
+    """Seconds remaining before the processing budget expires."""
+    if _START_TIME is None:
+        return float("inf")
+    elapsed = time.time() - _START_TIME
+    return max(0, MAX_PROCESSING_MINUTES * 60 - elapsed)
+
+
 def process_posts(posts: list, known_urls: set, log, skip_vision: bool = False) -> tuple:
     """Process a list of posts, return (entries, new_urls, stats)."""
     entries = []
@@ -763,6 +779,14 @@ def process_posts(posts: list, known_urls: set, log, skip_vision: bool = False) 
     stats = {"seen": 0, "skipped_dup": 0, "mod_removed": 0, "auto": 0, "review": 0, "discard": 0, "no_keyword": 0}
 
     for post in posts:
+        # Time budget: stop processing so we have time to save results
+        if _time_remaining() < 120:  # 2-minute buffer for upsert/save
+            remaining = len(posts) - stats["seen"]
+            log.warning(f"  Time budget reached ({MAX_PROCESSING_MINUTES}min). "
+                        f"Stopping with {remaining} posts unprocessed.")
+            stats["timed_out"] = remaining
+            break
+
         stats["seen"] += 1
         permalink = post.get("permalink", "")
         url = f"https://reddit.com{permalink}" if permalink.startswith("/") else permalink
@@ -1086,13 +1110,17 @@ def _load_existing_urls_from_supabase(log) -> set:
 
 def run_recent(log):
     """Fetch recent posts via Arctic Shift API (last 7 days)."""
+    global _sigterm_known_urls, _sigterm_new_urls
+
     log.info("=" * 60)
     log.info("MODE: Recent posts (Arctic Shift API — last 7 days)")
     log.info(f"Subreddits: {', '.join(ALL_SUBREDDITS)}")
+    log.info(f"Time budget: {MAX_PROCESSING_MINUTES} minutes")
     log.info("=" * 60)
 
     known_urls = load_known_urls(KNOWN_URLS_FILE)
     known_urls |= _load_existing_urls_from_supabase(log)
+    _sigterm_known_urls = known_urls  # expose to SIGTERM handler
 
     log.info("\nFetching recent posts from Arctic Shift...")
     all_posts = fetch_recent_arctic_shift(log, days=7)
@@ -1109,6 +1137,7 @@ def run_recent(log):
     log.info(f"\nTotal unique posts fetched: {len(unique_posts)}")
 
     entries, new_urls, stats = process_posts(unique_posts, known_urls, log)
+    _sigterm_new_urls = new_urls  # expose to SIGTERM handler
 
     # Save to Supabase
     if HAS_SUPABASE and SUPABASE_KEY:
@@ -1141,17 +1170,26 @@ def run_recent(log):
     log.info(f"  auto:{stats['auto']}  review:{stats['review']}  discard:{stats['discard']}")
     if stats.get("vision_analyzed"):
         log.info(f"  vision analyzed: {stats['vision_analyzed']} images")
+    if stats.get("timed_out"):
+        log.warning(f"  TIMED OUT: {stats['timed_out']} posts left unprocessed "
+                    f"(will be picked up next run)")
+    elapsed = time.time() - (_START_TIME or time.time())
+    log.info(f"  Total elapsed: {elapsed / 60:.1f} minutes")
 
 
 def run_backfill(log, skip_vision: bool = False):
     """Historical backfill via Arctic Shift archive API."""
+    global _sigterm_known_urls, _sigterm_new_urls
+
     log.info("=" * 60)
     log.info("MODE: Historical backfill (Arctic Shift archive)")
     log.info(f"Subreddits: {', '.join(ALL_SUBREDDITS)}")
+    log.info(f"Time budget: {MAX_PROCESSING_MINUTES} minutes")
     log.info("=" * 60)
 
     known_urls = load_known_urls(KNOWN_URLS_FILE)
     known_urls |= _load_existing_urls_from_supabase(log)
+    _sigterm_known_urls = known_urls
 
     log.info("\nFetching ALL historical posts from Arctic Shift...")
     all_posts = fetch_all_arctic_shift(log)
@@ -1171,6 +1209,7 @@ def run_backfill(log, skip_vision: bool = False):
     if skip_vision:
         log.info("Vision analysis SKIPPED (--skip-vision). Use --backfill-images later to enrich.")
     entries, new_urls, stats = process_posts(all_posts, known_urls, log, skip_vision=skip_vision)
+    _sigterm_new_urls = new_urls
 
     # Save to Supabase
     if HAS_SUPABASE and SUPABASE_KEY:
@@ -1353,6 +1392,23 @@ if __name__ == "__main__":
         datefmt="%Y-%m-%dT%H:%M:%S",
     )
     log = logging.getLogger("fullcarts")
+
+    _START_TIME = time.time()
+
+    # SIGTERM handler: GitHub Actions sends SIGTERM on cancellation.
+    # Save known_urls so the next run can skip already-processed posts.
+    _sigterm_known_urls = set()
+    _sigterm_new_urls = set()
+
+    def _handle_sigterm(signum, frame):
+        log.warning("SIGTERM received — saving known URLs before exit")
+        combined = _sigterm_known_urls | _sigterm_new_urls
+        if combined:
+            save_known_urls(KNOWN_URLS_FILE, combined)
+            log.info(f"  Saved {len(combined)} known URLs on SIGTERM")
+        raise SystemExit(1)
+
+    signal.signal(signal.SIGTERM, _handle_sigterm)
 
     parser = argparse.ArgumentParser(description="FullCarts Public Reddit Scraper (no API key needed)")
     group = parser.add_mutually_exclusive_group()
