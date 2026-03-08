@@ -15,6 +15,7 @@ Usage:
 """
 
 import os
+import re
 import sys
 import time
 import logging
@@ -79,7 +80,6 @@ def fetch_rss(query: str) -> list[dict]:
         description = unescape(desc_el.text or "") if desc_el is not None else ""
 
         # Strip HTML tags from description
-        import re
         description = re.sub(r"<[^>]+>", " ", description).strip()
 
         items.append({
@@ -131,6 +131,7 @@ def build_staging_entry(article: dict, parsed: dict, tier: str) -> dict:
         # first insert, and omitting it ensures re-scraping the same
         # source_url does not reset an already-reviewed record.
         "title": article["title"][:200],
+        "body": article.get("description", "")[:2000],
         "brand": parsed["brand"],
         "product_hint": parsed["product_hint"],
         "old_size": parsed["old_size"],

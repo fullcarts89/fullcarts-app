@@ -21,7 +21,7 @@ Data flow:
 import sys
 import logging
 import argparse
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 sys.path.insert(0, ".")
 
@@ -203,7 +203,8 @@ def promote_entry(sb, entry, dry_run=False):
     # Estimate a "before" date for the old product_version record (internal only)
     try:
         noticed_dt = datetime.strptime(date_noticed[:10], "%Y-%m-%d")
-        date_before = noticed_dt.replace(year=noticed_dt.year - 1).strftime("%Y-%m-%d")
+        # Use timedelta to avoid leap year crash (Feb 29 → replace(year-1) fails)
+        date_before = (noticed_dt - timedelta(days=365)).strftime("%Y-%m-%d")
     except ValueError:
         date_before = "2023-01-01"
 
@@ -295,21 +296,40 @@ def promote_entry(sb, entry, dry_run=False):
         return False
 
 
+def _fetch_all_rows(sb, table, filters: list[tuple]) -> list:
+    """Paginate through all matching rows (Supabase default limit is 1000)."""
+    all_rows = []
+    batch_size = 1000
+    offset = 0
+    while True:
+        query = sb.table(table).select("*")
+        for method, args in filters:
+            query = getattr(query, method)(*args)
+        result = query.range(offset, offset + batch_size - 1).execute()
+        rows = result.data or []
+        all_rows.extend(rows)
+        if len(rows) < batch_size:
+            break
+        offset += batch_size
+    return all_rows
+
+
 def promote_pending(sb, include_reviewed=False, dry_run=False):
     """Promote all pending auto (and optionally approved) staging entries."""
-    query = sb.table("reddit_staging").select("*").eq("status", "pending")
-
     if include_reviewed:
         # Get both auto-tier pending and manually approved entries
-        result_auto = query.eq("tier", "auto").execute()
-        result_approved = (
-            sb.table("reddit_staging").select("*")
-            .eq("status", "approved").execute()
-        )
-        entries = (result_auto.data or []) + (result_approved.data or [])
+        entries = _fetch_all_rows(sb, "reddit_staging", [
+            ("eq", ("status", "pending")),
+            ("eq", ("tier", "auto")),
+        ])
+        entries += _fetch_all_rows(sb, "reddit_staging", [
+            ("eq", ("status", "approved")),
+        ])
     else:
-        result = query.eq("tier", "auto").execute()
-        entries = result.data or []
+        entries = _fetch_all_rows(sb, "reddit_staging", [
+            ("eq", ("status", "pending")),
+            ("eq", ("tier", "auto")),
+        ])
 
     log.info(f"Found {len(entries)} entries to promote")
 

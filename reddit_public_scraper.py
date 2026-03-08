@@ -507,7 +507,7 @@ def _fetch_all_one_sub(sub: str) -> list:
         oldest_ts = min(p["created_utc"] for p in posts)
         before_utc = int(oldest_ts)
 
-        oldest_date = datetime.utcfromtimestamp(oldest_ts).strftime("%Y-%m-%d")
+        oldest_date = datetime.fromtimestamp(oldest_ts, tz=timezone.utc).strftime("%Y-%m-%d")
         log.info(f"  r/{sub} batch {batch_num}: {len(posts)} posts "
                  f"(sub total: {len(posts_out)}, oldest: {oldest_date})")
 
@@ -758,7 +758,7 @@ def build_entry(post: dict, parsed: dict, tier: str,
 
     # Use the post's month as the "when noticed" date
     if created_utc:
-        post_date = datetime.utcfromtimestamp(created_utc)
+        post_date = datetime.fromtimestamp(created_utc, tz=timezone.utc)
         # First of the month the post was made
         date_noticed = post_date.strftime("%Y-%m-01")
     else:
@@ -769,7 +769,7 @@ def build_entry(post: dict, parsed: dict, tier: str,
     return {
         "source_url": f"https://reddit.com{permalink}" if permalink.startswith("/") else permalink,
         "subreddit": subreddit,
-        "posted_utc": datetime.utcfromtimestamp(created_utc).isoformat() if created_utc else None,
+        "posted_utc": datetime.fromtimestamp(created_utc, tz=timezone.utc).isoformat() if created_utc else None,
         "scraped_utc": datetime.now(tz=timezone.utc).isoformat(),
         "tier": tier,
         # status is NOT included here — the DB default ('pending') applies on
@@ -995,7 +995,7 @@ def process_posts(posts: list, known_urls: set, log, skip_vision: bool = False) 
             entries.append(entry)
 
             ts = post.get("created_utc", 0)
-            date_str = datetime.utcfromtimestamp(ts).strftime("%Y-%m") if ts else "?"
+            date_str = datetime.fromtimestamp(ts, tz=timezone.utc).strftime("%Y-%m") if ts else "?"
             log.info(f"  [{tier.upper():6}] [{date_str}] {title[:70]}")
 
         new_urls.add(url)
@@ -1472,8 +1472,8 @@ def run_backfill(log, skip_vision: bool = False):
     # Sort by date for nice logging
     all_posts.sort(key=lambda p: p.get("created_utc", 0))
 
-    oldest = datetime.utcfromtimestamp(all_posts[0]["created_utc"]).strftime("%Y-%m-%d")
-    newest = datetime.utcfromtimestamp(all_posts[-1]["created_utc"]).strftime("%Y-%m-%d")
+    oldest = datetime.fromtimestamp(all_posts[0]["created_utc"], tz=timezone.utc).strftime("%Y-%m-%d")
+    newest = datetime.fromtimestamp(all_posts[-1]["created_utc"], tz=timezone.utc).strftime("%Y-%m-%d")
     log.info(f"Date range: {oldest} → {newest}")
 
     if skip_vision:
