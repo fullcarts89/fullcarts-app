@@ -5119,6 +5119,7 @@ function openProductEdit(upc) {
       </select>
     </div>
     <div class="admin-edit-actions">
+      <button class="admin-btn-delete" onclick="retractProduct('${escapeHTML(p.upc)}')">Retract Product</button>
       <button class="admin-btn-cancel" onclick="closeAdminEdit()">Cancel</button>
       <button class="admin-btn-save" onclick="saveProductEdit()">Save Changes</button>
     </div>
@@ -5319,6 +5320,83 @@ async function deleteEvent(upc, date) {
   } catch (err) {
     console.error('Event delete failed:', err);
     alert('Failed to delete event: ' + err.message);
+  }
+}
+
+async function retractProduct(upc) {
+  if (!isAdmin) return;
+  const p = findProduct(upc);
+  const name = p ? `${p.name} (${p.brand})` : upc;
+  if (!confirm(`RETRACT "${name}"?\n\nThis will:\n• Delete the product record\n• Delete all its events\n• Delete all change_events (marked false_positive)\n• Delete product_versions\n• Mark the staging entry as rejected\n• Remove any news article links\n\nThis cannot be undone.`)) return;
+
+  const btn = document.querySelector('.admin-btn-delete');
+  if (btn) { btn.textContent = '⏳ Retracting...'; btn.style.pointerEvents = 'none'; }
+
+  const errors = [];
+
+  try {
+    // 1. Mark any change_events as false_positive, then delete
+    const { error: ceErr } = await sb.from('change_events')
+      .update({ false_positive: true, retracted_at: new Date().toISOString(), retracted_by: 'admin', retraction_reason: 'Product retracted — bad data' })
+      .eq('product_upc', upc);
+    if (ceErr) errors.push('change_events update: ' + ceErr.message);
+
+    // Then delete them
+    const { error: ceDelErr } = await sb.from('change_events').delete().eq('product_upc', upc);
+    if (ceDelErr) errors.push('change_events delete: ' + ceDelErr.message);
+
+    // 2. Delete product_versions
+    const { error: pvErr } = await sb.from('product_versions').delete().eq('product_upc', upc);
+    if (pvErr) errors.push('product_versions: ' + pvErr.message);
+
+    // 3. Delete article_product_links
+    try {
+      await sb.from('article_product_links').delete().eq('product_upc', upc);
+    } catch (e) { /* table may not exist yet */ }
+
+    // 4. Delete events (legacy)
+    const { error: evErr } = await sb.from('events').delete().eq('upc', upc);
+    if (evErr) errors.push('events: ' + evErr.message);
+
+    // 5. Delete the product itself
+    const { error: pErr } = await sb.from('products').delete().eq('upc', upc);
+    if (pErr) errors.push('products: ' + pErr.message);
+
+    // 6. Mark the staging entry as rejected (find by the REDDIT-{id} pattern)
+    if (upc.startsWith('REDDIT-')) {
+      const idPrefix = upc.replace('REDDIT-', '');
+      const { data: stagingRows } = await sb.from('reddit_staging')
+        .select('id').like('id', idPrefix + '%').eq('status', 'promoted');
+      for (const row of (stagingRows || [])) {
+        await sb.rpc('update_staging_status_v2', {
+          row_id: row.id, new_status: 'rejected',
+          reviewer: 'admin', notes: 'Retracted — bad data'
+        }).catch(() =>
+          sb.from('reddit_staging').update({ status: 'rejected', reviewed_by: 'admin', review_notes: 'Retracted — bad data' }).eq('id', row.id)
+        );
+      }
+    }
+
+    // 7. Update local state
+    PRODUCTS = PRODUCTS.filter(pp => pp.upc !== upc);
+    EVENTS = EVENTS.filter(e => e.upc !== upc);
+    delete PRODUCT_NEWS[upc];
+    CATEGORIES = ["All", ...new Set(PRODUCTS.map(pp => pp.category))];
+
+    closeAdminEdit();
+
+    if (errors.length) {
+      console.warn('Retract partial errors:', errors);
+      showToast('Product retracted (with warnings — check console)', 'var(--duo-orange)');
+    } else {
+      showToast('Product retracted successfully', 'var(--duo-red)');
+    }
+
+    navigate('home');
+  } catch (err) {
+    console.error('Retract failed:', err);
+    if (btn) { btn.textContent = '❌ Error'; btn.style.pointerEvents = ''; }
+    alert('Retract failed: ' + err.message);
   }
 }
 
