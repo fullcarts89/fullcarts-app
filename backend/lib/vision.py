@@ -178,7 +178,11 @@ def _call_claude_vision(image_data: bytes, media_type: str, title: str) -> dict 
             text = re.sub(r"^```(?:json)?\s*", "", text)
             text = re.sub(r"\s*```$", "", text)
 
-        return json.loads(text)
+        parsed = json.loads(text)
+        if not isinstance(parsed, dict):
+            log.debug(f"  Vision: expected JSON object, got {type(parsed).__name__}")
+            return None
+        return parsed
 
     except json.JSONDecodeError:
         log.debug(f"  Vision: could not parse JSON from response: {text[:200]}")
