@@ -60,7 +60,6 @@ TARGET_SUBREDDITS = [
     "Frugal",
     "personalfinance",
     "grocery",
-    "mildlyinfuriating",
     "EatCheapAndHealthy",
     "Costco",
     "traderjoes",
@@ -445,11 +444,19 @@ def run_scraper(dry_run: bool = False) -> None:
 
             parsed = parse_text(full_text)
 
-            # Vision analysis: if text parsing is weak and post has an image,
-            # use Claude vision to extract product details from the photo.
+            is_dedicated = sub_name.lower() == "shrinkflation"
+
+            # Early discard: non-dedicated sub posts with no extractable fields
+            if not is_dedicated and parsed["fields_found"] == 0:
+                stats["discard"] += 1
+                new_urls.add(url)
+                continue
+
+            # Vision analysis: only for dedicated subs to avoid wasting API
+            # calls on low-signal posts from general subreddits.
             image_url = _extract_image_url_praw(post)
             vision_result = None
-            if HAS_VISION and should_analyze(parsed, image_url):
+            if is_dedicated and HAS_VISION and should_analyze(parsed, image_url):
                 vision_result = analyze_image(image_url, post.title)
                 if vision_result:
                     parsed = merge_vision_into_parsed(parsed, vision_result)
