@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS reddit_staging (
   subreddit        text,
   posted_utc       timestamptz,
   scraped_utc      timestamptz,
-  tier             text,
+  tier             text,                        -- auto, review, discard (all require human review)
   title            text,
   brand            text,
   product_hint     text,
@@ -74,7 +74,19 @@ CREATE TABLE IF NOT EXISTS reddit_staging (
   score            integer,
   num_comments     integer,
   date_noticed     date,
-  status           text DEFAULT 'pending',
+  status           text DEFAULT 'pending',      -- pending, promoted, dismissed, rejected, evidence_wall
+  -- Extraction quality metadata
+  confidence_score integer DEFAULT 0 CHECK (confidence_score BETWEEN 0 AND 100),
+  extraction_method text DEFAULT 'text',        -- text, vision, text+vision, manual
+  retailer         text,                        -- Store where product was spotted
+  region           text DEFAULT 'US',           -- US, CA, UK, AU, etc.
+  -- Reviewer audit trail
+  reviewed_by      text,                        -- Who reviewed this entry
+  reviewed_at      timestamptz,                 -- When it was reviewed
+  fields_edited    text[],                      -- Which fields the reviewer changed
+  review_notes     text,                        -- Reviewer notes
+  original_values  jsonb,                       -- Snapshot of pre-edit values
+  date_before      date,                        -- When product was at old size (set by reviewer)
   created_at       timestamptz DEFAULT now()
 );
 
@@ -128,6 +140,8 @@ CREATE TABLE IF NOT EXISTS evidence_wall (
   product_name     text,
   category         text,
   tag              text DEFAULT 'slack-fill',   -- slack-fill, paper-thin, spot-the-difference, phantom-shrink, the-audacity, caught-in-4k
+  signal_type      text DEFAULT 'unverified_size_change',  -- stealth_redesign, ppu_increase, ingredient_swap, count_reduction, regional_test, unverified_size_change
+  severity         integer DEFAULT 2 CHECK (severity BETWEEN 1 AND 3),  -- 1=low, 2=medium, 3=high
   source_url       text,
   source_type      text DEFAULT 'reddit',       -- reddit, community, news
   subreddit        text,

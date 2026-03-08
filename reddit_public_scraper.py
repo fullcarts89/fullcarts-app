@@ -176,6 +176,32 @@ SHRINK_KEYWORDS = re.compile(
     re.IGNORECASE,
 )
 
+# Retailer detection — extract where the product was spotted
+KNOWN_RETAILERS = [
+    "walmart", "target", "costco", "sam's club", "sams club", "kroger",
+    "safeway", "albertsons", "publix", "heb", "h-e-b", "aldi", "lidl",
+    "trader joe's", "trader joes", "whole foods", "amazon", "wegmans",
+    "food lion", "stop & shop", "stop and shop", "giant", "meijer",
+    "winco", "dollar general", "dollar tree", "family dollar",
+    "cvs", "walgreens", "rite aid", "7-eleven", "7 eleven",
+]
+RETAILER_PATTERN = re.compile(
+    r"\b(" + "|".join(re.escape(r) for r in KNOWN_RETAILERS) + r")\b",
+    re.IGNORECASE,
+)
+
+# Region detection from subreddit or text clues
+REGION_CLUES = {
+    "canada": "CA", "canadian": "CA", "loblaws": "CA", "no frills": "CA",
+    "shoppers drug mart": "CA", "dollarama": "CA",
+    "uk": "UK", "tesco": "UK", "sainsbury": "UK", "asda": "UK", "aldi uk": "UK",
+    "australia": "AU", "woolworths": "AU", "coles": "AU",
+}
+REGION_SUBREDDITS = {
+    "canadianfrugal": "CA", "australia": "AU", "unitedkingdom": "UK",
+    "asda": "UK", "tesco": "UK",
+}
+
 # ---------------------------------------------------------------------------
 # Category guesser
 # ---------------------------------------------------------------------------
@@ -323,8 +349,8 @@ def parse_text(text: str) -> dict:
 def confidence_tier(parsed: dict, subreddit: str = "", text: str = "") -> str:
     """Assign a confidence tier.
 
-    Auto-tier now requires shrinkflation keywords to prevent off-topic posts
-    from being auto-promoted.
+    All tiers now route to the human review queue — 'auto' just means
+    higher confidence, but still requires human validation before promotion.
     """
     f = parsed["fields_found"]
     has_kw = bool(SHRINK_KEYWORDS.search(text)) if text else True  # backwards compat
@@ -340,6 +366,38 @@ def confidence_tier(parsed: dict, subreddit: str = "", text: str = "") -> str:
     if subreddit.lower() in DEDICATED_SUBREDDITS:
         return "review"
     return "discard"
+
+
+def compute_confidence_score(parsed: dict, tier: str, has_vision: bool = False,
+                              subreddit: str = "") -> int:
+    """Compute a 0-100 numeric confidence score from extraction signals.
+
+    Scores are weighted by signal reliability:
+      - Explicit from→to pattern:  +25 (strongest text signal)
+      - Brand detected:            +15
+      - Fields found:              +8 per field (max 40)
+      - Shrinkflation subreddit:   +10 (topical context)
+      - Vision analysis enriched:  +10
+      - Prices extracted:          +5
+    """
+    score = 0
+
+    if parsed.get("explicit_from_to"):
+        score += 25
+    if parsed.get("brand"):
+        score += 15
+
+    fields = min(parsed.get("fields_found", 0), 5)
+    score += fields * 8
+
+    if subreddit.lower() in DEDICATED_SUBREDDITS:
+        score += 10
+    if has_vision:
+        score += 10
+    if parsed.get("old_price") and parsed.get("new_price"):
+        score += 5
+
+    return min(score, 100)
 
 
 # ---------------------------------------------------------------------------
@@ -537,10 +595,30 @@ def _extract_image_url(post: dict) -> str | None:
     return None
 
 
-def build_entry(post: dict, parsed: dict, tier: str) -> dict:
+def detect_retailer(text: str) -> str | None:
+    """Extract retailer name from post text."""
+    m = RETAILER_PATTERN.search(text)
+    return m.group(0).title() if m else None
+
+
+def detect_region(text: str, subreddit: str = "") -> str:
+    """Detect geographic region from text and subreddit clues."""
+    sub_lower = subreddit.lower()
+    if sub_lower in REGION_SUBREDDITS:
+        return REGION_SUBREDDITS[sub_lower]
+    text_lower = text.lower()
+    for clue, region in REGION_CLUES.items():
+        if clue in text_lower:
+            return region
+    return "US"
+
+
+def build_entry(post: dict, parsed: dict, tier: str,
+                has_vision: bool = False) -> dict:
     """Build a staging entry from a Reddit post + parsed signals."""
     created_utc = post.get("created_utc", 0)
     permalink = post.get("permalink", "")
+    subreddit = post.get("subreddit", "shrinkflation")
 
     # Use the post's month as the "when noticed" date
     if created_utc:
@@ -550,9 +628,11 @@ def build_entry(post: dict, parsed: dict, tier: str) -> dict:
     else:
         date_noticed = datetime.now(tz=timezone.utc).strftime("%Y-%m-01")
 
+    full_text = f"{post.get('title', '')}\n{post.get('selftext', '')}"
+
     return {
         "source_url": f"https://reddit.com{permalink}" if permalink.startswith("/") else permalink,
-        "subreddit": post.get("subreddit", "shrinkflation"),
+        "subreddit": subreddit,
         "posted_utc": datetime.utcfromtimestamp(created_utc).isoformat() if created_utc else None,
         "scraped_utc": datetime.now(tz=timezone.utc).isoformat(),
         "tier": tier,
@@ -576,74 +656,25 @@ def build_entry(post: dict, parsed: dict, tier: str) -> dict:
         "score": post.get("score", 0),
         "num_comments": post.get("num_comments", 0),
         "date_noticed": date_noticed,
+        # New enrichment fields
+        "confidence_score": compute_confidence_score(
+            parsed, tier, has_vision=has_vision, subreddit=subreddit
+        ),
+        "extraction_method": "text+vision" if has_vision else "text",
+        "retailer": detect_retailer(full_text),
+        "region": detect_region(full_text, subreddit),
     }
 
 
 # ---------------------------------------------------------------------------
 # Promote auto entries to products + events
 # ---------------------------------------------------------------------------
-
-def promote_auto_entries(sb: "SupabaseClient", log) -> int:
-    """Promote high-confidence reddit entries directly to products + events."""
-    result = sb.table("reddit_staging").select("*").eq("tier", "auto").eq("status", "pending").execute()
-    entries = result.data or []
-    promoted = 0
-
-    for entry in entries:
-        if not entry.get("old_size") or not entry.get("new_size"):
-            continue
-
-        upc = f"REDDIT-{entry['id'][:8]}"
-        old_s = float(entry["old_size"])
-        new_s = float(entry["new_size"])
-        unit = entry.get("new_unit") or entry.get("old_unit") or "oz"
-        pct = round(((old_s - new_s) / old_s) * 100, 2) if old_s > 0 else 0
-
-        product_name = (entry.get("product_hint") or "Unknown Product")[:100]
-        brand = entry.get("brand")
-        date_noticed = entry.get("date_noticed") or entry.get("posted_utc", "")[:10]
-
-        # Guess category from product info
-        category = guess_category(f"{product_name} {brand or ''}")
-
-        try:
-            # Upsert product
-            sb.table("products").upsert({
-                "upc": upc,
-                "name": product_name,
-                "brand": brand,
-                "category": category,
-                "current_size": new_s,
-                "unit": unit,
-                "type": "shrinkflation",
-                "repeat_offender": False,
-                "source": "reddit_bot"
-            }, on_conflict="upc").execute()
-
-            # Upsert event (prevent duplicates)
-            sb.table("events").upsert({
-                "upc": upc,
-                "date": date_noticed,
-                "old_size": old_s,
-                "new_size": new_s,
-                "unit": unit,
-                "pct": pct,
-                "price_before": entry.get("old_price"),
-                "price_after": entry.get("new_price"),
-                "type": "shrinkflation",
-                "notes": f"Auto-imported from r/shrinkflation: {entry.get('source_url', '')}",
-                "source": "reddit_bot"
-            }, on_conflict="upc,date,source").execute()
-
-            # Mark as promoted
-            sb.table("reddit_staging").update({"status": "promoted"}).eq("id", entry["id"]).execute()
-            promoted += 1
-            log.info(f"  ✅ Promoted: {product_name} ({brand}) — {old_s}{unit} → {new_s}{unit} [{date_noticed}]")
-
-        except Exception as exc:
-            log.warning(f"  ❌ Promotion failed for {entry.get('id', '?')}: {exc}")
-
-    return promoted
+# NOTE: Auto-promotion has been disabled. ALL entries now require human
+# review through the admin review queue before being promoted to the
+# products + events tables. The 'auto' tier indicates high confidence
+# but still needs validation.
+#
+# The promote_staging.py backend job handles promotion after human review.
 
 
 # ---------------------------------------------------------------------------
@@ -793,7 +824,7 @@ def process_posts(posts: list, known_urls: set, log) -> tuple:
         stats[tier] += 1
 
         if tier != "discard":
-            entry = build_entry(post, parsed, tier)
+            entry = build_entry(post, parsed, tier, has_vision=bool(vision_result))
             # Attach vision metadata if available
             if vision_result:
                 entry["ai_description"] = vision_result.get("description")
@@ -945,9 +976,7 @@ def run_recent(log):
         sb = create_client(SUPABASE_URL, SUPABASE_KEY)
         upserted = upsert_to_supabase(sb, entries, log)
         log.info(f"\nSupabase: upserted {upserted} entries to reddit_staging")
-
-        promoted = promote_auto_entries(sb, log)
-        log.info(f"Auto-promoted {promoted} entries to products + events")
+        log.info(f"All entries queued for human review (auto-promotion disabled)")
     else:
         # Save locally
         local_file = OUTPUT_DIR / "public_staging.json"
@@ -1000,9 +1029,7 @@ def run_backfill(log):
         sb = create_client(SUPABASE_URL, SUPABASE_KEY)
         upserted = upsert_to_supabase(sb, entries, log)
         log.info(f"\nSupabase: upserted {upserted} entries to reddit_staging")
-
-        promoted = promote_auto_entries(sb, log)
-        log.info(f"Auto-promoted {promoted} entries to products + events")
+        log.info(f"All entries queued for human review (auto-promotion disabled)")
     else:
         local_file = OUTPUT_DIR / "backfill_staging.json"
         existing = json.loads(local_file.read_text()) if local_file.exists() else []
@@ -1104,18 +1131,28 @@ def run_backfill_images(log):
 
 
 def run_promote_only(log):
-    """Just promote pending auto entries — no scraping."""
+    """Show pending review queue stats — auto-promotion is disabled.
+
+    All items now require human review through the admin UI.
+    Use the review queue at /fullcarts.html#admin to promote entries.
+    """
     log.info("=" * 60)
-    log.info("MODE: Promote only")
+    log.info("MODE: Review queue status")
     log.info("=" * 60)
 
     if not HAS_SUPABASE or not SUPABASE_KEY:
-        log.error("SUPABASE_KEY required for promote-only mode")
+        log.error("SUPABASE_KEY required")
         return
 
     sb = create_client(SUPABASE_URL, SUPABASE_KEY)
-    promoted = promote_auto_entries(sb, log)
-    log.info(f"\nPromoted {promoted} entries to products + events")
+    pending = sb.table("reddit_staging").select("id", count="exact").eq("status", "pending").execute()
+    auto_tier = sb.table("reddit_staging").select("id", count="exact").eq("status", "pending").eq("tier", "auto").execute()
+    review_tier = sb.table("reddit_staging").select("id", count="exact").eq("status", "pending").eq("tier", "review").execute()
+
+    log.info(f"\nPending review: {pending.count or 0} total")
+    log.info(f"  High confidence (auto tier): {auto_tier.count or 0}")
+    log.info(f"  Needs review (review tier): {review_tier.count or 0}")
+    log.info(f"\nAuto-promotion is disabled. Use the admin review queue to promote entries.")
 
 
 # ---------------------------------------------------------------------------

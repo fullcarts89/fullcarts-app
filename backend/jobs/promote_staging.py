@@ -53,19 +53,23 @@ def promote_entry(sb, entry, dry_run=False):
     brand = entry.get("brand")
     category = guess_category(f"{product_name} {brand or ''}")
 
-    # Dates: use post month for "after", approximate "before" as 1 year prior
+    # Dates: use reviewer-set dates if available, otherwise fallback
     date_after = entry.get("date_noticed") or entry.get("posted_utc", "")[:10]
     if not date_after or len(date_after) < 7:
         date_after = datetime.now(tz=timezone.utc).strftime("%Y-%m-01")
 
-    # Parse the date and go back 1 year for the "before" version
-    try:
-        after_dt = datetime.strptime(date_after[:10], "%Y-%m-%d")
-        date_before = after_dt.replace(year=after_dt.year - 1).strftime("%Y-%m-%d")
-    except ValueError:
-        date_before = "2023-01-01"
+    # Use reviewer-set before-date if available, otherwise estimate 1 year prior
+    date_before = entry.get("date_before")
+    if not date_before:
+        try:
+            after_dt = datetime.strptime(date_after[:10], "%Y-%m-%d")
+            date_before = after_dt.replace(year=after_dt.year - 1).strftime("%Y-%m-%d")
+        except ValueError:
+            date_before = "2023-01-01"
 
     source_url = entry.get("source_url", "")
+    retailer = entry.get("retailer")
+    region = entry.get("region", "US")
 
     if dry_run:
         log.info(f"  [DRY RUN] Would promote: {product_name} ({brand}) "
@@ -84,6 +88,7 @@ def promote_entry(sb, entry, dry_run=False):
             "type": "shrinkflation",
             "repeat_offender": False,
             "source": "reddit_bot",
+            "region": region,
         }, on_conflict="upc").execute()
 
         # Insert "before" version
@@ -93,9 +98,11 @@ def promote_entry(sb, entry, dry_run=False):
             "size": old_size,
             "unit": unit,
             "price": float(entry["old_price"]) if entry.get("old_price") else None,
+            "retailer": retailer,
+            "region": region,
             "source": "reddit_bot",
             "source_url": source_url,
-            "notes": f"Before state from r/shrinkflation post",
+            "notes": "Before state from r/shrinkflation post",
             "created_by": "promote_staging",
         }, on_conflict="product_upc,observed_date,source").execute()
 
@@ -106,9 +113,11 @@ def promote_entry(sb, entry, dry_run=False):
             "size": new_size,
             "unit": unit,
             "price": float(entry["new_price"]) if entry.get("new_price") else None,
+            "retailer": retailer,
+            "region": region,
             "source": "reddit_bot",
             "source_url": source_url,
-            "notes": f"After state from r/shrinkflation post",
+            "notes": "After state from r/shrinkflation post",
             "created_by": "promote_staging",
         }, on_conflict="product_upc,observed_date,source").execute()
 
@@ -124,7 +133,7 @@ def promote_entry(sb, entry, dry_run=False):
             "price_before": float(entry["old_price"]) if entry.get("old_price") else None,
             "price_after": float(entry["new_price"]) if entry.get("new_price") else None,
             "type": "shrinkflation",
-            "notes": f"Auto-imported from r/shrinkflation: {source_url}",
+            "notes": f"Reviewed and promoted from r/shrinkflation: {source_url}",
             "source": "reddit_bot",
         }, on_conflict="upc,date,source").execute()
 

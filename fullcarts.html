@@ -1932,9 +1932,20 @@ const EW_TAGS = {
   'caught-in-4k':         { label:'Caught in 4K',         emoji:'📸', desc:'Label/fine print reveals the truth' },
 };
 
+const EW_SIGNAL_TYPES = {
+  'unverified_size_change': { label:'Size Change',        emoji:'📦', desc:'Likely size reduction, needs verification' },
+  'stealth_redesign':       { label:'Stealth Redesign',   emoji:'🎭', desc:'New packaging hides a size cut' },
+  'ppu_increase':           { label:'PPU Increase',       emoji:'💲', desc:'Price-per-unit went up without size change' },
+  'ingredient_swap':        { label:'Ingredient Swap',    emoji:'🧪', desc:'Cheaper ingredients substituted' },
+  'count_reduction':        { label:'Count Reduction',    emoji:'🔢', desc:'Fewer items in the same package' },
+  'regional_test':          { label:'Regional Test',      emoji:'📍', desc:'Smaller size spotted in select markets' },
+};
+
 let EVIDENCE_WALL = [];
 let ewSelectedTag = 'all';
 let ewRouteTag = 'slack-fill';
+let ewRouteSignalType = 'unverified_size_change';
+let ewRouteSeverity = 2;
 
 // ── Supabase client ─────────────────────────────────────────
 const SUPABASE_URL = 'https://ntyhbapphnzlariakgrw.supabase.co';
@@ -2438,10 +2449,10 @@ function renderHome() {
     </div>
 
     <div class="stats-row">
-      <div class="stat-bubble"><div class="num green">${PRODUCTS.length}</div><div class="lbl">Products</div></div>
-      <div class="stat-bubble"><div class="num orange">${EVENTS.length}</div><div class="lbl">Shrinks</div></div>
-      <div class="stat-bubble"><div class="num red">${PRODUCTS.filter(p=>p.repeatOffender).length}</div><div class="lbl">Repeat</div></div>
-      <div class="stat-bubble"><div class="num blue">${Object.values(UPVOTE_COUNTS).reduce((s,v)=>s+v,0)}</div><div class="lbl">Upvotes</div></div>
+      <div class="stat-bubble"><div class="num green">${(window.FC_STATS?.productsTracked || PRODUCTS.length).toLocaleString()}</div><div class="lbl">Tracked</div></div>
+      <div class="stat-bubble"><div class="num orange">${(window.FC_STATS?.totalSignals || EVENTS.length).toLocaleString()}</div><div class="lbl">Signals</div></div>
+      <div class="stat-bubble"><div class="num red">${(window.FC_STATS?.brandsTracked || PRODUCTS.filter(p=>p.repeatOffender).length).toLocaleString()}</div><div class="lbl">Brands</div></div>
+      <div class="stat-bubble"><div class="num blue">${EVIDENCE_WALL.length}</div><div class="lbl">Evidence</div></div>
     </div>
 
     ${EVIDENCE_WALL.length ? `
@@ -3744,20 +3755,20 @@ function renderCommunity() {
 
     <div class="community-stats-grid">
       <div class="community-stat-card">
-        <div class="csv green">${PRODUCTS.length}</div>
+        <div class="csv green">${(window.FC_STATS?.productsTracked || PRODUCTS.length).toLocaleString()}</div>
         <div class="csl">Products Tracked</div>
       </div>
       <div class="community-stat-card">
-        <div class="csv" style="color:var(--duo-orange)">${totalUpvotes}</div>
-        <div class="csl">Total Upvotes</div>
+        <div class="csv" style="color:var(--duo-orange)">${(window.FC_STATS?.totalSignals || EVENTS.length).toLocaleString()}</div>
+        <div class="csl">Total Signals</div>
       </div>
       <div class="community-stat-card">
-        <div class="csv" style="color:var(--duo-red)">${EVENTS.length}</div>
-        <div class="csl">Shrink Events</div>
+        <div class="csv" style="color:var(--duo-red)">${(window.FC_STATS?.brandsTracked || PRODUCTS.filter(p => p.repeatOffender).length).toLocaleString()}</div>
+        <div class="csl">Brands Tracked</div>
       </div>
       <div class="community-stat-card">
-        <div class="csv" style="color:var(--duo-blue)">${PRODUCTS.filter(p => p.repeatOffender).length}</div>
-        <div class="csl">Repeat Offenders</div>
+        <div class="csv" style="color:var(--duo-blue)">${EVIDENCE_WALL.length}</div>
+        <div class="csl">Evidence Wall</div>
       </div>
     </div>
 
@@ -3975,7 +3986,12 @@ function renderReviewCard() {
     </div>
 
     <div class="review-card" id="review-current-card">
-      <div class="review-card-brand">${escapeHTML(r.subreddit || 'ALL')}</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <div class="review-card-brand" style="margin-bottom:0">${escapeHTML(r.subreddit || 'ALL')}</div>
+        <div style="font-size:10px;font-weight:900;padding:2px 8px;border-radius:6px;background:${(r.confidence_score||0) >= 60 ? 'rgba(88,204,2,0.15)' : (r.confidence_score||0) >= 30 ? 'rgba(255,150,0,0.15)' : 'rgba(255,75,75,0.15)'};color:${(r.confidence_score||0) >= 60 ? 'var(--duo-green)' : (r.confidence_score||0) >= 30 ? 'var(--duo-orange)' : 'var(--duo-red)'}">${r.confidence_score || 0}% conf</div>
+        <div style="font-size:10px;font-weight:700;color:var(--wolf)">${escapeHTML(r.extraction_method || 'text')}</div>
+        ${r.region && r.region !== 'US' ? `<div style="font-size:10px;font-weight:900;padding:2px 6px;border-radius:6px;background:rgba(28,176,246,0.15);color:var(--duo-blue)">${escapeHTML(r.region)}</div>` : ''}
+      </div>
       <div class="review-card-name">${escapeHTML(r.title || 'No title')}</div>
       ${r.body ? `<div style="font-size:13px;color:var(--wolf);margin:6px 0 10px;padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:8px;max-height:120px;overflow-y:auto;line-height:1.4;white-space:pre-wrap">${escapeHTML(r.body.slice(0, 500))}</div>` : ''}
       ${r.image_url ? `<div style="margin:8px 0;text-align:center"><img src="${escapeHTML(r.image_url)}" alt="Reddit post image" style="max-width:100%;max-height:300px;border-radius:8px;object-fit:contain" onerror="this.parentElement.style.display='none'"></div>` : (r.source_url ? `<div id="review-img-placeholder" style="margin:8px 0;text-align:center;padding:16px;background:rgba(255,255,255,0.03);border:2px dashed var(--card-border);border-radius:8px"><div style="font-size:12px;color:var(--wolf);margin-bottom:8px">📷 No image scraped — check the Reddit post</div><a href="${escapeHTML(r.source_url.startsWith('http') ? r.source_url : 'https://www.reddit.com' + r.source_url)}" target="_blank" rel="noopener" style="display:inline-block;padding:6px 14px;background:rgba(206,130,255,0.1);border:1.5px solid rgba(206,130,255,0.2);border-radius:8px;font-size:12px;font-weight:800;color:var(--duo-purple);text-decoration:none;font-family:'Nunito',sans-serif">Open Reddit Post ↗</a></div>` : '')}
@@ -4036,7 +4052,25 @@ function renderReviewCard() {
           <span style="color:var(--wolf);font-size:12px;padding:0 4px">→</span>
           <input id="re-new-price" value="${r.new_price || ''}" placeholder="New price" type="number" step="0.01" style="flex:1">
         </div>
+        <div style="border-top:1px solid var(--card-border);margin:8px 0 4px;opacity:0.4"></div>
+        <div class="review-edit-row">
+          <label>Store</label>
+          <input id="re-retailer" value="${escapeHTML(r.retailer || '')}" placeholder="Retailer (Walmart, Costco...)" style="flex:1">
+          <select id="re-region" style="width:60px;padding:4px;background:rgba(255,255,255,0.06);border:2px solid var(--card-border);border-radius:8px;color:var(--snow);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700">
+            <option value="US" ${(r.region||'US')==='US'?'selected':''}>US</option>
+            <option value="CA" ${r.region==='CA'?'selected':''}>CA</option>
+            <option value="UK" ${r.region==='UK'?'selected':''}>UK</option>
+            <option value="AU" ${r.region==='AU'?'selected':''}>AU</option>
+          </select>
+        </div>
+        <div class="review-edit-row">
+          <label>Dates</label>
+          <input id="re-date-before" type="date" value="${r.date_before || ''}" placeholder="Old size date" title="When was the product at its old size?" style="flex:1">
+          <span style="color:var(--wolf);font-size:12px;padding:0 4px">→</span>
+          <input id="re-date-after" type="date" value="${dateNoticed || ''}" placeholder="New size date" title="When was the change noticed?" style="flex:1">
+        </div>
       </div>
+      <div id="review-warnings" style="margin-top:6px"></div>
 
       <div class="review-actions">
         <button class="review-btn-reject" onclick="rejectReviewItem()">🚫 Reject</button>
@@ -4047,13 +4081,26 @@ function renderReviewCard() {
         <button class="review-btn-evidence" style="width:100%;padding:10px;border:none;border-radius:14px;font-size:13px;font-weight:900;font-family:'Nunito',sans-serif;cursor:pointer;border-bottom:3px solid rgba(255,150,0,0.2)" onclick="showEvidenceWallRoute()">🖼️ Send to Evidence Wall</button>
       </div>
       <div id="evidence-wall-route" style="display:none;margin-top:8px;padding:12px;background:rgba(255,150,0,0.06);border:1.5px solid rgba(255,150,0,0.2);border-radius:12px">
-        <div style="font-size:11px;font-weight:900;color:var(--duo-orange);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Evidence Wall Tag</div>
+        <div style="font-size:11px;font-weight:900;color:var(--duo-orange);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Visual Tag</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px" id="ew-tag-picker"></div>
+        <div style="font-size:11px;font-weight:900;color:var(--duo-orange);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Signal Type</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px" id="ew-signal-picker"></div>
+        <div style="font-size:11px;font-weight:900;color:var(--duo-orange);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Severity</div>
+        <div style="display:flex;gap:6px;margin-bottom:10px" id="ew-severity-picker"></div>
         <div id="ew-image-input" style="margin-bottom:10px"></div>
         <button class="review-btn-approve" style="width:100%;padding:10px;border:none;border-radius:14px;font-size:13px;font-weight:900;font-family:'Nunito',sans-serif;cursor:pointer;border-bottom:3px solid rgba(88,204,2,0.2);background:rgba(88,204,2,0.15);color:var(--duo-green)" onclick="sendToEvidenceWall()">Confirm → Evidence Wall</button>
       </div>
     </div>
   `;
+
+  // Wire up live validation on edit fields
+  setTimeout(() => {
+    validateReviewFields();
+    ['re-name','re-brand','re-old','re-new','re-old-unit','re-new-unit','re-old-price','re-new-price','re-date-before','re-date-after'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', validateReviewFields);
+    });
+  }, 50);
 }
 
 function escapeHTML(str) {
@@ -4062,6 +4109,70 @@ function escapeHTML(str) {
 }
 
 // toggleReviewEdit removed — edit fields are always visible now
+
+function validateReviewFields() {
+  const warnings = [];
+  const oldSize = parseFloat(document.getElementById('re-old')?.value);
+  const newSize = parseFloat(document.getElementById('re-new')?.value);
+  const oldUnit = (document.getElementById('re-old-unit')?.value || '').trim();
+  const newUnit = (document.getElementById('re-new-unit')?.value || '').trim();
+  const oldPrice = parseFloat(document.getElementById('re-old-price')?.value);
+  const newPrice = parseFloat(document.getElementById('re-new-price')?.value);
+  const dateBefore = document.getElementById('re-date-before')?.value;
+  const dateAfter = document.getElementById('re-date-after')?.value;
+  const name = (document.getElementById('re-name')?.value || '').trim();
+  const brand = (document.getElementById('re-brand')?.value || '').trim();
+
+  if (!name) warnings.push('⚠️ Product name is empty');
+  if (!brand) warnings.push('⚠️ Brand is empty');
+  if (!oldSize || !newSize) warnings.push('⚠️ Missing size data — consider Evidence Wall instead');
+  if (oldSize && newSize && oldSize <= newSize) warnings.push('🤔 New size ≥ old size — not shrinkflation?');
+  if (oldUnit && newUnit && oldUnit.toLowerCase() !== newUnit.toLowerCase()) warnings.push('⚠️ Units don\'t match ('+oldUnit+' vs '+newUnit+')');
+  if (oldSize && newSize && oldSize > 0) {
+    const pct = ((oldSize - newSize) / oldSize) * 100;
+    if (pct > 50) warnings.push('🚨 >50% size reduction — double check these numbers');
+    if (pct < 1 && pct > 0) warnings.push('🤏 <1% reduction — may not be worth tracking');
+  }
+  if (oldPrice && oldPrice > 100) warnings.push('💲 Old price >$100 — is that correct?');
+  if (newPrice && newPrice > 100) warnings.push('💲 New price >$100 — is that correct?');
+  if (dateAfter) {
+    const afterDate = new Date(dateAfter);
+    if (afterDate > new Date()) warnings.push('📅 "After" date is in the future');
+  }
+  if (dateBefore && dateAfter && new Date(dateBefore) >= new Date(dateAfter)) {
+    warnings.push('📅 "Before" date should be earlier than "after" date');
+  }
+
+  const el = document.getElementById('review-warnings');
+  if (el) {
+    el.innerHTML = warnings.length
+      ? warnings.map(w => `<div style="font-size:11px;font-weight:700;color:var(--duo-orange);padding:2px 0">${w}</div>`).join('')
+      : '';
+  }
+  return warnings;
+}
+
+function getEditedFields(r) {
+  const edits = [];
+  const check = (id, original, field) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const val = el.value.trim();
+    const orig = original != null ? String(original).trim() : '';
+    if (val !== orig) edits.push(field);
+  };
+  check('re-name', r.product_hint || r.title, 'product_hint');
+  check('re-brand', r.brand, 'brand');
+  check('re-old', r.old_size, 'old_size');
+  check('re-new', r.new_size, 'new_size');
+  check('re-old-unit', r.old_unit || 'oz', 'old_unit');
+  check('re-new-unit', r.new_unit || 'oz', 'new_unit');
+  check('re-old-price', r.old_price, 'old_price');
+  check('re-new-price', r.new_price, 'new_price');
+  check('re-retailer', r.retailer, 'retailer');
+  check('re-region', r.region || 'US', 'region');
+  return edits;
+}
 
 async function approveReviewItem() {
   const r = reviewQueue[reviewIndex];
@@ -4078,13 +4189,27 @@ async function approveReviewItem() {
   newUnit  = (document.getElementById('re-new-unit')?.value || '').trim() || r.new_unit || oldUnit;
   const oldPrice = parseFloat(document.getElementById('re-old-price')?.value) || null;
   const newPrice = parseFloat(document.getElementById('re-new-price')?.value) || null;
+  const retailer = (document.getElementById('re-retailer')?.value || '').trim() || null;
+  const region = document.getElementById('re-region')?.value || 'US';
+  const dateBefore = document.getElementById('re-date-before')?.value || null;
+  const dateAfter = document.getElementById('re-date-after')?.value || null;
 
   const unit = newUnit || oldUnit || 'oz';
   const upc = `REDDIT-${(r.id || '').slice(0, 8)}`;
   const pct = (oldSize && newSize && oldSize > 0)
     ? Math.round(((oldSize - newSize) / oldSize) * 10000) / 100
     : 0;
-  const dateNoticed = r.date_noticed || (r.posted_utc ? r.posted_utc.slice(0, 10) : new Date().toISOString().slice(0, 10));
+  const dateNoticed = dateAfter || r.date_noticed || (r.posted_utc ? r.posted_utc.slice(0, 10) : new Date().toISOString().slice(0, 10));
+
+  // Track what the reviewer changed for audit
+  const editedFields = getEditedFields(r);
+  const originalValues = editedFields.length > 0 ? {
+    product_hint: r.product_hint, brand: r.brand,
+    old_size: r.old_size, new_size: r.new_size,
+    old_unit: r.old_unit, new_unit: r.new_unit,
+    old_price: r.old_price, new_price: r.new_price,
+    retailer: r.retailer, region: r.region,
+  } : null;
   const category = guessCategory(prodName, brand || '', 'shrinkflation');
 
   try {
@@ -4098,7 +4223,8 @@ async function approveReviewItem() {
       unit,
       type: 'shrinkflation',
       repeat_offender: false,
-      source: 'reddit_bot'
+      source: 'reddit_bot',
+      region,
     }, { onConflict: 'upc' });
 
     // 2. Upsert event (if we have size or price data) — prevents duplicates
@@ -4118,12 +4244,31 @@ async function approveReviewItem() {
       }, { onConflict: 'upc,date,source' });
     }
 
-    // 3. Mark as promoted in staging (uses RPC to bypass RLS)
-    const { error: rpcErr } = await sb.rpc('update_staging_status', { row_id: r.id, new_status: 'promoted' });
+    // 3. Mark as promoted in staging with audit trail (uses RPC to bypass RLS)
+    const auditUpdate = {
+      status: 'promoted',
+      reviewed_by: 'admin',
+      reviewed_at: new Date().toISOString(),
+      fields_edited: editedFields.length > 0 ? editedFields : null,
+      original_values: originalValues,
+      retailer: retailer,
+      region: region,
+      date_before: dateBefore,
+    };
+    // Try v2 RPC first, fall back to v1, then direct update
+    let { error: rpcErr } = await sb.rpc('update_staging_status_v2', {
+      row_id: r.id, new_status: 'promoted',
+      reviewer: 'admin',
+      edited_fields: editedFields.length > 0 ? editedFields : null,
+    });
     if (rpcErr) {
-      console.warn('RPC failed, trying direct update:', rpcErr.message);
-      const { error: directErr } = await sb.from('reddit_staging').update({ status: 'promoted' }).eq('id', r.id);
-      if (directErr) throw new Error(`Both RPC and direct update failed: ${rpcErr.message} / ${directErr.message}`);
+      console.warn('v2 RPC failed, trying v1:', rpcErr.message);
+      ({ error: rpcErr } = await sb.rpc('update_staging_status', { row_id: r.id, new_status: 'promoted' }));
+    }
+    if (rpcErr) {
+      console.warn('v1 RPC failed, trying direct update:', rpcErr.message);
+      const { error: directErr } = await sb.from('reddit_staging').update(auditUpdate).eq('id', r.id);
+      if (directErr) throw new Error(`All update methods failed: ${rpcErr.message} / ${directErr.message}`);
     }
     // Verify the status actually changed
     const { data: verify, error: verifyErr } = await sb.from('reddit_staging').select('status').eq('id', r.id).single();
@@ -4271,12 +4416,7 @@ function showEvidenceWallRoute() {
   if (!panel) return;
   panel.style.display = ewRouteOpen ? '' : 'none';
   if (ewRouteOpen) {
-    const picker = document.getElementById('ew-tag-picker');
-    if (picker) {
-      picker.innerHTML = Object.entries(EW_TAGS).map(([k, v]) =>
-        `<button class="ew-tag-pill ${ewRouteTag === k ? 'active' : ''}" onclick="pickEwTag('${k}')" style="padding:4px 10px;border-radius:8px;font-size:11px;font-weight:800;border:1.5px solid ${ewRouteTag === k ? 'rgba(255,150,0,0.4)' : 'var(--card-border)'};background:${ewRouteTag === k ? 'rgba(255,150,0,0.15)' : 'transparent'};color:${ewRouteTag === k ? 'var(--duo-orange)' : 'var(--hare)'};cursor:pointer;font-family:'Nunito',sans-serif">${v.emoji} ${v.label}</button>`
-      ).join('');
-    }
+    renderEwPickers();
     // Show image URL input if post has no image
     const imgInput = document.getElementById('ew-image-input');
     const r = reviewQueue[reviewIndex];
@@ -4293,10 +4433,49 @@ function showEvidenceWallRoute() {
   }
 }
 
+function renderEwPickers() {
+  const pillStyle = (active) => `padding:4px 10px;border-radius:8px;font-size:11px;font-weight:800;border:1.5px solid ${active ? 'rgba(255,150,0,0.4)' : 'var(--card-border)'};background:${active ? 'rgba(255,150,0,0.15)' : 'transparent'};color:${active ? 'var(--duo-orange)' : 'var(--hare)'};cursor:pointer;font-family:'Nunito',sans-serif`;
+
+  const picker = document.getElementById('ew-tag-picker');
+  if (picker) {
+    picker.innerHTML = Object.entries(EW_TAGS).map(([k, v]) =>
+      `<button style="${pillStyle(ewRouteTag === k)}" onclick="pickEwTag('${k}')">${v.emoji} ${v.label}</button>`
+    ).join('');
+  }
+
+  const signalPicker = document.getElementById('ew-signal-picker');
+  if (signalPicker) {
+    signalPicker.innerHTML = Object.entries(EW_SIGNAL_TYPES).map(([k, v]) =>
+      `<button style="${pillStyle(ewRouteSignalType === k)}" onclick="pickEwSignalType('${k}')" title="${v.desc}">${v.emoji} ${v.label}</button>`
+    ).join('');
+  }
+
+  const sevPicker = document.getElementById('ew-severity-picker');
+  if (sevPicker) {
+    const sevLabels = [
+      { val:1, label:'Low', color:'#1CB0F6', desc:'Minor or ambiguous' },
+      { val:2, label:'Medium', color:'#FF9600', desc:'Credible evidence' },
+      { val:3, label:'High', color:'#FF4B4B', desc:'Egregious / blatant' },
+    ];
+    sevPicker.innerHTML = sevLabels.map(s =>
+      `<button style="flex:1;padding:6px 10px;border-radius:8px;font-size:12px;font-weight:900;border:1.5px solid ${ewRouteSeverity === s.val ? s.color + '66' : 'var(--card-border)'};background:${ewRouteSeverity === s.val ? s.color + '22' : 'transparent'};color:${ewRouteSeverity === s.val ? s.color : 'var(--hare)'};cursor:pointer;font-family:'Nunito',sans-serif" onclick="pickEwSeverity(${s.val})" title="${s.desc}">${s.label}</button>`
+    ).join('');
+  }
+}
+
 function pickEwTag(tag) {
   ewRouteTag = tag;
-  showEvidenceWallRoute(); // toggle off
-  showEvidenceWallRoute(); // toggle on to re-render
+  renderEwPickers();
+}
+
+function pickEwSignalType(type) {
+  ewRouteSignalType = type;
+  renderEwPickers();
+}
+
+function pickEwSeverity(val) {
+  ewRouteSeverity = val;
+  renderEwPickers();
 }
 
 async function sendToEvidenceWall() {
@@ -4325,6 +4504,8 @@ async function sendToEvidenceWall() {
       product_name: r.product_hint || null,
       category: r.product_hint ? guessCategory(r.product_hint, r.brand || '', '') : null,
       tag: ewRouteTag,
+      signal_type: ewRouteSignalType,
+      severity: ewRouteSeverity,
       source_url: r.source_url || null,
       source_type: 'reddit',
       subreddit: r.subreddit || null,
@@ -4561,6 +4742,27 @@ async function loadFromSupabase() {
       EVIDENCE_WALL = ewData;
     }
 
+    // Load pipeline stats for accurate counts
+    const [stagingCountRes, stagingBrandsRes] = await Promise.all([
+      sb.from('reddit_staging').select('id', { count: 'exact', head: true }),
+      sb.from('reddit_staging').select('brand').neq('status', 'rejected'),
+    ]);
+    const stagingTotal = stagingCountRes.count || 0;
+
+    // Compute real brand count across products + staging
+    const allBrands = new Set();
+    PRODUCTS.forEach(p => { if (p.brand) allBrands.add(p.brand.toLowerCase()); });
+    (stagingBrandsRes.data || []).forEach(r => { if (r.brand) allBrands.add(r.brand.toLowerCase()); });
+
+    // Store pipeline stats globally for rendering
+    window.FC_STATS = {
+      productsTracked: PRODUCTS.length + stagingTotal,
+      totalSignals: EVENTS.length + EVIDENCE_WALL.length,
+      brandsTracked: allBrands.size,
+      evidenceCount: EVIDENCE_WALL.length,
+      stagedCount: stagingTotal,
+    };
+
     // Update header product count
     const pcEl = document.getElementById('products-count');
     if (pcEl) pcEl.textContent = PRODUCTS.length;
@@ -4569,7 +4771,7 @@ async function loadFromSupabase() {
     const ab = document.getElementById('admin-badge');
     if (ab) ab.style.display = isAdmin ? 'inline' : 'none';
 
-    console.log('[FullCarts] Loaded from Supabase:', PRODUCTS.length, 'products,', EVENTS.length, 'events,', (upvotes||[]).length, 'upvotes,', EVIDENCE_WALL.length, 'evidence');
+    console.log('[FullCarts] Loaded from Supabase:', PRODUCTS.length, 'products,', EVENTS.length, 'events,', (upvotes||[]).length, 'upvotes,', EVIDENCE_WALL.length, 'evidence,', stagingTotal, 'staged');
   } catch (err) {
     console.warn('[FullCarts] Supabase load failed, using fallback data:', err);
   }
