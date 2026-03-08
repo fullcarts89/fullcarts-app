@@ -2142,6 +2142,28 @@ function fmtDate(d) { return new Date(d).toLocaleDateString('en-US', { month: 's
 function fmtPct(n) { return n.toFixed(1); }
 function findProduct(upc) { return PRODUCTS.find(p => p.upc === upc); }
 
+function formatTimelineNotes(notes) {
+  if (!notes) return '';
+  // Extract URL from notes (e.g. "Auto-imported from r/shrinkflation: https://reddit.com/...")
+  const urlMatch = notes.match(/(https?:\/\/[^\s]+)/);
+  if (urlMatch) {
+    const url = urlMatch[1];
+    // Clean text: remove the raw URL from the display text
+    let text = notes.replace(url, '').replace(/:\s*$/, '').trim();
+    // Determine source label from URL
+    let sourceLabel = 'View source';
+    if (url.includes('reddit.com')) sourceLabel = 'View Reddit post';
+    else if (url.includes('twitter.com') || url.includes('x.com')) sourceLabel = 'View post';
+    return `
+      ${text ? `<div class="timeline-detail">${escapeHTML(text)}</div>` : ''}
+      <a href="${escapeHTML(url)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;margin-top:4px;padding:4px 10px;background:rgba(28,176,246,0.1);border:1.5px solid rgba(28,176,246,0.2);border-radius:8px;font-size:11px;font-weight:800;color:var(--duo-blue);text-decoration:none;font-family:'Nunito',sans-serif">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        ${sourceLabel} ↗
+      </a>`;
+  }
+  return `<div class="timeline-detail">${escapeHTML(notes)}</div>`;
+}
+
 // ── Upvote system ──────────────────────────────────────────
 async function toggleUpvote(upc) {
   const btn = document.getElementById('upvote-btn-' + upc);
@@ -2911,7 +2933,7 @@ function renderResult() {
               ${e.oldSize}${e.unit} → ${e.newSize}${e.unit}
               <span class="timeline-pct"> (−${fmtPct(e.pct)}%)</span>
             </div>
-            <div class="timeline-detail">${e.notes}</div>
+            ${formatTimelineNotes(e.notes)}
             ${e.priceBefore && e.priceAfter
               ? `<div class="timeline-price">$${e.priceBefore.toFixed(2)} → <strong>$${e.priceAfter.toFixed(2)}</strong></div>`
               : ''}
