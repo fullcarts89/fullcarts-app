@@ -85,7 +85,6 @@ GENERAL_SUBREDDITS = [
     "grocery",
     "Costco",
     "traderjoes",
-    "mildlyinfuriating",
 ]
 
 ALL_SUBREDDITS = DEDICATED_SUBREDDITS + GENERAL_SUBREDDITS
@@ -806,11 +805,18 @@ def process_posts(posts: list, known_urls: set, log, skip_vision: bool = False) 
 
         parsed = parse_text(full_text)
 
-        # Vision analysis: if text parsing is weak and post has an image,
-        # use Claude vision to extract product details from the photo.
+        # Early discard: general sub posts with no extractable fields are noise
+        if not is_dedicated and parsed["fields_found"] == 0:
+            stats["discard"] += 1
+            new_urls.add(url)
+            continue
+
+        # Vision analysis: only for dedicated subs where posts are likely
+        # relevant. General subs produce too many weak matches to justify
+        # the cost and latency of vision calls.
         image_url = _extract_image_url(post, skip_reddit_fallback=skip_vision)
         vision_result = None
-        if not skip_vision and HAS_VISION and should_analyze(parsed, image_url):
+        if is_dedicated and not skip_vision and HAS_VISION and should_analyze(parsed, image_url):
             vision_result = analyze_image(image_url, title)
             if vision_result:
                 parsed = merge_vision_into_parsed(parsed, vision_result)
