@@ -35,6 +35,15 @@ jobs:
       - name: Install dependencies
         run: pip install -r backend/requirements.txt
 
+      - name: Restore known URLs from previous run
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          name: scraper-output-latest
+          path: .
+          if_no_artifact_found: ignore
+          search_artifacts: true
+          workflow: scrape_reddit.yml
+
       - name: Run Reddit scraper
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -45,6 +54,9 @@ jobs:
           EXTRA_FLAGS=""
           if [ "$MODE" = "backfill" ]; then
             EXTRA_FLAGS="--skip-vision"
+          fi
+          if [ -f known_urls_public.txt ]; then
+            echo "Restored $(wc -l < known_urls_public.txt) known URLs from previous run"
           fi
           python reddit_public_scraper.py --${MODE} ${EXTRA_FLAGS}
 
@@ -58,9 +70,10 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: scraper-output-${{ github.run_number }}
+          name: scraper-output-latest
           path: |
             known_urls_public.txt
             public_staging.json
-          retention-days: 7
+          retention-days: 30
+          overwrite: true
           if-no-files-found: ignore
