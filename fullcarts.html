@@ -3812,6 +3812,32 @@ function renderCommunity() {
       ${activityHTML}
     </div>
 
+    ${EVIDENCE_WALL.length ? `
+    <div class="section-title" style="margin-top:8px">
+      <span style="color:var(--duo-orange)">Evidence Wall</span>
+      <span style="font-size:12px;font-weight:700;color:var(--wolf);margin-left:6px">${EVIDENCE_WALL.length} verified</span>
+    </div>
+    <div style="display:flex;gap:10px;overflow-x:auto;padding:0 16px 12px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch">
+      ${EVIDENCE_WALL.slice(0, 8).map(e => {
+        const tag = EW_TAGS[e.tag] || EW_TAGS['slack-fill'];
+        return `
+        <div style="flex:0 0 200px;scroll-snap-align:start;background:var(--card-bg);border:2px solid var(--card-border);border-radius:16px;overflow:hidden;border-bottom:4px solid rgba(255,150,0,0.15)">
+          <img src="${escapeHTML(e.image_url)}" alt="${escapeHTML(e.caption)}" style="width:100%;height:140px;object-fit:cover" loading="lazy" onerror="this.style.display='none'">
+          <div style="padding:10px 12px">
+            <div style="font-size:12px;font-weight:900;color:var(--snow);line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${escapeHTML(e.caption.length > 60 ? e.caption.slice(0, 57) + '...' : e.caption)}</div>
+            <div style="margin-top:6px;display:flex;align-items:center;gap:6px">
+              <span style="font-size:10px;font-weight:900;background:rgba(255,150,0,0.12);color:var(--duo-orange);border-radius:6px;padding:2px 6px">${tag.emoji} ${tag.label}</span>
+              ${e.brand ? `<span style="font-size:10px;font-weight:700;color:var(--wolf)">${escapeHTML(e.brand)}</span>` : ''}
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="padding:0 16px 8px">
+      <button class="btn-duo btn-outline btn-sm" onclick="navigate('evidence')" style="width:100%;font-size:12px;padding:8px 16px;border-color:rgba(255,150,0,0.25);color:var(--duo-orange)">View Full Evidence Wall (${EVIDENCE_WALL.length})</button>
+    </div>
+    ` : ''}
+
     <div class="section-title" style="margin-top:8px">How to Earn Badges</div>
     <div class="duo-card" style="padding:14px 16px">
       <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;font-weight:700;color:var(--hare)">
@@ -4308,13 +4334,26 @@ async function sendToEvidenceWall() {
     });
     if (ewErr) throw ewErr;
 
-    // Mark staging as promoted (evidence)
+    // Mark staging as evidence_wall (requires RPC to allow this status —
+    // see migration 009_staging_status_rpc.sql)
     const { error: rpcErr } = await sb.rpc('update_staging_status', { row_id: r.id, new_status: 'evidence_wall' });
     if (rpcErr) {
-      console.warn('RPC failed, trying direct update:', rpcErr.message);
-      await sb.from('reddit_staging').update({ status: 'evidence_wall' }).eq('id', r.id);
+      console.warn('RPC failed for evidence_wall, trying direct update:', rpcErr.message);
+      const { error: directErr } = await sb.from('reddit_staging').update({ status: 'evidence_wall' }).eq('id', r.id);
+      if (directErr) {
+        console.error('Direct update also failed:', directErr.message);
+        // Evidence wall insert succeeded but staging status didn't change.
+        // Alert user so they know to run the updated RPC migration.
+        alert('Evidence Wall item saved, but the staging record could not be marked as processed.\n\nPlease run the updated migration 009 in Supabase SQL Editor to add "evidence_wall" to the allowed statuses.');
+      }
+    }
+    // Verify status actually changed
+    const { data: ewVerify } = await sb.from('reddit_staging').select('status').eq('id', r.id).single();
+    if (ewVerify && ewVerify.status === 'pending') {
+      console.error('Evidence wall status update did not persist — record still pending');
     }
 
+    markReviewProcessed(r.id);
     reviewSessionStats.approved++;
     ewRouteOpen = false;
 

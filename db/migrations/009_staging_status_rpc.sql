@@ -11,7 +11,7 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 BEGIN
-  IF new_status NOT IN ('promoted', 'dismissed', 'rejected') THEN
+  IF new_status NOT IN ('promoted', 'dismissed', 'rejected', 'evidence_wall') THEN
     RAISE EXCEPTION 'Invalid status: %', new_status;
   END IF;
 
