@@ -2036,6 +2036,8 @@ const EW_SIGNAL_TYPES = {
 };
 
 let EVIDENCE_WALL = [];
+let NEWS_ARTICLES = [];     // Populated from news_articles table (DB)
+let PRODUCT_NEWS = {};      // Map: product_upc → [{article_id, url, title, outlet, published_at, context}]
 let ewSelectedTag = 'all';
 let ewRouteTag = 'slack-fill';
 let ewRouteSignalType = 'unverified_size_change';
@@ -3121,6 +3123,24 @@ function renderResult() {
         </div>`;
     })()}
 
+    ${(() => {
+      const citations = PRODUCT_NEWS[p.upc] || [];
+      if (!citations.length) return '';
+      return `
+        <div class="section-title">In the News</div>
+        <div class="duo-card" style="padding:12px 14px">
+          ${citations.map(c => `
+            <a href="${escapeHTML(c.article_url)}" target="_blank" rel="noopener" style="display:block;text-decoration:none;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:10px;font-weight:900;padding:2px 8px;border-radius:6px;background:rgba(28,176,246,0.12);color:var(--duo-blue);white-space:nowrap">${escapeHTML(c.outlet || 'News')}</span>
+                <span style="font-size:12px;font-weight:800;color:var(--snow);line-height:1.3;flex:1">${escapeHTML(c.article_title)}</span>
+              </div>
+              ${c.published_at ? `<div style="font-size:11px;color:var(--wolf);font-weight:700;margin-top:3px;padding-left:2px">${new Date(c.published_at).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })}</div>` : ''}
+            </a>
+          `).join('')}
+        </div>`;
+    })()}
+
     <div style="padding:0 16px 4px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
       ${upvoteCountBadge(p.upc)}
       ${upvoteBtnHTML(p.upc)}
@@ -4179,9 +4199,9 @@ function renderReviewCard() {
     <div class="review-card" id="review-current-card">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
         <div class="review-card-brand" style="margin-bottom:0">${escapeHTML(r.subreddit || 'ALL')}</div>
+        ${(r.source_type === 'news' || r.subreddit === 'google_news') ? '<div style="font-size:10px;font-weight:900;padding:2px 8px;border-radius:6px;background:rgba(28,176,246,0.15);color:var(--duo-blue)">📰 NEWS</div>' : ''}
         <div style="font-size:10px;font-weight:900;padding:2px 8px;border-radius:6px;background:${(r.confidence_score||0) >= 60 ? 'rgba(88,204,2,0.15)' : (r.confidence_score||0) >= 30 ? 'rgba(255,150,0,0.15)' : 'rgba(255,75,75,0.15)'};color:${(r.confidence_score||0) >= 60 ? 'var(--duo-green)' : (r.confidence_score||0) >= 30 ? 'var(--duo-orange)' : 'var(--duo-red)'}">${r.confidence_score || 0}% conf</div>
         <div style="font-size:10px;font-weight:700;color:var(--wolf)">${escapeHTML(r.extraction_method || 'text')}</div>
-        ${r.region && r.region !== 'US' ? `<div style="font-size:10px;font-weight:900;padding:2px 6px;border-radius:6px;background:rgba(28,176,246,0.15);color:var(--duo-blue)">${escapeHTML(r.region)}</div>` : ''}
       </div>
       <div class="review-card-name">${escapeHTML(r.title || 'No title')}</div>
       ${r.body ? `<div style="font-size:13px;color:var(--wolf);margin:6px 0 10px;padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:8px;max-height:120px;overflow-y:auto;line-height:1.4;white-space:pre-wrap">${escapeHTML(r.body.slice(0, 500))}</div>` : ''}
@@ -4214,7 +4234,7 @@ function renderReviewCard() {
       <div class="review-meta">
         <span>📊 Score: ${r.score || 0}</span>
         ${dateNoticed ? `<span>📅 ${dateNoticed}</span>` : ''}
-        ${r.source_url ? `<a href="${r.source_url}" target="_blank" rel="noopener">View Reddit post →</a>` : ''}
+        ${r.source_url ? `<a href="${r.source_url}" target="_blank" rel="noopener">${(r.source_type === 'news' || r.subreddit === 'google_news') ? 'View Article' : 'View Reddit post'} →</a>` : ''}
       </div>
 
       <div class="review-edit-fields" style="margin-top:8px">
@@ -4247,18 +4267,10 @@ function renderReviewCard() {
         <div class="review-edit-row">
           <label>Store</label>
           <input id="re-retailer" value="${escapeHTML(r.retailer || '')}" placeholder="Retailer (Walmart, Costco...)" style="flex:1">
-          <select id="re-region" style="width:60px;padding:4px;background:rgba(255,255,255,0.06);border:2px solid var(--card-border);border-radius:8px;color:var(--snow);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700">
-            <option value="US" ${(r.region||'US')==='US'?'selected':''}>US</option>
-            <option value="CA" ${r.region==='CA'?'selected':''}>CA</option>
-            <option value="UK" ${r.region==='UK'?'selected':''}>UK</option>
-            <option value="AU" ${r.region==='AU'?'selected':''}>AU</option>
-          </select>
         </div>
         <div class="review-edit-row">
-          <label>Dates</label>
-          <input id="re-date-before" type="date" value="${r.date_before || ''}" placeholder="Old size date" title="When was the product at its old size?" style="flex:1">
-          <span style="color:var(--wolf);font-size:12px;padding:0 4px">→</span>
-          <input id="re-date-after" type="date" value="${dateNoticed || ''}" placeholder="New size date" title="When was the change noticed?" style="flex:1">
+          <label>Date Noticed</label>
+          <input id="re-date-noticed" type="date" value="${dateNoticed || ''}" placeholder="When was the change noticed?" title="When was the change noticed?" style="flex:1">
         </div>
       </div>
       <div id="review-warnings" style="margin-top:6px"></div>
@@ -4309,8 +4321,7 @@ function validateReviewFields() {
   const newUnit = (document.getElementById('re-new-unit')?.value || '').trim();
   const oldPrice = parseFloat(document.getElementById('re-old-price')?.value);
   const newPrice = parseFloat(document.getElementById('re-new-price')?.value);
-  const dateBefore = document.getElementById('re-date-before')?.value;
-  const dateAfter = document.getElementById('re-date-after')?.value;
+  const dateNoticed = document.getElementById('re-date-noticed')?.value;
   const name = (document.getElementById('re-name')?.value || '').trim();
   const brand = (document.getElementById('re-brand')?.value || '').trim();
 
@@ -4326,12 +4337,9 @@ function validateReviewFields() {
   }
   if (oldPrice && oldPrice > 100) warnings.push('💲 Old price >$100 — is that correct?');
   if (newPrice && newPrice > 100) warnings.push('💲 New price >$100 — is that correct?');
-  if (dateAfter) {
-    const afterDate = new Date(dateAfter);
-    if (afterDate > new Date()) warnings.push('📅 "After" date is in the future');
-  }
-  if (dateBefore && dateAfter && new Date(dateBefore) >= new Date(dateAfter)) {
-    warnings.push('📅 "Before" date should be earlier than "after" date');
+  if (dateNoticed) {
+    const noticedDate = new Date(dateNoticed);
+    if (noticedDate > new Date()) warnings.push('📅 Date noticed is in the future');
   }
 
   const el = document.getElementById('review-warnings');
@@ -4361,7 +4369,6 @@ function getEditedFields(r) {
   check('re-old-price', r.old_price, 'old_price');
   check('re-new-price', r.new_price, 'new_price');
   check('re-retailer', r.retailer, 'retailer');
-  check('re-region', r.region || 'US', 'region');
   return edits;
 }
 
@@ -4381,16 +4388,12 @@ async function approveReviewItem() {
   const oldPrice = parseFloat(document.getElementById('re-old-price')?.value) || null;
   const newPrice = parseFloat(document.getElementById('re-new-price')?.value) || null;
   const retailer = (document.getElementById('re-retailer')?.value || '').trim() || null;
-  const region = document.getElementById('re-region')?.value || 'US';
-  const dateBefore = document.getElementById('re-date-before')?.value || null;
-  const dateAfter = document.getElementById('re-date-after')?.value || null;
-
   const unit = newUnit || oldUnit || 'oz';
   const upc = `REDDIT-${(r.id || '').slice(0, 8)}`;
   const pct = (oldSize && newSize && oldSize > 0)
     ? Math.round(((oldSize - newSize) / oldSize) * 10000) / 100
     : 0;
-  const dateNoticed = dateAfter || r.date_noticed || (r.posted_utc ? r.posted_utc.slice(0, 10) : new Date().toISOString().slice(0, 10));
+  const dateNoticed = document.getElementById('re-date-noticed')?.value || r.date_noticed || (r.posted_utc ? r.posted_utc.slice(0, 10) : new Date().toISOString().slice(0, 10));
 
   // Track what the reviewer changed for audit
   const editedFields = getEditedFields(r);
@@ -4399,7 +4402,7 @@ async function approveReviewItem() {
     old_size: r.old_size, new_size: r.new_size,
     old_unit: r.old_unit, new_unit: r.new_unit,
     old_price: r.old_price, new_price: r.new_price,
-    retailer: r.retailer, region: r.region,
+    retailer: r.retailer,
   } : null;
   const category = guessCategory(prodName, brand || '', 'shrinkflation');
 
@@ -4415,7 +4418,6 @@ async function approveReviewItem() {
       type: 'shrinkflation',
       repeat_offender: false,
       source: 'reddit_bot',
-      region,
     }, { onConflict: 'upc' });
 
     // 2. Upsert event (if we have size or price data) — prevents duplicates
@@ -4443,8 +4445,6 @@ async function approveReviewItem() {
       fields_edited: editedFields.length > 0 ? editedFields : null,
       original_values: originalValues,
       retailer: retailer,
-      region: region,
-      date_before: dateBefore,
     };
     // Try v2 RPC first, fall back to v1, then direct update
     let { error: rpcErr } = await sb.rpc('update_staging_status_v2', {
@@ -4470,6 +4470,50 @@ async function approveReviewItem() {
     } else if (verify.status !== 'promoted') {
       console.error(`Status verify failed: expected 'promoted', got '${verify.status}'`);
       throw new Error('Status update did not persist — check RLS policies and RPC function in Supabase');
+    }
+
+    // If this is a news article, also create a news_articles record + link
+    const isNewsSource = r.source_type === 'news' || r.subreddit === 'google_news';
+    if (isNewsSource && r.source_url) {
+      try {
+        // Parse outlet from title (common format: "Headline - Outlet")
+        let articleTitle = r.title || '';
+        let outlet = null;
+        if (articleTitle.includes(' — ')) {
+          const parts = articleTitle.split(' — ');
+          outlet = parts.pop().trim();
+          articleTitle = parts.join(' — ').trim();
+        } else if (articleTitle.includes(' - ')) {
+          const parts = articleTitle.split(' - ');
+          outlet = parts.pop().trim();
+          articleTitle = parts.join(' - ').trim();
+        }
+
+        const { data: articleData } = await sb.from('news_articles').upsert({
+          url: r.source_url,
+          title: articleTitle || r.title,
+          outlet: outlet,
+          published_at: r.posted_utc || null,
+          summary: (r.title || '').slice(0, 500),
+          article_type: 'shrinkflation',
+          tags: ['News'],
+          staging_id: r.id,
+          products_extracted: (oldSize && newSize) ? 1 : 0,
+          status: 'active',
+        }, { onConflict: 'url' }).select('id').single();
+
+        // Link article to the product we just created
+        if (articleData?.id && upc) {
+          await sb.from('article_product_links').upsert({
+            article_id: articleData.id,
+            product_upc: upc,
+            context: `Mentioned in: ${(r.title || '').slice(0, 100)}`,
+          }, { onConflict: 'article_id,product_upc' });
+        }
+        console.log('[FullCarts] News article created + linked:', r.source_url);
+      } catch (newsErr) {
+        console.warn('[FullCarts] News article creation skipped:', newsErr);
+      }
     }
 
     // Mark locally so reloads from in-memory queue also skip this
@@ -4817,9 +4861,40 @@ function renderNews() {
     ...Object.entries(SHRINK_TYPES).map(([k,v]) => ({ key:k, label:`${v.emoji} ${v.label}` }))
   ];
 
+  // Merge DB articles with hardcoded NEWS, deduplicating by URL
+  const seenUrls = new Set();
+  const allArticles = [];
+
+  // DB articles first (they're more current)
+  NEWS_ARTICLES.forEach(a => {
+    const url = a.url || '';
+    if (seenUrls.has(url)) return;
+    seenUrls.add(url);
+    allArticles.push({
+      id: a.id,
+      headline: a.title,
+      source: a.outlet || 'News',
+      sourceColor: '#666',
+      date: a.published_at ? new Date(a.published_at).toLocaleDateString('en-US', { month:'short', year:'numeric' }) : '',
+      type: a.article_type || 'shrinkflation',
+      summary: a.summary || '',
+      url: a.url,
+      tag: (a.tags && a.tags[0]) || 'News',
+      fromDB: true,
+      productsLinked: a.products_extracted || 0,
+    });
+  });
+
+  // Then hardcoded articles
+  NEWS.forEach(a => {
+    if (seenUrls.has(a.url)) return;
+    seenUrls.add(a.url);
+    allArticles.push({ ...a, headline: a.headline, source: a.source, fromDB: false });
+  });
+
   let articles = selectedNewsType === 'all'
-    ? NEWS
-    : NEWS.filter(n => n.type === selectedNewsType);
+    ? allArticles
+    : allArticles.filter(n => n.type === selectedNewsType);
 
   const pillsHTML = pills.map(p => {
     const isActive = selectedNewsType === p.key;
@@ -4831,17 +4906,19 @@ function renderNews() {
 
   const cardsHTML = articles.length ? articles.map(a => {
     const typeInfo = SHRINK_TYPES[a.type];
+    const outletColor = a.sourceColor || '#666';
     return `
       <a class="news-card" href="${a.url}" target="_blank" rel="noopener">
         <div class="news-card-top">
-          <span class="news-source-badge" style="background:${a.sourceColor}20;color:${a.sourceColor};border:1.5px solid ${a.sourceColor}40">${a.source}</span>
+          <span class="news-source-badge" style="background:${outletColor}20;color:${outletColor};border:1.5px solid ${outletColor}40">${escapeHTML(a.source)}</span>
           ${typeInfo ? `<span class="news-type-dot" style="background:${typeInfo.cls.includes('shrinkflation') ? '#FF4B4B' : typeInfo.cls.includes('skimpflation') ? '#CE82FF' : typeInfo.cls.includes('downsizing') ? '#FF9600' : typeInfo.cls.includes('count') ? '#1CB0F6' : '#FFC800'}">${typeInfo.emoji}</span>` : ''}
           <span class="news-meta" style="margin-left:auto">${a.date}</span>
         </div>
-        <div class="news-headline">${a.headline}</div>
-        <div class="news-summary">${a.summary}</div>
+        <div class="news-headline">${escapeHTML(a.headline)}</div>
+        <div class="news-summary">${escapeHTML(a.summary)}</div>
         <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
-          <span style="font-size:11px;font-weight:800;background:rgba(88,204,2,0.1);color:var(--duo-green);border:1.5px solid rgba(88,204,2,0.25);border-radius:6px;padding:2px 7px">${a.tag}</span>
+          <span style="font-size:11px;font-weight:800;background:rgba(88,204,2,0.1);color:var(--duo-green);border:1.5px solid rgba(88,204,2,0.25);border-radius:6px;padding:2px 7px">${escapeHTML(a.tag)}</span>
+          ${a.fromDB && a.productsLinked ? `<span style="font-size:11px;font-weight:800;background:rgba(28,176,246,0.1);color:var(--duo-blue);border:1.5px solid rgba(28,176,246,0.25);border-radius:6px;padding:2px 7px">${a.productsLinked} product${a.productsLinked > 1 ? 's' : ''}</span>` : ''}
           <span style="font-size:11px;color:var(--wolf);font-weight:700;margin-left:auto">Read article →</span>
         </div>
       </a>`;
@@ -4935,6 +5012,28 @@ async function loadFromSupabase() {
       EVIDENCE_WALL = ewData;
     }
 
+    // Load news articles from DB
+    try {
+      const { data: newsData, error: newsErr } = await sb.from('news_articles')
+        .select('*').eq('status', 'active')
+        .order('published_at', { ascending: false }).limit(100);
+      if (!newsErr && newsData?.length) {
+        NEWS_ARTICLES = newsData;
+      }
+    } catch (e) { console.warn('[FullCarts] news_articles load skipped:', e); }
+
+    // Load product-news citations
+    try {
+      const { data: pnData, error: pnErr } = await sb.from('product_news').select('*');
+      if (!pnErr && pnData?.length) {
+        PRODUCT_NEWS = {};
+        pnData.forEach(row => {
+          if (!PRODUCT_NEWS[row.product_upc]) PRODUCT_NEWS[row.product_upc] = [];
+          PRODUCT_NEWS[row.product_upc].push(row);
+        });
+      }
+    } catch (e) { console.warn('[FullCarts] product_news load skipped:', e); }
+
     // Load pipeline stats for accurate counts
     const [stagingCountRes, stagingBrandsRes] = await Promise.all([
       sb.from('reddit_staging').select('id', { count: 'exact', head: true }),
@@ -4954,6 +5053,7 @@ async function loadFromSupabase() {
       brandsTracked: allBrands.size,
       evidenceCount: EVIDENCE_WALL.length,
       stagedCount: stagingTotal,
+      newsArticlesCount: NEWS_ARTICLES.length,
     };
 
     // Update header product count

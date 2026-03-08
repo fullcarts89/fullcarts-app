@@ -2,9 +2,9 @@
 -- Migration 011: Data quality & human-review-required pipeline
 --
 -- Key changes:
---   1. Add confidence_score, extraction_method, region to staging
+--   1. Add confidence_score, extraction_method to staging
 --   2. Add reviewer audit trail fields to staging
---   3. Add retailer + region to product_versions
+--   3. Add retailer to product_versions (region removed in 014)
 --   4. Add false_positive + retracted_at to change_events
 --   5. Update promote function to require human review
 --   6. Add validation constraints
@@ -31,9 +31,7 @@ ALTER TABLE reddit_staging
 COMMENT ON COLUMN reddit_staging.extraction_method IS
   'Primary extraction method: text, vision, text+vision, manual';
 
--- Region (US prices differ from Canada/UK)
-ALTER TABLE reddit_staging
-  ADD COLUMN IF NOT EXISTS region text DEFAULT 'US';
+-- region column removed in migration 014_drop_region.sql
 
 -- Retailer mentioned in post (Walmart, Costco, etc.)
 ALTER TABLE reddit_staging
@@ -64,27 +62,18 @@ ALTER TABLE reddit_staging
 ALTER TABLE reddit_staging
   ADD COLUMN IF NOT EXISTS original_values jsonb;
 
--- The "before" date — replaces the hardcoded 1-year assumption
-ALTER TABLE reddit_staging
-  ADD COLUMN IF NOT EXISTS date_before date;
-
-COMMENT ON COLUMN reddit_staging.date_before IS
-  'When the product was at its old size. Set by reviewer. Replaces hardcoded 1-year assumption.';
+-- date_before column removed in migration 013_drop_date_before.sql
 
 
 -- ═══════════════════════════════════════════════════════════════
 -- 3. PRODUCT_VERSIONS: retailer + region
 -- ═══════════════════════════════════════════════════════════════
 
--- Region for the observation
-ALTER TABLE product_versions
-  ADD COLUMN IF NOT EXISTS region text DEFAULT 'US';
+-- region column removed in migration 014_drop_region.sql
 
 -- (retailer column already exists in product_versions — just add comment)
 COMMENT ON COLUMN product_versions.retailer IS
   'Store where this size/price was observed (Walmart, Costco, Target, etc.)';
-COMMENT ON COLUMN product_versions.region IS
-  'Geographic region: US, CA, UK, AU, etc.';
 
 
 -- ═══════════════════════════════════════════════════════════════
@@ -107,12 +96,7 @@ COMMENT ON COLUMN change_events.false_positive IS
   'Marked true when a change_event is determined to be incorrect data.';
 
 
--- ═══════════════════════════════════════════════════════════════
--- 5. PRODUCTS: region tracking
--- ═══════════════════════════════════════════════════════════════
-
-ALTER TABLE products
-  ADD COLUMN IF NOT EXISTS region text DEFAULT 'US';
+-- region column for products removed in migration 014_drop_region.sql
 
 
 -- ═══════════════════════════════════════════════════════════════

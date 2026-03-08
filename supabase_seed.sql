@@ -79,14 +79,13 @@ CREATE TABLE IF NOT EXISTS reddit_staging (
   confidence_score integer DEFAULT 0 CHECK (confidence_score BETWEEN 0 AND 100),
   extraction_method text DEFAULT 'text',        -- text, vision, text+vision, manual
   retailer         text,                        -- Store where product was spotted
-  region           text DEFAULT 'US',           -- US, CA, UK, AU, etc.
   -- Reviewer audit trail
   reviewed_by      text,                        -- Who reviewed this entry
   reviewed_at      timestamptz,                 -- When it was reviewed
   fields_edited    text[],                      -- Which fields the reviewer changed
   review_notes     text,                        -- Reviewer notes
   original_values  jsonb,                       -- Snapshot of pre-edit values
-  date_before      date,                        -- When product was at old size (set by reviewer)
+  source_type      text DEFAULT 'reddit',       -- reddit, news, community, openfoodfacts
   created_at       timestamptz DEFAULT now()
 );
 
@@ -126,6 +125,38 @@ CREATE TABLE IF NOT EXISTS flags (
   detail     text,
   status     text DEFAULT 'open',
   created_at timestamptz DEFAULT now()
+);
+
+-- ── NEWS ARTICLES ─────────────────────────────────────────
+-- Stores news articles covering shrinkflation. Populated when
+-- google_news staging entries are approved or via the news scraper.
+CREATE TABLE IF NOT EXISTS news_articles (
+  id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  url              text UNIQUE NOT NULL,
+  title            text NOT NULL,
+  outlet           text,
+  author           text,
+  published_at     timestamptz,
+  summary          text,
+  article_type     text DEFAULT 'shrinkflation',
+  tags             text[],
+  staging_id       uuid,
+  source_query     text,
+  products_extracted integer DEFAULT 0,
+  status           text DEFAULT 'active',
+  created_at       timestamptz DEFAULT now(),
+  updated_at       timestamptz DEFAULT now()
+);
+
+-- ── ARTICLE-PRODUCT LINKS ────────────────────────────────
+-- Many-to-many: which news articles mention which products.
+CREATE TABLE IF NOT EXISTS article_product_links (
+  id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  article_id       uuid NOT NULL REFERENCES news_articles(id) ON DELETE CASCADE,
+  product_upc      text NOT NULL REFERENCES products(upc) ON DELETE CASCADE,
+  context          text,
+  created_at       timestamptz DEFAULT now(),
+  UNIQUE(article_id, product_upc)
 );
 
 -- ── EVIDENCE WALL ─────────────────────────────────────────
@@ -199,6 +230,17 @@ CREATE POLICY "Public read flags" ON flags FOR SELECT USING (true);
 ALTER TABLE evidence_wall ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public read evidence_wall" ON evidence_wall FOR SELECT USING (true);
 CREATE POLICY "Anyone can insert evidence_wall" ON evidence_wall FOR INSERT WITH CHECK (true);
+
+-- News articles: public read, service role + anon can insert
+ALTER TABLE news_articles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public read news_articles" ON news_articles FOR SELECT USING (true);
+CREATE POLICY "Anon can insert news_articles" ON news_articles FOR INSERT WITH CHECK (true);
+CREATE POLICY "Service role manages news_articles" ON news_articles FOR ALL USING (auth.role() = 'service_role');
+
+-- Article-product links: public read, anyone can insert
+ALTER TABLE article_product_links ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public read article_product_links" ON article_product_links FOR SELECT USING (true);
+CREATE POLICY "Anon can insert article_product_links" ON article_product_links FOR INSERT WITH CHECK (true);
 
 -- ============================================================
 -- SEED: PRODUCTS
