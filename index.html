@@ -497,7 +497,7 @@
       <div class="phone-stat-row">
         <div class="phone-stat"><div class="psv" style="color:#58CC02">25</div><div class="psl">Products</div></div>
         <div class="phone-stat"><div class="psv" style="color:#FF9600">26</div><div class="psl">Shrinks</div></div>
-        <div class="phone-stat"><div class="psv" style="color:#FF4B4B">15</div><div class="psl">Repeat</div></div>
+        <div class="phone-stat"><div class="psv" style="color:#FF4B4B">15</div><div class="psl">Brands</div></div>
       </div>
       <div class="phone-content">
         <div class="phone-product-row">
@@ -552,7 +552,7 @@
     <div class="stat-divider"></div>
     <div class="stat-item">
       <div class="si-val" style="color:#FF4B4B">15</div>
-      <div class="si-lbl">Repeat Offenders</div>
+      <div class="si-lbl">Brands Tracked</div>
     </div>
     <div class="stat-divider"></div>
     <div class="stat-item">
@@ -868,7 +868,63 @@
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
+// ── Live stats from Supabase ───────────────────────────────
+(async function loadLiveStats() {
+  try {
+    const sb = supabase.createClient(
+      'https://ntyhbapphnzlariakgrw.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50eWhiYXBwaG56bGFyaWFrZ3J3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NTE5ODcsImV4cCI6MjA4ODEyNzk4N30.oaW846y2YzVjfgPjtOqz-cS8TB3UkkY12oytSuHEA3k'
+    );
+
+    // Fetch counts in parallel
+    const [productsRes, eventsRes, stagingRes, ewRes] = await Promise.all([
+      sb.from('products').select('upc', { count: 'exact', head: true }),
+      sb.from('events').select('id', { count: 'exact', head: true }),
+      sb.from('reddit_staging').select('id', { count: 'exact', head: true }),
+      sb.from('evidence_wall').select('id', { count: 'exact', head: true }).eq('status', 'approved'),
+    ]);
+
+    const products = productsRes.count || 0;
+    const events = eventsRes.count || 0;
+    const staged = stagingRes.count || 0;
+    const evidence = ewRes.count || 0;
+    const totalSignals = events + evidence;
+    const totalTracked = products + staged;
+
+    // Update banner stats
+    const bannerStats = document.querySelectorAll('.stat-item .si-val');
+    if (bannerStats[0]) bannerStats[0].textContent = totalTracked > 0 ? totalTracked.toLocaleString() + '+' : '25+';
+    if (bannerStats[1]) bannerStats[1].textContent = totalSignals > 0 ? totalSignals.toLocaleString() : '26';
+
+    // Count unique brands from products + staging
+    const [brandRes, stagingBrandRes] = await Promise.all([
+      sb.from('products').select('brand'),
+      sb.from('reddit_staging').select('brand').neq('status', 'rejected'),
+    ]);
+    const allBrands = new Set();
+    (brandRes.data || []).forEach(r => { if (r.brand) allBrands.add(r.brand.toLowerCase()); });
+    (stagingBrandRes.data || []).forEach(r => { if (r.brand) allBrands.add(r.brand.toLowerCase()); });
+    if (bannerStats[2]) bannerStats[2].textContent = allBrands.size > 0 ? allBrands.size.toLocaleString() : '15';
+
+    // Update phone mockup stats
+    const phoneStats = document.querySelectorAll('.phone-stat .psv');
+    if (phoneStats[0]) phoneStats[0].textContent = totalTracked > 0 ? totalTracked.toLocaleString() : '25';
+    if (phoneStats[1]) phoneStats[1].textContent = totalSignals > 0 ? totalSignals.toLocaleString() : '26';
+    if (phoneStats[2]) phoneStats[2].textContent = allBrands.size > 0 ? allBrands.size.toLocaleString() : '15';
+
+    // Update banner labels to match new meaning
+    const bannerLabels = document.querySelectorAll('.stat-item .si-lbl');
+    if (bannerLabels[0]) bannerLabels[0].textContent = 'Products Tracked';
+    if (bannerLabels[1]) bannerLabels[1].textContent = 'Signals Documented';
+    if (bannerLabels[2]) bannerLabels[2].textContent = 'Brands Tracked';
+
+  } catch (err) {
+    console.warn('[FullCarts] Live stats failed, keeping defaults:', err);
+  }
+})();
+
 function downloadCSV() {
   // Mirror the app's downloadDataset logic with static data
   const csv = `# FullCarts Product Database

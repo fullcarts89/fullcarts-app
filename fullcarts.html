@@ -1932,9 +1932,20 @@ const EW_TAGS = {
   'caught-in-4k':         { label:'Caught in 4K',         emoji:'📸', desc:'Label/fine print reveals the truth' },
 };
 
+const EW_SIGNAL_TYPES = {
+  'unverified_size_change': { label:'Size Change',        emoji:'📦', desc:'Likely size reduction, needs verification' },
+  'stealth_redesign':       { label:'Stealth Redesign',   emoji:'🎭', desc:'New packaging hides a size cut' },
+  'ppu_increase':           { label:'PPU Increase',       emoji:'💲', desc:'Price-per-unit went up without size change' },
+  'ingredient_swap':        { label:'Ingredient Swap',    emoji:'🧪', desc:'Cheaper ingredients substituted' },
+  'count_reduction':        { label:'Count Reduction',    emoji:'🔢', desc:'Fewer items in the same package' },
+  'regional_test':          { label:'Regional Test',      emoji:'📍', desc:'Smaller size spotted in select markets' },
+};
+
 let EVIDENCE_WALL = [];
 let ewSelectedTag = 'all';
 let ewRouteTag = 'slack-fill';
+let ewRouteSignalType = 'unverified_size_change';
+let ewRouteSeverity = 2;
 
 // ── Supabase client ─────────────────────────────────────────
 const SUPABASE_URL = 'https://ntyhbapphnzlariakgrw.supabase.co';
@@ -2438,10 +2449,10 @@ function renderHome() {
     </div>
 
     <div class="stats-row">
-      <div class="stat-bubble"><div class="num green">${PRODUCTS.length}</div><div class="lbl">Products</div></div>
-      <div class="stat-bubble"><div class="num orange">${EVENTS.length}</div><div class="lbl">Shrinks</div></div>
-      <div class="stat-bubble"><div class="num red">${PRODUCTS.filter(p=>p.repeatOffender).length}</div><div class="lbl">Repeat</div></div>
-      <div class="stat-bubble"><div class="num blue">${Object.values(UPVOTE_COUNTS).reduce((s,v)=>s+v,0)}</div><div class="lbl">Upvotes</div></div>
+      <div class="stat-bubble"><div class="num green">${(window.FC_STATS?.productsTracked || PRODUCTS.length).toLocaleString()}</div><div class="lbl">Tracked</div></div>
+      <div class="stat-bubble"><div class="num orange">${(window.FC_STATS?.totalSignals || EVENTS.length).toLocaleString()}</div><div class="lbl">Signals</div></div>
+      <div class="stat-bubble"><div class="num red">${(window.FC_STATS?.brandsTracked || PRODUCTS.filter(p=>p.repeatOffender).length).toLocaleString()}</div><div class="lbl">Brands</div></div>
+      <div class="stat-bubble"><div class="num blue">${EVIDENCE_WALL.length}</div><div class="lbl">Evidence</div></div>
     </div>
 
     ${EVIDENCE_WALL.length ? `
@@ -3744,20 +3755,20 @@ function renderCommunity() {
 
     <div class="community-stats-grid">
       <div class="community-stat-card">
-        <div class="csv green">${PRODUCTS.length}</div>
+        <div class="csv green">${(window.FC_STATS?.productsTracked || PRODUCTS.length).toLocaleString()}</div>
         <div class="csl">Products Tracked</div>
       </div>
       <div class="community-stat-card">
-        <div class="csv" style="color:var(--duo-orange)">${totalUpvotes}</div>
-        <div class="csl">Total Upvotes</div>
+        <div class="csv" style="color:var(--duo-orange)">${(window.FC_STATS?.totalSignals || EVENTS.length).toLocaleString()}</div>
+        <div class="csl">Total Signals</div>
       </div>
       <div class="community-stat-card">
-        <div class="csv" style="color:var(--duo-red)">${EVENTS.length}</div>
-        <div class="csl">Shrink Events</div>
+        <div class="csv" style="color:var(--duo-red)">${(window.FC_STATS?.brandsTracked || PRODUCTS.filter(p => p.repeatOffender).length).toLocaleString()}</div>
+        <div class="csl">Brands Tracked</div>
       </div>
       <div class="community-stat-card">
-        <div class="csv" style="color:var(--duo-blue)">${PRODUCTS.filter(p => p.repeatOffender).length}</div>
-        <div class="csl">Repeat Offenders</div>
+        <div class="csv" style="color:var(--duo-blue)">${EVIDENCE_WALL.length}</div>
+        <div class="csl">Evidence Wall</div>
       </div>
     </div>
 
@@ -4047,8 +4058,12 @@ function renderReviewCard() {
         <button class="review-btn-evidence" style="width:100%;padding:10px;border:none;border-radius:14px;font-size:13px;font-weight:900;font-family:'Nunito',sans-serif;cursor:pointer;border-bottom:3px solid rgba(255,150,0,0.2)" onclick="showEvidenceWallRoute()">🖼️ Send to Evidence Wall</button>
       </div>
       <div id="evidence-wall-route" style="display:none;margin-top:8px;padding:12px;background:rgba(255,150,0,0.06);border:1.5px solid rgba(255,150,0,0.2);border-radius:12px">
-        <div style="font-size:11px;font-weight:900;color:var(--duo-orange);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Evidence Wall Tag</div>
+        <div style="font-size:11px;font-weight:900;color:var(--duo-orange);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Visual Tag</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px" id="ew-tag-picker"></div>
+        <div style="font-size:11px;font-weight:900;color:var(--duo-orange);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Signal Type</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px" id="ew-signal-picker"></div>
+        <div style="font-size:11px;font-weight:900;color:var(--duo-orange);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Severity</div>
+        <div style="display:flex;gap:6px;margin-bottom:10px" id="ew-severity-picker"></div>
         <div id="ew-image-input" style="margin-bottom:10px"></div>
         <button class="review-btn-approve" style="width:100%;padding:10px;border:none;border-radius:14px;font-size:13px;font-weight:900;font-family:'Nunito',sans-serif;cursor:pointer;border-bottom:3px solid rgba(88,204,2,0.2);background:rgba(88,204,2,0.15);color:var(--duo-green)" onclick="sendToEvidenceWall()">Confirm → Evidence Wall</button>
       </div>
@@ -4271,12 +4286,7 @@ function showEvidenceWallRoute() {
   if (!panel) return;
   panel.style.display = ewRouteOpen ? '' : 'none';
   if (ewRouteOpen) {
-    const picker = document.getElementById('ew-tag-picker');
-    if (picker) {
-      picker.innerHTML = Object.entries(EW_TAGS).map(([k, v]) =>
-        `<button class="ew-tag-pill ${ewRouteTag === k ? 'active' : ''}" onclick="pickEwTag('${k}')" style="padding:4px 10px;border-radius:8px;font-size:11px;font-weight:800;border:1.5px solid ${ewRouteTag === k ? 'rgba(255,150,0,0.4)' : 'var(--card-border)'};background:${ewRouteTag === k ? 'rgba(255,150,0,0.15)' : 'transparent'};color:${ewRouteTag === k ? 'var(--duo-orange)' : 'var(--hare)'};cursor:pointer;font-family:'Nunito',sans-serif">${v.emoji} ${v.label}</button>`
-      ).join('');
-    }
+    renderEwPickers();
     // Show image URL input if post has no image
     const imgInput = document.getElementById('ew-image-input');
     const r = reviewQueue[reviewIndex];
@@ -4293,10 +4303,49 @@ function showEvidenceWallRoute() {
   }
 }
 
+function renderEwPickers() {
+  const pillStyle = (active) => `padding:4px 10px;border-radius:8px;font-size:11px;font-weight:800;border:1.5px solid ${active ? 'rgba(255,150,0,0.4)' : 'var(--card-border)'};background:${active ? 'rgba(255,150,0,0.15)' : 'transparent'};color:${active ? 'var(--duo-orange)' : 'var(--hare)'};cursor:pointer;font-family:'Nunito',sans-serif`;
+
+  const picker = document.getElementById('ew-tag-picker');
+  if (picker) {
+    picker.innerHTML = Object.entries(EW_TAGS).map(([k, v]) =>
+      `<button style="${pillStyle(ewRouteTag === k)}" onclick="pickEwTag('${k}')">${v.emoji} ${v.label}</button>`
+    ).join('');
+  }
+
+  const signalPicker = document.getElementById('ew-signal-picker');
+  if (signalPicker) {
+    signalPicker.innerHTML = Object.entries(EW_SIGNAL_TYPES).map(([k, v]) =>
+      `<button style="${pillStyle(ewRouteSignalType === k)}" onclick="pickEwSignalType('${k}')" title="${v.desc}">${v.emoji} ${v.label}</button>`
+    ).join('');
+  }
+
+  const sevPicker = document.getElementById('ew-severity-picker');
+  if (sevPicker) {
+    const sevLabels = [
+      { val:1, label:'Low', color:'#1CB0F6', desc:'Minor or ambiguous' },
+      { val:2, label:'Medium', color:'#FF9600', desc:'Credible evidence' },
+      { val:3, label:'High', color:'#FF4B4B', desc:'Egregious / blatant' },
+    ];
+    sevPicker.innerHTML = sevLabels.map(s =>
+      `<button style="flex:1;padding:6px 10px;border-radius:8px;font-size:12px;font-weight:900;border:1.5px solid ${ewRouteSeverity === s.val ? s.color + '66' : 'var(--card-border)'};background:${ewRouteSeverity === s.val ? s.color + '22' : 'transparent'};color:${ewRouteSeverity === s.val ? s.color : 'var(--hare)'};cursor:pointer;font-family:'Nunito',sans-serif" onclick="pickEwSeverity(${s.val})" title="${s.desc}">${s.label}</button>`
+    ).join('');
+  }
+}
+
 function pickEwTag(tag) {
   ewRouteTag = tag;
-  showEvidenceWallRoute(); // toggle off
-  showEvidenceWallRoute(); // toggle on to re-render
+  renderEwPickers();
+}
+
+function pickEwSignalType(type) {
+  ewRouteSignalType = type;
+  renderEwPickers();
+}
+
+function pickEwSeverity(val) {
+  ewRouteSeverity = val;
+  renderEwPickers();
 }
 
 async function sendToEvidenceWall() {
@@ -4325,6 +4374,8 @@ async function sendToEvidenceWall() {
       product_name: r.product_hint || null,
       category: r.product_hint ? guessCategory(r.product_hint, r.brand || '', '') : null,
       tag: ewRouteTag,
+      signal_type: ewRouteSignalType,
+      severity: ewRouteSeverity,
       source_url: r.source_url || null,
       source_type: 'reddit',
       subreddit: r.subreddit || null,
@@ -4561,6 +4612,27 @@ async function loadFromSupabase() {
       EVIDENCE_WALL = ewData;
     }
 
+    // Load pipeline stats for accurate counts
+    const [stagingCountRes, stagingBrandsRes] = await Promise.all([
+      sb.from('reddit_staging').select('id', { count: 'exact', head: true }),
+      sb.from('reddit_staging').select('brand').neq('status', 'rejected'),
+    ]);
+    const stagingTotal = stagingCountRes.count || 0;
+
+    // Compute real brand count across products + staging
+    const allBrands = new Set();
+    PRODUCTS.forEach(p => { if (p.brand) allBrands.add(p.brand.toLowerCase()); });
+    (stagingBrandsRes.data || []).forEach(r => { if (r.brand) allBrands.add(r.brand.toLowerCase()); });
+
+    // Store pipeline stats globally for rendering
+    window.FC_STATS = {
+      productsTracked: PRODUCTS.length + stagingTotal,
+      totalSignals: EVENTS.length + EVIDENCE_WALL.length,
+      brandsTracked: allBrands.size,
+      evidenceCount: EVIDENCE_WALL.length,
+      stagedCount: stagingTotal,
+    };
+
     // Update header product count
     const pcEl = document.getElementById('products-count');
     if (pcEl) pcEl.textContent = PRODUCTS.length;
@@ -4569,7 +4641,7 @@ async function loadFromSupabase() {
     const ab = document.getElementById('admin-badge');
     if (ab) ab.style.display = isAdmin ? 'inline' : 'none';
 
-    console.log('[FullCarts] Loaded from Supabase:', PRODUCTS.length, 'products,', EVENTS.length, 'events,', (upvotes||[]).length, 'upvotes,', EVIDENCE_WALL.length, 'evidence');
+    console.log('[FullCarts] Loaded from Supabase:', PRODUCTS.length, 'products,', EVENTS.length, 'events,', (upvotes||[]).length, 'upvotes,', EVIDENCE_WALL.length, 'evidence,', stagingTotal, 'staged');
   } catch (err) {
     console.warn('[FullCarts] Supabase load failed, using fallback data:', err);
   }
