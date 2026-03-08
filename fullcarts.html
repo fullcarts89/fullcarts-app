@@ -4280,6 +4280,9 @@ function renderReviewCard() {
         <button class="review-btn-skip" onclick="skipReviewItem()">⏭ Skip</button>
         <button class="review-btn-approve" onclick="approveReviewItem()">✅ Approve</button>
       </div>
+      ${(r.source_type === 'news' || r.subreddit === 'google_news') ? `<div style="margin-top:8px">
+        <button style="width:100%;padding:10px;border:none;border-radius:14px;font-size:13px;font-weight:900;font-family:'Nunito',sans-serif;cursor:pointer;border-bottom:3px solid rgba(28,176,246,0.2);background:rgba(28,176,246,0.12);color:var(--duo-blue)" onclick="approveAsArticleOnly()">📰 Approve as Article Only</button>
+      </div>` : ''}
       <div style="margin-top:8px">
         <button class="review-btn-evidence" style="width:100%;padding:10px;border:none;border-radius:14px;font-size:13px;font-weight:900;font-family:'Nunito',sans-serif;cursor:pointer;border-bottom:3px solid rgba(255,150,0,0.2)" onclick="showEvidenceWallRoute()">🖼️ Send to Evidence Wall</button>
       </div>
@@ -5320,6 +5323,75 @@ async function deleteEvent(upc, date) {
   } catch (err) {
     console.error('Event delete failed:', err);
     alert('Failed to delete event: ' + err.message);
+  }
+}
+
+async function approveAsArticleOnly() {
+  const r = reviewQueue[reviewIndex];
+  if (!r) return;
+
+  const btn = document.querySelector('[onclick="approveAsArticleOnly()"]');
+  if (btn) { btn.textContent = '⏳...'; btn.style.pointerEvents = 'none'; }
+
+  try {
+    // Parse outlet from title
+    let articleTitle = r.title || '';
+    let outlet = null;
+    if (articleTitle.includes(' — ')) {
+      const parts = articleTitle.split(' — ');
+      outlet = parts.pop().trim();
+      articleTitle = parts.join(' — ').trim();
+    } else if (articleTitle.includes(' - ')) {
+      const parts = articleTitle.split(' - ');
+      outlet = parts.pop().trim();
+      articleTitle = parts.join(' - ').trim();
+    }
+
+    // 1. Create news_articles record (no product, no events)
+    await sb.from('news_articles').upsert({
+      url: r.source_url,
+      title: articleTitle || r.title,
+      outlet: outlet,
+      published_at: r.posted_utc || null,
+      summary: (r.title || '').slice(0, 500),
+      article_type: 'shrinkflation',
+      tags: ['News'],
+      staging_id: r.id,
+      products_extracted: 0,
+      status: 'active',
+    }, { onConflict: 'url' });
+
+    // 2. Mark staging as promoted
+    let { error: rpcErr } = await sb.rpc('update_staging_status_v2', {
+      row_id: r.id, new_status: 'promoted',
+      reviewer: 'admin', notes: 'Approved as article only (no product created)'
+    });
+    if (rpcErr) {
+      await sb.from('reddit_staging').update({
+        status: 'promoted', reviewed_by: 'admin',
+        reviewed_at: new Date().toISOString(),
+        review_notes: 'Approved as article only (no product created)'
+      }).eq('id', r.id);
+    }
+
+    r.status = 'promoted';
+    markReviewProcessed(r.id);
+    reviewSessionStats.approved++;
+
+    // Flash blue
+    const card = document.getElementById('review-current-card');
+    if (card) {
+      card.style.transition = 'all 0.2s';
+      card.style.borderColor = 'var(--duo-blue)';
+      card.style.transform = 'translateX(-20px)';
+      card.style.opacity = '0.5';
+    }
+
+    setTimeout(() => { reviewIndex++; renderReviewCard(); }, 250);
+  } catch (err) {
+    console.error('Approve as article failed:', err);
+    if (btn) { btn.textContent = '❌ Error'; btn.style.pointerEvents = ''; }
+    setTimeout(() => { if (btn) btn.textContent = '📰 Approve as Article Only'; }, 2000);
   }
 }
 
