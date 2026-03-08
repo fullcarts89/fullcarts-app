@@ -2,7 +2,7 @@ name: Scrape Reddit
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # Every 6 hours
+    - cron: '0 8 * * *'  # Once daily at 08:00 UTC
   workflow_dispatch:        # Manual trigger
     inputs:
       mode:

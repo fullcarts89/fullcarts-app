@@ -946,6 +946,32 @@ def fetch_recent_arctic_shift(log, days: int = 7, subreddits: list = None) -> li
     return all_posts
 
 
+def _load_existing_urls_from_supabase(log) -> set:
+    """Load source_urls already in reddit_staging to avoid re-processing."""
+    if not (HAS_SUPABASE and SUPABASE_KEY):
+        return set()
+    try:
+        sb = create_client(SUPABASE_URL, SUPABASE_KEY)
+        urls = set()
+        batch_size = 1000
+        offset = 0
+        while True:
+            result = (sb.table("reddit_staging")
+                      .select("source_url")
+                      .range(offset, offset + batch_size - 1)
+                      .execute())
+            rows = result.data or []
+            if not rows:
+                break
+            urls.update(row["source_url"] for row in rows if row.get("source_url"))
+            offset += batch_size
+        log.info(f"  Loaded {len(urls)} existing URLs from Supabase (skip re-processing)")
+        return urls
+    except Exception as e:
+        log.warning(f"  Could not load existing URLs from Supabase: {e}")
+        return set()
+
+
 def run_recent(log):
     """Fetch recent posts via Arctic Shift API (last 7 days)."""
     log.info("=" * 60)
@@ -954,6 +980,7 @@ def run_recent(log):
     log.info("=" * 60)
 
     known_urls = load_known_urls(KNOWN_URLS_FILE)
+    known_urls |= _load_existing_urls_from_supabase(log)
 
     log.info("\nFetching recent posts from Arctic Shift...")
     all_posts = fetch_recent_arctic_shift(log, days=7)
@@ -1006,6 +1033,7 @@ def run_backfill(log):
     log.info("=" * 60)
 
     known_urls = load_known_urls(KNOWN_URLS_FILE)
+    known_urls |= _load_existing_urls_from_supabase(log)
 
     log.info("\nFetching ALL historical posts from Arctic Shift...")
     all_posts = fetch_all_arctic_shift(log)
