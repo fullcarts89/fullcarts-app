@@ -1026,21 +1026,23 @@ def process_posts(posts: list, known_urls: set, log, skip_vision: bool = False) 
     return entries, new_urls, stats
 
 
-def _detect_staging_columns(sb) -> set | None:
-    """Query reddit_staging to discover which columns actually exist.
+def _detect_table_columns(sb, table_name: str) -> set | None:
+    """Query a table to discover which columns actually exist.
 
     Returns a set of column names, or None if detection fails.
     """
     try:
-        # Fetch one row (or empty result) to see the column names
-        result = sb.table("reddit_staging").select("*").limit(1).execute()
+        result = sb.table(table_name).select("*").limit(1).execute()
         if result.data:
             return set(result.data[0].keys())
-        # Empty table — try inserting nothing to get column info from schema
-        # Fall back to a known safe set
         return None
     except Exception:
         return None
+
+
+def _detect_staging_columns(sb) -> set | None:
+    """Query reddit_staging to discover which columns actually exist."""
+    return _detect_table_columns(sb, "reddit_staging")
 
 
 def _strip_unknown_columns(entries: list, known_columns: set | None, log) -> list:
@@ -1225,42 +1227,56 @@ def triage_staging(sb: "SupabaseClient", log) -> dict:
     """
     stats = {"promoted": 0, "dismissed": 0, "remaining": 0, "promote_failed": 0}
 
+    # Check which columns exist — skip confidence-based triage if migration
+    # 011 hasn't been applied (confidence_score / reviewed_by missing).
+    staging_cols = _detect_staging_columns(sb)
+    has_confidence = staging_cols is None or "confidence_score" in staging_cols
+    has_reviewed_by = staging_cols is None or "reviewed_by" in staging_cols
+
+    if not has_confidence:
+        log.info("  Triage: confidence_score column not found — "
+                 "skipping auto-dismiss/promote (run migration 011)")
+
     # --- Auto-dismiss low-confidence entries ---
-    try:
-        result = (sb.table("reddit_staging")
-                  .select("id")
-                  .eq("status", "pending")
-                  .lt("confidence_score", TRIAGE_AUTO_DISMISS_SCORE)
-                  .execute())
-        dismiss_ids = [r["id"] for r in (result.data or [])]
-    except Exception as exc:
-        log.warning(f"  Triage: failed to query low-confidence entries: {exc}")
-        dismiss_ids = []
+    dismiss_ids = []
+    if has_confidence:
+        try:
+            result = (sb.table("reddit_staging")
+                      .select("id")
+                      .eq("status", "pending")
+                      .lt("confidence_score", TRIAGE_AUTO_DISMISS_SCORE)
+                      .execute())
+            dismiss_ids = [r["id"] for r in (result.data or [])]
+        except Exception as exc:
+            log.warning(f"  Triage: failed to query low-confidence entries: {exc}")
 
     for i in range(0, len(dismiss_ids), 100):
         batch = dismiss_ids[i:i + 100]
         try:
-            sb.table("reddit_staging").update({
-                "status": "dismissed",
-                "reviewed_by": "auto-triage",
-            }).in_("id", batch).execute()
+            update_payload = {"status": "dismissed"}
+            if has_reviewed_by:
+                update_payload["reviewed_by"] = "auto-triage"
+            sb.table("reddit_staging").update(
+                update_payload
+            ).in_("id", batch).execute()
             stats["dismissed"] += len(batch)
         except Exception as exc:
             log.warning(f"  Triage: dismiss batch failed: {exc}")
 
     # --- Auto-promote high-confidence entries ---
-    try:
-        result = (sb.table("reddit_staging")
-                  .select("*")
-                  .eq("status", "pending")
-                  .eq("tier", "auto")
-                  .gte("confidence_score", TRIAGE_AUTO_PROMOTE_SCORE)
-                  .eq("explicit_from_to", True)
-                  .execute())
-        candidates = result.data or []
-    except Exception as exc:
-        log.warning(f"  Triage: failed to query auto-promote candidates: {exc}")
-        candidates = []
+    candidates = []
+    if has_confidence:
+        try:
+            result = (sb.table("reddit_staging")
+                      .select("*")
+                      .eq("status", "pending")
+                      .eq("tier", "auto")
+                      .gte("confidence_score", TRIAGE_AUTO_PROMOTE_SCORE)
+                      .eq("explicit_from_to", True)
+                      .execute())
+            candidates = result.data or []
+        except Exception as exc:
+            log.warning(f"  Triage: failed to query auto-promote candidates: {exc}")
 
     # Lazy import to avoid circular deps
     try:
