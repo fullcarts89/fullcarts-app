@@ -86,7 +86,6 @@ CREATE TABLE IF NOT EXISTS reddit_staging (
   fields_edited    text[],                      -- Which fields the reviewer changed
   review_notes     text,                        -- Reviewer notes
   original_values  jsonb,                       -- Snapshot of pre-edit values
-  date_before      date,                        -- When product was at old size (set by reviewer)
   created_at       timestamptz DEFAULT now()
 );
 

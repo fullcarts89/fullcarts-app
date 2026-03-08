@@ -4255,10 +4255,8 @@ function renderReviewCard() {
           </select>
         </div>
         <div class="review-edit-row">
-          <label>Dates</label>
-          <input id="re-date-before" type="date" value="${r.date_before || ''}" placeholder="Old size date" title="When was the product at its old size?" style="flex:1">
-          <span style="color:var(--wolf);font-size:12px;padding:0 4px">→</span>
-          <input id="re-date-after" type="date" value="${dateNoticed || ''}" placeholder="New size date" title="When was the change noticed?" style="flex:1">
+          <label>Date Noticed</label>
+          <input id="re-date-noticed" type="date" value="${dateNoticed || ''}" placeholder="When was the change noticed?" title="When was the change noticed?" style="flex:1">
         </div>
       </div>
       <div id="review-warnings" style="margin-top:6px"></div>
@@ -4309,8 +4307,7 @@ function validateReviewFields() {
   const newUnit = (document.getElementById('re-new-unit')?.value || '').trim();
   const oldPrice = parseFloat(document.getElementById('re-old-price')?.value);
   const newPrice = parseFloat(document.getElementById('re-new-price')?.value);
-  const dateBefore = document.getElementById('re-date-before')?.value;
-  const dateAfter = document.getElementById('re-date-after')?.value;
+  const dateNoticed = document.getElementById('re-date-noticed')?.value;
   const name = (document.getElementById('re-name')?.value || '').trim();
   const brand = (document.getElementById('re-brand')?.value || '').trim();
 
@@ -4326,12 +4323,9 @@ function validateReviewFields() {
   }
   if (oldPrice && oldPrice > 100) warnings.push('💲 Old price >$100 — is that correct?');
   if (newPrice && newPrice > 100) warnings.push('💲 New price >$100 — is that correct?');
-  if (dateAfter) {
-    const afterDate = new Date(dateAfter);
-    if (afterDate > new Date()) warnings.push('📅 "After" date is in the future');
-  }
-  if (dateBefore && dateAfter && new Date(dateBefore) >= new Date(dateAfter)) {
-    warnings.push('📅 "Before" date should be earlier than "after" date');
+  if (dateNoticed) {
+    const noticedDate = new Date(dateNoticed);
+    if (noticedDate > new Date()) warnings.push('📅 Date noticed is in the future');
   }
 
   const el = document.getElementById('review-warnings');
@@ -4382,15 +4376,12 @@ async function approveReviewItem() {
   const newPrice = parseFloat(document.getElementById('re-new-price')?.value) || null;
   const retailer = (document.getElementById('re-retailer')?.value || '').trim() || null;
   const region = document.getElementById('re-region')?.value || 'US';
-  const dateBefore = document.getElementById('re-date-before')?.value || null;
-  const dateAfter = document.getElementById('re-date-after')?.value || null;
-
   const unit = newUnit || oldUnit || 'oz';
   const upc = `REDDIT-${(r.id || '').slice(0, 8)}`;
   const pct = (oldSize && newSize && oldSize > 0)
     ? Math.round(((oldSize - newSize) / oldSize) * 10000) / 100
     : 0;
-  const dateNoticed = dateAfter || r.date_noticed || (r.posted_utc ? r.posted_utc.slice(0, 10) : new Date().toISOString().slice(0, 10));
+  const dateNoticed = document.getElementById('re-date-noticed')?.value || r.date_noticed || (r.posted_utc ? r.posted_utc.slice(0, 10) : new Date().toISOString().slice(0, 10));
 
   // Track what the reviewer changed for audit
   const editedFields = getEditedFields(r);
@@ -4444,7 +4435,6 @@ async function approveReviewItem() {
       original_values: originalValues,
       retailer: retailer,
       region: region,
-      date_before: dateBefore,
     };
     // Try v2 RPC first, fall back to v1, then direct update
     let { error: rpcErr } = await sb.rpc('update_staging_status_v2', {

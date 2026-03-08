@@ -77,19 +77,17 @@ def promote_entry(sb, entry, dry_run=False):
     brand = entry.get("brand")
     category = guess_category(f"{product_name} {brand or ''}")
 
-    # Dates: use reviewer-set dates if available, otherwise fallback
-    date_after = entry.get("date_noticed") or entry.get("posted_utc", "")[:10]
-    if not date_after or len(date_after) < 7:
-        date_after = datetime.now(tz=timezone.utc).strftime("%Y-%m-01")
+    # Date noticed: when the community member spotted the change
+    date_noticed = entry.get("date_noticed") or entry.get("posted_utc", "")[:10]
+    if not date_noticed or len(date_noticed) < 7:
+        date_noticed = datetime.now(tz=timezone.utc).strftime("%Y-%m-01")
 
-    # Use reviewer-set before-date if available, otherwise estimate 1 year prior
-    date_before = entry.get("date_before")
-    if not date_before:
-        try:
-            after_dt = datetime.strptime(date_after[:10], "%Y-%m-%d")
-            date_before = after_dt.replace(year=after_dt.year - 1).strftime("%Y-%m-%d")
-        except ValueError:
-            date_before = "2023-01-01"
+    # Estimate a "before" date for the old product_version record (internal only)
+    try:
+        noticed_dt = datetime.strptime(date_noticed[:10], "%Y-%m-%d")
+        date_before = noticed_dt.replace(year=noticed_dt.year - 1).strftime("%Y-%m-%d")
+    except ValueError:
+        date_before = "2023-01-01"
 
     source_url = entry.get("source_url", "")
     retailer = entry.get("retailer")
@@ -97,7 +95,7 @@ def promote_entry(sb, entry, dry_run=False):
 
     if dry_run:
         log.info(f"  [DRY RUN] Would promote: {product_name} ({brand}) "
-                 f"— {old_size}{unit} → {new_size}{unit} [{date_after}]")
+                 f"— {old_size}{unit} → {new_size}{unit} [{date_noticed}]")
         return True
 
     try:
@@ -133,7 +131,7 @@ def promote_entry(sb, entry, dry_run=False):
         # Insert "after" version
         sb.table("product_versions").upsert(_strip_cols({
             "product_upc": upc,
-            "observed_date": date_after,
+            "observed_date": date_noticed,
             "size": new_size,
             "unit": unit,
             "price": float(entry["new_price"]) if entry.get("new_price") else None,
@@ -149,7 +147,7 @@ def promote_entry(sb, entry, dry_run=False):
         pct = round(((old_size - new_size) / old_size) * 100, 2) if old_size > 0 else 0
         sb.table("events").upsert(_strip_cols({
             "upc": upc,
-            "date": date_after,
+            "date": date_noticed,
             "old_size": old_size,
             "new_size": new_size,
             "unit": unit,
@@ -170,7 +168,7 @@ def promote_entry(sb, entry, dry_run=False):
         detect_changes_for_product(sb, upc)
 
         log.info(f"  Promoted: {product_name} ({brand}) "
-                 f"— {old_size}{unit} → {new_size}{unit} [{date_after}]")
+                 f"— {old_size}{unit} → {new_size}{unit} [{date_noticed}]")
         return True
 
     except Exception as exc:

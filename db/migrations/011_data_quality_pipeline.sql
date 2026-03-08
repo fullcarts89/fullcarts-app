@@ -64,12 +64,7 @@ ALTER TABLE reddit_staging
 ALTER TABLE reddit_staging
   ADD COLUMN IF NOT EXISTS original_values jsonb;
 
--- The "before" date — replaces the hardcoded 1-year assumption
-ALTER TABLE reddit_staging
-  ADD COLUMN IF NOT EXISTS date_before date;
-
-COMMENT ON COLUMN reddit_staging.date_before IS
-  'When the product was at its old size. Set by reviewer. Replaces hardcoded 1-year assumption.';
+-- date_before column removed in migration 013_drop_date_before.sql
 
 
 -- ═══════════════════════════════════════════════════════════════
