@@ -65,6 +65,15 @@ USER_AGENT = "FullCartsBot/1.0 (fullcarts.org community shrinkflation tracker)"
 ARCTIC_SHIFT_URL = "https://arctic-shift.photon-reddit.com/api/posts/search"
 ARCTIC_SHIFT_COMMENTS_URL = "https://arctic-shift.photon-reddit.com/api/comments/search"
 
+# Reddit public JSON API — no credentials needed, used as fallback
+# when Arctic Shift has no recent data (its archive lags by months).
+REDDIT_LISTING_URL = "https://www.reddit.com/r/{subreddit}/{sort}.json"
+REDDIT_SEARCH_URL = "https://www.reddit.com/r/{subreddit}/search.json"
+
+# Retry config for API calls
+MAX_RETRIES = 3
+RETRY_BACKOFF_BASE = 2  # seconds — exponential: 2, 4, 8
+
 # Output for local fallback
 OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", "."))
 KNOWN_URLS_FILE = OUTPUT_DIR / "known_urls_public.txt"
@@ -422,6 +431,48 @@ def save_known_urls(path: Path, urls: set) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Retry helper
+# ---------------------------------------------------------------------------
+
+def _request_with_retry(method: str, url: str, **kwargs) -> requests.Response | None:
+    """Make an HTTP request with exponential backoff on failure.
+
+    Returns the Response on success, or None after all retries exhausted.
+    Handles 429 (rate-limit) and 403 (blocked) with longer waits.
+    """
+    log = logging.getLogger("fullcarts")
+    kwargs.setdefault("timeout", 15)
+    kwargs.setdefault("headers", {"User-Agent": USER_AGENT})
+
+    for attempt in range(MAX_RETRIES):
+        try:
+            resp = requests.request(method, url, **kwargs)
+
+            if resp.status_code == 429:
+                retry_after = int(resp.headers.get("Retry-After", RETRY_BACKOFF_BASE ** (attempt + 1)))
+                log.warning(f"  Rate-limited (429), waiting {retry_after}s (attempt {attempt + 1})")
+                time.sleep(retry_after)
+                continue
+
+            if resp.status_code == 403:
+                wait = RETRY_BACKOFF_BASE ** (attempt + 1)
+                log.warning(f"  Blocked (403) from {url[:60]}, waiting {wait}s (attempt {attempt + 1})")
+                time.sleep(wait)
+                continue
+
+            resp.raise_for_status()
+            return resp
+
+        except requests.exceptions.RequestException as e:
+            wait = RETRY_BACKOFF_BASE ** (attempt + 1)
+            log.warning(f"  Request failed: {e} — retrying in {wait}s (attempt {attempt + 1}/{MAX_RETRIES})")
+            time.sleep(wait)
+
+    log.warning(f"  All {MAX_RETRIES} retries exhausted for {url[:80]}")
+    return None
+
+
+# ---------------------------------------------------------------------------
 # Arctic Shift archive fetcher (no Reddit credentials needed)
 # ---------------------------------------------------------------------------
 
@@ -437,14 +488,13 @@ def fetch_arctic_shift_batch(subreddit: str = "shrinkflation", before_utc: int =
     if after_utc:
         params["after"] = after_utc
 
-    headers = {"User-Agent": USER_AGENT}
-
+    resp = _request_with_retry("GET", ARCTIC_SHIFT_URL, params=params)
+    if resp is None:
+        return []
     try:
-        resp = requests.get(ARCTIC_SHIFT_URL, params=params, headers=headers, timeout=15)
-        resp.raise_for_status()
         return resp.json().get("data", [])
     except Exception as e:
-        logging.getLogger("fullcarts").warning(f"Arctic Shift fetch failed: {e}")
+        logging.getLogger("fullcarts").warning(f"Arctic Shift JSON parse failed: {e}")
         return []
 
 
@@ -495,6 +545,105 @@ def fetch_all_arctic_shift(log, subreddits: list = None) -> list:
                 all_posts.extend(posts)
             except Exception as e:
                 log.warning(f"  r/{sub}: fetch failed — {e}")
+
+    return all_posts
+
+
+# ---------------------------------------------------------------------------
+# Reddit public JSON API fallback (for recent posts)
+# ---------------------------------------------------------------------------
+# Arctic Shift's archive lags behind by months, so recent posts (last 7 days)
+# are often missing. Reddit's public JSON API provides real-time listings
+# without authentication (rate-limited to ~60 req/min unauthenticated).
+
+def _normalize_reddit_post(post_data: dict) -> dict:
+    """Normalize a Reddit API post object to match Arctic Shift's format.
+
+    Arctic Shift and Reddit's API use the same field names for most fields,
+    but Reddit wraps each post in {"kind": "t3", "data": {...}}.
+    """
+    d = post_data.get("data", post_data) if "data" in post_data else post_data
+    return d
+
+
+def _fetch_reddit_listing(subreddit: str, sort: str = "new",
+                          after_token: str = None, limit: int = 100) -> tuple[list, str | None]:
+    """Fetch a page of posts from Reddit's public JSON listing API.
+
+    Returns (posts, after_token). after_token is None when no more pages.
+    """
+    url = REDDIT_LISTING_URL.format(subreddit=subreddit, sort=sort)
+    params = {"limit": min(limit, 100), "raw_json": 1}
+    if after_token:
+        params["after"] = after_token
+
+    resp = _request_with_retry("GET", url, params=params)
+    if resp is None:
+        return [], None
+
+    try:
+        data = resp.json().get("data", {})
+        children = data.get("children", [])
+        posts = [_normalize_reddit_post(c) for c in children]
+        next_after = data.get("after")
+        return posts, next_after
+    except Exception as e:
+        logging.getLogger("fullcarts").warning(f"Reddit listing parse failed: {e}")
+        return [], None
+
+
+def _fetch_recent_reddit_one_sub(sub: str, after_utc: int, max_pages: int = 10) -> list:
+    """Fetch recent posts for a subreddit from Reddit's public JSON API."""
+    log = logging.getLogger("fullcarts")
+    log.info(f"\n  --- r/{sub} (Reddit JSON fallback, max {max_pages} pages) ---")
+
+    all_posts = []
+    after_token = None
+
+    for page in range(1, max_pages + 1):
+        posts, after_token = _fetch_reddit_listing(sub, sort="new", after_token=after_token)
+        if not posts:
+            break
+
+        # Filter to posts within the time window
+        for post in posts:
+            created = post.get("created_utc", 0)
+            if created >= after_utc:
+                all_posts.append(post)
+            else:
+                # Posts are sorted newest-first, so once we pass the cutoff, stop
+                log.info(f"  r/{sub} page {page}: reached time cutoff, stopping")
+                after_token = None
+                break
+
+        log.info(f"  r/{sub} page {page}: {len(posts)} posts (total: {len(all_posts)})")
+
+        if not after_token:
+            break
+
+        # Rate limit: Reddit allows ~60 req/min unauthenticated
+        time.sleep(1.5)
+
+    log.info(f"  r/{sub}: {len(all_posts)} recent posts via Reddit JSON API")
+    return all_posts
+
+
+def fetch_recent_reddit_json(log, days: int = 7, subreddits: list = None) -> list:
+    """Fetch recent posts from Reddit's public JSON API (sequential, rate-limited).
+
+    Used as a fallback when Arctic Shift has no recent data.
+    """
+    subreddits = subreddits or ALL_SUBREDDITS
+    after_utc = int(time.time()) - (days * 86400)
+    all_posts = []
+
+    # Sequential to respect Reddit's rate limits (no auth = strict limits)
+    for sub in subreddits:
+        try:
+            posts = _fetch_recent_reddit_one_sub(sub, after_utc)
+            all_posts.extend(posts)
+        except Exception as e:
+            log.warning(f"  r/{sub}: Reddit JSON fetch failed — {e}")
 
     return all_posts
 
@@ -731,20 +880,19 @@ def _is_mod_removed_not_shrinkflation(post: dict) -> bool:
     if not post_id:
         return False
 
+    resp = _request_with_retry(
+        "GET", ARCTIC_SHIFT_COMMENTS_URL,
+        params={
+            "link_id": post_id,
+            "parent_id": "",  # top-level only
+            "limit": 10,
+            "sort": "asc",
+            "fields": "author,body,distinguished",
+        },
+    )
+    if resp is None:
+        return False
     try:
-        resp = requests.get(
-            ARCTIC_SHIFT_COMMENTS_URL,
-            params={
-                "link_id": post_id,
-                "parent_id": "",  # top-level only
-                "limit": 10,
-                "sort": "asc",
-                "fields": "author,body,distinguished",
-            },
-            headers={"User-Agent": USER_AGENT},
-            timeout=10,
-        )
-        resp.raise_for_status()
         comments = resp.json().get("data", [])
     except Exception:
         return False
@@ -878,6 +1026,58 @@ def process_posts(posts: list, known_urls: set, log, skip_vision: bool = False) 
     return entries, new_urls, stats
 
 
+def _upsert_via_rest(entries: list, log) -> int:
+    """Fallback: upsert directly via PostgREST HTTP API using requests.
+
+    Bypasses supabase-py entirely in case the library version is sending
+    incompatible headers or parameters.
+    """
+    if not SUPABASE_KEY:
+        return 0
+
+    url = f"{SUPABASE_URL}/rest/v1/reddit_staging"
+    headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}",
+        "Content-Type": "application/json",
+        "Prefer": "resolution=merge-duplicates,return=minimal",
+    }
+    params = {"on_conflict": "source_url"}
+
+    upserted = 0
+    for i in range(0, len(entries), 50):
+        batch = entries[i:i + 50]
+        try:
+            resp = requests.post(url, json=batch, headers=headers,
+                                 params=params, timeout=30)
+            if resp.status_code in (200, 201):
+                upserted += len(batch)
+            else:
+                log.warning(f"  REST fallback batch {i // 50 + 1} failed: "
+                            f"{resp.status_code} {resp.text[:300]}")
+                # Try one by one to isolate bad entries
+                for entry in batch:
+                    try:
+                        resp = requests.post(url, json=entry, headers=headers,
+                                             params=params, timeout=15)
+                        if resp.status_code in (200, 201):
+                            upserted += 1
+                        elif upserted == 0:
+                            log.warning(f"    Single REST upsert failed: "
+                                        f"{resp.status_code} {resp.text[:200]}")
+                            log.warning(f"    Entry keys: {list(entry.keys())}")
+                            # Log a sample value to help diagnose type issues
+                            for k, v in entry.items():
+                                if v is not None:
+                                    log.warning(f"      {k}: {type(v).__name__} = {str(v)[:80]}")
+                    except Exception as exc2:
+                        log.warning(f"    Single REST request failed: {exc2}")
+        except Exception as exc:
+            log.warning(f"  REST fallback request error: {exc}")
+
+    return upserted
+
+
 def upsert_to_supabase(sb: "SupabaseClient", entries: list, log) -> int:
     """Upsert entries to reddit_staging table. Returns count upserted."""
     if not entries:
@@ -913,28 +1113,48 @@ def upsert_to_supabase(sb: "SupabaseClient", entries: list, log) -> int:
     for i in range(0, len(entries), 50):
         batch = entries[i:i + 50]
         try:
+            # default_to_null=False prevents supabase-py from sending a
+            # `columns` query param that can break newer PostgREST versions.
             sb.table("reddit_staging").upsert(
                 batch, on_conflict="source_url",
-                ignore_duplicates=True
+                ignore_duplicates=False,
+                default_to_null=False,
             ).execute()
             upserted += len(batch)
         except Exception as exc:
             if not first_error_logged:
-                log.warning(f"  Supabase batch insert failed (batch {i // 50 + 1}): {exc}")
+                # Log the full error including response body
+                exc_msg = str(exc)
+                resp_body = ""
+                if hasattr(exc, "response") and exc.response is not None:
+                    resp_body = getattr(exc.response, "text", "")[:500]
+                log.warning(f"  Supabase upsert batch {i // 50 + 1} failed: "
+                            f"{exc_msg[:200]}")
+                if resp_body:
+                    log.warning(f"  Response body: {resp_body}")
                 first_error_logged = True
+
             # Try one by one
             for entry in batch:
                 try:
                     sb.table("reddit_staging").upsert(
                         entry, on_conflict="source_url",
-                        ignore_duplicates=True
+                        ignore_duplicates=False,
+                        default_to_null=False,
                     ).execute()
                     upserted += 1
                 except Exception as exc2:
-                    # Log first few failures with full detail
                     if upserted == 0 and i == 0:
-                        log.warning(f"    Single insert failed: {exc2}")
+                        log.warning(f"    Single upsert failed: {exc2}")
                         log.warning(f"    Entry keys: {list(entry.keys())}")
+
+    # If supabase-py upserts all failed, try the raw REST API as fallback
+    if upserted == 0 and entries:
+        log.warning(f"  All supabase-py upserts failed. "
+                    f"Trying direct REST API fallback...")
+        upserted = _upsert_via_rest(entries, log)
+        if upserted > 0:
+            log.info(f"  REST fallback succeeded: {upserted} entries upserted")
 
     return upserted
 
@@ -1114,11 +1334,11 @@ def _load_existing_urls_from_supabase(log) -> set:
 
 
 def run_recent(log):
-    """Fetch recent posts via Arctic Shift API (last 7 days)."""
+    """Fetch recent posts, trying Arctic Shift first then Reddit JSON fallback."""
     global _sigterm_known_urls
 
     log.info("=" * 60)
-    log.info("MODE: Recent posts (Arctic Shift API — last 7 days)")
+    log.info("MODE: Recent posts (last 7 days)")
     log.info(f"Subreddits: {', '.join(ALL_SUBREDDITS)}")
     log.info(f"Time budget: {MAX_PROCESSING_MINUTES} minutes")
     log.info("=" * 60)
@@ -1127,8 +1347,20 @@ def run_recent(log):
     known_urls |= _load_existing_urls_from_supabase(log)
     _sigterm_known_urls = known_urls  # expose to SIGTERM handler
 
+    # Try Arctic Shift first (best for bulk data, but lags behind real-time)
     log.info("\nFetching recent posts from Arctic Shift...")
     all_posts = fetch_recent_arctic_shift(log, days=7)
+
+    # Fallback: if Arctic Shift returned few/no posts, use Reddit's public
+    # JSON API. Arctic Shift's archive often lags months behind, so recent
+    # posts may not be available there.
+    if len(all_posts) < 5:
+        log.info(f"\nArctic Shift returned only {len(all_posts)} posts — "
+                 f"falling back to Reddit public JSON API...")
+        reddit_posts = fetch_recent_reddit_json(log, days=7)
+        all_posts.extend(reddit_posts)
+        log.info(f"  Combined total: {len(all_posts)} posts "
+                 f"(Arctic Shift + Reddit JSON)")
 
     # Deduplicate by id
     seen_ids = set()

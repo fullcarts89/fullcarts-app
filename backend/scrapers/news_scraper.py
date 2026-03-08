@@ -261,16 +261,20 @@ def run(queries: list[str] | None = None, dry_run: bool = False):
         try:
             sb.table("reddit_staging").upsert(
                 batch, on_conflict="source_url",
-                ignore_duplicates=True
+                ignore_duplicates=False,
+                default_to_null=False,
             ).execute()
             upserted += len(batch)
         except Exception as exc:
             log.warning(f"Batch upsert failed: {exc}")
+            if hasattr(exc, "response") and exc.response is not None:
+                log.warning(f"  Response: {getattr(exc.response, 'text', '')[:300]}")
             for entry in batch:
                 try:
                     sb.table("reddit_staging").upsert(
                         entry, on_conflict="source_url",
-                        ignore_duplicates=True
+                        ignore_duplicates=False,
+                        default_to_null=False,
                     ).execute()
                     upserted += 1
                 except Exception as exc2:
