@@ -3910,15 +3910,33 @@ function markReviewProcessed(id) {
   sessionStorage.setItem('reviewProcessedIds', JSON.stringify([...reviewProcessedIds]));
 }
 
-async function loadRedditReviewQueue() {
+let reviewQueueOffset = 0;
+const REVIEW_BATCH_SIZE = 50;
+
+async function loadRedditReviewQueue(append = false) {
   const container = document.getElementById('reddit-review-container');
   const loadBtn = document.getElementById('review-load-btn');
   if (loadBtn) loadBtn.style.display = 'none';
-  container.innerHTML = '<p style="color:var(--wolf);text-align:center;padding:16px;font-weight:700">Loading review queue...</p>';
 
+  if (!append) {
+    container.innerHTML = '<p style="color:var(--wolf);text-align:center;padding:16px;font-weight:700">Loading review queue...</p>';
+    reviewQueueOffset = 0;
+    reviewQueue = [];
+    reviewIndex = 0;
+    reviewSessionStats = { approved: 0, skipped: 0, rejected: 0 };
+  }
+
+  // Get total pending count for display
+  const { count: totalPending } = await sb.from('reddit_staging')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'pending').in('tier', ['auto', 'review']);
+
+  // Load next batch — both auto and review tiers, sorted by confidence then score
   const { data: reviewData, error } = await sb.from('reddit_staging')
-    .select('*').eq('tier', 'review').eq('status', 'pending')
-    .order('score', { ascending: false }).limit(100);
+    .select('*').eq('status', 'pending').in('tier', ['auto', 'review'])
+    .order('confidence_score', { ascending: false })
+    .order('score', { ascending: false })
+    .range(reviewQueueOffset, reviewQueueOffset + REVIEW_BATCH_SIZE - 1);
 
   if (error || !reviewData) {
     container.innerHTML = '<p style="color:var(--wolf);margin-top:10px">Could not load queue.</p>';
@@ -3926,9 +3944,13 @@ async function loadRedditReviewQueue() {
     return;
   }
 
-  reviewQueue = reviewData.filter(r => !reviewProcessedIds.has(r.id));
-  reviewIndex = 0;
-  reviewSessionStats = { approved: 0, skipped: 0, rejected: 0 };
+  const newItems = reviewData.filter(r => !reviewProcessedIds.has(r.id));
+  if (append) {
+    reviewQueue = reviewQueue.concat(newItems);
+  } else {
+    reviewQueue = newItems;
+  }
+  reviewQueueOffset += reviewData.length;
 
   if (!reviewQueue.length) {
     container.innerHTML = `<div class="review-done-card">
@@ -3939,22 +3961,27 @@ async function loadRedditReviewQueue() {
     return;
   }
 
+  // Store total for progress display
+  window._reviewTotalPending = totalPending || reviewQueue.length;
   renderReviewCard();
 }
 
 function renderReviewCard() {
   const container = document.getElementById('reddit-review-container');
   if (reviewIndex >= reviewQueue.length) {
+    const reviewed = reviewSessionStats.approved + reviewSessionStats.rejected + reviewSessionStats.skipped;
+    const remaining = Math.max(0, (window._reviewTotalPending || 0) - reviewed);
     container.innerHTML = `<div class="review-done-card">
       <div class="emoji">🏆</div>
-      <h3>Session Complete!</h3>
-      <p>You reviewed ${reviewQueue.length} items</p>
+      <h3>Batch Complete!</h3>
+      <p>You reviewed ${reviewed} items this session</p>
       <div class="review-session-stats">
         <span style="background:rgba(88,204,2,0.12);color:var(--duo-green)">✅ ${reviewSessionStats.approved} approved</span>
         <span style="background:rgba(255,68,68,0.12);color:#ff4444">🚫 ${reviewSessionStats.rejected} rejected</span>
         <span style="background:rgba(255,255,255,0.06);color:var(--hare)">⏭ ${reviewSessionStats.skipped} skipped</span>
       </div>
-      <button class="btn-duo btn-sm" style="margin:16px auto 0;background:rgba(206,130,255,0.1);border:2px solid rgba(206,130,255,0.2);color:var(--duo-purple);border-bottom:4px solid rgba(206,130,255,0.15)" onclick="loadRedditReviewQueue()">Load More</button>
+      ${remaining > 0 ? `<p style="font-size:13px;color:var(--wolf);margin-top:8px;font-weight:700">${remaining.toLocaleString()} items still pending</p>
+      <button class="btn-duo btn-sm" style="margin:12px auto 0;background:rgba(206,130,255,0.1);border:2px solid rgba(206,130,255,0.2);color:var(--duo-purple);border-bottom:4px solid rgba(206,130,255,0.15)" onclick="loadRedditReviewQueue(true)">Load Next ${REVIEW_BATCH_SIZE}</button>` : `<p style="font-size:13px;color:var(--duo-green);margin-top:8px;font-weight:700">🎉 Queue empty!</p>`}
     </div>`;
     return;
   }
@@ -3979,7 +4006,7 @@ function renderReviewCard() {
 
   container.innerHTML = `
     <div class="review-progress">
-      <span>${reviewIndex + 1} / ${reviewQueue.length}</span>
+      <span>${reviewIndex + 1} / ${reviewQueue.length}${window._reviewTotalPending > reviewQueue.length ? ` <span style="color:var(--wolf);font-size:11px">(${window._reviewTotalPending.toLocaleString()} total)</span>` : ''}</span>
       <div class="review-progress-bar"><div class="review-progress-fill" style="width:${progress}%"></div></div>
       <span style="color:var(--duo-green)">✅${reviewSessionStats.approved}</span>
       <span style="color:#ff4444">🚫${reviewSessionStats.rejected}</span>
