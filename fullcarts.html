@@ -3724,16 +3724,16 @@ async function submitReport() {
       repeat_offender: false, source: 'community'
     }, { onConflict: 'upc' });
 
-    // 2. Insert shrink event (if we have size data)
+    // 2. Upsert shrink event (if we have size data) — prevents duplicates on resubmit
     if (oldParsed.val && newParsed.val) {
-      await sb.from('events').insert({
+      await sb.from('events').upsert({
         upc, date: dateVal ? `${dateVal}-01` : new Date().toISOString().slice(0, 10),
         old_size: oldParsed.val, new_size: newParsed.val, unit, pct,
         price_before: priceBefore ? parseFloat(priceBefore.replace('$', '')) : null,
         price_after: priceAfter ? parseFloat(priceAfter.replace('$', '')) : null,
         type: type || 'shrinkflation', notes: notes || null,
         source: 'community', submitted_by: SESSION_ID
-      });
+      }, { onConflict: 'upc,date,source' });
     }
 
     // 3. Audit log (fire and forget)
@@ -4969,14 +4969,21 @@ async function loadFromSupabase() {
       CATEGORIES = ["All", ...new Set(PRODUCTS.map(p => p.category))];
     }
 
-    // Load events
+    // Load events (deduplicated by upc+date+source)
     const { data: events, error: eErr } = await sb.from('events').select('*');
     if (!eErr && events?.length) {
-      EVENTS = events.map(e => ({
-        upc: e.upc, date: e.date, oldSize: Number(e.old_size), newSize: Number(e.new_size),
-        unit: e.unit, pct: Number(e.pct), priceBefore: Number(e.price_before),
-        priceAfter: Number(e.price_after), type: e.type, notes: e.notes
-      }));
+      const evSeen = new Set();
+      EVENTS = [];
+      for (const e of events) {
+        const key = `${e.upc}|${e.date}|${e.source || ''}`;
+        if (evSeen.has(key)) continue;
+        evSeen.add(key);
+        EVENTS.push({
+          upc: e.upc, date: e.date, oldSize: Number(e.old_size), newSize: Number(e.new_size),
+          unit: e.unit, pct: Number(e.pct), priceBefore: Number(e.price_before),
+          priceAfter: Number(e.price_after), type: e.type, notes: e.notes
+        });
+      }
     }
 
     // Load upvote counts
@@ -4991,20 +4998,28 @@ async function loadFromSupabase() {
     if (myUpvotes) { myUpvotes.forEach(u => USER_UPVOTED.add(u.upc)); }
 
     // Load real activity feed from recent events
+    // Deduplicate by upc+date and only show events whose products still exist
     const { data: recentEvents, error: reErr } = await sb.from('events')
       .select('upc, date, old_size, new_size, unit, pct, created_at')
-      .order('created_at', { ascending: false }).limit(10);
+      .order('created_at', { ascending: false }).limit(30);
     if (!reErr && recentEvents) {
-      ACTIVITY_FEED = recentEvents.map(e => {
+      const seen = new Set();
+      ACTIVITY_FEED = [];
+      for (const e of recentEvents) {
+        const key = `${e.upc}|${e.date}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
         const p = findProduct(e.upc);
-        return {
+        if (!p) continue; // skip events for deleted/retracted products
+        ACTIVITY_FEED.push({
           upc: e.upc,
-          product_name: p ? p.name : 'Unknown Product',
-          brand: p ? p.brand : '',
+          product_name: p.name,
+          brand: p.brand || '',
           pct: e.pct ? Number(e.pct).toFixed(1) : null,
           ago: timeAgo(new Date(e.created_at))
-        };
-      });
+        });
+        if (ACTIVITY_FEED.length >= 10) break;
+      }
     }
 
     // Load evidence wall
@@ -5449,10 +5464,16 @@ async function retractProduct(upc) {
       }
     }
 
-    // 7. Update local state
+    // 7. Delete upvotes for this product
+    try { await sb.from('upvotes').delete().eq('upc', upc); } catch (e) { /* non-critical */ }
+
+    // 8. Update all local state
     PRODUCTS = PRODUCTS.filter(pp => pp.upc !== upc);
     EVENTS = EVENTS.filter(e => e.upc !== upc);
+    ACTIVITY_FEED = ACTIVITY_FEED.filter(a => a.upc !== upc);
     delete PRODUCT_NEWS[upc];
+    delete UPVOTE_COUNTS[upc];
+    USER_UPVOTED.delete(upc);
     CATEGORIES = ["All", ...new Set(PRODUCTS.map(pp => pp.category))];
 
     closeAdminEdit();
