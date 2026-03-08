@@ -102,9 +102,6 @@ GENERAL_SUBREDDITS = [
     "grocery",
     "Costco",
     "traderjoes",
-    "Frugal",
-    "EatCheapAndHealthy",
-    "mildlyinfuriating",
 ]
 
 ALL_SUBREDDITS = DEDICATED_SUBREDDITS + GENERAL_SUBREDDITS
