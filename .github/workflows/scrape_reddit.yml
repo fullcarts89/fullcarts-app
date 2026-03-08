@@ -42,7 +42,11 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           MODE="${{ github.event.inputs.mode || 'recent' }}"
-          python reddit_public_scraper.py --${MODE}
+          EXTRA_FLAGS=""
+          if [ "$MODE" = "backfill" ]; then
+            EXTRA_FLAGS="--skip-vision"
+          fi
+          python reddit_public_scraper.py --${MODE} ${EXTRA_FLAGS}
 
       - name: Run change detection
         env:

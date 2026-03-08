@@ -755,7 +755,7 @@ def _is_mod_removed_not_shrinkflation(post: dict) -> bool:
 # Main scraping logic
 # ---------------------------------------------------------------------------
 
-def process_posts(posts: list, known_urls: set, log) -> tuple:
+def process_posts(posts: list, known_urls: set, log, skip_vision: bool = False) -> tuple:
     """Process a list of posts, return (entries, new_urls, stats)."""
     entries = []
     new_urls = set()
@@ -808,7 +808,7 @@ def process_posts(posts: list, known_urls: set, log) -> tuple:
         # use Claude vision to extract product details from the photo.
         image_url = _extract_image_url(post)
         vision_result = None
-        if HAS_VISION and should_analyze(parsed, image_url):
+        if not skip_vision and HAS_VISION and should_analyze(parsed, image_url):
             vision_result = analyze_image(image_url, title)
             if vision_result:
                 parsed = merge_vision_into_parsed(parsed, vision_result)
@@ -1025,7 +1025,7 @@ def run_recent(log):
         log.info(f"  vision analyzed: {stats['vision_analyzed']} images")
 
 
-def run_backfill(log):
+def run_backfill(log, skip_vision: bool = False):
     """Historical backfill via Arctic Shift archive API."""
     log.info("=" * 60)
     log.info("MODE: Historical backfill (Arctic Shift archive)")
@@ -1050,7 +1050,9 @@ def run_backfill(log):
     newest = datetime.utcfromtimestamp(all_posts[-1]["created_utc"]).strftime("%Y-%m-%d")
     log.info(f"Date range: {oldest} → {newest}")
 
-    entries, new_urls, stats = process_posts(all_posts, known_urls, log)
+    if skip_vision:
+        log.info("Vision analysis SKIPPED (--skip-vision). Use --backfill-images later to enrich.")
+    entries, new_urls, stats = process_posts(all_posts, known_urls, log, skip_vision=skip_vision)
 
     # Save to Supabase
     if HAS_SUPABASE and SUPABASE_KEY:
@@ -1205,10 +1207,12 @@ if __name__ == "__main__":
                        help="Skip scraping, just promote staged auto entries")
     group.add_argument("--backfill-images", action="store_true",
                        help="Fetch missing image URLs from Reddit for staging rows")
+    parser.add_argument("--skip-vision", action="store_true",
+                        help="Skip Claude vision analysis during backfill (use --backfill-images later)")
     args = parser.parse_args()
 
     if args.backfill:
-        run_backfill(log)
+        run_backfill(log, skip_vision=args.skip_vision)
     elif args.promote_only:
         run_promote_only(log)
     elif args.backfill_images:
