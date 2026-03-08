@@ -79,7 +79,6 @@ CREATE TABLE IF NOT EXISTS reddit_staging (
   confidence_score integer DEFAULT 0 CHECK (confidence_score BETWEEN 0 AND 100),
   extraction_method text DEFAULT 'text',        -- text, vision, text+vision, manual
   retailer         text,                        -- Store where product was spotted
-  region           text DEFAULT 'US',           -- US, CA, UK, AU, etc.
   -- Reviewer audit trail
   reviewed_by      text,                        -- Who reviewed this entry
   reviewed_at      timestamptz,                 -- When it was reviewed

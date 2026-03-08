@@ -206,17 +206,6 @@ RETAILER_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
-# Region detection from subreddit or text clues
-REGION_CLUES = {
-    "canada": "CA", "canadian": "CA", "loblaws": "CA", "no frills": "CA",
-    "shoppers drug mart": "CA", "dollarama": "CA",
-    "uk": "UK", "tesco": "UK", "sainsbury": "UK", "asda": "UK", "aldi uk": "UK",
-    "australia": "AU", "woolworths": "AU", "coles": "AU",
-}
-REGION_SUBREDDITS = {
-    "canadianfrugal": "CA", "australia": "AU", "unitedkingdom": "UK",
-    "asda": "UK", "tesco": "UK",
-}
 
 # ---------------------------------------------------------------------------
 # Category guesser
@@ -758,17 +747,6 @@ def detect_retailer(text: str) -> str | None:
     return m.group(0).title() if m else None
 
 
-def detect_region(text: str, subreddit: str = "") -> str:
-    """Detect geographic region from text and subreddit clues."""
-    sub_lower = subreddit.lower()
-    if sub_lower in REGION_SUBREDDITS:
-        return REGION_SUBREDDITS[sub_lower]
-    text_lower = text.lower()
-    for clue, region in REGION_CLUES.items():
-        if clue in text_lower:
-            return region
-    return "US"
-
 
 def build_entry(post: dict, parsed: dict, tier: str,
                 has_vision: bool = False,
@@ -820,7 +798,6 @@ def build_entry(post: dict, parsed: dict, tier: str,
         ),
         "extraction_method": "text+vision" if has_vision else "text",
         "retailer": detect_retailer(full_text),
-        "region": detect_region(full_text, subreddit),
     }
 
 

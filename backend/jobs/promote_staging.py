@@ -91,7 +91,6 @@ def promote_entry(sb, entry, dry_run=False):
 
     source_url = entry.get("source_url", "")
     retailer = entry.get("retailer")
-    region = entry.get("region", "US")
 
     if dry_run:
         log.info(f"  [DRY RUN] Would promote: {product_name} ({brand}) "
@@ -99,7 +98,7 @@ def promote_entry(sb, entry, dry_run=False):
         return True
 
     try:
-        # Upsert product (strip columns missing from DB, e.g. region)
+        # Upsert product
         sb.table("products").upsert(_strip_cols({
             "upc": upc,
             "name": product_name,
@@ -110,7 +109,6 @@ def promote_entry(sb, entry, dry_run=False):
             "type": "shrinkflation",
             "repeat_offender": False,
             "source": "reddit_bot",
-            "region": region,
         }, "products", sb), on_conflict="upc").execute()
 
         # Insert "before" version
@@ -121,7 +119,6 @@ def promote_entry(sb, entry, dry_run=False):
             "unit": unit,
             "price": float(entry["old_price"]) if entry.get("old_price") else None,
             "retailer": retailer,
-            "region": region,
             "source": "reddit_bot",
             "source_url": source_url,
             "notes": "Before state from r/shrinkflation post",
@@ -136,7 +133,6 @@ def promote_entry(sb, entry, dry_run=False):
             "unit": unit,
             "price": float(entry["new_price"]) if entry.get("new_price") else None,
             "retailer": retailer,
-            "region": region,
             "source": "reddit_bot",
             "source_url": source_url,
             "notes": "After state from r/shrinkflation post",

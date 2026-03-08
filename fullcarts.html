@@ -4181,7 +4181,6 @@ function renderReviewCard() {
         <div class="review-card-brand" style="margin-bottom:0">${escapeHTML(r.subreddit || 'ALL')}</div>
         <div style="font-size:10px;font-weight:900;padding:2px 8px;border-radius:6px;background:${(r.confidence_score||0) >= 60 ? 'rgba(88,204,2,0.15)' : (r.confidence_score||0) >= 30 ? 'rgba(255,150,0,0.15)' : 'rgba(255,75,75,0.15)'};color:${(r.confidence_score||0) >= 60 ? 'var(--duo-green)' : (r.confidence_score||0) >= 30 ? 'var(--duo-orange)' : 'var(--duo-red)'}">${r.confidence_score || 0}% conf</div>
         <div style="font-size:10px;font-weight:700;color:var(--wolf)">${escapeHTML(r.extraction_method || 'text')}</div>
-        ${r.region && r.region !== 'US' ? `<div style="font-size:10px;font-weight:900;padding:2px 6px;border-radius:6px;background:rgba(28,176,246,0.15);color:var(--duo-blue)">${escapeHTML(r.region)}</div>` : ''}
       </div>
       <div class="review-card-name">${escapeHTML(r.title || 'No title')}</div>
       ${r.body ? `<div style="font-size:13px;color:var(--wolf);margin:6px 0 10px;padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:8px;max-height:120px;overflow-y:auto;line-height:1.4;white-space:pre-wrap">${escapeHTML(r.body.slice(0, 500))}</div>` : ''}
@@ -4247,12 +4246,6 @@ function renderReviewCard() {
         <div class="review-edit-row">
           <label>Store</label>
           <input id="re-retailer" value="${escapeHTML(r.retailer || '')}" placeholder="Retailer (Walmart, Costco...)" style="flex:1">
-          <select id="re-region" style="width:60px;padding:4px;background:rgba(255,255,255,0.06);border:2px solid var(--card-border);border-radius:8px;color:var(--snow);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700">
-            <option value="US" ${(r.region||'US')==='US'?'selected':''}>US</option>
-            <option value="CA" ${r.region==='CA'?'selected':''}>CA</option>
-            <option value="UK" ${r.region==='UK'?'selected':''}>UK</option>
-            <option value="AU" ${r.region==='AU'?'selected':''}>AU</option>
-          </select>
         </div>
         <div class="review-edit-row">
           <label>Date Noticed</label>
@@ -4355,7 +4348,6 @@ function getEditedFields(r) {
   check('re-old-price', r.old_price, 'old_price');
   check('re-new-price', r.new_price, 'new_price');
   check('re-retailer', r.retailer, 'retailer');
-  check('re-region', r.region || 'US', 'region');
   return edits;
 }
 
@@ -4375,7 +4367,6 @@ async function approveReviewItem() {
   const oldPrice = parseFloat(document.getElementById('re-old-price')?.value) || null;
   const newPrice = parseFloat(document.getElementById('re-new-price')?.value) || null;
   const retailer = (document.getElementById('re-retailer')?.value || '').trim() || null;
-  const region = document.getElementById('re-region')?.value || 'US';
   const unit = newUnit || oldUnit || 'oz';
   const upc = `REDDIT-${(r.id || '').slice(0, 8)}`;
   const pct = (oldSize && newSize && oldSize > 0)
@@ -4390,7 +4381,7 @@ async function approveReviewItem() {
     old_size: r.old_size, new_size: r.new_size,
     old_unit: r.old_unit, new_unit: r.new_unit,
     old_price: r.old_price, new_price: r.new_price,
-    retailer: r.retailer, region: r.region,
+    retailer: r.retailer,
   } : null;
   const category = guessCategory(prodName, brand || '', 'shrinkflation');
 
@@ -4406,7 +4397,6 @@ async function approveReviewItem() {
       type: 'shrinkflation',
       repeat_offender: false,
       source: 'reddit_bot',
-      region,
     }, { onConflict: 'upc' });
 
     // 2. Upsert event (if we have size or price data) — prevents duplicates
@@ -4434,7 +4424,6 @@ async function approveReviewItem() {
       fields_edited: editedFields.length > 0 ? editedFields : null,
       original_values: originalValues,
       retailer: retailer,
-      region: region,
     };
     // Try v2 RPC first, fall back to v1, then direct update
     let { error: rpcErr } = await sb.rpc('update_staging_status_v2', {
