@@ -904,6 +904,109 @@ def upsert_to_supabase(sb: "SupabaseClient", entries: list, log) -> int:
     return upserted
 
 
+# ---------------------------------------------------------------------------
+# Auto-triage: reduce manual review queue
+# ---------------------------------------------------------------------------
+# Thresholds (adjustable)
+TRIAGE_AUTO_PROMOTE_SCORE = 70   # confidence_score >= this → auto-promote
+TRIAGE_AUTO_DISMISS_SCORE = 25   # confidence_score < this → auto-dismiss
+
+
+def triage_staging(sb: "SupabaseClient", log) -> dict:
+    """Auto-promote and auto-dismiss staging entries to shrink the review queue.
+
+    Runs after upsert. Only touches status='pending' entries.
+
+    Auto-PROMOTE (confidence_score >= 70, tier='auto'):
+      - Must have brand, old_size, new_size, explicit_from_to
+      - new_size must be < old_size (actually shrinkflation)
+      - Uses promote_staging.promote_entry() for the full pipeline
+
+    Auto-DISMISS (confidence_score < 25):
+      - Low signal entries unlikely to be useful
+
+    Returns dict with counts: {promoted, dismissed, remaining}
+    """
+    stats = {"promoted": 0, "dismissed": 0, "remaining": 0, "promote_failed": 0}
+
+    # --- Auto-dismiss low-confidence entries ---
+    try:
+        result = (sb.table("reddit_staging")
+                  .select("id")
+                  .eq("status", "pending")
+                  .lt("confidence_score", TRIAGE_AUTO_DISMISS_SCORE)
+                  .execute())
+        dismiss_ids = [r["id"] for r in (result.data or [])]
+    except Exception as exc:
+        log.warning(f"  Triage: failed to query low-confidence entries: {exc}")
+        dismiss_ids = []
+
+    for i in range(0, len(dismiss_ids), 100):
+        batch = dismiss_ids[i:i + 100]
+        try:
+            sb.table("reddit_staging").update({
+                "status": "dismissed",
+                "reviewed_by": "auto-triage",
+            }).in_("id", batch).execute()
+            stats["dismissed"] += len(batch)
+        except Exception as exc:
+            log.warning(f"  Triage: dismiss batch failed: {exc}")
+
+    # --- Auto-promote high-confidence entries ---
+    try:
+        result = (sb.table("reddit_staging")
+                  .select("*")
+                  .eq("status", "pending")
+                  .eq("tier", "auto")
+                  .gte("confidence_score", TRIAGE_AUTO_PROMOTE_SCORE)
+                  .eq("explicit_from_to", True)
+                  .execute())
+        candidates = result.data or []
+    except Exception as exc:
+        log.warning(f"  Triage: failed to query auto-promote candidates: {exc}")
+        candidates = []
+
+    # Lazy import to avoid circular deps
+    try:
+        from backend.jobs.promote_staging import promote_entry
+        has_promoter = True
+    except ImportError:
+        has_promoter = False
+        log.info("  Triage: promote_staging not available, skipping auto-promote")
+
+    if has_promoter:
+        for entry in candidates:
+            # Safety checks: must have brand + both sizes + shrinkage
+            brand = entry.get("brand")
+            old_size = entry.get("old_size")
+            new_size = entry.get("new_size")
+            if not brand or not old_size or not new_size:
+                continue
+            if float(new_size) >= float(old_size):
+                continue  # Not shrinkflation
+            try:
+                ok = promote_entry(sb, entry)
+                if ok:
+                    stats["promoted"] += 1
+                else:
+                    stats["promote_failed"] += 1
+            except Exception as exc:
+                log.warning(f"  Triage: promote failed for {entry.get('id', '?')}: {exc}")
+                stats["promote_failed"] += 1
+
+    # --- Count remaining ---
+    try:
+        result = (sb.table("reddit_staging")
+                  .select("id", count="exact")
+                  .eq("status", "pending")
+                  .execute())
+        stats["remaining"] = result.count or 0
+    except Exception:
+        stats["remaining"] = -1
+
+    return stats
+
+
 def _fetch_recent_one_sub(sub: str, after_utc: int, max_batches: int = 20) -> list:
     """Fetch recent posts for a single subreddit (thread-safe)."""
     log = logging.getLogger("fullcarts")
@@ -1006,7 +1109,13 @@ def run_recent(log):
         sb = create_client(SUPABASE_URL, SUPABASE_KEY)
         upserted = upsert_to_supabase(sb, entries, log)
         log.info(f"\nSupabase: upserted {upserted} entries to reddit_staging")
-        log.info(f"All entries queued for human review (auto-promotion disabled)")
+
+        # Auto-triage: promote high-confidence, dismiss low-confidence
+        log.info("\nRunning auto-triage to reduce manual review queue...")
+        triage = triage_staging(sb, log)
+        log.info(f"  Auto-promoted: {triage['promoted']}  "
+                 f"Auto-dismissed: {triage['dismissed']}  "
+                 f"Remaining for review: {triage['remaining']}")
     else:
         # Save locally
         local_file = OUTPUT_DIR / "public_staging.json"
@@ -1062,7 +1171,13 @@ def run_backfill(log, skip_vision: bool = False):
         sb = create_client(SUPABASE_URL, SUPABASE_KEY)
         upserted = upsert_to_supabase(sb, entries, log)
         log.info(f"\nSupabase: upserted {upserted} entries to reddit_staging")
-        log.info(f"All entries queued for human review (auto-promotion disabled)")
+
+        # Auto-triage: promote high-confidence, dismiss low-confidence
+        log.info("\nRunning auto-triage to reduce manual review queue...")
+        triage = triage_staging(sb, log)
+        log.info(f"  Auto-promoted: {triage['promoted']}  "
+                 f"Auto-dismissed: {triage['dismissed']}  "
+                 f"Remaining for review: {triage['remaining']}")
     else:
         local_file = OUTPUT_DIR / "backfill_staging.json"
         existing = json.loads(local_file.read_text()) if local_file.exists() else []
@@ -1090,6 +1205,39 @@ def run_backfill(log, skip_vision: bool = False):
     log.info("\nEntries by year:")
     for year in sorted(year_counts):
         log.info(f"  {year}: {year_counts[year]}")
+
+
+def run_triage_only(log):
+    """Run auto-triage on existing pending entries without scraping."""
+    log.info("=" * 60)
+    log.info("MODE: Auto-triage existing pending entries")
+    log.info(f"  Promote threshold: confidence_score >= {TRIAGE_AUTO_PROMOTE_SCORE}")
+    log.info(f"  Dismiss threshold: confidence_score < {TRIAGE_AUTO_DISMISS_SCORE}")
+    log.info("=" * 60)
+
+    if not HAS_SUPABASE or not SUPABASE_KEY:
+        log.error("SUPABASE_KEY required for triage")
+        return
+
+    sb = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+    # Show current queue size
+    try:
+        result = (sb.table("reddit_staging")
+                  .select("id", count="exact")
+                  .eq("status", "pending")
+                  .execute())
+        log.info(f"\nPending entries before triage: {result.count or 0}")
+    except Exception:
+        pass
+
+    triage = triage_staging(sb, log)
+    log.info(f"\nTriage complete:")
+    log.info(f"  Auto-promoted: {triage['promoted']}")
+    log.info(f"  Auto-dismissed: {triage['dismissed']}")
+    if triage.get("promote_failed"):
+        log.info(f"  Promote failures: {triage['promote_failed']}")
+    log.info(f"  Remaining for manual review: {triage['remaining']}")
 
 
 def run_backfill_images(log):
@@ -1210,6 +1358,8 @@ if __name__ == "__main__":
                        help="Skip scraping, just promote staged auto entries")
     group.add_argument("--backfill-images", action="store_true",
                        help="Fetch missing image URLs from Reddit for staging rows")
+    group.add_argument("--triage-only", action="store_true",
+                       help="Run auto-triage on existing pending entries (no scraping)")
     parser.add_argument("--skip-vision", action="store_true",
                         help="Skip Claude vision analysis during backfill (use --backfill-images later)")
     args = parser.parse_args()
@@ -1220,5 +1370,7 @@ if __name__ == "__main__":
         run_promote_only(log)
     elif args.backfill_images:
         run_backfill_images(log)
+    elif args.triage_only:
+        run_triage_only(log)
     else:
         run_recent(log)
