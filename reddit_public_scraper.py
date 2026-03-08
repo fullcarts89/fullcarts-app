@@ -1215,12 +1215,17 @@ def triage_staging(sb: "SupabaseClient", log) -> dict:
                  "skipping auto-dismiss/promote (run migration 011)")
 
     # --- Auto-dismiss low-confidence entries ---
+    # Only dismiss entries that are NOT tier='review'.  The 'review' tier is
+    # the floor for posts from dedicated shrinkflation subreddits (mostly
+    # image posts with little extractable text).  Dismissing them would hide
+    # all Reddit posts from the review queue.
     dismiss_ids = []
     if has_confidence:
         try:
             result = (sb.table("reddit_staging")
                       .select("id")
                       .eq("status", "pending")
+                      .neq("tier", "review")
                       .lt("confidence_score", TRIAGE_AUTO_DISMISS_SCORE)
                       .execute())
             dismiss_ids = [r["id"] for r in (result.data or [])]
