@@ -2376,18 +2376,13 @@ function renderScreen() {
 // HOME
 // ============================================================
 function renderHome() {
-  let list = searchQuery
-    ? PRODUCTS.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.brand.toLowerCase().includes(searchQuery.toLowerCase()))
-    : PRODUCTS;
+  // Search results — only built when user is searching
+  const searchResults = searchQuery
+    ? PRODUCTS.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.brand.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 10)
+    : [];
 
-  if (selectedCategory !== 'All') list = list.filter(p => p.category === selectedCategory);
-  list = list.slice(0, 15);
-
-  if (selectedType !== 'all') list = list.filter(p => p.type === selectedType);
-  list = list.slice(0, 15);
-
-  const items = list.length
-    ? list.map(p => {
+  const items = searchResults.length
+    ? searchResults.map(p => {
         const evs = getEvents(p.upc);
         const last = evs[0];
         const total = totalShrink(p.upc).toFixed(0);
@@ -2410,18 +2405,7 @@ function renderHome() {
               : evs.length ? `<span class="badge badge-amber">−${total}%</span>` : ''}
           </div>`;
       }).join('')
-    : `<div class="empty">No products found. Try a different filter!</div>`;
-
-  const catPills = CATEGORIES.map(c =>
-    `<button class="cat-pill ${selectedCategory === c ? 'active' : ''}" onclick="selectCategory('${c}')">${c === 'All' ? '🛒 All' : emoji(c) + ' ' + c}</button>`
-  ).join('');
-
-  const typePills = [
-    { key:'all', label:'🔍 All Types' },
-    ...Object.entries(SHRINK_TYPES).map(([k,v]) => ({ key:k, label:`${v.emoji} ${v.label}` }))
-  ].map(t =>
-    `<button class="type-pill ${selectedType === t.key ? 'active-'+t.key : ''}" onclick="selectType('${t.key}')">${t.label}</button>`
-  ).join('');
+    : (searchQuery ? `<div class="empty">No products found for "${escapeHTML(searchQuery)}"</div>` : '');
 
   return `
     <div class="hero">
@@ -2475,12 +2459,55 @@ function renderHome() {
       </div>
     </div>
 
-    <div class="category-row">${catPills}</div>
-    <div class="type-row">${typePills}</div>
+    ${searchQuery ? `
+      <div class="section-title">Search Results</div>
+      <div class="duo-card" style="padding:0">${items}</div>
+    ` : `
+
+    ${(() => {
+      // Build worst offenders ranking (same logic as shame list)
+      const brandMap = {};
+      PRODUCTS.forEach(p => {
+        const evs = getEvents(p.upc);
+        if (!evs.length) return;
+        if (!brandMap[p.brand]) brandMap[p.brand] = { brand: p.brand, products: [], totalPct: 0, eventCount: 0 };
+        const pct = totalShrink(p.upc);
+        brandMap[p.brand].products.push({ ...p, pct, evCount: evs.length });
+        brandMap[p.brand].totalPct += pct;
+        brandMap[p.brand].eventCount += evs.length;
+      });
+      const ranked = Object.values(brandMap)
+        .map(b => ({ ...b, score: b.totalPct / b.products.length }))
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 5);
+
+      if (!ranked.length) return '';
+
+      const medals = ['gold', 'silver', 'bronze'];
+      return `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:0 16px">
+          <div class="section-title" style="padding:0;margin:0">Worst Offenders</div>
+          <button style="background:none;border:none;font-size:12px;font-weight:900;color:var(--duo-red);cursor:pointer;font-family:'Nunito',sans-serif;padding:8px 0" onclick="navigate('leaderboard')">Full Shame List →</button>
+        </div>
+        <div class="duo-card" style="padding:0;margin:0 16px 16px">
+          ${ranked.map((b, i) => `
+            <div class="rank-item" onclick="currentBrand='${escapeHTML(b.brand)}';navigate('leaderboard')">
+              <div class="rank-num ${medals[i] || ''}" style="margin-right:12px;font-size:13px">${i + 1}</div>
+              <div class="rank-avatar" style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--duo-red),var(--duo-orange));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:white;margin-right:10px;flex-shrink:0">${b.brand.slice(0,2).toUpperCase()}</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:14px;font-weight:900;color:var(--snow)">${escapeHTML(b.brand)}</div>
+                <div style="font-size:11px;font-weight:700;color:var(--wolf)">${b.products.length} product${b.products.length !== 1 ? 's' : ''} · ${b.eventCount} event${b.eventCount !== 1 ? 's' : ''}</div>
+              </div>
+              <div class="rank-pct" style="font-size:15px">−${b.score.toFixed(1)}%</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    })()}
 
     ${(() => {
       const fightingBackProducts = PRODUCTS.filter(p => p.fightingBack);
-      if (!fightingBackProducts.length || (searchQuery || selectedCategory !== 'All' || selectedType !== 'all')) return '';
+      if (!fightingBackProducts.length) return '';
       return `
         <div class="section-title">Fighting Back</div>
         ${fightingBackProducts.map(p => `
@@ -2497,8 +2524,22 @@ function renderHome() {
       `;
     })()}
 
-    <div class="section-title">${searchQuery ? 'Search Results' : selectedCategory !== 'All' ? selectedCategory : 'All Products'}</div>
-    <div class="duo-card" style="padding:0">${items}</div>
+    ${ACTIVITY_FEED.length ? `
+      <div class="section-title">Recent Activity</div>
+      <div class="duo-card" style="padding:0;margin:0 16px 16px">
+        ${ACTIVITY_FEED.slice(0, 6).map(a => `
+          <div class="activity-item">
+            <div class="activity-dot" style="margin-top:6px"></div>
+            <div style="flex:1">
+              <div class="activity-text"><strong>${escapeHTML(a.product_name)}</strong> · ${escapeHTML(a.brand)}${a.pct ? ` <span style="color:var(--duo-red);font-weight:900">−${a.pct}%</span>` : ''}</div>
+              <div class="activity-time">${a.ago}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    ` : ''}
+
+    `}
 
     <div class="tp-card">
       <div class="tp-label">Coming Soon</div>
@@ -3910,15 +3951,33 @@ function markReviewProcessed(id) {
   sessionStorage.setItem('reviewProcessedIds', JSON.stringify([...reviewProcessedIds]));
 }
 
-async function loadRedditReviewQueue() {
+let reviewQueueOffset = 0;
+const REVIEW_BATCH_SIZE = 50;
+
+async function loadRedditReviewQueue(append = false) {
   const container = document.getElementById('reddit-review-container');
   const loadBtn = document.getElementById('review-load-btn');
   if (loadBtn) loadBtn.style.display = 'none';
-  container.innerHTML = '<p style="color:var(--wolf);text-align:center;padding:16px;font-weight:700">Loading review queue...</p>';
 
+  if (!append) {
+    container.innerHTML = '<p style="color:var(--wolf);text-align:center;padding:16px;font-weight:700">Loading review queue...</p>';
+    reviewQueueOffset = 0;
+    reviewQueue = [];
+    reviewIndex = 0;
+    reviewSessionStats = { approved: 0, skipped: 0, rejected: 0 };
+  }
+
+  // Get total pending count for display
+  const { count: totalPending } = await sb.from('reddit_staging')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'pending').in('tier', ['auto', 'review']);
+
+  // Load next batch — both auto and review tiers, sorted by confidence then score
   const { data: reviewData, error } = await sb.from('reddit_staging')
-    .select('*').eq('tier', 'review').eq('status', 'pending')
-    .order('score', { ascending: false }).limit(100);
+    .select('*').eq('status', 'pending').in('tier', ['auto', 'review'])
+    .order('confidence_score', { ascending: false })
+    .order('score', { ascending: false })
+    .range(reviewQueueOffset, reviewQueueOffset + REVIEW_BATCH_SIZE - 1);
 
   if (error || !reviewData) {
     container.innerHTML = '<p style="color:var(--wolf);margin-top:10px">Could not load queue.</p>';
@@ -3926,9 +3985,13 @@ async function loadRedditReviewQueue() {
     return;
   }
 
-  reviewQueue = reviewData.filter(r => !reviewProcessedIds.has(r.id));
-  reviewIndex = 0;
-  reviewSessionStats = { approved: 0, skipped: 0, rejected: 0 };
+  const newItems = reviewData.filter(r => !reviewProcessedIds.has(r.id));
+  if (append) {
+    reviewQueue = reviewQueue.concat(newItems);
+  } else {
+    reviewQueue = newItems;
+  }
+  reviewQueueOffset += reviewData.length;
 
   if (!reviewQueue.length) {
     container.innerHTML = `<div class="review-done-card">
@@ -3939,22 +4002,27 @@ async function loadRedditReviewQueue() {
     return;
   }
 
+  // Store total for progress display
+  window._reviewTotalPending = totalPending || reviewQueue.length;
   renderReviewCard();
 }
 
 function renderReviewCard() {
   const container = document.getElementById('reddit-review-container');
   if (reviewIndex >= reviewQueue.length) {
+    const reviewed = reviewSessionStats.approved + reviewSessionStats.rejected + reviewSessionStats.skipped;
+    const remaining = Math.max(0, (window._reviewTotalPending || 0) - reviewed);
     container.innerHTML = `<div class="review-done-card">
       <div class="emoji">🏆</div>
-      <h3>Session Complete!</h3>
-      <p>You reviewed ${reviewQueue.length} items</p>
+      <h3>Batch Complete!</h3>
+      <p>You reviewed ${reviewed} items this session</p>
       <div class="review-session-stats">
         <span style="background:rgba(88,204,2,0.12);color:var(--duo-green)">✅ ${reviewSessionStats.approved} approved</span>
         <span style="background:rgba(255,68,68,0.12);color:#ff4444">🚫 ${reviewSessionStats.rejected} rejected</span>
         <span style="background:rgba(255,255,255,0.06);color:var(--hare)">⏭ ${reviewSessionStats.skipped} skipped</span>
       </div>
-      <button class="btn-duo btn-sm" style="margin:16px auto 0;background:rgba(206,130,255,0.1);border:2px solid rgba(206,130,255,0.2);color:var(--duo-purple);border-bottom:4px solid rgba(206,130,255,0.15)" onclick="loadRedditReviewQueue()">Load More</button>
+      ${remaining > 0 ? `<p style="font-size:13px;color:var(--wolf);margin-top:8px;font-weight:700">${remaining.toLocaleString()} items still pending</p>
+      <button class="btn-duo btn-sm" style="margin:12px auto 0;background:rgba(206,130,255,0.1);border:2px solid rgba(206,130,255,0.2);color:var(--duo-purple);border-bottom:4px solid rgba(206,130,255,0.15)" onclick="loadRedditReviewQueue(true)">Load Next ${REVIEW_BATCH_SIZE}</button>` : `<p style="font-size:13px;color:var(--duo-green);margin-top:8px;font-weight:700">🎉 Queue empty!</p>`}
     </div>`;
     return;
   }
@@ -3979,7 +4047,7 @@ function renderReviewCard() {
 
   container.innerHTML = `
     <div class="review-progress">
-      <span>${reviewIndex + 1} / ${reviewQueue.length}</span>
+      <span>${reviewIndex + 1} / ${reviewQueue.length}${window._reviewTotalPending > reviewQueue.length ? ` <span style="color:var(--wolf);font-size:11px">(${window._reviewTotalPending.toLocaleString()} total)</span>` : ''}</span>
       <div class="review-progress-bar"><div class="review-progress-fill" style="width:${progress}%"></div></div>
       <span style="color:var(--duo-green)">✅${reviewSessionStats.approved}</span>
       <span style="color:#ff4444">🚫${reviewSessionStats.rejected}</span>
