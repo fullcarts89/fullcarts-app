@@ -2550,12 +2550,13 @@ function renderHome() {
       <div class="section-title">Recent Activity</div>
       <div class="duo-card" style="padding:0;margin:0 16px 16px">
         ${ACTIVITY_FEED.slice(0, 6).map(a => `
-          <div class="activity-item">
+          <div class="activity-item" style="cursor:pointer" onclick="navigate('result','${a.upc}')">
             <div class="activity-dot" style="margin-top:6px"></div>
             <div style="flex:1">
               <div class="activity-text"><strong>${escapeHTML(a.product_name)}</strong> · ${escapeHTML(a.brand)}${a.pct ? ` <span style="color:var(--duo-red);font-weight:900">−${a.pct}%</span>` : ''}</div>
               <div class="activity-time">${a.ago}</div>
             </div>
+            <span style="font-size:11px;font-weight:900;color:var(--duo-blue);flex-shrink:0">→</span>
           </div>
         `).join('')}
       </div>
@@ -3799,14 +3800,15 @@ function renderCommunity() {
 
   const activityHTML = ACTIVITY_FEED.length
     ? ACTIVITY_FEED.slice(0, 10).map(a => `
-        <div class="activity-item">
+        <div class="activity-item" style="cursor:pointer" onclick="navigate('result','${a.upc}')">
           <div class="activity-dot" style="background:var(--duo-green)"></div>
-          <div>
+          <div style="flex:1">
             <div class="activity-text">
               New report: <strong>${a.product_name || 'Unknown'}</strong> ${a.brand ? '· ' + a.brand : ''} ${a.pct ? `<span style="color:var(--duo-red)">-${a.pct}%</span>` : ''}
             </div>
             <div class="activity-time">${a.ago}</div>
           </div>
+          <span style="font-size:11px;font-weight:900;color:var(--duo-blue);flex-shrink:0">→</span>
         </div>`).join('')
     : '<div style="padding:16px;text-align:center;color:var(--wolf);font-weight:700;font-size:13px">No recent activity yet. Submit a report to get started!</div>';
 
@@ -4816,6 +4818,7 @@ async function loadFromSupabase() {
       ACTIVITY_FEED = recentEvents.map(e => {
         const p = findProduct(e.upc);
         return {
+          upc: e.upc,
           product_name: p ? p.name : 'Unknown Product',
           brand: p ? p.brand : '',
           pct: e.pct ? Number(e.pct).toFixed(1) : null,
