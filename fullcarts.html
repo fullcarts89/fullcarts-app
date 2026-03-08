@@ -1754,6 +1754,88 @@
     .activity-text { font-size: 13px; font-weight: 700; color: var(--hare); line-height: 1.4; }
     .activity-text strong { color: var(--snow); }
     .activity-time { font-size: 11px; color: var(--wolf); font-weight: 800; margin-top: 2px; }
+
+    /* ═══════════════════════════════════════════
+       ADMIN EDIT OVERLAY
+    ═══════════════════════════════════════════ */
+    #admin-edit-overlay {
+      display:none;position:fixed;inset:0;z-index:500;
+      background:rgba(0,0,0,0.8);
+      align-items:flex-end;justify-content:center;
+    }
+    #admin-edit-overlay.open { display:flex; }
+    .admin-edit-sheet {
+      background:#131F24;
+      border:2px solid var(--card-border);
+      border-radius:24px 24px 0 0;
+      width:100%;max-width:430px;
+      max-height:90vh;
+      overflow-y:auto;
+      padding:20px 20px 48px;
+    }
+    .admin-edit-handle { width:40px;height:5px;background:#2b3f48;border-radius:3px;margin:0 auto 14px; }
+    .admin-edit-header {
+      display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;
+    }
+    .admin-edit-header h3 { font-size:18px;font-weight:900;color:var(--snow); }
+    .admin-edit-close {
+      background:none;border:none;font-size:20px;color:var(--wolf);cursor:pointer;
+      padding:4px 8px;border-radius:8px;font-family:'Nunito',sans-serif;font-weight:900;
+    }
+    .admin-edit-close:hover { background:rgba(255,255,255,0.06); }
+    .admin-edit-section {
+      font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;
+      color:var(--duo-blue);margin:16px 0 8px;
+    }
+    .admin-edit-row {
+      display:flex;align-items:center;gap:8px;margin-bottom:8px;
+    }
+    .admin-edit-row label {
+      font-size:11px;font-weight:900;color:var(--wolf);text-transform:uppercase;
+      letter-spacing:0.5px;width:65px;flex-shrink:0;
+    }
+    .admin-edit-row input, .admin-edit-row select {
+      flex:1;background:rgba(255,255,255,0.06);border:2px solid var(--card-border);
+      border-radius:10px;padding:8px 10px;color:var(--snow);
+      font-size:14px;font-weight:700;font-family:'Nunito',sans-serif;
+    }
+    .admin-edit-row input:focus, .admin-edit-row select:focus {
+      border-color:var(--duo-blue);outline:none;
+    }
+    .admin-edit-actions {
+      display:flex;gap:10px;margin-top:18px;
+    }
+    .admin-edit-actions button {
+      flex:1;padding:12px 8px;border:none;border-radius:14px;
+      font-size:14px;font-weight:900;font-family:'Nunito',sans-serif;
+      cursor:pointer;border-bottom:3px solid transparent;
+    }
+    .admin-edit-actions button:active { transform:translateY(2px);border-bottom-width:1px; }
+    .admin-btn-save {
+      background:rgba(88,204,2,0.15);color:var(--duo-green);
+      border-bottom-color:rgba(88,204,2,0.2) !important;
+    }
+    .admin-btn-cancel {
+      background:rgba(255,255,255,0.06);color:var(--hare);
+      border-bottom-color:rgba(255,255,255,0.04) !important;
+    }
+    .admin-btn-delete {
+      background:rgba(255,68,68,0.15);color:#ff4444;
+      border-bottom-color:rgba(255,68,68,0.2) !important;
+    }
+    .admin-edit-btn-inline {
+      background:none;border:none;cursor:pointer;
+      font-size:11px;font-weight:900;padding:3px 8px;border-radius:6px;
+      font-family:'Nunito',sans-serif;transition:all 0.15s;
+    }
+    .admin-edit-btn-inline:hover { background:rgba(255,255,255,0.06); }
+    .admin-edit-product-btn {
+      color:var(--duo-blue);background:rgba(28,176,246,0.1);
+      border:1.5px solid rgba(28,176,246,0.2);border-radius:8px;
+      padding:6px 12px;font-size:12px;font-weight:900;
+      cursor:pointer;font-family:'Nunito',sans-serif;
+    }
+    .admin-edit-product-btn:active { transform:scale(0.97); }
   </style>
 </head>
 <body>
@@ -1861,6 +1943,18 @@
       </div>
 
       <button class="btn-duo" style="width:100%;background:var(--card-bg);border:2px solid var(--card-border);color:var(--snow);border-bottom:4px solid #0a1517;margin-top:4px" onclick="hideAbout()">Close</button>
+    </div>
+  </div>
+
+  <!-- Admin Edit Overlay -->
+  <div id="admin-edit-overlay" onclick="if(event.target===this)closeAdminEdit()">
+    <div class="admin-edit-sheet">
+      <div class="admin-edit-handle"></div>
+      <div class="admin-edit-header">
+        <h3 id="admin-edit-title">Edit Product</h3>
+        <button class="admin-edit-close" onclick="closeAdminEdit()">✕</button>
+      </div>
+      <div id="admin-edit-body"><!-- filled by JS --></div>
     </div>
   </div>
 
@@ -2929,7 +3023,7 @@ function renderResult() {
             ${i < evs.length - 1 ? '<div class="timeline-line"></div>' : ''}
           </div>
           <div style="flex:1">
-            <div class="timeline-date">${fmtDate(e.date)}</div>
+            <div class="timeline-date">${fmtDate(e.date)}${isAdmin ? `<span style="margin-left:8px"><button class="admin-edit-btn-inline" style="color:var(--duo-blue)" onclick="event.stopPropagation();openEventEdit('${escapeHTML(p.upc)}','${escapeHTML(e.date)}')">✏️ Edit</button><button class="admin-edit-btn-inline" style="color:#ff4444" onclick="event.stopPropagation();deleteEvent('${escapeHTML(p.upc)}','${escapeHTML(e.date)}')">🗑 Delete</button></span>` : ''}</div>
             <div class="timeline-change">
               ${e.oldSize}${e.unit} → ${e.newSize}${e.unit}
               <span class="timeline-pct"> (−${fmtPct(e.pct)}%)</span>
@@ -2951,6 +3045,7 @@ function renderResult() {
       <div class="sub">${p.brand} · ${p.category}</div>
       ${(() => { const t = SHRINK_TYPES[p.type]; return t ? `<span class="type-badge ${t.cls}" style="margin:6px auto 0;display:inline-block">${t.emoji} ${t.label}</span>` : ''; })()}
       ${p.repeatOffender ? `<div class="repeat-badge">🔁 SERIAL SHRINKER</div>` : ''}
+      ${isAdmin ? `<button class="admin-edit-product-btn" style="margin-top:8px" onclick="openProductEdit('${escapeHTML(p.upc)}')">✏️ Edit Product</button>` : ''}
     </div>
 
     <div style="text-align:center;margin-top:16px">
@@ -4874,6 +4969,265 @@ async function loadFromSupabase() {
     console.warn('[FullCarts] Supabase load failed, using fallback data:', err);
   }
   renderScreen();
+}
+
+// ============================================================
+// ADMIN: EDIT RECORDS
+// ============================================================
+let editingUPC = null;
+let editingEventDate = null;
+
+function openProductEdit(upc) {
+  if (!isAdmin) return;
+  editingUPC = upc;
+  editingEventDate = null;
+  const p = findProduct(upc);
+  if (!p) return;
+
+  const categories = [...new Set(PRODUCTS.map(pp => pp.category))].sort();
+  const typeKeys = Object.keys(SHRINK_TYPES);
+
+  document.getElementById('admin-edit-title').textContent = 'Edit Product';
+  document.getElementById('admin-edit-body').innerHTML = `
+    <div class="admin-edit-section">Product Details</div>
+    <div class="admin-edit-row">
+      <label>UPC</label>
+      <input id="ae-upc" value="${escapeHTML(p.upc)}" disabled style="opacity:0.5;cursor:not-allowed">
+    </div>
+    <div class="admin-edit-row">
+      <label>Name</label>
+      <input id="ae-name" value="${escapeHTML(p.name)}" placeholder="Product name">
+    </div>
+    <div class="admin-edit-row">
+      <label>Brand</label>
+      <input id="ae-brand" value="${escapeHTML(p.brand)}" placeholder="Brand">
+    </div>
+    <div class="admin-edit-row">
+      <label>Category</label>
+      <input id="ae-category" value="${escapeHTML(p.category)}" placeholder="Category" list="ae-cat-list">
+      <datalist id="ae-cat-list">${categories.map(c => `<option value="${escapeHTML(c)}">`).join('')}</datalist>
+    </div>
+    <div class="admin-edit-row">
+      <label>Size</label>
+      <input id="ae-size" type="number" step="0.01" value="${p.currentSize}" placeholder="Current size" style="flex:1">
+      <input id="ae-unit" value="${escapeHTML(p.unit)}" placeholder="unit" style="width:60px;text-align:center">
+    </div>
+    <div class="admin-edit-row">
+      <label>Type</label>
+      <select id="ae-type">
+        ${typeKeys.map(k => `<option value="${k}" ${p.type === k ? 'selected' : ''}>${SHRINK_TYPES[k].emoji} ${SHRINK_TYPES[k].label}</option>`).join('')}
+      </select>
+    </div>
+    <div class="admin-edit-actions">
+      <button class="admin-btn-cancel" onclick="closeAdminEdit()">Cancel</button>
+      <button class="admin-btn-save" onclick="saveProductEdit()">Save Changes</button>
+    </div>
+  `;
+  document.getElementById('admin-edit-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function openEventEdit(upc, date) {
+  if (!isAdmin) return;
+  editingUPC = upc;
+  editingEventDate = date;
+  const evs = EVENTS.filter(e => e.upc === upc && e.date === date);
+  const e = evs[0];
+  if (!e) return;
+
+  document.getElementById('admin-edit-title').textContent = 'Edit Event';
+  document.getElementById('admin-edit-body').innerHTML = `
+    <div class="admin-edit-section">Event Details</div>
+    <div class="admin-edit-row">
+      <label>Date</label>
+      <input id="ae-date" type="date" value="${escapeHTML(e.date)}">
+    </div>
+    <div class="admin-edit-row">
+      <label>Old Size</label>
+      <input id="ae-old-size" type="number" step="0.01" value="${e.oldSize}" style="flex:1">
+      <input id="ae-old-unit" value="${escapeHTML(e.unit)}" placeholder="unit" style="width:55px;text-align:center">
+    </div>
+    <div class="admin-edit-row">
+      <label>New Size</label>
+      <input id="ae-new-size" type="number" step="0.01" value="${e.newSize}" style="flex:1">
+      <input id="ae-new-unit" value="${escapeHTML(e.unit)}" placeholder="unit" style="width:55px;text-align:center">
+    </div>
+    <div class="admin-edit-row">
+      <label>Old Price</label>
+      <input id="ae-old-price" type="number" step="0.01" value="${e.priceBefore || ''}" placeholder="$">
+    </div>
+    <div class="admin-edit-row">
+      <label>New Price</label>
+      <input id="ae-new-price" type="number" step="0.01" value="${e.priceAfter || ''}" placeholder="$">
+    </div>
+    <div class="admin-edit-row">
+      <label>Type</label>
+      <select id="ae-ev-type">
+        ${Object.keys(SHRINK_TYPES).map(k => `<option value="${k}" ${e.type === k ? 'selected' : ''}>${SHRINK_TYPES[k].emoji} ${SHRINK_TYPES[k].label}</option>`).join('')}
+      </select>
+    </div>
+    <div class="admin-edit-row">
+      <label>Notes</label>
+      <input id="ae-notes" value="${escapeHTML(e.notes || '')}" placeholder="Notes">
+    </div>
+    <div class="admin-edit-actions">
+      <button class="admin-btn-delete" onclick="deleteEvent('${escapeHTML(upc)}','${escapeHTML(date)}')">Delete</button>
+      <button class="admin-btn-cancel" onclick="closeAdminEdit()">Cancel</button>
+      <button class="admin-btn-save" onclick="saveEventEdit()">Save</button>
+    </div>
+  `;
+  document.getElementById('admin-edit-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeAdminEdit() {
+  document.getElementById('admin-edit-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  editingUPC = null;
+  editingEventDate = null;
+}
+
+async function saveProductEdit() {
+  if (!editingUPC) return;
+  const btn = document.querySelector('.admin-btn-save');
+  if (btn) { btn.textContent = '⏳ Saving...'; btn.style.pointerEvents = 'none'; }
+
+  const name = (document.getElementById('ae-name')?.value || '').trim();
+  const brand = (document.getElementById('ae-brand')?.value || '').trim();
+  const category = (document.getElementById('ae-category')?.value || '').trim();
+  const currentSize = parseFloat(document.getElementById('ae-size')?.value);
+  const unit = (document.getElementById('ae-unit')?.value || '').trim();
+  const type = document.getElementById('ae-type')?.value;
+
+  if (!name || !brand) {
+    alert('Name and brand are required.');
+    if (btn) { btn.textContent = 'Save Changes'; btn.style.pointerEvents = ''; }
+    return;
+  }
+
+  try {
+    const { error } = await sb.from('products').update({
+      name,
+      brand,
+      category: category || null,
+      current_size: currentSize || null,
+      unit: unit || null,
+      type: type || 'shrinkflation',
+    }).eq('upc', editingUPC);
+
+    if (error) throw error;
+
+    // Update local state
+    const p = findProduct(editingUPC);
+    if (p) {
+      p.name = name;
+      p.brand = brand;
+      p.category = category;
+      p.currentSize = currentSize;
+      p.unit = unit;
+      p.type = type;
+    }
+    CATEGORIES = ["All", ...new Set(PRODUCTS.map(pp => pp.category))];
+
+    closeAdminEdit();
+    renderScreen();
+    showToast('Product updated successfully', 'var(--duo-green)');
+  } catch (err) {
+    console.error('Product edit failed:', err);
+    if (btn) { btn.textContent = '❌ Error'; btn.style.pointerEvents = ''; }
+    setTimeout(() => { if (btn) btn.textContent = 'Save Changes'; }, 2000);
+  }
+}
+
+async function saveEventEdit() {
+  if (!editingUPC || !editingEventDate) return;
+  const btn = document.querySelector('.admin-btn-save');
+  if (btn) { btn.textContent = '⏳ Saving...'; btn.style.pointerEvents = 'none'; }
+
+  const date = document.getElementById('ae-date')?.value;
+  const oldSize = parseFloat(document.getElementById('ae-old-size')?.value);
+  const newSize = parseFloat(document.getElementById('ae-new-size')?.value);
+  const unit = (document.getElementById('ae-new-unit')?.value || document.getElementById('ae-old-unit')?.value || '').trim();
+  const oldPrice = parseFloat(document.getElementById('ae-old-price')?.value) || null;
+  const newPrice = parseFloat(document.getElementById('ae-new-price')?.value) || null;
+  const type = document.getElementById('ae-ev-type')?.value;
+  const notes = (document.getElementById('ae-notes')?.value || '').trim();
+  const pct = (oldSize && newSize && oldSize > 0) ? Math.round(((oldSize - newSize) / oldSize) * 10000) / 100 : 0;
+
+  try {
+    const { error } = await sb.from('events').update({
+      date,
+      old_size: oldSize,
+      new_size: newSize,
+      unit,
+      pct,
+      price_before: oldPrice,
+      price_after: newPrice,
+      type: type || 'shrinkflation',
+      notes: notes || null,
+    }).eq('upc', editingUPC).eq('date', editingEventDate);
+
+    if (error) throw error;
+
+    // Update local state
+    const evIdx = EVENTS.findIndex(e => e.upc === editingUPC && e.date === editingEventDate);
+    if (evIdx >= 0) {
+      EVENTS[evIdx] = {
+        upc: editingUPC, date, oldSize, newSize, unit, pct,
+        priceBefore: oldPrice, priceAfter: newPrice, type, notes
+      };
+    }
+
+    // Update product's currentSize to the newest event's newSize
+    const productEvents = getEvents(editingUPC);
+    if (productEvents.length) {
+      const p = findProduct(editingUPC);
+      if (p) p.currentSize = productEvents[0].newSize;
+    }
+
+    closeAdminEdit();
+    renderScreen();
+    showToast('Event updated successfully', 'var(--duo-green)');
+  } catch (err) {
+    console.error('Event edit failed:', err);
+    if (btn) { btn.textContent = '❌ Error'; btn.style.pointerEvents = ''; }
+    setTimeout(() => { if (btn) btn.textContent = 'Save'; }, 2000);
+  }
+}
+
+async function deleteEvent(upc, date) {
+  if (!isAdmin) return;
+  if (!confirm(`Delete this event (${date}) permanently?`)) return;
+
+  try {
+    const { error } = await sb.from('events').delete().eq('upc', upc).eq('date', date);
+    if (error) throw error;
+
+    // Remove from local state
+    EVENTS = EVENTS.filter(e => !(e.upc === upc && e.date === date));
+
+    // Update product's currentSize
+    const productEvents = getEvents(upc);
+    const p = findProduct(upc);
+    if (p && productEvents.length) {
+      p.currentSize = productEvents[0].newSize;
+    }
+
+    closeAdminEdit();
+    renderScreen();
+    showToast('Event deleted', 'var(--duo-red)');
+  } catch (err) {
+    console.error('Event delete failed:', err);
+    alert('Failed to delete event: ' + err.message);
+  }
+}
+
+function showToast(msg, color) {
+  const toast = document.createElement('div');
+  toast.textContent = msg;
+  toast.style.cssText = `position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:${color || 'var(--duo-green)'};color:white;padding:10px 20px;border-radius:12px;font-weight:900;font-size:14px;z-index:700;font-family:Nunito,sans-serif`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
 }
 
 // ============================================================
