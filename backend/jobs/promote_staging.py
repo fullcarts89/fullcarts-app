@@ -31,6 +31,30 @@ from backend.jobs.change_detector import detect_changes_for_product
 
 log = logging.getLogger("fullcarts.promote")
 
+# Cache detected columns per table to avoid repeated queries within a run.
+_column_cache: dict[str, set | None] = {}
+
+
+def _detect_table_columns(sb, table_name: str) -> set | None:
+    """Query a table to discover which columns actually exist."""
+    if table_name in _column_cache:
+        return _column_cache[table_name]
+    try:
+        result = sb.table(table_name).select("*").limit(1).execute()
+        cols = set(result.data[0].keys()) if result.data else None
+    except Exception:
+        cols = None
+    _column_cache[table_name] = cols
+    return cols
+
+
+def _strip_cols(record: dict, table_name: str, sb) -> dict:
+    """Remove keys from a record that don't exist as columns in the DB table."""
+    known = _detect_table_columns(sb, table_name)
+    if known is None:
+        return record
+    return {k: v for k, v in record.items() if k in known or k in ("id", "created_at")}
+
 
 def promote_entry(sb, entry, dry_run=False):
     """Promote a single staging entry to products + product_versions.
@@ -77,8 +101,8 @@ def promote_entry(sb, entry, dry_run=False):
         return True
 
     try:
-        # Upsert product
-        sb.table("products").upsert({
+        # Upsert product (strip columns missing from DB, e.g. region)
+        sb.table("products").upsert(_strip_cols({
             "upc": upc,
             "name": product_name,
             "brand": brand,
@@ -89,10 +113,10 @@ def promote_entry(sb, entry, dry_run=False):
             "repeat_offender": False,
             "source": "reddit_bot",
             "region": region,
-        }, on_conflict="upc").execute()
+        }, "products", sb), on_conflict="upc").execute()
 
         # Insert "before" version
-        sb.table("product_versions").upsert({
+        sb.table("product_versions").upsert(_strip_cols({
             "product_upc": upc,
             "observed_date": date_before,
             "size": old_size,
@@ -104,10 +128,10 @@ def promote_entry(sb, entry, dry_run=False):
             "source_url": source_url,
             "notes": "Before state from r/shrinkflation post",
             "created_by": "promote_staging",
-        }, on_conflict="product_upc,observed_date,source").execute()
+        }, "product_versions", sb), on_conflict="product_upc,observed_date,source").execute()
 
         # Insert "after" version
-        sb.table("product_versions").upsert({
+        sb.table("product_versions").upsert(_strip_cols({
             "product_upc": upc,
             "observed_date": date_after,
             "size": new_size,
@@ -119,11 +143,11 @@ def promote_entry(sb, entry, dry_run=False):
             "source_url": source_url,
             "notes": "After state from r/shrinkflation post",
             "created_by": "promote_staging",
-        }, on_conflict="product_upc,observed_date,source").execute()
+        }, "product_versions", sb), on_conflict="product_upc,observed_date,source").execute()
 
         # Also upsert into legacy events table for backward compatibility
         pct = round(((old_size - new_size) / old_size) * 100, 2) if old_size > 0 else 0
-        sb.table("events").upsert({
+        sb.table("events").upsert(_strip_cols({
             "upc": upc,
             "date": date_after,
             "old_size": old_size,
@@ -135,7 +159,7 @@ def promote_entry(sb, entry, dry_run=False):
             "type": "shrinkflation",
             "notes": f"Reviewed and promoted from r/shrinkflation: {source_url}",
             "source": "reddit_bot",
-        }, on_conflict="upc,date,source").execute()
+        }, "events", sb), on_conflict="upc,date,source").execute()
 
         # Mark staging entry as promoted
         sb.table("reddit_staging").update(
