@@ -4308,13 +4308,26 @@ async function sendToEvidenceWall() {
     });
     if (ewErr) throw ewErr;
 
-    // Mark staging as promoted (evidence)
+    // Mark staging as evidence_wall (requires RPC to allow this status —
+    // see migration 009_staging_status_rpc.sql)
     const { error: rpcErr } = await sb.rpc('update_staging_status', { row_id: r.id, new_status: 'evidence_wall' });
     if (rpcErr) {
-      console.warn('RPC failed, trying direct update:', rpcErr.message);
-      await sb.from('reddit_staging').update({ status: 'evidence_wall' }).eq('id', r.id);
+      console.warn('RPC failed for evidence_wall, trying direct update:', rpcErr.message);
+      const { error: directErr } = await sb.from('reddit_staging').update({ status: 'evidence_wall' }).eq('id', r.id);
+      if (directErr) {
+        console.error('Direct update also failed:', directErr.message);
+        // Evidence wall insert succeeded but staging status didn't change.
+        // Alert user so they know to run the updated RPC migration.
+        alert('Evidence Wall item saved, but the staging record could not be marked as processed.\n\nPlease run the updated migration 009 in Supabase SQL Editor to add "evidence_wall" to the allowed statuses.');
+      }
+    }
+    // Verify status actually changed
+    const { data: ewVerify } = await sb.from('reddit_staging').select('status').eq('id', r.id).single();
+    if (ewVerify && ewVerify.status === 'pending') {
+      console.error('Evidence wall status update did not persist — record still pending');
     }
 
+    markReviewProcessed(r.id);
     reviewSessionStats.approved++;
     ewRouteOpen = false;
 
