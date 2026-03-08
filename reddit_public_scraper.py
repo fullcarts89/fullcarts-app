@@ -1026,6 +1026,42 @@ def process_posts(posts: list, known_urls: set, log, skip_vision: bool = False) 
     return entries, new_urls, stats
 
 
+def _detect_staging_columns(sb) -> set | None:
+    """Query reddit_staging to discover which columns actually exist.
+
+    Returns a set of column names, or None if detection fails.
+    """
+    try:
+        # Fetch one row (or empty result) to see the column names
+        result = sb.table("reddit_staging").select("*").limit(1).execute()
+        if result.data:
+            return set(result.data[0].keys())
+        # Empty table — try inserting nothing to get column info from schema
+        # Fall back to a known safe set
+        return None
+    except Exception:
+        return None
+
+
+def _strip_unknown_columns(entries: list, known_columns: set | None, log) -> list:
+    """Remove keys from entries that don't exist as columns in the DB.
+
+    This prevents 400 errors when migrations haven't been applied yet.
+    """
+    if known_columns is None:
+        return entries
+
+    # Never strip core fields — only strip enrichment fields that might
+    # not exist if a migration hasn't been applied
+    sample = entries[0] if entries else {}
+    unknown = set(sample.keys()) - known_columns - {"id", "created_at"}
+    if not unknown:
+        return entries
+
+    log.warning(f"  Stripping columns not in DB: {sorted(unknown)}")
+    return [{k: v for k, v in e.items() if k not in unknown} for e in entries]
+
+
 def _upsert_via_rest(entries: list, log) -> int:
     """Fallback: upsert directly via PostgREST HTTP API using requests.
 
@@ -1082,6 +1118,11 @@ def upsert_to_supabase(sb: "SupabaseClient", entries: list, log) -> int:
     """Upsert entries to reddit_staging table. Returns count upserted."""
     if not entries:
         return 0
+
+    # Detect which columns actually exist in the DB and strip any that
+    # don't. This prevents 400 errors when migrations haven't been applied.
+    known_cols = _detect_staging_columns(sb)
+    entries = _strip_unknown_columns(entries, known_cols, log)
 
     # Pre-filter: exclude entries whose source_url already has a non-pending
     # status (promoted/dismissed/rejected). This prevents any possibility of
