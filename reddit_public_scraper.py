@@ -774,8 +774,13 @@ def _time_remaining() -> float:
 
 def process_posts(posts: list, known_urls: set, log, skip_vision: bool = False) -> tuple:
     """Process a list of posts, return (entries, new_urls, stats)."""
+    global _sigterm_new_urls
+
     entries = []
     new_urls = set()
+    # Point the global at this set so the SIGTERM handler can see URLs
+    # accumulated during processing (not just after we return).
+    _sigterm_new_urls = new_urls
     stats = {"seen": 0, "skipped_dup": 0, "mod_removed": 0, "auto": 0, "review": 0, "discard": 0, "no_keyword": 0}
 
     for post in posts:
@@ -1110,7 +1115,7 @@ def _load_existing_urls_from_supabase(log) -> set:
 
 def run_recent(log):
     """Fetch recent posts via Arctic Shift API (last 7 days)."""
-    global _sigterm_known_urls, _sigterm_new_urls
+    global _sigterm_known_urls
 
     log.info("=" * 60)
     log.info("MODE: Recent posts (Arctic Shift API — last 7 days)")
@@ -1137,7 +1142,6 @@ def run_recent(log):
     log.info(f"\nTotal unique posts fetched: {len(unique_posts)}")
 
     entries, new_urls, stats = process_posts(unique_posts, known_urls, log)
-    _sigterm_new_urls = new_urls  # expose to SIGTERM handler
 
     # Save to Supabase
     if HAS_SUPABASE and SUPABASE_KEY:
@@ -1179,7 +1183,7 @@ def run_recent(log):
 
 def run_backfill(log, skip_vision: bool = False):
     """Historical backfill via Arctic Shift archive API."""
-    global _sigterm_known_urls, _sigterm_new_urls
+    global _sigterm_known_urls
 
     log.info("=" * 60)
     log.info("MODE: Historical backfill (Arctic Shift archive)")
@@ -1209,7 +1213,6 @@ def run_backfill(log, skip_vision: bool = False):
     if skip_vision:
         log.info("Vision analysis SKIPPED (--skip-vision). Use --backfill-images later to enrich.")
     entries, new_urls, stats = process_posts(all_posts, known_urls, log, skip_vision=skip_vision)
-    _sigterm_new_urls = new_urls
 
     # Save to Supabase
     if HAS_SUPABASE and SUPABASE_KEY:
