@@ -136,8 +136,10 @@ def check_product(sb, product: dict, dry_run: bool = False) -> dict | None:
         off_product = fetch_off_product(upc)
         time.sleep(0.5)  # Rate limit
 
-    # Fall back to name search
-    if not off_product and name:
+    # Fall back to name search — but only for real products with meaningful
+    # names.  REDDIT-* products have Reddit post titles as names (e.g.
+    # "Shrinkflation strikes again!") which return unrelated OFF results.
+    if not off_product and name and not upc.startswith("REDDIT-"):
         results = search_off_by_name(name, brand)
         if results:
             off_product = results[0]

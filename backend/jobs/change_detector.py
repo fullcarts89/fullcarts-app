@@ -204,9 +204,21 @@ def detect_all_changes(sb, dry_run=False):
 
     Returns (total_events_created, products_scanned).
     """
-    # Get all distinct UPCs that have product_versions
-    resp = sb.table("product_versions").select("product_upc").execute()
-    upcs = sorted({row["product_upc"] for row in (resp.data or [])})
+    # Get all distinct UPCs that have product_versions (paginated)
+    upcs_set = set()
+    offset = 0
+    batch_size = 1000
+    while True:
+        resp = (sb.table("product_versions")
+                .select("product_upc")
+                .range(offset, offset + batch_size - 1)
+                .execute())
+        rows = resp.data or []
+        upcs_set.update(row["product_upc"] for row in rows)
+        if len(rows) < batch_size:
+            break
+        offset += batch_size
+    upcs = sorted(upcs_set)
 
     log.info(f"Scanning {len(upcs)} products for changes...")
 
@@ -228,11 +240,17 @@ def detect_all_changes(sb, dry_run=False):
 
 
 def _update_repeat_offenders(sb):
-    """Mark products with 2+ shrinkflation events as repeat offenders."""
+    """Mark products with 2+ shrinkflation events as repeat offenders.
+
+    Excludes retracted and false-positive events so that corrections
+    don't inflate the repeat-offender count.
+    """
     resp = (
         sb.table("change_events")
         .select("product_upc")
         .eq("is_shrinkflation", True)
+        .neq("false_positive", True)
+        .is_("retracted_at", "null")
         .execute()
     )
 
@@ -243,13 +261,13 @@ def _update_repeat_offenders(sb):
         counts[upc] = counts.get(upc, 0) + 1
 
     for upc, count in counts.items():
-        if count > 1:
-            try:
-                sb.table("products").update(
-                    {"repeat_offender": True}
-                ).eq("upc", upc).execute()
-            except Exception:
-                pass  # non-critical
+        try:
+            # Also reset repeat_offender to False when count drops to 1
+            sb.table("products").update(
+                {"repeat_offender": count > 1}
+            ).eq("upc", upc).execute()
+        except Exception:
+            pass  # non-critical
 
 
 # ---------------------------------------------------------------------------
