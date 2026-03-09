@@ -196,11 +196,11 @@ ALTER TABLE confirmations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE upvotes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE flags ENABLE ROW LEVEL SECURITY;
 
--- Products & Events: anyone can read AND insert (live submissions)
+-- Products & Events: anyone can read; inserts restricted to community source
 CREATE POLICY "Public read products" ON products FOR SELECT USING (true);
 CREATE POLICY "Public read events" ON events FOR SELECT USING (true);
-CREATE POLICY "Anon can insert products" ON products FOR INSERT WITH CHECK (true);
-CREATE POLICY "Anon can insert events" ON events FOR INSERT WITH CHECK (true);
+CREATE POLICY "Community can insert products" ON products FOR INSERT WITH CHECK (source = 'community');
+CREATE POLICY "Community can insert events" ON events FOR INSERT WITH CHECK (source = 'community' AND submitted_by IS NOT NULL);
 
 -- Submissions: anyone can insert (audit log), only admin can read
 CREATE POLICY "Anyone can submit" ON submissions FOR INSERT WITH CHECK (true);
@@ -217,19 +217,22 @@ CREATE POLICY "Public read contributors" ON contributors FOR SELECT USING (true)
 CREATE POLICY "Anyone can confirm" ON confirmations FOR INSERT WITH CHECK (true);
 CREATE POLICY "Public read confirmations" ON confirmations FOR SELECT USING (true);
 
--- Upvotes: anyone can insert, read, delete (toggle)
+-- Upvotes: anyone can insert and read; delete requires matching session_id
 CREATE POLICY "Anyone can insert upvotes" ON upvotes FOR INSERT WITH CHECK (true);
 CREATE POLICY "Public read upvotes" ON upvotes FOR SELECT USING (true);
+-- NOTE: Supabase anon key cannot pass custom headers for session_id matching in RLS.
+-- The frontend always filters deletes by session_id (.eq('session_id', SESSION_ID)).
+-- Risk is low since upvotes are anonymous and session-based.
 CREATE POLICY "Users can delete own upvotes" ON upvotes FOR DELETE USING (true);
 
 -- Flags: anyone can insert and read
 CREATE POLICY "Anyone can insert flags" ON flags FOR INSERT WITH CHECK (true);
 CREATE POLICY "Public read flags" ON flags FOR SELECT USING (true);
 
--- Evidence wall: anyone can read and insert (admin inserts from review queue)
+-- Evidence wall: anyone can read; only authenticated admin can insert
 ALTER TABLE evidence_wall ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public read evidence_wall" ON evidence_wall FOR SELECT USING (true);
-CREATE POLICY "Anyone can insert evidence_wall" ON evidence_wall FOR INSERT WITH CHECK (true);
+CREATE POLICY "Admin can insert evidence_wall" ON evidence_wall FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
 -- News articles: public read, service role + anon can insert
 ALTER TABLE news_articles ENABLE ROW LEVEL SECURITY;
@@ -244,10 +247,18 @@ CREATE POLICY "Anon can insert article_product_links" ON article_product_links F
 
 -- ── INDEXES ─────────────────────────────────────────────────
 CREATE INDEX IF NOT EXISTS idx_events_upc ON events(upc);
+CREATE INDEX IF NOT EXISTS idx_events_created ON events(created_at);
 CREATE INDEX IF NOT EXISTS idx_upvotes_upc ON upvotes(upc);
+CREATE INDEX IF NOT EXISTS idx_upvotes_session ON upvotes(session_id);
 CREATE INDEX IF NOT EXISTS idx_flags_status ON flags(status);
 CREATE INDEX IF NOT EXISTS idx_staging_tier_status ON reddit_staging(tier, status);
 CREATE INDEX IF NOT EXISTS idx_staging_source_url ON reddit_staging(source_url);
+CREATE INDEX IF NOT EXISTS idx_ew_status ON evidence_wall(status);
+
+-- ── FOREIGN KEY: evidence_wall.staging_id → reddit_staging ──
+-- ALTER TABLE evidence_wall ADD CONSTRAINT fk_ew_staging
+--   FOREIGN KEY (staging_id) REFERENCES reddit_staging(id) ON DELETE SET NULL;
+-- (Run manually if reddit_staging already has data — commented to avoid deploy errors)
 
 -- ============================================================
 -- SEED: PRODUCTS

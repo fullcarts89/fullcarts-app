@@ -266,8 +266,8 @@ def _update_repeat_offenders(sb):
             sb.table("products").update(
                 {"repeat_offender": count > 1}
             ).eq("upc", upc).execute()
-        except Exception:
-            pass  # non-critical
+        except Exception as exc:
+            log.warning(f"  Failed to update repeat_offender for {upc}: {exc}")
 
 
 # ---------------------------------------------------------------------------

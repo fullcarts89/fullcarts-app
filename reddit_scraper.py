@@ -259,12 +259,119 @@ def load_staging(path: Path) -> dict:
         try:
             return json.loads(path.read_text())
         except json.JSONDecodeError:
-            pass
+            log = logging.getLogger("fullcarts")
+            log.warning(f"Corrupt staging file at {path} — backing up and starting fresh")
+            backup = path.with_suffix('.json.corrupt')
+            path.rename(backup)
     return {"auto": [], "review": [], "meta": {"last_run": None, "total_processed": 0}}
 
 
 def save_staging(path: Path, queue: dict) -> None:
     path.write_text(json.dumps(queue, indent=2, ensure_ascii=False))
+
+
+# ---------------------------------------------------------------------------
+# Moderator removal detection
+# ---------------------------------------------------------------------------
+
+MOD_REMOVAL_KEYWORDS = re.compile(
+    r"\b(removed|deleted|doesn't belong|not shrinkflation|off[- ]topic|rule \d|"
+    r"violat|spam|repost|duplicate|wrong sub|not relevant|this post has been)\b",
+    re.IGNORECASE,
+)
+
+
+def is_mod_removed(post) -> bool:
+    """Check if a Reddit post was removed by moderators.
+
+    Checks:
+    1. post.removed_by_category == 'moderator'
+    2. post.selftext == '[removed]' or '[deleted]'
+    3. First comment is from a moderator/AutoModerator with removal language
+    """
+    # Check PRAW removal attributes
+    removed_by = getattr(post, "removed_by_category", None)
+    if removed_by in ("moderator", "automod_filtered"):
+        return True
+
+    selftext = getattr(post, "selftext", "") or ""
+    if selftext.strip() in ("[removed]", "[deleted]"):
+        return True
+
+    # Check first comment for mod removal notice
+    try:
+        post.comment_sort = "old"
+        post.comments.replace_more(limit=0)
+        if post.comments:
+            first = post.comments[0]
+            is_mod = (
+                getattr(first, "distinguished", None) == "moderator"
+                or (
+                    getattr(first, "author", None) is not None
+                    and str(first.author).lower() in ("automoderator", "automod")
+                )
+            )
+            if is_mod and MOD_REMOVAL_KEYWORDS.search(first.body or ""):
+                return True
+    except Exception:
+        pass  # Comment fetch may fail for deleted posts
+
+    return False
+
+
+def check_mod_removals(reddit, sb, log) -> int:
+    """Re-check existing staging entries for moderator-removed posts.
+
+    Fetches all pending/review entries from reddit_staging and checks
+    if the original Reddit post has been removed by moderators.
+    Returns the count of dismissed entries.
+    """
+    result = sb.table("reddit_staging").select("id, source_url").eq(
+        "status", "pending"
+    ).execute()
+    entries = result.data or []
+    dismissed = 0
+
+    for entry in entries:
+        source_url = entry.get("source_url", "")
+        if not source_url:
+            continue
+
+        # Extract Reddit post ID from URL
+        # Format: https://reddit.com/r/subreddit/comments/POST_ID/...
+        parts = source_url.rstrip("/").split("/")
+        try:
+            comments_idx = parts.index("comments")
+            post_id = parts[comments_idx + 1]
+        except (ValueError, IndexError):
+            continue
+
+        try:
+            post = reddit.submission(id=post_id)
+            # Access an attribute to trigger the fetch
+            _ = post.title
+
+            if is_mod_removed(post):
+                sb.table("reddit_staging").update(
+                    {"status": "dismissed"}
+                ).eq("id", entry["id"]).execute()
+                dismissed += 1
+                log.info(f"  Dismissed (mod-removed): {source_url[:80]}")
+
+        except Exception as exc:
+            # Post may be deleted entirely — dismiss it
+            if "404" in str(exc) or "Not Found" in str(exc):
+                sb.table("reddit_staging").update(
+                    {"status": "dismissed"}
+                ).eq("id", entry["id"]).execute()
+                dismissed += 1
+                log.info(f"  Dismissed (deleted): {source_url[:80]}")
+            else:
+                log.warning(f"  Mod-check failed for {entry['id']}: {exc}")
+
+        time.sleep(0.5)  # Rate limit
+
+    return dismissed
 
 
 # ---------------------------------------------------------------------------
@@ -274,7 +381,7 @@ def save_staging(path: Path, queue: dict) -> None:
 _IMAGE_DOMAINS = {"i.redd.it", "i.imgur.com", "imgur.com", "preview.redd.it"}
 
 
-def _extract_image_url_praw(post) -> str | None:
+def _extract_image_url_praw(post) -> Optional[str]:
     """Return a direct image URL from a PRAW post object, or None.
 
     Handles direct image links, gallery posts (media_metadata), and
@@ -447,6 +554,13 @@ def run_scraper(dry_run: bool = False) -> None:
                 stats["skipped_dup"] += 1
                 continue
 
+            # Skip posts removed by moderators
+            if is_mod_removed(post):
+                stats.setdefault("mod_removed", 0)
+                stats["mod_removed"] += 1
+                new_urls.add(url)
+                continue
+
             # Combine title + selftext for NLP
             full_text = f"{post.title}\n{post.selftext or ''}"
 
@@ -529,6 +643,11 @@ def run_scraper(dry_run: bool = False) -> None:
                 # Auto-promote high-confidence entries to products + events
                 promoted = promote_auto_entries(sb, log)
                 log.info(f"Auto-promoted {promoted} entries to products + events")
+
+                # Check existing staging entries for mod-removed posts
+                log.info("Checking existing staging entries for mod-removed posts...")
+                mod_dismissed = check_mod_removals(reddit, sb, log)
+                log.info(f"Mod-removal check: dismissed {mod_dismissed} entries")
             except Exception as exc:
                 log.warning(f"Supabase write failed (JSON fallback still saved): {exc}")
         elif not SUPABASE_KEY:
@@ -539,6 +658,8 @@ def run_scraper(dry_run: bool = False) -> None:
     log.info(f"Run complete — seen:{stats['seen']}  dupes:{stats['skipped_dup']}  "
              f"no-keyword:{stats['no_keyword']}")
     log.info(f"  auto:{stats['auto']}  review:{stats['review']}  discard:{stats['discard']}")
+    if stats.get("mod_removed"):
+        log.info(f"  mod-removed (skipped): {stats['mod_removed']}")
     if stats.get("vision_analyzed"):
         log.info(f"  vision analyzed: {stats['vision_analyzed']} images")
     log.info(f"Staging queue → {STAGING_FILE}")

@@ -37,6 +37,7 @@ import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Optional, List, Tuple
 
 import requests
 
@@ -644,7 +645,7 @@ def fetch_recent_reddit_json(log, days: int = 7, subreddits: list = None) -> lis
 _IMAGE_DOMAINS = {"i.redd.it", "i.imgur.com", "imgur.com", "preview.redd.it"}
 
 
-def _extract_image_url_from_reddit_json(permalink: str) -> str | None:
+def _extract_image_url_from_reddit_json(permalink: str) -> Optional[str]:
     """Fetch image URL directly from Reddit's public JSON API.
 
     Used as a fallback when Arctic Shift doesn't include media_metadata
@@ -691,7 +692,7 @@ def _extract_image_url_from_reddit_json(permalink: str) -> str | None:
     return None
 
 
-def _extract_image_url(post: dict, skip_reddit_fallback: bool = False) -> str | None:
+def _extract_image_url(post: dict, skip_reddit_fallback: bool = False) -> Optional[str]:
     """Return a direct image URL from an Arctic Shift post dict, or None.
 
     Handles direct image links, gallery posts (media_metadata),
@@ -883,6 +884,72 @@ def _is_mod_removed_not_shrinkflation(post: dict) -> bool:
             return True
 
     return False
+
+
+def check_mod_removals(sb, log) -> int:
+    """Re-check existing pending staging entries for moderator-removed posts.
+
+    Uses Reddit's public JSON API to check if posts have been removed.
+    Returns the count of dismissed entries.
+    """
+    result = sb.table("reddit_staging").select("id, source_url").eq(
+        "status", "pending"
+    ).execute()
+    entries = result.data or []
+    dismissed = 0
+
+    for entry in entries:
+        source_url = entry.get("source_url", "")
+        if not source_url or "reddit.com" not in source_url:
+            continue
+
+        # Extract permalink from URL
+        permalink = source_url
+        if "reddit.com" in source_url:
+            parts = source_url.split("reddit.com", 1)
+            if len(parts) == 2:
+                permalink = parts[1]
+
+        try:
+            json_url = f"https://www.reddit.com{permalink}.json" if permalink.startswith("/") else f"{permalink}.json"
+            resp = requests.get(json_url, headers={"User-Agent": USER_AGENT}, timeout=10)
+
+            if resp.status_code == 404:
+                # Post deleted entirely
+                sb.table("reddit_staging").update(
+                    {"status": "dismissed"}
+                ).eq("id", entry["id"]).execute()
+                dismissed += 1
+                log.info(f"  Dismissed (deleted): {source_url[:80]}")
+                continue
+
+            if resp.status_code == 429:
+                log.info("  Rate limited, pausing...")
+                time.sleep(5)
+                continue
+
+            if resp.status_code != 200:
+                continue
+
+            data = resp.json()
+            post = data[0]["data"]["children"][0]["data"]
+
+            # Check if removed
+            selftext = post.get("selftext", "")
+            removed_by = post.get("removed_by_category", "")
+            if selftext == "[removed]" or removed_by in ("moderator", "automod"):
+                sb.table("reddit_staging").update(
+                    {"status": "dismissed"}
+                ).eq("id", entry["id"]).execute()
+                dismissed += 1
+                log.info(f"  Dismissed (mod-removed): {source_url[:80]}")
+
+        except Exception as exc:
+            log.warning(f"  Mod-check failed for {entry['id']}: {exc}")
+
+        time.sleep(1)  # Rate limit
+
+    return dismissed
 
 
 # ---------------------------------------------------------------------------
@@ -1426,6 +1493,11 @@ def run_recent(log):
         log.info(f"  Auto-promoted: {triage['promoted']}  "
                  f"Auto-dismissed: {triage['dismissed']}  "
                  f"Remaining for review: {triage['remaining']}")
+
+        # Re-check existing pending entries for mod-removed posts
+        log.info("Checking existing staging entries for mod-removed posts...")
+        mod_dismissed = check_mod_removals(sb, log)
+        log.info(f"Mod-removal check: dismissed {mod_dismissed} entries")
     else:
         # Save locally
         local_file = OUTPUT_DIR / "public_staging.json"
@@ -1497,6 +1569,11 @@ def run_backfill(log, skip_vision: bool = False):
         log.info(f"  Auto-promoted: {triage['promoted']}  "
                  f"Auto-dismissed: {triage['dismissed']}  "
                  f"Remaining for review: {triage['remaining']}")
+
+        # Re-check existing pending entries for mod-removed posts
+        log.info("Checking existing staging entries for mod-removed posts...")
+        mod_dismissed = check_mod_removals(sb, log)
+        log.info(f"Mod-removal check: dismissed {mod_dismissed} entries")
     else:
         local_file = OUTPUT_DIR / "backfill_staging.json"
         existing = json.loads(local_file.read_text()) if local_file.exists() else []

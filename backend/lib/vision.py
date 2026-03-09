@@ -13,6 +13,7 @@ import logging
 import os
 import re
 from io import BytesIO
+from typing import Optional, Tuple
 
 import requests
 
@@ -82,7 +83,7 @@ Rules:
 # Image download
 # ---------------------------------------------------------------------------
 
-def _download_image(url: str) -> tuple[bytes, str] | None:
+def _download_image(url: str) -> Optional[Tuple[bytes, str]]:
     """Download an image, return (bytes, media_type) or None on failure."""
     try:
         resp = requests.get(url, timeout=IMAGE_TIMEOUT, headers={
@@ -122,7 +123,7 @@ def _download_image(url: str) -> tuple[bytes, str] | None:
 # Claude Vision API call
 # ---------------------------------------------------------------------------
 
-def _call_claude_vision(image_data: bytes, media_type: str, title: str) -> dict | None:
+def _call_claude_vision(image_data: bytes, media_type: str, title: str) -> Optional[dict]:
     """Send image to Claude vision API, return parsed JSON response or None."""
     if not ANTHROPIC_API_KEY:
         return None
@@ -196,7 +197,7 @@ def _call_claude_vision(image_data: bytes, media_type: str, title: str) -> dict 
 # Public interface
 # ---------------------------------------------------------------------------
 
-def analyze_image(image_url: str, title: str = "") -> dict | None:
+def analyze_image(image_url: str, title: str = "") -> Optional[dict]:
     """Analyze a product image and return extracted data.
 
     Returns a dict with keys: brand, product, old_size, new_size, unit,
@@ -218,7 +219,7 @@ def analyze_image(image_url: str, title: str = "") -> dict | None:
     return _call_claude_vision(image_data, media_type, title)
 
 
-def should_analyze(parsed: dict, image_url: str | None) -> bool:
+def should_analyze(parsed: dict, image_url: Optional[str]) -> bool:
     """Decide whether vision analysis is warranted for this post.
 
     Returns True when:

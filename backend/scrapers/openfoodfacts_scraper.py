@@ -26,6 +26,7 @@ import time
 import logging
 import argparse
 from datetime import datetime, timezone
+from typing import Optional, List, Tuple
 
 import requests
 
@@ -54,7 +55,7 @@ UNIT_CONVERSIONS = {
 }
 
 
-def normalize_off_weight(quantity_str: str) -> tuple[float | None, str | None]:
+def normalize_off_weight(quantity_str: str) -> Tuple[Optional[float], Optional[str]]:
     """Extract numeric weight and unit from an OFF quantity string."""
     if not quantity_str:
         return None, None
@@ -79,7 +80,7 @@ def normalize_off_weight(quantity_str: str) -> tuple[float | None, str | None]:
     return value, unit
 
 
-def fetch_off_product(barcode: str) -> dict | None:
+def fetch_off_product(barcode: str) -> Optional[dict]:
     """Fetch a product from Open Food Facts by barcode."""
     url = OFF_API.format(barcode=barcode)
     headers = {"User-Agent": USER_AGENT}
@@ -96,7 +97,7 @@ def fetch_off_product(barcode: str) -> dict | None:
         return None
 
 
-def search_off_by_name(name: str, brand: str | None = None) -> list[dict]:
+def search_off_by_name(name: str, brand: Optional[str] = None) -> List[dict]:
     """Search Open Food Facts by product name."""
     query = f"{brand} {name}" if brand else name
     params = {
@@ -119,7 +120,7 @@ def search_off_by_name(name: str, brand: str | None = None) -> list[dict]:
         return []
 
 
-def check_product(sb, product: dict, dry_run: bool = False) -> dict | None:
+def check_product(sb, product: dict, dry_run: bool = False) -> Optional[dict]:
     """Check a single product against Open Food Facts.
 
     Returns a dict with discrepancy details if found, else None.
@@ -224,7 +225,7 @@ def check_product(sb, product: dict, dry_run: bool = False) -> dict | None:
         return None
 
 
-def write_step_summary(discrepancy_list: list[dict], total_checked: int, dry_run: bool):
+def write_step_summary(discrepancy_list: List[dict], total_checked: int, dry_run: bool):
     """Write a GitHub Actions Step Summary with discrepancy details."""
     summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
     if not summary_path:
@@ -251,7 +252,7 @@ def write_step_summary(discrepancy_list: list[dict], total_checked: int, dry_run
         f.write("\n".join(lines) + "\n")
 
 
-def run(upc: str | None = None, dry_run: bool = False):
+def run(upc: Optional[str] = None, dry_run: bool = False):
     """Check all products (or a specific one) against Open Food Facts."""
     sb = get_client()
 

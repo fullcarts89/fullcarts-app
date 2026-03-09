@@ -24,6 +24,7 @@ import hashlib
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from html import unescape
+from typing import Optional, List
 from urllib.parse import quote_plus
 
 import requests
@@ -49,7 +50,7 @@ DEFAULT_QUERIES = [
 GOOGLE_NEWS_RSS = "https://news.google.com/rss/search?q={query}&hl=en-US&gl=US&ceid=US:en"
 
 
-def fetch_rss(query: str) -> list[dict]:
+def fetch_rss(query: str) -> List[dict]:
     """Fetch and parse a Google News RSS feed for the given query."""
     url = GOOGLE_NEWS_RSS.format(query=quote_plus(query))
     headers = {"User-Agent": USER_AGENT}
@@ -92,7 +93,7 @@ def fetch_rss(query: str) -> list[dict]:
     return items
 
 
-def parse_pubdate(pubdate_str: str) -> str | None:
+def parse_pubdate(pubdate_str: str) -> Optional[str]:
     """Parse RSS pubDate to ISO format."""
     if not pubdate_str:
         return None
@@ -148,7 +149,7 @@ def build_staging_entry(article: dict, parsed: dict, tier: str) -> dict:
     }
 
 
-def write_step_summary(entries: list[dict], stats: dict, dry_run: bool):
+def write_step_summary(entries: List[dict], stats: dict, dry_run: bool):
     """Write a GitHub Actions Step Summary with a table of staged entries."""
     summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
     if not summary_path:
@@ -181,7 +182,7 @@ def write_step_summary(entries: list[dict], stats: dict, dry_run: bool):
         f.write("\n".join(lines) + "\n")
 
 
-def run(queries: list[str] | None = None, dry_run: bool = False):
+def run(queries: Optional[List[str]] = None, dry_run: bool = False):
     """Scrape Google News RSS for shrinkflation articles."""
     queries = queries or DEFAULT_QUERIES
     sb = None if dry_run else get_client()

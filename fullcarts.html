@@ -6,8 +6,8 @@
   <title>FullCarts — Shrinkflation Scanner</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" integrity="sha384-c9d8RFSL+u3exBOJ4Yp3HUJXS4znl9f+z66d1y54ig+ea249SpqR+w1wyvXz/lk+" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.98.0/dist/umd/supabase.min.js" integrity="sha384-Sm2s7OXxsAMTyJ4iIyRBgVpeGUvMPk2lRQnnZhE78Wej7oggIoolKt+SCt0XJbUB" crossorigin="anonymous"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
@@ -1152,16 +1152,6 @@
       margin-top: 12px; padding-top: 10px;
       border-top: 1.5px solid var(--card-border);
     }
-    .upvote-btn {
-      display: flex; align-items: center; gap: 5px;
-      background: rgba(255,70,0,0.1); border: 1.5px solid rgba(255,70,0,0.3);
-      border-radius: 20px; padding: 5px 12px;
-      font-size: 13px; font-weight: 900; color: #FF4500;
-      cursor: pointer; font-family: 'Nunito', sans-serif;
-      transition: background 0.15s;
-    }
-    .upvote-btn:active { background: rgba(255,70,0,0.25); }
-    .upvote-btn.voted { background: rgba(255,70,0,0.2); border-color: #FF4500; }
     .meme-award { font-size: 18px; cursor: pointer; }
     .celebrate-actions {
       display: flex; flex-direction: column; gap: 10px;
@@ -1872,7 +1862,7 @@
           <path d="M17 17l2.5 2.5 2.5-1.5 2 2" stroke="#0d1a1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </a>
-      <h1 onclick="handleLogoTap()">FullCarts</h1>
+      <h1>FullCarts</h1>
     </div>
     <div class="header-stats">
       <div class="header-stat"><span style="color:var(--duo-green)">📊</span> <span id="products-count">0</span></div>
@@ -2185,36 +2175,50 @@ let personalStats = JSON.parse(localStorage.getItem('fc_stats') || '{"submission
 if (!personalStats.firstUse) { personalStats.firstUse = new Date().toISOString(); }
 function saveStats() { localStorage.setItem('fc_stats', JSON.stringify(personalStats)); }
 
-// ── Admin mode ───────────────────────────────────────────
-let isAdmin = localStorage.getItem('fc_admin') === 'true';
-const ADMIN_SECRET = 'fc-shrink-admin-2026';
-const _urlParams = new URLSearchParams(window.location.search);
-const _hash = window.location.hash;
-if (_hash === '#admin-' + ADMIN_SECRET || _urlParams.get('admin') === '1') { isAdmin = true; localStorage.setItem('fc_admin', 'true'); }
-if (_hash === '#noadmin' || _urlParams.get('admin') === '0') { isAdmin = false; localStorage.removeItem('fc_admin'); }
-window.addEventListener('hashchange', () => {
-  if (window.location.hash === '#admin-' + ADMIN_SECRET) { isAdmin = true; localStorage.setItem('fc_admin', 'true'); }
-  if (window.location.hash === '#noadmin') { isAdmin = false; localStorage.removeItem('fc_admin'); }
+// ── Admin mode (Supabase Auth) ───────────────────────────
+let isAdmin = false;
+
+async function checkAdminSession() {
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    isAdmin = !!session;
+  } catch { isAdmin = false; }
+  const ab = document.getElementById('admin-badge');
+  if (ab) ab.style.display = isAdmin ? 'inline' : 'none';
+}
+
+// Listen for auth state changes (login/logout)
+sb.auth.onAuthStateChange((_event, session) => {
+  isAdmin = !!session;
   const ab = document.getElementById('admin-badge');
   if (ab) ab.style.display = isAdmin ? 'inline' : 'none';
   renderScreen();
 });
-let adminTapCount = 0;
-let adminTapTimer = null;
-function handleLogoTap() {
-  adminTapCount++;
-  clearTimeout(adminTapTimer);
-  adminTapTimer = setTimeout(() => { adminTapCount = 0; }, 2000);
-  if (adminTapCount >= 5) {
-    isAdmin = !isAdmin;
-    if (isAdmin) localStorage.setItem('fc_admin', 'true');
-    else localStorage.removeItem('fc_admin');
-    adminTapCount = 0;
-    const ab = document.getElementById('admin-badge');
-    if (ab) ab.style.display = isAdmin ? 'inline' : 'none';
-    renderScreen();
-  }
+
+// Admin login via hash: #admin-login triggers Supabase magic link prompt
+// Admin logout via hash: #noadmin signs out
+const _hash = window.location.hash;
+if (_hash === '#noadmin') { sb.auth.signOut(); }
+if (_hash === '#admin-login') {
+  const email = prompt('Enter admin email for magic link:');
+  if (email) sb.auth.signInWithOtp({ email }).then(({ error }) => {
+    if (error) alert('Login failed: ' + error.message);
+    else alert('Check your email for a login link.');
+  });
 }
+window.addEventListener('hashchange', () => {
+  if (window.location.hash === '#noadmin') { sb.auth.signOut(); }
+  if (window.location.hash === '#admin-login') {
+    const email = prompt('Enter admin email for magic link:');
+    if (email) sb.auth.signInWithOtp({ email }).then(({ error }) => {
+      if (error) alert('Login failed: ' + error.message);
+      else alert('Check your email for a login link.');
+    });
+  }
+});
+
+// Initialize admin state
+checkAdminSession();
 
 // ============================================================
 // STATE
@@ -3617,8 +3621,8 @@ function showParseResult(p) {
     </div>
     ${fields.map(f => `
       <div class="parse-field">
-        <span class="field-label">${f.label}</span>
-        <span class="field-val">${f.val}</span>
+        <span class="field-label">${escapeHTML(f.label)}</span>
+        <span class="field-val">${escapeHTML(String(f.val))}</span>
         ${confBadge(f.conf)}
       </div>`).join('')}
     <button class="autofill-btn" onclick="applyAutofill()">Apply to Form ↓</button>
@@ -3722,10 +3726,11 @@ async function submitReport() {
     // 3. Audit log (fire and forget)
     sb.from('submissions').insert({
       name, brand: brand || null, old_size: oldSizeRaw || null, new_size: newSizeRaw || null,
-      price_before: priceBefore || null, price_after: priceAfter || null, type: type || null
-    }).then(() => {});
+      price_before: priceBefore || null, price_after: priceAfter || null, type: type || null,
+      status: 'pending'
+    });
 
-    // 4. Push to local arrays for immediate render
+    // 2. Push to local arrays for optimistic render
     PRODUCTS.push({
       name, brand, upc, category, currentSize: newSize || 0, unit,
       type: type || 'shrinkflation', repeatOffender: false, companyResponse: null, fightingBack: false
@@ -3741,10 +3746,11 @@ async function submitReport() {
     }
     CATEGORIES = ["All", ...new Set(PRODUCTS.map(p => p.category))];
 
-    // 5. Update personal stats
+    // 3. Update personal stats
     personalStats.submissions++;
     saveStats();
 
+    showToast('Submitted for review! An admin will verify your report.', 'success');
     lastParsed = null;
     showCelebration = true;
     renderScreen();
@@ -4187,7 +4193,7 @@ function renderReviewCard() {
       </div>
       <div class="review-card-name">${escapeHTML(r.title || 'No title')}</div>
       ${r.body ? `<div style="font-size:13px;color:var(--wolf);margin:6px 0 10px;padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:8px;max-height:120px;overflow-y:auto;line-height:1.4;white-space:pre-wrap">${escapeHTML(r.body.slice(0, 500))}</div>` : ''}
-      ${r.image_url ? `<div style="margin:8px 0;text-align:center"><img src="${escapeHTML(r.image_url)}" alt="Reddit post image" style="max-width:100%;max-height:300px;border-radius:8px;object-fit:contain" onerror="this.parentElement.style.display='none'"></div>` : (r.source_url ? `<div id="review-img-placeholder" style="margin:8px 0;text-align:center;padding:16px;background:rgba(255,255,255,0.03);border:2px dashed var(--card-border);border-radius:8px"><div style="font-size:12px;color:var(--wolf);margin-bottom:8px">📷 No image scraped — check the Reddit post</div><a href="${escapeHTML(r.source_url.startsWith('http') ? r.source_url : 'https://www.reddit.com' + r.source_url)}" target="_blank" rel="noopener" style="display:inline-block;padding:6px 14px;background:rgba(206,130,255,0.1);border:1.5px solid rgba(206,130,255,0.2);border-radius:8px;font-size:12px;font-weight:800;color:var(--duo-purple);text-decoration:none;font-family:'Nunito',sans-serif">Open Reddit Post ↗</a></div>` : '')}
+      ${sanitizeImageUrl(r.image_url) ? `<div style="margin:8px 0;text-align:center"><img src="${sanitizeImageUrl(r.image_url)}" alt="Reddit post image" style="max-width:100%;max-height:300px;border-radius:8px;object-fit:contain" onerror="this.parentElement.style.display='none'"></div>` : (r.source_url ? `<div id="review-img-placeholder" style="margin:8px 0;text-align:center;padding:16px;background:rgba(255,255,255,0.03);border:2px dashed var(--card-border);border-radius:8px"><div style="font-size:12px;color:var(--wolf);margin-bottom:8px">📷 No image scraped — check the Reddit post</div><a href="${escapeHTML(r.source_url.startsWith('http') ? r.source_url : 'https://www.reddit.com' + r.source_url)}" target="_blank" rel="noopener" style="display:inline-block;padding:6px 14px;background:rgba(206,130,255,0.1);border:1.5px solid rgba(206,130,255,0.2);border-radius:8px;font-size:12px;font-weight:800;color:var(--duo-purple);text-decoration:none;font-family:'Nunito',sans-serif">Open Reddit Post ↗</a></div>` : '')}
       ${r.ai_description ? `<div style="font-size:13px;color:var(--hare);margin:6px 0 10px;padding:8px 10px;background:rgba(88,204,2,0.06);border:1px solid rgba(88,204,2,0.15);border-radius:8px;line-height:1.4"><span style="font-weight:700;color:var(--duo-green)">🤖 AI:</span> ${escapeHTML(r.ai_description)}${r.visual_only ? ' <span style="font-weight:700;color:var(--duo-purple)">(visual evidence only)</span>' : ''}</div>` : ''}
 
       ${oldS && newS ? `
@@ -4216,7 +4222,7 @@ function renderReviewCard() {
       <div class="review-meta">
         <span>📊 Score: ${r.score || 0}</span>
         ${dateNoticed ? `<span>📅 ${dateNoticed}</span>` : ''}
-        ${r.source_url ? `<a href="${r.source_url}" target="_blank" rel="noopener">${(r.source_type === 'news' || r.subreddit === 'google_news') ? 'View Article' : 'View Reddit post'} →</a>` : ''}
+        ${r.source_url ? `<a href="${escapeHTML(r.source_url)}" target="_blank" rel="noopener">${(r.source_type === 'news' || r.subreddit === 'google_news') ? 'View Article' : 'View Reddit post'} →</a>` : ''}
       </div>
 
       <div class="review-edit-fields" style="margin-top:8px">
@@ -4293,7 +4299,18 @@ function renderReviewCard() {
 
 function escapeHTML(str) {
   if (!str) return '';
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+const ALLOWED_IMAGE_DOMAINS = ['i.redd.it', 'i.imgur.com', 'preview.redd.it', 'external-preview.redd.it', 'imgur.com'];
+function sanitizeImageUrl(url) {
+  if (!url) return '';
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== 'https:') return '';
+    if (!ALLOWED_IMAGE_DOMAINS.some(d => parsed.hostname === d || parsed.hostname.endsWith('.' + d))) return '';
+    return escapeHTML(url);
+  } catch { return ''; }
 }
 
 // toggleReviewEdit removed — edit fields are always visible now
@@ -4358,6 +4375,7 @@ function getEditedFields(r) {
 }
 
 async function approveReviewItem() {
+  if (!isAdmin) { showToast('Admin access required', 'error'); return; }
   const r = reviewQueue[reviewIndex];
   const btn = document.querySelector('.review-btn-approve');
   if (btn) { btn.textContent = '⏳...'; btn.style.pointerEvents = 'none'; }
@@ -4521,12 +4539,14 @@ async function approveReviewItem() {
     }, 250);
 
   } catch (err) {
+    showToast('Approve failed: ' + (err.message || err), 'error');
     if (btn) { btn.textContent = '❌ Error'; btn.style.pointerEvents = ''; }
     setTimeout(() => { if (btn) btn.textContent = '✅ Approve'; }, 2000);
   }
 }
 
 async function skipReviewItem() {
+  if (!isAdmin) { showToast('Admin access required', 'error'); return; }
   const r = reviewQueue[reviewIndex];
 
   const { error: rpcErr } = await sb.rpc('update_staging_status', { row_id: r.id, new_status: 'dismissed' });
@@ -4562,6 +4582,7 @@ async function skipReviewItem() {
 }
 
 async function rejectReviewItem() {
+  if (!isAdmin) { showToast('Admin access required', 'error'); return; }
   const r = reviewQueue[reviewIndex];
   const btn = document.querySelector('.review-btn-reject');
   if (btn) { btn.textContent = '⏳...'; btn.style.pointerEvents = 'none'; }
@@ -4707,15 +4728,21 @@ function pickEwSeverity(val) {
 }
 
 async function sendToEvidenceWall() {
+  if (!isAdmin) { showToast('Admin access required', 'error'); return; }
   const r = reviewQueue[reviewIndex];
   if (!r) return;
 
-  // Get image URL: from staging record or manual input
+  // Get image URL: from staging record or manual input (sanitized)
   const manualImg = (document.getElementById('ew-manual-image')?.value || '').trim();
-  const imageUrl = r.image_url || manualImg;
+  const rawImageUrl = r.image_url || manualImg;
+  const imageUrl = sanitizeImageUrl(rawImageUrl);
 
   if (!imageUrl) {
-    alert('Paste an image URL first. Right-click the photo on Reddit → Copy image address.');
+    if (rawImageUrl) {
+      alert('Image URL is not from an allowed domain (i.redd.it, imgur.com, etc). Please use a direct Reddit/Imgur image link.');
+    } else {
+      alert('Paste an image URL first. Right-click the photo on Reddit → Copy image address.');
+    }
     document.getElementById('ew-manual-image')?.focus();
     return;
   }
@@ -4743,23 +4770,15 @@ async function sendToEvidenceWall() {
     });
     if (ewErr) throw ewErr;
 
-    // Mark staging as evidence_wall (requires RPC to allow this status —
-    // see migration 009_staging_status_rpc.sql)
-    const { error: rpcErr } = await sb.rpc('update_staging_status', { row_id: r.id, new_status: 'evidence_wall' });
+    // Mark staging as promoted (the staging_id link on evidence_wall tracks the origin)
+    const { error: rpcErr } = await sb.rpc('update_staging_status', { row_id: r.id, new_status: 'promoted' });
     if (rpcErr) {
-      console.warn('RPC failed for evidence_wall, trying direct update:', rpcErr.message);
-      const { error: directErr } = await sb.from('reddit_staging').update({ status: 'evidence_wall' }).eq('id', r.id);
+      console.warn('RPC failed for promoted status, trying direct update:', rpcErr.message);
+      const { error: directErr } = await sb.from('reddit_staging').update({ status: 'promoted' }).eq('id', r.id);
       if (directErr) {
         console.error('Direct update also failed:', directErr.message);
-        // Evidence wall insert succeeded but staging status didn't change.
-        // Alert user so they know to run the updated RPC migration.
-        alert('Evidence Wall item saved, but the staging record could not be marked as processed.\n\nPlease run the updated migration 009 in Supabase SQL Editor to add "evidence_wall" to the allowed statuses.');
+        showToast('Warning: staging status update failed', 'error');
       }
-    }
-    // Verify status actually changed
-    const { data: ewVerify } = await sb.from('reddit_staging').select('status').eq('id', r.id).single();
-    if (ewVerify && ewVerify.status === 'pending') {
-      console.error('Evidence wall status update did not persist — record still pending');
     }
 
     markReviewProcessed(r.id);
@@ -4815,7 +4834,7 @@ function renderEvidenceWall() {
         const tag = EW_TAGS[e.tag] || EW_TAGS['slack-fill'];
         return `
           <div class="ew-card">
-            <img class="ew-card-img" src="${escapeHTML(e.image_url)}" alt="${escapeHTML(e.caption)}" loading="lazy" onerror="this.style.display='none'">
+            ${sanitizeImageUrl(e.image_url) ? `<img class="ew-card-img" src="${sanitizeImageUrl(e.image_url)}" alt="${escapeHTML(e.caption)}" loading="lazy" onerror="this.style.display='none'">` : ''}
             <div class="ew-card-body">
               <div class="ew-card-caption">${escapeHTML(e.caption)}</div>
               <div class="ew-card-meta">
@@ -4957,8 +4976,8 @@ async function loadFromSupabase() {
   loadBar.className = 'fc-loading-bar';
   document.body.appendChild(loadBar);
   try {
-    // Load products
-    const { data: products, error: pErr } = await sb.from('products').select('*');
+    // Load products (paginated)
+    const { data: products, error: pErr } = await sb.from('products').select('*').limit(500);
     if (!pErr && products?.length) {
       PRODUCTS = products.map(p => ({
         name: p.name, brand: p.brand, upc: p.upc, category: p.category,
@@ -4969,8 +4988,8 @@ async function loadFromSupabase() {
       CATEGORIES = ["All", ...new Set(PRODUCTS.map(p => p.category))];
     }
 
-    // Load events (deduplicated by upc+date+source)
-    const { data: events, error: eErr } = await sb.from('events').select('*');
+    // Load events (deduplicated by upc+date+source, paginated)
+    const { data: events, error: eErr } = await sb.from('events').select('*').limit(2000);
     if (!eErr && events?.length) {
       const evSeen = new Set();
       EVENTS = [];
@@ -5512,8 +5531,11 @@ const initHash = window.location.hash.replace('#', '');
 if (HASH_TO_SCREEN[initHash]) {
   currentScreen = HASH_TO_SCREEN[initHash];
 }
-renderScreen();
-loadFromSupabase();
+(async function init() {
+  renderScreen();          // immediate render with fallback data
+  await checkAdminSession(); // resolve admin state before data load
+  await loadFromSupabase();  // loads live data + re-renders
+})();
 </script>
 </body>
 </html>
