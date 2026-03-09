@@ -236,7 +236,7 @@ def run(queries: Optional[List[str]] = None, dry_run: bool = False):
     # status (promoted/dismissed/rejected/evidence_wall) so we never
     # accidentally overwrite a reviewed record.
     source_urls = [e["source_url"] for e in all_entries if e.get("source_url")]
-    reviewed_urls: set[str] = set()
+    reviewed_urls = set()  # type: Set[str]
     for chunk_start in range(0, len(source_urls), 200):
         chunk = source_urls[chunk_start:chunk_start + 200]
         try:

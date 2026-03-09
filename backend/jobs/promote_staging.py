@@ -27,15 +27,16 @@ sys.path.insert(0, ".")
 
 from backend.lib.supabase_client import get_client
 from backend.lib.nlp import guess_category
+from typing import Optional, Dict, Set, List, Tuple
 from backend.jobs.change_detector import detect_changes_for_product
 
 log = logging.getLogger("fullcarts.promote")
 
 # Cache detected columns per table to avoid repeated queries within a run.
-_column_cache: dict[str, set | None] = {}
+_column_cache = {}  # type: Dict[str, Optional[Set]]
 
 
-def _detect_table_columns(sb, table_name: str) -> set | None:
+def _detect_table_columns(sb, table_name: str) -> Optional[set]:
     """Query a table to discover which columns actually exist."""
     if table_name in _column_cache:
         return _column_cache[table_name]
@@ -296,7 +297,7 @@ def promote_entry(sb, entry, dry_run=False):
         return False
 
 
-def _fetch_all_rows(sb, table, filters: list[tuple]) -> list:
+def _fetch_all_rows(sb, table, filters: List[Tuple]) -> list:
     """Paginate through all matching rows (Supabase default limit is 1000)."""
     all_rows = []
     batch_size = 1000

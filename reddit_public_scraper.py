@@ -424,7 +424,7 @@ def save_known_urls(path: Path, urls: set) -> None:
 # Retry helper
 # ---------------------------------------------------------------------------
 
-def _request_with_retry(method: str, url: str, **kwargs) -> requests.Response | None:
+def _request_with_retry(method: str, url: str, **kwargs) -> Optional[requests.Response]:
     """Make an HTTP request with exponential backoff on failure.
 
     Returns the Response on success, or None after all retries exhausted.
@@ -557,7 +557,7 @@ def _normalize_reddit_post(post_data: dict) -> dict:
 
 
 def _fetch_reddit_listing(subreddit: str, sort: str = "new",
-                          after_token: str = None, limit: int = 100) -> tuple[list, str | None]:
+                          after_token: str = None, limit: int = 100) -> Tuple[list, Optional[str]]:
     """Fetch a page of posts from Reddit's public JSON listing API.
 
     Returns (posts, after_token). after_token is None when no more pages.
@@ -742,7 +742,7 @@ def _extract_image_url(post: dict, skip_reddit_fallback: bool = False) -> Option
     return None
 
 
-def detect_retailer(text: str) -> str | None:
+def detect_retailer(text: str) -> Optional[str]:
     """Extract retailer name from post text."""
     m = RETAILER_PATTERN.search(text)
     return m.group(0).title() if m else None
@@ -1070,7 +1070,7 @@ def process_posts(posts: list, known_urls: set, log, skip_vision: bool = False) 
     return entries, new_urls, stats
 
 
-def _detect_table_columns(sb, table_name: str) -> set | None:
+def _detect_table_columns(sb, table_name: str) -> Optional[set]:
     """Query a table to discover which columns actually exist.
 
     Returns a set of column names, or None if detection fails.
@@ -1084,12 +1084,12 @@ def _detect_table_columns(sb, table_name: str) -> set | None:
         return None
 
 
-def _detect_staging_columns(sb) -> set | None:
+def _detect_staging_columns(sb) -> Optional[set]:
     """Query reddit_staging to discover which columns actually exist."""
     return _detect_table_columns(sb, "reddit_staging")
 
 
-def _strip_unknown_columns(entries: list, known_columns: set | None, log) -> list:
+def _strip_unknown_columns(entries: list, known_columns: Optional[set], log) -> list:
     """Remove keys from entries that don't exist as columns in the DB.
 
     This prevents 400 errors when migrations haven't been applied yet.
