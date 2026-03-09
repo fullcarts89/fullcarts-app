@@ -99,7 +99,7 @@ END $$;
 DO $$ BEGIN
   ALTER TABLE evidence_wall
     ADD CONSTRAINT chk_ew_status
-    CHECK (status IN ('approved', 'hidden'));
+    CHECK (status IN ('approved', 'hidden', 'pending'));
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
