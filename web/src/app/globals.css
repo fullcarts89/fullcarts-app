@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+:root {
+  /* FullCarts Design System */
+  --bg-primary: #0a0b0d;
+  --bg-secondary: #161719;
+  --bg-tertiary: #2a2b2d;
+  --bg-hover: #1a1b1d;
+
+  --text-primary: #f5f4f0;
+  --text-secondary: #a0a0a5;
+  --text-tertiary: #656569;
+
+  --red-base: #dc2626;
+  --red-hover: #ef4444;
+  --red-bg: rgba(220, 38, 38, 0.1);
+  --red-border: rgba(220, 38, 38, 0.2);
+
+  --green-base: #10b981;
+  --green-bg: rgba(16, 185, 129, 0.1);
+  --green-border: rgba(16, 185, 129, 0.2);
+
+  --blue-base: #3b82f6;
+  --blue-bg: rgba(59, 130, 246, 0.1);
+  --blue-border: rgba(59, 130, 246, 0.2);
+
+  --amber-base: #f59e0b;
+  --amber-bg: rgba(245, 158, 11, 0.1);
+
+  --background: var(--bg-primary);
+  --foreground: var(--text-primary);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-tertiary: var(--bg-tertiary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-red: var(--red-base);
+  --color-green: var(--green-base);
+  --color-blue: var(--blue-base);
+  --color-amber: var(--amber-base);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
