@@ -1827,6 +1827,44 @@
     }
     .admin-edit-product-btn:active { transform:scale(0.97); }
 
+    /* Admin password login overlay */
+    #admin-login-overlay {
+      position:fixed;inset:0;z-index:600;background:rgba(0,0,0,0.85);
+      display:none;align-items:center;justify-content:center;
+    }
+    #admin-login-overlay.open { display:flex; }
+    .admin-login-card {
+      background:var(--card);border:1.5px solid var(--card-border);
+      border-radius:18px;padding:28px 24px;max-width:320px;width:90%;
+      text-align:center;
+    }
+    .admin-login-card h3 {
+      font-size:18px;font-weight:900;color:var(--snow);margin:0 0 6px;
+    }
+    .admin-login-card p {
+      font-size:12px;color:var(--wolf);margin:0 0 18px;
+    }
+    .admin-login-card input[type="password"] {
+      width:100%;box-sizing:border-box;padding:10px 14px;
+      background:var(--bg);border:1.5px solid var(--card-border);
+      border-radius:10px;color:var(--snow);font-size:14px;
+      font-family:'Nunito',sans-serif;outline:none;margin-bottom:14px;
+    }
+    .admin-login-card input[type="password"]:focus {
+      border-color:var(--duo-green);
+    }
+    .admin-login-card .admin-login-btn {
+      width:100%;padding:10px;background:var(--duo-green);color:#fff;
+      border:none;border-bottom:3px solid #3d8e02;border-radius:10px;
+      font-size:14px;font-weight:900;cursor:pointer;
+      font-family:'Nunito',sans-serif;
+    }
+    .admin-login-card .admin-login-btn:active { transform:translateY(2px);border-bottom-width:1px; }
+    .admin-login-card .admin-login-close {
+      margin-top:12px;background:none;border:none;color:var(--wolf);
+      font-size:12px;cursor:pointer;font-family:'Nunito',sans-serif;
+    }
+
     /* Toast notifications */
     .fc-toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); padding: 10px 20px; border-radius: 12px; font-size: 13px; font-weight: 800; color: white; z-index: 9999; animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards; max-width: 360px; text-align: center; }
     .fc-toast.success { background: var(--duo-green); }
@@ -1862,7 +1900,7 @@
           <path d="M17 17l2.5 2.5 2.5-1.5 2 2" stroke="#0d1a1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </a>
-      <h1>FullCarts</h1>
+      <h1 id="header-logo">FullCarts</h1>
     </div>
     <div class="header-stats">
       <div class="header-stat"><span style="color:var(--duo-green)">📊</span> <span id="products-count">0</span></div>
@@ -1871,6 +1909,17 @@
     </div>
   </div>
   <div id="content"></div>
+
+  <!-- Admin Login Overlay -->
+  <div id="admin-login-overlay" onclick="if(event.target===this)closeAdminLogin()">
+    <div class="admin-login-card">
+      <h3>🔒 Admin Login</h3>
+      <p>Enter admin password to continue</p>
+      <input type="password" id="admin-pw-input" placeholder="Password" onkeydown="if(event.key==='Enter')submitAdminPassword()">
+      <button class="admin-login-btn" onclick="submitAdminPassword()">Sign In</button>
+      <button class="admin-login-close" onclick="closeAdminLogin()">Cancel</button>
+    </div>
+  </div>
 
   <!-- Share Card Overlay -->
   <div id="share-overlay" onclick="if(event.target===this)closeShare()">
@@ -2175,46 +2224,122 @@ let personalStats = JSON.parse(localStorage.getItem('fc_stats') || '{"submission
 if (!personalStats.firstUse) { personalStats.firstUse = new Date().toISOString(); }
 function saveStats() { localStorage.setItem('fc_stats', JSON.stringify(personalStats)); }
 
-// ── Admin mode (Supabase Auth) ───────────────────────────
+// ── Admin mode (password-based) ──────────────────────────
 let isAdmin = false;
+const ADMIN_SESSION_KEY = 'fc_admin';
+const ADMIN_SESSION_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
-async function checkAdminSession() {
+function checkAdminSession() {
   try {
-    const { data: { session } } = await sb.auth.getSession();
-    isAdmin = !!session;
+    const raw = localStorage.getItem(ADMIN_SESSION_KEY);
+    if (raw) {
+      const { ts } = JSON.parse(raw);
+      if (Date.now() - ts < ADMIN_SESSION_TTL) {
+        isAdmin = true;
+      } else {
+        localStorage.removeItem(ADMIN_SESSION_KEY);
+        isAdmin = false;
+      }
+    }
   } catch { isAdmin = false; }
   const ab = document.getElementById('admin-badge');
   if (ab) ab.style.display = isAdmin ? 'inline' : 'none';
 }
 
-// Listen for auth state changes (login/logout)
-sb.auth.onAuthStateChange((_event, session) => {
-  isAdmin = !!session;
+function updateAdminBadge() {
   const ab = document.getElementById('admin-badge');
   if (ab) ab.style.display = isAdmin ? 'inline' : 'none';
-  renderScreen();
-});
-
-// Admin login via hash: #admin-login triggers Supabase magic link prompt
-// Admin logout via hash: #noadmin signs out
-const _hash = window.location.hash;
-if (_hash === '#noadmin') { sb.auth.signOut(); }
-if (_hash === '#admin-login') {
-  const email = prompt('Enter admin email for magic link:');
-  if (email) sb.auth.signInWithOtp({ email }).then(({ error }) => {
-    if (error) alert('Login failed: ' + error.message);
-    else alert('Check your email for a login link.');
-  });
 }
-window.addEventListener('hashchange', () => {
-  if (window.location.hash === '#noadmin') { sb.auth.signOut(); }
-  if (window.location.hash === '#admin-login') {
-    const email = prompt('Enter admin email for magic link:');
-    if (email) sb.auth.signInWithOtp({ email }).then(({ error }) => {
-      if (error) alert('Login failed: ' + error.message);
-      else alert('Check your email for a login link.');
-    });
+
+function openAdminLogin() {
+  const ov = document.getElementById('admin-login-overlay');
+  if (ov) { ov.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  const inp = document.getElementById('admin-pw-input');
+  if (inp) { inp.value = ''; setTimeout(() => inp.focus(), 100); }
+}
+
+function closeAdminLogin() {
+  const ov = document.getElementById('admin-login-overlay');
+  if (ov) { ov.classList.remove('open'); document.body.style.overflow = ''; }
+}
+
+async function submitAdminPassword() {
+  const inp = document.getElementById('admin-pw-input');
+  const pw = (inp ? inp.value : '').trim();
+  if (!pw) { showToast('Enter a password', 'error'); return; }
+
+  // Hash with SHA-256 via Web Crypto
+  const enc = new TextEncoder().encode(pw);
+  const hashBuf = await crypto.subtle.digest('SHA-256', enc);
+  const hashHex = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+
+  // Fetch stored hash from app_settings
+  let storedHash = null;
+  try {
+    const { data } = await sb.from('app_settings').select('value').eq('key', 'admin_password_hash').single();
+    if (data) storedHash = data.value;
+  } catch { /* fall through */ }
+
+  if (!storedHash) {
+    showToast('Admin login not configured', 'error');
+    return;
   }
+
+  if (hashHex === storedHash) {
+    isAdmin = true;
+    localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify({ ts: Date.now() }));
+    updateAdminBadge();
+    closeAdminLogin();
+    showToast('Admin mode enabled', 'success');
+    renderScreen();
+  } else {
+    showToast('Wrong password', 'error');
+    if (inp) inp.value = '';
+  }
+}
+
+function adminLogout() {
+  isAdmin = false;
+  localStorage.removeItem(ADMIN_SESSION_KEY);
+  updateAdminBadge();
+  showToast('Logged out of admin', 'info');
+  renderScreen();
+}
+
+// Long-press on header logo to open admin login / logout
+(function initLongPress() {
+  const logo = document.getElementById('header-logo');
+  if (!logo) return;
+  let lpTimer = null;
+  const LP_MS = 800;
+
+  function startLP(e) {
+    lpTimer = setTimeout(() => {
+      lpTimer = null;
+      if (isAdmin) {
+        if (confirm('Sign out of admin?')) adminLogout();
+      } else {
+        openAdminLogin();
+      }
+    }, LP_MS);
+  }
+  function cancelLP() { if (lpTimer) { clearTimeout(lpTimer); lpTimer = null; } }
+
+  logo.addEventListener('mousedown', startLP);
+  logo.addEventListener('mouseup', cancelLP);
+  logo.addEventListener('mouseleave', cancelLP);
+  logo.addEventListener('touchstart', startLP, { passive: true });
+  logo.addEventListener('touchend', cancelLP);
+  logo.addEventListener('touchcancel', cancelLP);
+  // Prevent text selection on long-press
+  logo.style.userSelect = 'none';
+  logo.style.webkitUserSelect = 'none';
+})();
+
+// Hash fallback: #noadmin to sign out
+if (window.location.hash === '#noadmin') { adminLogout(); }
+window.addEventListener('hashchange', () => {
+  if (window.location.hash === '#noadmin') adminLogout();
 });
 
 // Initialize admin state
