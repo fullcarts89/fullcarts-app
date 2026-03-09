@@ -134,11 +134,11 @@ CREATE TABLE variant_observations (
     evidence_file_id UUID REFERENCES evidence_files(id),
     raw_item_id     UUID REFERENCES raw_items(id),
 
-    created_at      TIMESTAMPTZ DEFAULT now() NOT NULL,
-
-    UNIQUE (variant_id, observed_date, source_type, COALESCE(retailer, ''))
+    created_at      TIMESTAMPTZ DEFAULT now() NOT NULL
 );
 
+CREATE UNIQUE INDEX idx_observations_unique
+    ON variant_observations (variant_id, observed_date, source_type, COALESCE(retailer, ''));
 CREATE INDEX idx_observations_variant ON variant_observations (variant_id);
 CREATE INDEX idx_observations_date ON variant_observations (observed_date);
 
