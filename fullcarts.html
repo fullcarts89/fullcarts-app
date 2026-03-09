@@ -2232,6 +2232,10 @@ let selectedCategory = 'All';
 let selectedType = 'all';
 let selectedNewsType = 'all';
 let shameMode = 'worst'; // 'worst' | 'flagged'
+let shameSearch = '';
+let reportEwOpen = false;
+let reportEwTag = 'slack-fill';
+let reportEwSeverity = 2;
 let scanStatus = 'idle'; // 'idle' | 'scanning' | 'found' | 'error'
 
 // ============================================================
@@ -2504,7 +2508,7 @@ function navigate(screen, upc = null) {
   if (currentScreen === 'scanner') stopScanner();
   currentScreen = screen;
   currentUPC = upc;
-  if (screen !== 'leaderboard') currentBrand = null;
+  if (screen !== 'leaderboard') { currentBrand = null; shameSearch = ''; }
 
   // Update URL hash for bookmarkable routes (skip for sub-screens like result/notfound)
   const hashRoutes = { home:'home', scanner:'scanner', leaderboard:'shame', report:'report', community:'community', news:'news' };
@@ -2712,6 +2716,13 @@ function handleSearch(q) {
 }
 function selectCategory(c) { selectedCategory = (selectedCategory === c && c !== 'All') ? 'All' : c; renderScreen(); }
 function selectType(t) { selectedType = (selectedType === t && t !== 'all') ? 'all' : t; renderScreen(); }
+
+let _shameSearchDebounce = null;
+function handleShameSearch(q) {
+  shameSearch = q;
+  clearTimeout(_shameSearchDebounce);
+  _shameSearchDebounce = setTimeout(() => renderScreen(), 200);
+}
 
 // ============================================================
 // SCANNER
@@ -3169,15 +3180,25 @@ function renderLeaderboard() {
   });
   const brands = Object.values(brandMap);
 
+  // ── Search filter ──────────────────────────────────────────
+  const sq = shameSearch.toLowerCase();
+  const filtered = sq
+    ? brands.filter(b =>
+        b.brand.toLowerCase().includes(sq) ||
+        b.products.some(p => p.name.toLowerCase().includes(sq)) ||
+        b.products.some(p => (p.category || '').toLowerCase().includes(sq))
+      )
+    : brands;
+
   let ranked;
   if (shameMode === 'worst') {
     // Worst offenders: avg % shrink across all brand's products
-    ranked = brands
+    ranked = filtered
       .map(b => ({ ...b, score: b.totalPct / b.products.length }))
       .sort((a, b) => b.score - a.score);
   } else {
     // Top flagged: most community reports
-    ranked = brands
+    ranked = filtered
       .sort((a, b) => b.reportCount - a.reportCount);
   }
 
@@ -3204,7 +3225,17 @@ function renderLeaderboard() {
 
     ${toggle}
 
-    <div class="duo-card" style="padding:0;margin-top:10px">
+    <div class="search-wrap" style="margin-top:8px">
+      <div class="search-bar">
+        <input type="text" placeholder="Search brands, products, categories\u2026"
+               value="${shameSearch}" oninput="handleShameSearch(this.value)" />
+        ${shameSearch ? `<button onclick="handleShameSearch('')">\u2715</button>` : ''}
+      </div>
+    </div>
+
+    ${ranked.length === 0
+      ? `<div class="duo-card" style="text-align:center;padding:24px"><p style="color:var(--wolf);font-weight:700;font-size:14px">No brands found matching "${escapeHTML(shameSearch)}"</p></div>`
+      : `<div class="duo-card" style="padding:0;margin-top:10px">
       ${ranked.map((b, i) => {
         const worstProduct = b.products.sort((x, y) => y.pct - x.pct)[0];
         const score = shameMode === 'worst'
@@ -3223,7 +3254,7 @@ function renderLeaderboard() {
             <div class="rank-pct">${score}</div>
           </div>`;
       }).join('')}
-    </div>
+    </div>`}
   `;
 }
 
@@ -3390,6 +3421,34 @@ function renderReport() {
       <label>Notes</label>
       <textarea id="r-notes" rows="3" placeholder="How did you spot it? Packaging changes, price shift…"></textarea>
     </div>
+
+    <!-- Evidence Wall Photo Upload (optional, collapsible) -->
+    <div class="duo-card" style="padding:0;margin:12px 0;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:8px;padding:12px 14px;cursor:pointer" onclick="toggleReportEvidence()">
+        <span style="font-size:20px">📸</span>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:900;color:var(--snow)">Add Photo Evidence</div>
+          <div style="font-size:11px;font-weight:700;color:var(--wolf)">Submit a photo to the Evidence Wall (optional)</div>
+        </div>
+        <span id="report-ew-chevron" style="font-size:12px;color:var(--wolf);transition:transform 0.2s">${reportEwOpen ? '▲' : '▼'}</span>
+      </div>
+      <div id="report-ew-body" style="display:${reportEwOpen ? 'block' : 'none'};padding:0 14px 14px;border-top:1.5px solid var(--card-border)">
+        <div style="margin-top:10px">
+          <div style="font-size:11px;font-weight:900;color:var(--duo-orange);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Image URL</div>
+          <input id="r-ew-image" type="url" placeholder="Paste image URL (i.redd.it, imgur, etc.)" value="" style="width:100%;padding:8px 10px;background:rgba(255,255,255,0.06);border:2px solid var(--card-border);border-radius:8px;color:var(--snow);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700" />
+          <div style="font-size:11px;color:var(--wolf);margin-top:4px;font-weight:700">Tip: Right-click the image on Reddit → Copy image address</div>
+        </div>
+        <div style="margin-top:12px">
+          <div style="font-size:11px;font-weight:900;color:var(--duo-orange);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">Tag</div>
+          <div id="report-ew-tag-picker" style="display:flex;flex-wrap:wrap;gap:5px"></div>
+        </div>
+        <div style="margin-top:12px">
+          <div style="font-size:11px;font-weight:900;color:var(--duo-orange);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">Severity</div>
+          <div id="report-ew-severity-picker" style="display:flex;gap:6px"></div>
+        </div>
+      </div>
+    </div>
+
     <div class="submit-wrap">
       <button class="btn-duo btn-green" onclick="submitReport()">Submit Report</button>
     </div>
@@ -3668,6 +3727,41 @@ function selectReportType(key) {
   });
 }
 
+function toggleReportEvidence() {
+  reportEwOpen = !reportEwOpen;
+  const body = document.getElementById('report-ew-body');
+  const chevron = document.getElementById('report-ew-chevron');
+  if (body) body.style.display = reportEwOpen ? 'block' : 'none';
+  if (chevron) chevron.textContent = reportEwOpen ? '\u25B2' : '\u25BC';
+  if (reportEwOpen) renderReportEwPickers();
+}
+
+function renderReportEwPickers() {
+  const pillStyle = (active) => `padding:4px 10px;border-radius:8px;font-size:11px;font-weight:800;border:1.5px solid ${active ? 'rgba(255,150,0,0.4)' : 'var(--card-border)'};background:${active ? 'rgba(255,150,0,0.15)' : 'transparent'};color:${active ? 'var(--duo-orange)' : 'var(--hare)'};cursor:pointer;font-family:'Nunito',sans-serif`;
+
+  const tagPicker = document.getElementById('report-ew-tag-picker');
+  if (tagPicker) {
+    tagPicker.innerHTML = Object.entries(EW_TAGS).map(([k, v]) =>
+      `<button style="${pillStyle(reportEwTag === k)}" onclick="pickReportEwTag('${k}')">${v.emoji} ${v.label}</button>`
+    ).join('');
+  }
+
+  const sevPicker = document.getElementById('report-ew-severity-picker');
+  if (sevPicker) {
+    const sevLabels = [
+      { val:1, label:'Low', color:'#1CB0F6', desc:'Minor or ambiguous' },
+      { val:2, label:'Medium', color:'#FF9600', desc:'Credible evidence' },
+      { val:3, label:'High', color:'#FF4B4B', desc:'Egregious / blatant' },
+    ];
+    sevPicker.innerHTML = sevLabels.map(s =>
+      `<button style="flex:1;padding:6px 10px;border-radius:8px;font-size:12px;font-weight:900;border:1.5px solid ${reportEwSeverity === s.val ? s.color + '66' : 'var(--card-border)'};background:${reportEwSeverity === s.val ? s.color + '22' : 'transparent'};color:${reportEwSeverity === s.val ? s.color : 'var(--hare)'};cursor:pointer;font-family:'Nunito',sans-serif" onclick="pickReportEwSeverity(${s.val})" title="${s.desc}">${s.label}</button>`
+    ).join('');
+  }
+}
+
+function pickReportEwTag(tag) { reportEwTag = tag; renderReportEwPickers(); }
+function pickReportEwSeverity(val) { reportEwSeverity = val; renderReportEwPickers(); }
+
 async function submitReport() {
   const name = document.getElementById('r-name').value.trim();
   if (!name) { alert('Please enter a product name!'); return; }
@@ -3730,7 +3824,31 @@ async function submitReport() {
       status: 'pending'
     });
 
-    // 2. Push to local arrays for optimistic render
+    // 4. Evidence Wall submission (if image provided)
+    const ewImageUrl = (document.getElementById('r-ew-image')?.value || '').trim();
+    if (ewImageUrl) {
+      const sanitized = sanitizeImageUrl(ewImageUrl);
+      if (sanitized) {
+        const today = new Date().toISOString().slice(0, 10);
+        await sb.from('evidence_wall').insert({
+          image_url: sanitized,
+          caption: name + (brand ? ' by ' + brand : ''),
+          brand: brand || null,
+          product_name: name,
+          category,
+          tag: reportEwTag,
+          signal_type: 'unverified_size_change',
+          severity: reportEwSeverity,
+          source_type: 'community',
+          date_spotted: dateVal ? dateVal + '-01' : today,
+          status: 'pending'
+        });
+      } else {
+        showToast('Image URL not from an allowed domain — evidence not submitted', 'info');
+      }
+    }
+
+    // 5. Push to local arrays for optimistic render
     PRODUCTS.push({
       name, brand, upc, category, currentSize: newSize || 0, unit,
       type: type || 'shrinkflation', repeatOffender: false, companyResponse: null, fightingBack: false
@@ -3750,8 +3868,11 @@ async function submitReport() {
     personalStats.submissions++;
     saveStats();
 
-    showToast('Submitted for review! An admin will verify your report.', 'success');
+    showToast(ewImageUrl ? 'Report + photo evidence submitted for review!' : 'Submitted for review! An admin will verify your report.', 'success');
     lastParsed = null;
+    reportEwOpen = false;
+    reportEwTag = 'slack-fill';
+    reportEwSeverity = 2;
     showCelebration = true;
     renderScreen();
     window.scrollTo(0, 0);
