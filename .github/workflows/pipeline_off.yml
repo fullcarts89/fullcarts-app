@@ -1,0 +1,38 @@
+name: "Pipeline \u2014 Open Food Facts"
+on:
+  schedule:
+    - cron: "30 6 * * *"  # Daily at 06:30 UTC
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (no database writes)"
+        required: false
+        default: "false"
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  spot-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: "pipeline/requirements.txt"
+      - name: Install dependencies
+        run: pip install -r pipeline/requirements.txt
+      - name: Run OFF daily spot-check
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          FLAGS=""
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            FLAGS="--dry-run"
+          fi
+          python -m pipeline off_daily $FLAGS
