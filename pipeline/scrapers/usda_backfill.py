@@ -19,7 +19,7 @@ from typing import Any, Dict, Iterator, List, Optional
 
 from pipeline.config import USDA_FDC_BASE, USDA_RELEASES, USER_AGENT
 from pipeline.lib.http_client import RateLimitedSession
-from pipeline.lib.supabase_client import get_client
+from pipeline.lib.supabase_client import get_client, reset_client
 from pipeline.lib.units import parse_package_weight
 from pipeline.scrapers.base import BaseScraper
 

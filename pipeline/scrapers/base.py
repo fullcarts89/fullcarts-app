@@ -11,7 +11,7 @@ from pipeline.config import SCRAPER_VERSION
 from pipeline.lib.cursor import load_cursor, save_cursor
 from pipeline.lib.hashing import content_hash
 from pipeline.lib.logging_setup import get_logger
-from pipeline.lib.supabase_client import get_client
+from pipeline.lib.supabase_client import get_client, reset_client
 from pipeline.lib.github_summary import write_summary
 
 
@@ -103,11 +103,16 @@ class BaseScraper(ABC):
 
         Uses ON CONFLICT (source_type, source_id) DO NOTHING for
         idempotent, deduplicated writes.  Returns count of new rows.
+
+        Automatically recycles the Supabase HTTP/2 connection every
+        _RECYCLE_EVERY batches to avoid stream-limit termination on
+        large jobs (e.g. USDA backfill with 500K+ rows).
         """
         client = get_client()
         now = datetime.now(timezone.utc).isoformat()
         total_new = 0
         batch_size = 50
+        _RECYCLE_EVERY = 4000  # ~200K rows — safely under HTTP/2 10K stream limit
 
         for i in range(0, len(items), batch_size):
             batch = items[i:i + batch_size]
@@ -124,11 +129,40 @@ class BaseScraper(ABC):
                     "scraper_version": SCRAPER_VERSION,
                 })
 
-            resp = (
-                client.table("raw_items")
-                .upsert(rows, on_conflict="source_type,source_id")
-                .execute()
-            )
+            batch_num = i // batch_size
+
+            # Recycle connection periodically to avoid HTTP/2 stream limits
+            if batch_num > 0 and batch_num % _RECYCLE_EVERY == 0:
+                reset_client()
+                client = get_client()
+                self.log.info(
+                    "Recycled Supabase connection at batch %d (%d items)",
+                    batch_num, i,
+                )
+
+            try:
+                resp = (
+                    client.table("raw_items")
+                    .upsert(rows, on_conflict="source_type,source_id")
+                    .execute()
+                )
+            except Exception as exc:
+                if "RemoteProtocolError" in type(exc).__name__ or \
+                   "ConnectionTerminated" in str(exc):
+                    self.log.warning(
+                        "Connection terminated at batch %d; recycling and retrying",
+                        batch_num,
+                    )
+                    reset_client()
+                    client = get_client()
+                    resp = (
+                        client.table("raw_items")
+                        .upsert(rows, on_conflict="source_type,source_id")
+                        .execute()
+                    )
+                else:
+                    raise
+
             # Count rows that were actually inserted (not conflict-skipped)
             if resp.data:
                 total_new += len(resp.data)
