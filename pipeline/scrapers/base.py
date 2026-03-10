@@ -3,6 +3,7 @@
 The lifecycle is:
     load cursor → fetch → store → update cursor → write summary
 """
+import time
 from abc import ABC, abstractmethod
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
@@ -13,6 +14,10 @@ from pipeline.lib.hashing import content_hash
 from pipeline.lib.logging_setup import get_logger
 from pipeline.lib.supabase_client import get_client, reset_client
 from pipeline.lib.github_summary import write_summary
+
+# Retry config for transient Supabase errors (502, 503, connection drops)
+_MAX_RETRIES = 3
+_RETRY_BASE_DELAY = 5  # seconds — exponential backoff: 5, 10, 20
 
 
 class BaseScraper(ABC):
@@ -104,9 +109,9 @@ class BaseScraper(ABC):
         Uses ON CONFLICT (source_type, source_id) DO NOTHING for
         idempotent, deduplicated writes.  Returns count of new rows.
 
-        Automatically recycles the Supabase HTTP/2 connection every
-        _RECYCLE_EVERY batches to avoid stream-limit termination on
-        large jobs (e.g. USDA backfill with 500K+ rows).
+        Resilience features:
+        - Recycles HTTP/2 connection every _RECYCLE_EVERY batches
+        - Retries with exponential backoff on 502/503/connection errors
         """
         client = get_client()
         now = datetime.now(timezone.utc).isoformat()
@@ -140,40 +145,70 @@ class BaseScraper(ABC):
                     batch_num, i,
                 )
 
-            try:
-                resp = (
-                    client.table("raw_items")
-                    .upsert(rows, on_conflict="source_type,source_id")
-                    .execute()
-                )
-            except Exception as exc:
-                if "RemoteProtocolError" in type(exc).__name__ or \
-                   "ConnectionTerminated" in str(exc):
-                    self.log.warning(
-                        "Connection terminated at batch %d; recycling and retrying",
-                        batch_num,
-                    )
-                    reset_client()
-                    client = get_client()
-                    resp = (
-                        client.table("raw_items")
-                        .upsert(rows, on_conflict="source_type,source_id")
-                        .execute()
-                    )
-                else:
-                    raise
+            resp = self._upsert_with_retry(client, rows, batch_num)
+            if resp is None:
+                # _upsert_with_retry returns None only if it had to
+                # reset the client; re-acquire for subsequent batches
+                client = get_client()
+                resp = self._upsert_with_retry(client, rows, batch_num)
 
             # Count rows that were actually inserted (not conflict-skipped)
-            if resp.data:
+            if resp and resp.data:
                 total_new += len(resp.data)
 
             self.log.debug(
                 "Batch %d-%d: upserted %d rows",
                 i, i + len(batch),
-                len(resp.data) if resp.data else 0,
+                len(resp.data) if resp and resp.data else 0,
             )
 
         return total_new
+
+    def _upsert_with_retry(self, client, rows, batch_num):
+        """Attempt upsert with retries on transient errors.
+
+        Handles HTTP/2 connection drops, 502/503 gateway errors,
+        and other transient Supabase failures with exponential backoff.
+        """
+        for attempt in range(_MAX_RETRIES):
+            try:
+                return (
+                    client.table("raw_items")
+                    .upsert(rows, on_conflict="source_type,source_id")
+                    .execute()
+                )
+            except Exception as exc:
+                exc_name = type(exc).__name__
+                exc_str = str(exc)
+                is_transient = (
+                    "RemoteProtocolError" in exc_name
+                    or "ConnectionTerminated" in exc_str
+                    or "502" in exc_str
+                    or "503" in exc_str
+                    or "Bad gateway" in exc_str
+                    or "Service Unavailable" in exc_str
+                )
+
+                if not is_transient:
+                    raise
+
+                delay = _RETRY_BASE_DELAY * (2 ** attempt)
+                self.log.warning(
+                    "Transient error at batch %d (attempt %d/%d): %s. "
+                    "Retrying in %ds...",
+                    batch_num, attempt + 1, _MAX_RETRIES,
+                    exc_name, delay,
+                )
+                time.sleep(delay)
+                reset_client()
+                client = get_client()
+
+        # Final attempt — let it raise if it fails
+        return (
+            client.table("raw_items")
+            .upsert(rows, on_conflict="source_type,source_id")
+            .execute()
+        )
 
     # ── Summary ───────────────────────────────────────────────────────────
 
