@@ -158,32 +158,51 @@ class UsdaVarianceAnalyzer(BaseScraper):
     def _fetch_upc_batch(
         self, client: Any, after_upc: str
     ) -> List[str]:
-        """Get the next batch of distinct UPCs from USDA raw_items."""
-        query = (
-            client.table("raw_items")
-            .select("raw_payload->gtin_upc")
-            .eq("source_type", "usda")
-        )
-        if after_upc:
-            query = query.gt("raw_payload->>gtin_upc", after_upc)
+        """Get the next batch of distinct UPCs from USDA raw_items.
 
-        resp = (
-            query
-            .order("raw_payload->>gtin_upc")
-            .limit(_UPC_BATCH_SIZE * 5)  # Overfetch to get enough distinct
-            .execute()
-        )
+        Supabase PostgREST caps responses at ~1000 rows regardless of
+        the limit parameter, so we paginate internally using range()
+        offsets until we collect _UPC_BATCH_SIZE distinct UPCs.
+        """
+        _PAGE_SIZE = 1000  # Supabase PostgREST max rows per request
+        _MAX_PAGES = 50    # Safety cap: 50 pages × 1000 = 50K rows scanned
 
-        # Deduplicate and sort
         seen: List[str] = []
         seen_set: set = set()
-        for row in (resp.data or []):
-            upc = row.get("gtin_upc", "")
-            if upc and upc not in seen_set:
-                seen_set.add(upc)
-                seen.append(upc)
-                if len(seen) >= _UPC_BATCH_SIZE:
-                    break
+        offset = 0
+
+        for _ in range(_MAX_PAGES):
+            query = (
+                client.table("raw_items")
+                .select("raw_payload->gtin_upc")
+                .eq("source_type", "usda")
+            )
+            if after_upc:
+                query = query.gt("raw_payload->>gtin_upc", after_upc)
+
+            resp = (
+                query
+                .order("raw_payload->>gtin_upc")
+                .range(offset, offset + _PAGE_SIZE - 1)
+                .execute()
+            )
+
+            rows = resp.data or []
+            if not rows:
+                break  # No more data
+
+            for row in rows:
+                upc = row.get("gtin_upc", "")
+                if upc and upc not in seen_set:
+                    seen_set.add(upc)
+                    seen.append(upc)
+                    if len(seen) >= _UPC_BATCH_SIZE:
+                        return seen
+
+            offset += _PAGE_SIZE
+
+            if len(rows) < _PAGE_SIZE:
+                break  # Last page
 
         return seen
 

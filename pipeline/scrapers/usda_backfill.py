@@ -99,7 +99,10 @@ class UsdaBackfillScraper(BaseScraper):
         return stored
 
     def source_id_for(self, item: Dict[str, Any]) -> str:
-        return f"usda_{item['gtin_upc']}_{item['fdc_id']}"
+        # Include release date so each quarterly snapshot is a separate record.
+        # Without this, ON CONFLICT DO NOTHING silently skips products that
+        # appear across releases (same fdc_id), preventing variance detection.
+        return f"usda_{item['gtin_upc']}_{item['fdc_id']}_{self._release_date}"
 
     def source_url_for(self, item: Dict[str, Any]) -> Optional[str]:
         return (
