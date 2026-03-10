@@ -4,20 +4,16 @@ For every active pack_variant UPC and each configured store location, fetches
 product data from the Kroger Product API using OAuth2 client credentials.
 Writes to raw_items and variant_observations.
 """
-import base64
-import time
 from datetime import date, datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
 from pipeline.config import (
     KROGER_API_BASE,
-    KROGER_CLIENT_ID,
-    KROGER_CLIENT_SECRET,
     KROGER_STORE_IDS,
-    KROGER_TOKEN_URL,
     USER_AGENT,
 )
 from pipeline.lib.http_client import RateLimitedSession
+from pipeline.lib.kroger_auth import KrogerAuth
 from pipeline.lib.supabase_client import get_client
 from pipeline.lib.units import parse_package_weight
 from pipeline.scrapers.base import BaseScraper
@@ -40,8 +36,7 @@ class KrogerScraper(BaseScraper):
             user_agent=USER_AGENT,
         )
         self._today = date.today().isoformat()
-        self._token: Optional[str] = None
-        self._token_expires_at: float = 0.0
+        self._auth = KrogerAuth(self._session)
 
     # ── BaseScraper interface ──────────────────────────────────────────────
 
@@ -105,44 +100,6 @@ class KrogerScraper(BaseScraper):
         self._store_variant_observations(items)
         return stored
 
-    # ── OAuth2 token management ────────────────────────────────────────────
-
-    def _get_token(self) -> Optional[str]:
-        """Return a valid OAuth2 access token, fetching a new one if needed."""
-        if self._token and time.monotonic() < self._token_expires_at:
-            return self._token
-
-        credentials = base64.b64encode(
-            f"{KROGER_CLIENT_ID}:{KROGER_CLIENT_SECRET}".encode()
-        ).decode()
-
-        resp = self._session.post(
-            KROGER_TOKEN_URL,
-            data="grant_type=client_credentials&scope=product.compact",
-            headers={
-                "Authorization": f"Basic {credentials}",
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-        )
-        if resp is None:
-            self.log.error("Failed to obtain Kroger OAuth2 token")
-            return None
-
-        try:
-            token_data = resp.json()
-        except Exception as exc:
-            self.log.error("Token response JSON decode failed: %s", exc)
-            return None
-
-        self._token = token_data.get("access_token")
-        expires_in = int(token_data.get("expires_in", 1800))
-        # Subtract 60 s as a safety buffer
-        self._token_expires_at = time.monotonic() + expires_in - 60
-        self.log.info(
-            "Kroger token obtained, expires in %ds", expires_in
-        )
-        return self._token
-
     # ── Private helpers ────────────────────────────────────────────────────
 
     def _load_active_upcs(self) -> List[str]:
@@ -160,7 +117,7 @@ class KrogerScraper(BaseScraper):
         self, upc: str, store_id: str
     ) -> Optional[Dict[str, Any]]:
         """Fetch one UPC from one store.  Returns the first product dict or None."""
-        token = self._get_token()
+        token = self._auth.get_token()
         if token is None:
             return None
 
@@ -179,9 +136,8 @@ class KrogerScraper(BaseScraper):
         # Re-authenticate on 401 and retry once
         if resp is not None and resp.status_code == 401:
             self.log.info("Got 401; refreshing Kroger token")
-            self._token = None
-            self._token_expires_at = 0.0
-            token = self._get_token()
+            self._auth.invalidate()
+            token = self._auth.get_token()
             if token is None:
                 return None
             resp = self._session.get(

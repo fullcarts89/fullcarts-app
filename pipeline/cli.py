@@ -1,14 +1,17 @@
 """Unified CLI entrypoint for the FullCarts pipeline.
 
 Usage:
-    python -m pipeline reddit_recent  [--dry-run]
-    python -m pipeline reddit_backfill [--dry-run]
-    python -m pipeline news_rss       [--dry-run]
-    python -m pipeline gdelt          [--dry-run]
-    python -m pipeline off_daily      [--dry-run]
-    python -m pipeline kroger         [--dry-run]
-    python -m pipeline usda_quarterly [--dry-run]
-    python -m pipeline usda_backfill  [--dry-run]
+    python -m pipeline reddit_recent    [--dry-run]
+    python -m pipeline reddit_backfill  [--dry-run]
+    python -m pipeline news_rss         [--dry-run]
+    python -m pipeline gdelt            [--dry-run]
+    python -m pipeline off_daily        [--dry-run]
+    python -m pipeline off_discovery    [--dry-run]
+    python -m pipeline kroger           [--dry-run]
+    python -m pipeline kroger_discovery [--dry-run]
+    python -m pipeline usda_quarterly   [--dry-run]
+    python -m pipeline usda_backfill    [--dry-run]
+    python -m pipeline usda_variance    [--dry-run]
 """
 import argparse
 import sys
@@ -24,9 +27,12 @@ SCRAPER_MAP = {
     "news_rss": "pipeline.scrapers.news_rss:NewsRssScraper",
     "gdelt": "pipeline.scrapers.gdelt:GdeltScraper",
     "off_daily": "pipeline.scrapers.openfoodfacts:OpenFoodFactsScraper",
+    "off_discovery": "pipeline.scrapers.off_discovery:OffDiscoveryScraper",
     "kroger": "pipeline.scrapers.kroger:KrogerScraper",
+    "kroger_discovery": "pipeline.scrapers.kroger_discovery:KrogerDiscoveryScraper",
     "usda_quarterly": "pipeline.scrapers.usda_quarterly:UsdaQuarterlyScraper",
     "usda_backfill": "pipeline.scrapers.usda_backfill:UsdaBackfillScraper",
+    "usda_variance": "pipeline.scrapers.usda_variance:UsdaVarianceAnalyzer",
 }
 
 

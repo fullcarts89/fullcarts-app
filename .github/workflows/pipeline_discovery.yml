@@ -1,15 +1,16 @@
-name: "Pipeline \u2014 One-Time Backfills"
+name: "Pipeline \u2014 Discovery"
 on:
+  schedule:
+    - cron: "0 2 * * 0"   # Weekly on Sunday at 02:00 UTC
   workflow_dispatch:
     inputs:
       scraper:
-        description: "Which backfill to run"
+        description: "Which discovery scraper to run"
         required: true
         type: choice
         options:
-          - reddit_backfill
-          - usda_backfill
-          - usda_variance
+          - off_discovery
+          - kroger_discovery
       dry_run:
         description: "Dry run (no database writes)"
         required: false
@@ -20,9 +21,14 @@ permissions:
   contents: read
 
 jobs:
-  backfill:
+  discover:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        scraper:
+          - off_discovery
+          - kroger_discovery
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -32,13 +38,15 @@ jobs:
           cache-dependency-path: "pipeline/requirements.txt"
       - name: Install dependencies
         run: pip install -r pipeline/requirements.txt
-      - name: Run backfill scraper
+      - name: "Run ${{ matrix.scraper }}"
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          KROGER_CLIENT_ID: ${{ secrets.KROGER_CLIENT_ID }}
+          KROGER_CLIENT_SECRET: ${{ secrets.KROGER_CLIENT_SECRET }}
         run: |
           FLAGS=""
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
             FLAGS="--dry-run"
           fi
-          python -m pipeline ${{ github.event.inputs.scraper }} $FLAGS
+          python -m pipeline ${{ matrix.scraper }} $FLAGS

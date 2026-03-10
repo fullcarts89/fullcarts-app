@@ -17,6 +17,18 @@ KROGER_TOKEN_URL = "https://api.kroger.com/v1/connect/oauth2/token"
 KROGER_API_BASE = "https://api.kroger.com/v1"
 # Comma-separated store location IDs for price checks
 KROGER_STORE_IDS = os.getenv("KROGER_STORE_IDS", "01400376,01400943").split(",")
+KROGER_SEARCH_TERMS = [
+    "potato chips", "breakfast cereal", "cookies", "crackers",
+    "yogurt", "ice cream", "juice", "soda", "frozen meals",
+    "canned soup", "pasta sauce", "candy bars", "granola bars", "bread",
+]
+KROGER_BRANDS = [
+    "Frito-Lay", "General Mills", "Kellogg's", "Mondelez",
+    "PepsiCo", "Unilever", "Nestle", "Conagra", "Kraft Heinz", "Mars",
+]
+KROGER_DISCOVERY_MAX_REQUESTS = int(
+    os.getenv("KROGER_DISCOVERY_MAX_REQUESTS", "5000")
+)
 
 # ── Scraper identity ──────────────────────────────────────────────────────────
 SCRAPER_VERSION = "pipeline-v1.0"
@@ -49,7 +61,14 @@ GDELT_DELAY = 1.0             # seconds between GDELT queries
 
 # ── Open Food Facts ───────────────────────────────────────────────────────────
 OFF_API_BASE = "https://world.openfoodfacts.org/api/v2"
+OFF_SEARCH_URL = "https://world.openfoodfacts.org/cgi/search.pl"
 OFF_DELAY = 0.6                # 100 req/min limit → 0.6s between requests
+OFF_CATEGORIES = [
+    "snacks", "cereals", "beverages", "dairy", "frozen-foods",
+    "candy", "confections", "chips", "cookies", "crackers",
+    "yogurt", "ice-cream", "juice", "soft-drinks", "canned-goods",
+    "pasta", "condiments",
+]
 
 # ── USDA ──────────────────────────────────────────────────────────────────────
 USDA_FDC_BASE = "https://fdc.nal.usda.gov/fdc-datasets"
