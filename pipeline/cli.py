@@ -12,6 +12,7 @@ Usage:
     python -m pipeline usda_quarterly   [--dry-run]
     python -m pipeline usda_backfill    [--dry-run]
     python -m pipeline usda_variance    [--dry-run]
+    python -m pipeline usda_turnover   [--dry-run]
 """
 import argparse
 import sys
@@ -33,6 +34,7 @@ SCRAPER_MAP = {
     "usda_quarterly": "pipeline.scrapers.usda_quarterly:UsdaQuarterlyScraper",
     "usda_backfill": "pipeline.scrapers.usda_backfill:UsdaBackfillScraper",
     "usda_variance": "pipeline.scrapers.usda_variance:UsdaVarianceAnalyzer",
+    "usda_turnover": "pipeline.scrapers.usda_turnover:UsdaTurnoverAnalyzer",
 }
 
 

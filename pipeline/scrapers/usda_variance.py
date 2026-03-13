@@ -7,15 +7,19 @@ Writes detected changes back to raw_items with source_type='usda_size_change'.
 This is a post-processing job, not a real-time scraper.  It reads FROM
 raw_items (source_type='usda') and writes BACK to raw_items
 (source_type='usda_size_change').
-"""
-from typing import Any, Dict, List, Optional, Tuple
 
-from pipeline.lib.logging_setup import get_logger
+Strategy: streams all USDA records paginated by primary key (id), groups
+by UPC in memory, then runs change detection.  This avoids unindexed
+JSONB ORDER BY queries and N+1 per-UPC lookups.
+"""
+from typing import Any, Dict, List, Optional
+
 from pipeline.lib.supabase_client import get_client
-from pipeline.lib.units import convert_to_base, parse_package_weight
+from pipeline.lib.units import convert_to_base
 from pipeline.scrapers.base import BaseScraper
 
-_UPC_BATCH_SIZE = 1000
+_PAGE_SIZE = 1000   # Supabase PostgREST max rows per request
+_LOG_EVERY = 100000  # Log progress every N rows
 _CHANGE_THRESHOLD_PCT = 2.0  # Only flag changes > 2%
 
 
@@ -91,45 +95,106 @@ class UsdaVarianceAnalyzer(BaseScraper):
     def fetch(
         self, cursor: Dict[str, Any], dry_run: bool = False
     ) -> List[Dict[str, Any]]:
-        """Read USDA raw_items, group by UPC, detect size changes.
+        """Stream all USDA raw_items by id, group by UPC, detect size changes.
 
-        Paginates through UPCs in batches.  Returns detected change items.
+        Paginates by primary key (always fast) and accumulates a lightweight
+        dict of {upc: observations} in memory.  After streaming all data,
+        runs detect_changes() on each UPC with 2+ observations.
         """
-        last_upc = cursor.get("last_upc", "")
-        total_changes_prev = int(cursor.get("total_changes", 0))
-
         client = get_client()
-        all_changes: List[Dict[str, Any]] = []
-        upcs_processed = 0
+        last_id = cursor.get("last_id", "")
+
+        # {upc: {"brand": str, "desc": str, "obs": {date: (size, unit)}}}
+        upc_data = {}  # type: Dict[str, Dict[str, Any]]
+        total_rows = 0
+
+        self.log.info("Streaming USDA records%s ...",
+                       " from id > %s" % last_id if last_id else "")
 
         while True:
-            # Get next batch of distinct UPCs
-            upcs = self._fetch_upc_batch(client, last_upc)
-            if not upcs:
-                break
+            query = (
+                client.table("raw_items")
+                .select("id,source_date,raw_payload")
+                .eq("source_type", "usda")
+            )
+            if last_id:
+                query = query.gt("id", last_id)
 
-            self.log.info(
-                "Processing UPC batch: %d UPCs (after '%s')",
-                len(upcs), last_upc[:20] if last_upc else "start",
+            resp = (
+                query
+                .order("id")
+                .range(0, _PAGE_SIZE - 1)
+                .execute()
             )
 
-            # For each UPC, get all USDA records and compare
-            for upc in upcs:
-                observations = self._fetch_observations_for_upc(client, upc)
-                if len(observations) < 2:
+            rows = resp.data or []
+            if not rows:
+                break
+
+            for row in rows:
+                payload = row.get("raw_payload") or {}
+                upc = payload.get("gtin_upc", "")
+                size = payload.get("_size")
+                size_unit = payload.get("_size_unit", "")
+                date = (row.get("source_date") or "")[:10]
+
+                if not upc or size is None or not date:
                     continue
-                changes = detect_changes(observations)
-                all_changes.extend(changes)
 
-            upcs_processed += len(upcs)
-            last_upc = upcs[-1]
+                if upc not in upc_data:
+                    upc_data[upc] = {
+                        "brand": payload.get("brand_owner", ""),
+                        "desc": payload.get("description", ""),
+                        "obs": {},
+                    }
 
-            if len(upcs) < _UPC_BATCH_SIZE:
-                break  # Last batch
+                # Deduplicate: keep first observation per (UPC, date)
+                if date not in upc_data[upc]["obs"]:
+                    upc_data[upc]["obs"][date] = (size, size_unit)
+
+            total_rows += len(rows)
+            last_id = rows[-1]["id"]
+
+            if total_rows % _LOG_EVERY == 0:
+                self.log.info(
+                    "Streamed %d rows, %d UPCs so far...",
+                    total_rows, len(upc_data),
+                )
+
+            if len(rows) < _PAGE_SIZE:
+                break
 
         self.log.info(
-            "USDA variance: processed %d UPCs, found %d size changes",
-            upcs_processed, len(all_changes),
+            "Streamed %d total rows, %d unique UPCs. Detecting changes...",
+            total_rows, len(upc_data),
+        )
+
+        # Detect changes for each UPC with 2+ observations
+        all_changes = []  # type: List[Dict[str, Any]]
+        for upc, data in upc_data.items():
+            obs_dict = data["obs"]
+            if len(obs_dict) < 2:
+                continue
+
+            # Build sorted observation list for detect_changes()
+            observations = []
+            for date in sorted(obs_dict.keys()):
+                size, unit = obs_dict[date]
+                observations.append({
+                    "gtin_upc": upc,
+                    "brand_owner": data["brand"],
+                    "description": data["desc"],
+                    "_size": size,
+                    "_size_unit": unit,
+                    "source_date": date,
+                })
+
+            changes = detect_changes(observations)
+            all_changes.extend(changes)
+
+        self.log.info(
+            "USDA variance: %d UPCs analyzed, %d size changes found",
+            len(upc_data), len(all_changes),
         )
         return all_changes
 
@@ -149,86 +214,6 @@ class UsdaVarianceAnalyzer(BaseScraper):
     ) -> Dict[str, Any]:
         prev_total = int(prev_cursor.get("total_changes", 0))
         return {
-            "last_upc": "",  # Reset for next full run
+            "last_id": "",  # Reset for next full run
             "total_changes": prev_total + len(items),
         }
-
-    # ── Private helpers ────────────────────────────────────────────────────
-
-    def _fetch_upc_batch(
-        self, client: Any, after_upc: str
-    ) -> List[str]:
-        """Get the next batch of distinct UPCs from USDA raw_items.
-
-        Supabase PostgREST caps responses at ~1000 rows regardless of
-        the limit parameter, so we paginate internally using range()
-        offsets until we collect _UPC_BATCH_SIZE distinct UPCs.
-        """
-        _PAGE_SIZE = 1000  # Supabase PostgREST max rows per request
-        _MAX_PAGES = 50    # Safety cap: 50 pages × 1000 = 50K rows scanned
-
-        seen: List[str] = []
-        seen_set: set = set()
-        offset = 0
-
-        for _ in range(_MAX_PAGES):
-            query = (
-                client.table("raw_items")
-                .select("raw_payload->gtin_upc")
-                .eq("source_type", "usda")
-            )
-            if after_upc:
-                query = query.gt("raw_payload->>gtin_upc", after_upc)
-
-            resp = (
-                query
-                .order("raw_payload->>gtin_upc")
-                .range(offset, offset + _PAGE_SIZE - 1)
-                .execute()
-            )
-
-            rows = resp.data or []
-            if not rows:
-                break  # No more data
-
-            for row in rows:
-                upc = row.get("gtin_upc", "")
-                if upc and upc not in seen_set:
-                    seen_set.add(upc)
-                    seen.append(upc)
-                    if len(seen) >= _UPC_BATCH_SIZE:
-                        return seen
-
-            offset += _PAGE_SIZE
-
-            if len(rows) < _PAGE_SIZE:
-                break  # Last page
-
-        return seen
-
-    def _fetch_observations_for_upc(
-        self, client: Any, upc: str
-    ) -> List[Dict[str, Any]]:
-        """Get all USDA raw_items for a specific UPC, sorted by source_date."""
-        resp = (
-            client.table("raw_items")
-            .select("source_date,raw_payload")
-            .eq("source_type", "usda")
-            .eq("raw_payload->>gtin_upc", upc)
-            .order("source_date")
-            .execute()
-        )
-
-        observations: List[Dict[str, Any]] = []
-        for row in (resp.data or []):
-            payload = row.get("raw_payload", {})
-            observations.append({
-                "gtin_upc": payload.get("gtin_upc", upc),
-                "brand_owner": payload.get("brand_owner", ""),
-                "description": payload.get("description", ""),
-                "_size": payload.get("_size"),
-                "_size_unit": payload.get("_size_unit", ""),
-                "source_date": (row.get("source_date") or "")[:10],
-            })
-
-        return observations
