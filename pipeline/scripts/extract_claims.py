@@ -28,6 +28,7 @@ from pipeline.lib.extraction_prompt import (
     build_reddit_text_message,
     parse_claim_response,
 )
+from pipeline.lib.image_archiver import archive_claim_image
 from pipeline.lib.logging_setup import get_logger
 from pipeline.lib.supabase_client import get_client, reset_client
 
@@ -334,11 +335,20 @@ def _write_claim(item, claim_data, extractor_version, status, claim_index=0):
     }
 
     try:
-        (
+        resp = (
             client.table("claims")
             .upsert(row, on_conflict="raw_item_id,extractor_version,claim_index")
             .execute()
         )
+        # Archive image (best-effort, non-blocking for extraction)
+        if resp.data and item.get("source_type") == "reddit":
+            claim_id = resp.data[0].get("id")
+            if claim_id:
+                storage_path = archive_claim_image(claim_id, item.get("raw_payload", {}))
+                if storage_path:
+                    client.table("claims").update(
+                        {"image_storage_path": storage_path}
+                    ).eq("id", claim_id).execute()
     except Exception as exc:
         log.error(
             "Failed to write claim for raw_item %s (index %d): %s",

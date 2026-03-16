@@ -2,8 +2,25 @@
 
 import { useState } from "react";
 
-export function ClaimImage({ src, alt }: { src: string; alt: string }) {
+const STORAGE_BASE =
+  "https://ntyhbapphnzlariakgrw.supabase.co/storage/v1/object/public/claim-images";
+
+export function ClaimImage({
+  src,
+  storagePath,
+  alt,
+}: {
+  src: string;
+  storagePath?: string | null;
+  alt: string;
+}) {
+  // Try stored image first, then fall back to original URL
+  const [useStored, setUseStored] = useState(!!storagePath);
   const [failed, setFailed] = useState(false);
+
+  const activeSrc = useStored && storagePath
+    ? `${STORAGE_BASE}/${storagePath}`
+    : src;
 
   if (failed) {
     return (
@@ -16,11 +33,18 @@ export function ClaimImage({ src, alt }: { src: string; alt: string }) {
   /* eslint-disable @next/next/no-img-element */
   return (
     <img
-      src={src}
+      src={activeSrc}
       alt={alt}
       className="absolute inset-0 w-full h-full object-contain"
       loading="lazy"
-      onError={() => setFailed(true)}
+      onError={() => {
+        if (useStored) {
+          // Stored image failed, try original URL
+          setUseStored(false);
+        } else {
+          setFailed(true);
+        }
+      }}
     />
   );
 }

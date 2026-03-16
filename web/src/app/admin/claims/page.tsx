@@ -21,6 +21,7 @@ type Claim = {
   observed_date: string | null;
   raw_item_id: string;
   evidence_tags: string[] | null;
+  image_storage_path: string | null;
 };
 
 type RawItem = {
@@ -146,7 +147,7 @@ export default async function ClaimsReviewPage({
   // Fetch claims
   const { data: claims, count } = await supabase
     .from("claims")
-    .select("id,brand,product_name,category,old_size,old_size_unit,new_size,new_size_unit,old_price,new_price,change_description,confidence,status,observed_date,raw_item_id,evidence_tags", { count: "exact" })
+    .select("id,brand,product_name,category,old_size,old_size_unit,new_size,new_size_unit,old_price,new_price,change_description,confidence,status,observed_date,raw_item_id,evidence_tags,image_storage_path", { count: "exact" })
     .eq("status", statusFilter)
     .order("confidence->overall" as any, { ascending: false })
     .range(offset, offset + perPage - 1);
@@ -209,8 +210,12 @@ export default async function ClaimsReviewPage({
               <div className="flex flex-col sm:flex-row">
                 {/* Image column */}
                 <div className="w-full sm:w-64 h-48 sm:min-h-48 bg-[var(--bg-primary)] flex-shrink-0 relative">
-                  {imageUrl ? (
-                    <ClaimImage src={imageUrl} alt={title} />
+                  {imageUrl || claim.image_storage_path ? (
+                    <ClaimImage
+                      src={imageUrl || ""}
+                      storagePath={claim.image_storage_path}
+                      alt={title}
+                    />
                   ) : (
                     <div className="flex items-center justify-center h-full text-[var(--text-tertiary)] text-sm">
                       No image
