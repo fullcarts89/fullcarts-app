@@ -2,6 +2,23 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Protect /admin routes (except /admin/login and /api/admin/login)
+  if (
+    pathname.startsWith("/admin") &&
+    !pathname.startsWith("/admin/login") &&
+    !pathname.startsWith("/api/admin/login")
+  ) {
+    const session = request.cookies.get("admin_session")?.value;
+    const expectedHash = process.env.ADMIN_PASSWORD_HASH;
+
+    if (!session || !expectedHash || session !== expectedHash) {
+      const loginUrl = new URL("/admin/login", request.url);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });
