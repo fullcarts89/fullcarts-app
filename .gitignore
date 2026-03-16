@@ -39,3 +39,17 @@ Database Tables/
 
 # Original file (now served as index.html)
 fullcarts-website.html
+
+# Scratch / analysis files
+db_audit.py
+reddit_analysis.py
+sample_image_posts.py
+vision_extraction_test.py
+*_results.json
+*.log
+skimpflation_num1_drops.txt
+nutrition_skimpflation.json
+ingredient_changes_campbell.json
+top50_image_posts.json
+API\ Key.numbers
+App\ Screenshots/
