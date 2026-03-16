@@ -5,6 +5,7 @@ Usage:
     python -m pipeline reddit_backfill  [--dry-run]
     python -m pipeline news_rss         [--dry-run]
     python -m pipeline gdelt            [--dry-run]
+    python -m pipeline gdelt_backfill   [--dry-run]
     python -m pipeline off_daily        [--dry-run]
     python -m pipeline off_discovery    [--dry-run]
     python -m pipeline kroger           [--dry-run]
@@ -27,6 +28,7 @@ SCRAPER_MAP = {
     "reddit_backfill": "pipeline.scrapers.reddit_backfill:RedditBackfillScraper",
     "news_rss": "pipeline.scrapers.news_rss:NewsRssScraper",
     "gdelt": "pipeline.scrapers.gdelt:GdeltScraper",
+    "gdelt_backfill": "pipeline.scrapers.gdelt_backfill:GdeltBackfillScraper",
     "off_daily": "pipeline.scrapers.openfoodfacts:OpenFoodFactsScraper",
     "off_discovery": "pipeline.scrapers.off_discovery:OffDiscoveryScraper",
     "kroger": "pipeline.scrapers.kroger:KrogerScraper",
