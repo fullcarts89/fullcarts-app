@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { ClaimImage } from "@/components/admin/ClaimImage";
 import { ClaimActions } from "@/components/admin/ClaimActions";
 import { ClaimEditor } from "@/components/admin/ClaimEditor";
+import { ClaimFilters } from "@/components/admin/ClaimFilters";
 import { SourceContent } from "@/components/admin/SourceContent";
 
 type Claim = {
@@ -131,26 +132,50 @@ function formatDate(raw: RawItem | undefined): string | null {
   return null;
 }
 
+const CONFIDENCE_TIERS = [
+  { key: "all", label: "All", min: 0, max: 1 },
+  { key: "high", label: "80%+", min: 0.8, max: 1 },
+  { key: "mid", label: "60-79%", min: 0.6, max: 0.79 },
+  { key: "low", label: "40-59%", min: 0.4, max: 0.59 },
+  { key: "weak", label: "<40%", min: 0, max: 0.39 },
+];
+
+
 export default async function ClaimsReviewPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; status?: string }>;
+  searchParams: Promise<{ page?: string; status?: string; conf?: string; category?: string }>;
 }) {
   const params = await searchParams;
   const page = parseInt(params.page || "1", 10);
   const statusFilter = params.status || "pending";
+  const confFilter = params.conf || "all";
+  const categoryFilter = params.category || "";
   const perPage = 20;
   const offset = (page - 1) * perPage;
 
+  const tier = CONFIDENCE_TIERS.find((t) => t.key === confFilter) || CONFIDENCE_TIERS[0];
+
   const supabase = createAdminClient();
 
-  // Fetch claims
-  const { data: claims, count } = await supabase
+  // Build query with filters
+  let query = supabase
     .from("claims")
     .select("id,brand,product_name,category,old_size,old_size_unit,new_size,new_size_unit,old_price,new_price,change_description,confidence,status,observed_date,raw_item_id,evidence_tags,image_storage_path", { count: "exact" })
     .eq("status", statusFilter)
-    .order("confidence->overall" as any, { ascending: false })
-    .range(offset, offset + perPage - 1);
+    .order("confidence->overall" as any, { ascending: false });
+
+  if (confFilter !== "all") {
+    query = query
+      .gte("confidence->overall" as any, tier.min)
+      .lte("confidence->overall" as any, tier.max);
+  }
+
+  if (categoryFilter) {
+    query = query.eq("category", categoryFilter);
+  }
+
+  const { data: claims, count } = await query.range(offset, offset + perPage - 1);
 
   // Fetch raw_items for these claims
   const rawItemIds = (claims || []).map((c: Claim) => c.raw_item_id);
@@ -168,15 +193,16 @@ export default async function ClaimsReviewPage({
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
-      <header className="border-b border-[var(--bg-tertiary)] px-6 py-4">
+      <header className="border-b border-[var(--bg-tertiary)] px-6 py-4 space-y-3">
         <h1 className="font-[var(--font-headline)] text-2xl font-bold tracking-tight">
           Claim Review
         </h1>
-        <div className="flex gap-3 mt-3">
+        {/* Status tabs */}
+        <div className="flex gap-3">
           {["pending", "approved", "evidence", "discarded"].map((s) => (
             <a
               key={s}
-              href={`/admin/claims?status=${s}&page=1`}
+              href={`/admin/claims?status=${s}&page=1${confFilter !== "all" ? `&conf=${confFilter}` : ""}${categoryFilter ? `&category=${categoryFilter}` : ""}`}
               className={`px-3 py-1.5 text-sm rounded-md border transition-colors ${
                 statusFilter === s
                   ? "bg-[var(--bg-tertiary)] border-[var(--text-tertiary)] text-[var(--text-primary)]"
@@ -190,6 +216,8 @@ export default async function ClaimsReviewPage({
             {count || 0} claims &middot; Page {page}/{totalPages || 1}
           </span>
         </div>
+        {/* Confidence + Category filters */}
+        <ClaimFilters status={statusFilter} conf={confFilter} category={categoryFilter} />
       </header>
 
       <main className="max-w-5xl mx-auto px-6 py-6 space-y-4">
@@ -314,7 +342,7 @@ export default async function ClaimsReviewPage({
           <div className="flex justify-center gap-2 pt-4">
             {page > 1 && (
               <a
-                href={`/admin/claims?status=${statusFilter}&page=${page - 1}`}
+                href={`/admin/claims?status=${statusFilter}&page=${page - 1}${confFilter !== "all" ? `&conf=${confFilter}` : ""}${categoryFilter ? `&category=${categoryFilter}` : ""}`}
                 className="px-4 py-2 text-sm rounded border border-[var(--bg-tertiary)] hover:bg-[var(--bg-tertiary)] transition-colors"
               >
                 Previous
@@ -322,7 +350,7 @@ export default async function ClaimsReviewPage({
             )}
             {page < totalPages && (
               <a
-                href={`/admin/claims?status=${statusFilter}&page=${page + 1}`}
+                href={`/admin/claims?status=${statusFilter}&page=${page + 1}${confFilter !== "all" ? `&conf=${confFilter}` : ""}${categoryFilter ? `&category=${categoryFilter}` : ""}`}
                 className="px-4 py-2 text-sm rounded border border-[var(--bg-tertiary)] hover:bg-[var(--bg-tertiary)] transition-colors"
               >
                 Next
