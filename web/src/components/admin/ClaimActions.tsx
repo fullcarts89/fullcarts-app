@@ -9,6 +9,7 @@ const EVIDENCE_TAGS = [
   "Slack Fill",
   "Paper Thin",
   "Spot the Difference",
+  "So Smol",
 ] as const;
 
 export function ClaimActions({
