@@ -160,21 +160,13 @@ export default async function ClaimsReviewPage({
   const supabase = createAdminClient();
 
   // Pipeline stats queries (run in parallel with claims query)
-  const fourteenDaysAgo = new Date();
-  fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
-
-  const [statusCountsRaw, recentClaimsRes, latestClaimRes] = await Promise.all([
+  const [statusCountsRaw, dailyStatsRes, latestClaimRes] = await Promise.all([
     Promise.all(
       (["pending", "approved", "evidence", "discarded"] as const).map((s) =>
         supabase.from("claims").select("*", { count: "exact", head: true }).eq("status", s)
       )
     ),
-    supabase
-      .from("claims")
-      .select("extracted_at, status, raw_items!inner(source_type)")
-      .gte("extracted_at", fourteenDaysAgo.toISOString())
-      .order("extracted_at", { ascending: true })
-      .limit(5000),
+    supabase.rpc("pipeline_daily_stats", { days_back: 14 }),
     supabase
       .from("claims")
       .select("extracted_at")
@@ -189,16 +181,17 @@ export default async function ClaimsReviewPage({
     discarded: statusCountsRaw[3].count ?? 0,
   };
 
-  // Aggregate daily counts by source
+  // Pivot DB function results (per date+source rows) into per-date objects
   const dailyMap: Record<string, { total: number; reddit: number; news: number; gdelt: number }> = {};
-  for (const claim of recentClaimsRes.data || []) {
-    const date = (claim.extracted_at as string).slice(0, 10);
+  for (const row of dailyStatsRes.data || []) {
+    const date = (row.extraction_date as string).slice(0, 10);
     if (!dailyMap[date]) dailyMap[date] = { total: 0, reddit: 0, news: 0, gdelt: 0 };
-    dailyMap[date].total++;
-    const sourceType = (claim.raw_items as unknown as { source_type: string })?.source_type;
-    if (sourceType === "reddit") dailyMap[date].reddit++;
-    else if (sourceType === "news") dailyMap[date].news++;
-    else if (sourceType === "gdelt") dailyMap[date].gdelt++;
+    const count = Number(row.claim_count);
+    dailyMap[date].total += count;
+    const src = row.source_type as string;
+    if (src === "reddit") dailyMap[date].reddit += count;
+    else if (src === "news") dailyMap[date].news += count;
+    else if (src === "gdelt") dailyMap[date].gdelt += count;
   }
   const dailyCounts = Object.entries(dailyMap)
     .sort(([a], [b]) => a.localeCompare(b))
