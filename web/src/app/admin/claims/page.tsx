@@ -4,6 +4,7 @@ import { ClaimActions } from "@/components/admin/ClaimActions";
 import { ClaimEditor } from "@/components/admin/ClaimEditor";
 import { ClaimFilters } from "@/components/admin/ClaimFilters";
 import { SourceContent } from "@/components/admin/SourceContent";
+import { PipelineStats } from "@/components/admin/PipelineStats";
 
 type Claim = {
   id: string;
@@ -158,6 +159,66 @@ export default async function ClaimsReviewPage({
 
   const supabase = createAdminClient();
 
+  // Pipeline stats queries (run in parallel with claims query)
+  const fourteenDaysAgo = new Date();
+  fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+
+  const [statusCountsRaw, recentClaimsRes, latestClaimRes] = await Promise.all([
+    Promise.all(
+      (["pending", "approved", "evidence", "discarded"] as const).map((s) =>
+        supabase.from("claims").select("*", { count: "exact", head: true }).eq("status", s)
+      )
+    ),
+    supabase
+      .from("claims")
+      .select("extracted_at, status, raw_items!inner(source_type)")
+      .gte("extracted_at", fourteenDaysAgo.toISOString())
+      .order("extracted_at", { ascending: true })
+      .limit(5000),
+    supabase
+      .from("claims")
+      .select("extracted_at")
+      .order("extracted_at", { ascending: false })
+      .limit(1),
+  ]);
+
+  const statusCounts = {
+    pending: statusCountsRaw[0].count ?? 0,
+    approved: statusCountsRaw[1].count ?? 0,
+    evidence: statusCountsRaw[2].count ?? 0,
+    discarded: statusCountsRaw[3].count ?? 0,
+  };
+
+  // Aggregate daily counts by source
+  const dailyMap: Record<string, { total: number; reddit: number; news: number; gdelt: number }> = {};
+  for (const claim of recentClaimsRes.data || []) {
+    const date = (claim.extracted_at as string).slice(0, 10);
+    if (!dailyMap[date]) dailyMap[date] = { total: 0, reddit: 0, news: 0, gdelt: 0 };
+    dailyMap[date].total++;
+    const sourceType = (claim.raw_items as unknown as { source_type: string })?.source_type;
+    if (sourceType === "reddit") dailyMap[date].reddit++;
+    else if (sourceType === "news") dailyMap[date].news++;
+    else if (sourceType === "gdelt") dailyMap[date].gdelt++;
+  }
+  const dailyCounts = Object.entries(dailyMap)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([date, counts]) => ({ date, ...counts }));
+
+  // Pipeline health: healthy if extraction ran within 48h
+  const latestExtractedAt = latestClaimRes.data?.[0]?.extracted_at;
+  const hoursAgo = latestExtractedAt
+    ? Math.floor((Date.now() - new Date(latestExtractedAt as string).getTime()) / 3600000)
+    : Infinity;
+  const pipelineHealthy = hoursAgo < 48;
+  const lastExtractionAgo =
+    hoursAgo === Infinity
+      ? "never"
+      : hoursAgo < 1
+        ? "just now"
+        : hoursAgo < 24
+          ? `${hoursAgo}h ago`
+          : `${Math.floor(hoursAgo / 24)}d ago`;
+
   // Build query with filters
   let query = supabase
     .from("claims")
@@ -219,6 +280,13 @@ export default async function ClaimsReviewPage({
         {/* Confidence + Category filters */}
         <ClaimFilters status={statusFilter} conf={confFilter} category={categoryFilter} />
       </header>
+
+      <PipelineStats
+        statusCounts={statusCounts}
+        dailyCounts={dailyCounts}
+        pipelineHealthy={pipelineHealthy}
+        lastExtractionAgo={lastExtractionAgo}
+      />
 
       <main className="max-w-5xl mx-auto px-6 py-6 space-y-4">
         {(claims || []).map((claim: Claim) => {

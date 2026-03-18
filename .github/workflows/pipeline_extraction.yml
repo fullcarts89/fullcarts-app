@@ -1,5 +1,7 @@
 name: "Pipeline — Claim Extraction"
 on:
+  schedule:
+    - cron: "0 10 * * *" # Daily at 10:00 UTC (after scrapers finish)
   workflow_dispatch:
     inputs:
       source_type:
@@ -52,14 +54,20 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           FLAGS=""
-          if [ -n "${{ github.event.inputs.source_type }}" ]; then
-            FLAGS="$FLAGS --source-type ${{ github.event.inputs.source_type }}"
-          fi
-          if [ "${{ github.event.inputs.limit }}" != "0" ]; then
-            FLAGS="$FLAGS --limit ${{ github.event.inputs.limit }}"
-          fi
-          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
-            FLAGS="$FLAGS --dry-run"
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            # Scheduled: cap at 500 items/day for cost control (~$0.15/day)
+            FLAGS="--limit 500"
+          else
+            # Manual dispatch: use provided inputs
+            if [ -n "${{ github.event.inputs.source_type }}" ]; then
+              FLAGS="$FLAGS --source-type ${{ github.event.inputs.source_type }}"
+            fi
+            if [ "${{ github.event.inputs.limit }}" != "0" ]; then
+              FLAGS="$FLAGS --limit ${{ github.event.inputs.limit }}"
+            fi
+            if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+              FLAGS="$FLAGS --dry-run"
+            fi
           fi
           python -m pipeline.scripts.extract_claims $FLAGS
 
@@ -75,8 +83,18 @@ jobs:
           fi
           python -m pipeline.scripts.import_nutrition_claims $FLAGS
 
-      - name: Vision fallback
-        if: ${{ github.event.inputs.run_vision == 'true' }}
+      - name: Vision enrichment (scheduled)
+        if: ${{ github.event_name == 'schedule' }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          # Scheduled: enrich up to 200 pending claims with images (~$0.15/day)
+          python -m pipeline.scripts.extract_claims_vision --limit 200 --status pending
+
+      - name: Vision fallback (manual)
+        if: ${{ github.event_name != 'schedule' && github.event.inputs.run_vision == 'true' }}
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
