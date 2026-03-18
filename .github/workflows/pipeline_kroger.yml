@@ -38,3 +38,9 @@ jobs:
             FLAGS="--dry-run"
           fi
           python -m pipeline kroger $FLAGS
+      - name: Analyze Kroger changes
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python -m pipeline.scripts.analyze_kroger_changes

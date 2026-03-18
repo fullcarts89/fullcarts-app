@@ -36,3 +36,9 @@ jobs:
             FLAGS="--dry-run"
           fi
           python -m pipeline off_daily $FLAGS
+      - name: Analyze OFF changes
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python -m pipeline.scripts.analyze_off_changes
