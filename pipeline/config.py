@@ -110,6 +110,17 @@ FRED_SERIES = [
     ("CUSR0000SEFV",   "CPI: Food Away from Home",               "food_away_from_home"),
 ]
 
+# ── UPC / Barcode Resolution ──────────────────────────────────────────────────
+# UPCitemdb free trial tier: 100 lookups/day, 6 requests/minute
+UPCITEMDB_TRIAL_URL = "https://api.upcitemdb.com/prod/trial/lookup"
+UPCITEMDB_DAILY_LIMIT = 100
+
+# Brocade.io: free barcode lookup API, no authentication required
+BROCADE_API_URL = "https://brocade.io/api/items"
+
+# Seconds between UPCitemdb requests (free tier limit: 6/min → 10s gap)
+UPC_RESOLUTION_DELAY = 10
+
 # ── Rate limiting defaults ────────────────────────────────────────────────────
 DEFAULT_MAX_RETRIES = 3
 DEFAULT_TIMEOUT = 30           # seconds
