@@ -13,7 +13,10 @@ Usage:
     python -m pipeline usda_quarterly   [--dry-run]
     python -m pipeline usda_backfill    [--dry-run]
     python -m pipeline usda_variance    [--dry-run]
-    python -m pipeline usda_turnover   [--dry-run]
+    python -m pipeline usda_turnover    [--dry-run]
+    python -m pipeline bls_shrinkflation [--dry-run]
+    python -m pipeline open_prices      [--dry-run]
+    python -m pipeline fred_cpi         [--dry-run]
 """
 import argparse
 import sys
@@ -37,6 +40,9 @@ SCRAPER_MAP = {
     "usda_backfill": "pipeline.scrapers.usda_backfill:UsdaBackfillScraper",
     "usda_variance": "pipeline.scrapers.usda_variance:UsdaVarianceAnalyzer",
     "usda_turnover": "pipeline.scrapers.usda_turnover:UsdaTurnoverAnalyzer",
+    "bls_shrinkflation": "pipeline.scrapers.bls_shrinkflation:BlsShrinkflationScraper",
+    "open_prices": "pipeline.scrapers.open_prices:OpenPricesScraper",
+    "fred_cpi": "pipeline.scrapers.fred_cpi:FredCpiScraper",
 }
 
 

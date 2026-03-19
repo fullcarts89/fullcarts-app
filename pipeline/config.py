@@ -84,6 +84,32 @@ USDA_RELEASES = [
     ("2025-12-18", "FoodData_Central_branded_food_csv_2025-12-18.zip"),
 ]
 
+# ── Open Prices ───────────────────────────────────────────────────────────────
+OPEN_PRICES_API_BASE = "https://prices.openfoodfacts.org/api/v1"
+OPEN_PRICES_DELAY = 1.0        # seconds between requests (be respectful)
+OPEN_PRICES_PAGE_SIZE = 100    # items per page (API max)
+
+# ── FRED (Federal Reserve Economic Data) ─────────────────────────────────────
+# FRED API key is optional — the public CSV endpoint works without one.
+# Register at: https://fred.stlouisfed.org/docs/api/api_key.html
+FRED_API_KEY = os.getenv("FRED_API_KEY", "")
+FRED_API_BASE = "https://api.stlouisfed.org/fred"
+FRED_CSV_BASE = "https://fred.stlouisfed.org/graph/fredgraph.csv"
+FRED_DELAY = 0.6  # seconds between requests (~100 req/min, well under 120 limit)
+
+# (series_id, human_readable_name, category_slug)
+FRED_SERIES = [
+    ("CPIAUCNS",       "CPI: All Items (Urban Consumers)",       "all_items"),
+    ("CPIUFDNS",       "CPI: Food at Home",                      "food_at_home"),
+    ("CPIFABNS",       "CPI: Cereals and Bakery Products",       "cereals_bakery"),
+    ("CUSR0000SAF112", "CPI: Meats, Poultry, Fish, and Eggs",    "meats_poultry"),
+    ("CUSR0000SAF113", "CPI: Dairy and Related Products",        "dairy"),
+    ("CUSR0000SAF114", "CPI: Fruits and Vegetables",             "fruits_vegetables"),
+    ("CUSR0000SAF115", "CPI: Nonalcoholic Beverages",            "nonalcoholic_beverages"),
+    ("CUSR0000SAF116", "CPI: Other Food at Home",                "other_food_at_home"),
+    ("CUSR0000SEFV",   "CPI: Food Away from Home",               "food_away_from_home"),
+]
+
 # ── Rate limiting defaults ────────────────────────────────────────────────────
 DEFAULT_MAX_RETRIES = 3
 DEFAULT_TIMEOUT = 30           # seconds
