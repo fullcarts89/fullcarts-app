@@ -63,8 +63,9 @@ _MONTH_ABBR: Dict[str, int] = {
 _DOWNSIZE_KEYWORDS = ("downsize", "downsizing", "decrease", "reduction")
 _UPSIZE_KEYWORDS = ("upsize", "upsizing", "increase")
 
-# Keywords for official CPI vs R-CPI-SC series in the data file
-_RCPI_SC_KEYWORDS = ("r-cpi-sc", "rcpi-sc", "research cpi", "without")
+# Keywords for official CPI vs R-CPI-SC series in the data file.
+# BLS labels vary: "R-CPI-SC", "Research CPI", "CPI without size changes", etc.
+_RCPI_SC_KEYWORDS = ("r-cpi-sc", "rcpi-sc", "research cpi", "without", "adjusted")
 
 
 class BlsShrinkflationScraper(BaseScraper):
@@ -621,6 +622,7 @@ def _parse_period(cell_value: Any) -> Optional[date]:
 
     Handles:
       - Python datetime / date objects (openpyxl date-formatted cells)
+      - Excel serial date numbers (e.g. 45292 = 2024-01-01)
       - "Jan 2015"  / "Jan-2015"  / "Jan-15"
       - "2015 Jan"  / "2015-01"
       - "2015M01"   (BLS internal format)
@@ -632,6 +634,20 @@ def _parse_period(cell_value: Any) -> Optional[date]:
         return cell_value.date().replace(day=1)
     if isinstance(cell_value, date):
         return cell_value.replace(day=1)
+
+    # Excel serial date numbers: openpyxl may return raw int/float when the
+    # cell's number format isn't recognized as a date type.
+    # Excel epoch: datetime(1899, 12, 30) + timedelta(days=serial)
+    # BLS data spans ~2014–present: serials ~41640–49000
+    if isinstance(cell_value, (int, float)) and not isinstance(cell_value, bool):
+        serial = int(cell_value)
+        if 40000 <= serial <= 55000:  # 2009-03-06 to 2050-07-04
+            from datetime import timedelta
+            try:
+                d = datetime(1899, 12, 30) + timedelta(days=serial)
+                return d.date().replace(day=1)
+            except (ValueError, OverflowError):
+                pass
 
     s = str(cell_value).strip()
     if not s:

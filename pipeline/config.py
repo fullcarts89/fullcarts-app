@@ -110,6 +110,13 @@ FRED_SERIES = [
     ("CUSR0000SEFV",   "CPI: Food Away from Home",               "food_away_from_home"),
 ]
 
+# ── Walmart Open API ──────────────────────────────────────────────────────────
+# Register at: https://developer.walmart.com/
+# Generate an RSA key pair, upload the public key in the portal,
+# then set these env vars. The scraper skips gracefully if unset.
+WALMART_CONSUMER_ID = os.getenv("WALMART_CONSUMER_ID", "")
+WALMART_PRIVATE_KEY_PATH = os.getenv("WALMART_PRIVATE_KEY_PATH", "walmart_private_key.pem")
+
 # ── Rate limiting defaults ────────────────────────────────────────────────────
 DEFAULT_MAX_RETRIES = 3
 DEFAULT_TIMEOUT = 30           # seconds
