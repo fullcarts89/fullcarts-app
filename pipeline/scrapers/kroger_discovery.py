@@ -120,9 +120,11 @@ class KrogerDiscoveryScraper(BaseScraper):
     def next_cursor(
         self, items: List[Dict[str, Any]], prev_cursor: Dict[str, Any]
     ) -> Dict[str, Any]:
-        all_terms = KROGER_SEARCH_TERMS + KROGER_BRANDS
+        # Reset to beginning so the next run re-crawls all search terms
+        # (products are deduped by source_id on upsert, so re-crawling
+        # is safe and catches new/updated products)
         return {
-            "term_index": len(all_terms),
+            "term_index": 0,
             "offset": 0,
             "last_run_products": len(items),
             "last_run_date": self._today,

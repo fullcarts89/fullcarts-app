@@ -106,8 +106,11 @@ class OffDiscoveryScraper(BaseScraper):
     def next_cursor(
         self, items: List[Dict[str, Any]], prev_cursor: Dict[str, Any]
     ) -> Dict[str, Any]:
+        # Reset to beginning so the next run re-crawls all categories
+        # (products are deduped by source_id on upsert, so re-crawling
+        # is safe and catches new/updated products)
         return {
-            "category_index": len(OFF_CATEGORIES),
+            "category_index": 0,
             "page": 1,
             "last_run_products": len(items),
         }
