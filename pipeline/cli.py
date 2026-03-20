@@ -17,6 +17,7 @@ Usage:
     python -m pipeline bls_shrinkflation [--dry-run]
     python -m pipeline open_prices      [--dry-run]
     python -m pipeline fred_cpi         [--dry-run]
+    python -m pipeline promote_claims   [--dry-run] [--limit N]
 """
 import argparse
 import sys
@@ -62,21 +63,40 @@ def _load_scraper(name: str):
 
 
 def main() -> None:
+    all_commands = sorted(list(SCRAPER_MAP.keys()) + ["promote_claims"])
     parser = argparse.ArgumentParser(
         description="FullCarts data ingestion pipeline",
     )
     parser.add_argument(
         "scraper",
-        choices=sorted(SCRAPER_MAP.keys()),
-        help="Which scraper to run",
+        choices=all_commands,
+        help="Which scraper or job to run",
     )
     parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Fetch data but do not write to Supabase",
     )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=0,
+        help="(promote_claims) Max claims to process, 0=all",
+    )
 
     args = parser.parse_args()
+
+    # promote_claims is a standalone script, not a scraper
+    if args.scraper == "promote_claims":
+        import subprocess
+        import os
+        cmd = [sys.executable, "pipeline/scripts/promote_claims.py"]
+        if args.dry_run:
+            cmd.append("--dry-run")
+        if args.limit:
+            cmd += ["--limit", str(args.limit)]
+        result = subprocess.run(cmd, cwd=os.getcwd())
+        sys.exit(result.returncode)
 
     scraper = _load_scraper(args.scraper)
     try:
