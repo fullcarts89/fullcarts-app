@@ -52,6 +52,14 @@ Rules:
   - "is_shrinkflation": false
   - "change_description" should describe the quality change
   - confidence.overall should reflect how clear the claim is
+- For stretchflation (same size package but less product inside, more air/filler), set:
+  - "is_shrinkflation": true
+  - "change_description" should mention "stretchflation" and describe the issue
+  - confidence.overall should reflect how clear the evidence is
+- For catalog entries (OFF, Kroger, Open Prices) where no change is being reported:
+  - "is_shrinkflation": false
+  - Extract all available product data (brand, name, size, price, UPC)
+  - confidence.overall based on data completeness
 - category should be one of: chips, cereal, cookies, crackers, yogurt, ice_cream, candy, beverages, frozen_meals, canned_goods, bread, pasta, condiments, snacks, dairy, produce, meat, other"""
 
 SYSTEM_PROMPT_VISION = """You are a structured data extractor for a shrinkflation tracking platform.
@@ -222,6 +230,185 @@ def build_news_text_message(title, description, published, body=None, source_nam
         "have been shrinkflated, return a JSON array of claim objects (one per "
         "product). If only one product is mentioned, return a single JSON "
         "object as usual."
+    )
+
+    return "\n".join(parts)
+
+
+def build_usda_size_change_message(payload):
+    # type: (dict) -> str
+    """Build a user message for a USDA-detected size change.
+
+    The USDA variance analyzer already computed the before/after sizes.
+    This just formats the data for Claude to validate and enrich.
+    """
+    parts = []
+    parts.append("Source: USDA FoodData Central (government data)")
+    parts.append("Data type: Package weight change detected across quarterly releases")
+    parts.append("")
+
+    brand = payload.get("brand_owner", payload.get("brand", ""))
+    name = payload.get("description", payload.get("product_name", ""))
+    gtin = payload.get("gtin_upc", payload.get("upc", ""))
+    old_weight = payload.get("old_package_weight", payload.get("weight_before", ""))
+    new_weight = payload.get("new_package_weight", payload.get("weight_after", ""))
+    old_date = payload.get("old_release_date", payload.get("date_before", ""))
+    new_date = payload.get("new_release_date", payload.get("date_after", ""))
+    category = payload.get("branded_food_category", payload.get("category", ""))
+
+    if brand:
+        parts.append("Brand: %s" % brand)
+    if name:
+        parts.append("Product: %s" % name)
+    if gtin:
+        parts.append("UPC/GTIN: %s" % gtin)
+    if category:
+        parts.append("Category: %s" % category)
+    parts.append("")
+    if old_weight and new_weight:
+        parts.append("Previous package weight: %s" % old_weight)
+        parts.append("Current package weight: %s" % new_weight)
+    if old_date and new_date:
+        parts.append("Previous release: %s" % old_date)
+        parts.append("Current release: %s" % new_date)
+
+    parts.append("")
+    parts.append(
+        "This is GOVERNMENT DATA from the USDA. Extract the brand, product name, "
+        "old and new sizes (as numbers with units), and classify the change. "
+        "Confidence should be HIGH since this is official government data."
+    )
+
+    return "\n".join(parts)
+
+
+def build_openfoodfacts_message(payload):
+    # type: (dict) -> str
+    """Build a user message for an Open Food Facts product record.
+
+    OFF products are catalog entries, not change reports. The extractor
+    should record the current product data for future comparison.
+    """
+    parts = []
+    parts.append("Source: Open Food Facts (crowdsourced product database)")
+    parts.append("Data type: Product catalog entry")
+    parts.append("")
+
+    code = payload.get("code", "")
+    name = payload.get("product_name", "")
+    brands = payload.get("brands", "")
+    quantity = payload.get("quantity", payload.get("product_quantity", ""))
+    quantity_unit = payload.get("product_quantity_unit", "")
+    categories = payload.get("categories", "")
+
+    if brands:
+        parts.append("Brand: %s" % brands)
+    if name:
+        parts.append("Product: %s" % name)
+    if code:
+        parts.append("Barcode: %s" % code)
+    if quantity:
+        parts.append("Package size: %s %s" % (quantity, quantity_unit or ""))
+    if categories:
+        parts.append("Categories: %s" % str(categories)[:200])
+
+    parts.append("")
+    parts.append(
+        "This is a product catalog entry. Extract the brand, product name, "
+        "current size, and category. Set new_size to the current package size. "
+        "Leave old_size null (this is a single observation, not a change report). "
+        "Set is_shrinkflation to false. Set confidence based on data completeness."
+    )
+
+    return "\n".join(parts)
+
+
+def build_kroger_message(payload):
+    # type: (dict) -> str
+    """Build a user message for a Kroger API product record."""
+    parts = []
+    parts.append("Source: Kroger Product API (grocery retailer)")
+    parts.append("Data type: Current product listing")
+    parts.append("")
+
+    desc = payload.get("description", "")
+    brand = payload.get("brand", "")
+    upc = payload.get("upc", payload.get("productId", ""))
+    size = payload.get("size", payload.get("itemInformation", {}).get("size", ""))
+    price = None
+    items = payload.get("items", [])
+    if items and isinstance(items, list):
+        price_info = items[0].get("price", {})
+        price = price_info.get("regular", price_info.get("promo"))
+    categories = payload.get("categories", [])
+
+    if brand:
+        parts.append("Brand: %s" % brand)
+    if desc:
+        parts.append("Product: %s" % desc)
+    if upc:
+        parts.append("UPC: %s" % upc)
+    if size:
+        parts.append("Size: %s" % size)
+    if price:
+        parts.append("Price: $%.2f" % float(price))
+    if categories:
+        parts.append("Categories: %s" % str(categories)[:200])
+
+    parts.append("")
+    parts.append(
+        "This is a grocery product listing from Kroger. Extract the brand, "
+        "product name, current size, price, and category. Set new_size to "
+        "the current size. Leave old_size null. Set retailer to 'Kroger'. "
+        "Set is_shrinkflation to false. Set confidence based on data completeness."
+    )
+
+    return "\n".join(parts)
+
+
+def build_open_prices_message(payload):
+    # type: (dict) -> str
+    """Build a user message for an Open Prices receipt record."""
+    parts = []
+    parts.append("Source: Open Prices (crowdsourced receipt data)")
+    parts.append("Data type: Receipt-level price observation")
+    parts.append("")
+
+    code = payload.get("product_code", payload.get("barcode", ""))
+    product = payload.get("product", {})
+    name = ""
+    brand = ""
+    if isinstance(product, dict):
+        name = product.get("product_name", "")
+        brand = product.get("brands", "")
+
+    price = payload.get("price", "")
+    currency = payload.get("currency", "")
+    price_date = payload.get("date", payload.get("created", ""))
+    location = payload.get("location", {})
+    store = ""
+    if isinstance(location, dict):
+        store = location.get("osm_name", location.get("name", ""))
+
+    if brand:
+        parts.append("Brand: %s" % brand)
+    if name:
+        parts.append("Product: %s" % name)
+    if code:
+        parts.append("Barcode: %s" % code)
+    if price:
+        parts.append("Price: %s %s" % (price, currency))
+    if price_date:
+        parts.append("Date: %s" % str(price_date)[:10])
+    if store:
+        parts.append("Store: %s" % store)
+
+    parts.append("")
+    parts.append(
+        "This is a receipt-level price observation. Extract the brand, product "
+        "name, price, barcode, and store. Set new_price to the observed price. "
+        "Leave size fields null unless the product name contains size info. "
+        "Set is_shrinkflation to false. Set confidence based on data completeness."
     )
 
     return "\n".join(parts)

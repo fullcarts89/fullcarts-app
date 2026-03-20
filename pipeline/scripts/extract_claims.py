@@ -26,6 +26,10 @@ from pipeline.lib.extraction_prompt import (
     SYSTEM_PROMPT_TEXT,
     build_news_text_message,
     build_reddit_text_message,
+    build_usda_size_change_message,
+    build_openfoodfacts_message,
+    build_kroger_message,
+    build_open_prices_message,
     parse_claim_response,
 )
 from pipeline.lib.image_archiver import archive_claim_image
@@ -49,8 +53,12 @@ def main():
     )
     parser.add_argument(
         "--source-type", type=str, default=None,
-        choices=["reddit", "news", "gdelt"],
-        help="Only process this source type (default: both)",
+        choices=[
+            "reddit", "news", "gdelt", "openfoodfacts",
+            "kroger_api", "usda_size_change", "usda_turnover_change",
+            "usda_nutrition", "open_prices",
+        ],
+        help="Only process this source type (default: all supported)",
     )
     parser.add_argument(
         "--batch-size", type=int, default=50,
@@ -166,7 +174,12 @@ def _find_unprocessed_items(
     log.info("Found %d already-processed items", len(processed_ids))
 
     # Step 2: Fetch unprocessed raw_items
-    source_types = [source_type] if source_type else ["reddit", "news", "gdelt"]
+    source_types = [source_type] if source_type else [
+        "reddit", "news", "gdelt",
+        "openfoodfacts", "kroger_api",
+        "usda_size_change", "usda_turnover_change", "usda_nutrition",
+        "open_prices",
+    ]
     all_items = []  # type: List[Dict[str, Any]]
 
     for st in source_types:
@@ -279,6 +292,14 @@ def _extract_single_item(item, extractor_version):
             body=payload.get("article_body", payload.get("body")),
             source_name=payload.get("source_name", payload.get("domain", "")),
         )
+    elif source_type in ("usda_size_change", "usda_turnover_change", "usda_nutrition"):
+        user_message = build_usda_size_change_message(payload)
+    elif source_type == "openfoodfacts":
+        user_message = build_openfoodfacts_message(payload)
+    elif source_type == "kroger_api":
+        user_message = build_kroger_message(payload)
+    elif source_type == "open_prices":
+        user_message = build_open_prices_message(payload)
     else:
         log.warning("Unknown source_type: %s", source_type)
         return None
