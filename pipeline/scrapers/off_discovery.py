@@ -1,8 +1,9 @@
 """Open Food Facts category-based product discovery scraper.
 
-Browses focused food categories on OFF and stores every US product
-found into raw_items for later extraction.  Runs alongside off_daily
-(which monitors known UPCs); this scraper casts a wider net.
+Browses focused food categories on OFF and catalogs every US product
+found into product_entities + pack_variants + variant_observations.
+Runs alongside off_daily (which monitors known UPCs for price/size changes);
+this scraper casts a wider net to build the product catalog.
 
 Categories are configured in pipeline.config.OFF_CATEGORIES.
 """
@@ -15,8 +16,8 @@ from pipeline.config import (
     USER_AGENT,
 )
 from pipeline.lib.http_client import RateLimitedSession
-from pipeline.lib.logging_setup import get_logger
-from pipeline.scrapers.base import BaseScraper
+from pipeline.lib.units import parse_package_weight
+from pipeline.scrapers.catalog_base import CatalogScraper
 
 _OFF_RPS = 1.0 / OFF_DELAY  # ~1.67 req/s
 _PAGE_SIZE = 100
@@ -28,31 +29,83 @@ _FIELDS = (
 )
 
 
-class OffDiscoveryScraper(BaseScraper):
+class OffDiscoveryScraper(CatalogScraper):
     """Discover US food products on Open Food Facts by category."""
 
     scraper_name = "off_discovery"
     source_type = "openfoodfacts"
+    catalog_source = "off_catalog"
 
-    def __init__(self) -> None:
+    def __init__(self):
+        # type: () -> None
         super().__init__()
         self._session = RateLimitedSession(
             requests_per_second=_OFF_RPS,
             user_agent=USER_AGENT,
         )
 
-    # ── BaseScraper interface ──────────────────────────────────────────────
+    # ── CatalogScraper interface ────────────────────────────────────────────
+
+    def extract_product(self, item):
+        # type: (Dict[str, Any]) -> Optional[Dict[str, Any]]
+        """Map OFF product dict to catalog fields."""
+        brand = (item.get("brands") or "").strip()
+        name = (item.get("product_name") or "").strip()
+        if not brand or not name:
+            return None
+
+        # Parse size from OFF quantity fields
+        size = None  # type: Optional[float]
+        size_unit = None  # type: Optional[str]
+
+        # Try numeric fields first
+        pq = item.get("product_quantity")
+        pqu = item.get("product_quantity_unit", "")
+        if pq is not None:
+            try:
+                size = float(pq)
+                size_unit = pqu or "g"
+            except (ValueError, TypeError):
+                pass
+
+        # Fall back to free-text "quantity" field
+        if size is None:
+            qty_text = item.get("quantity", "")
+            if qty_text:
+                size, size_unit = parse_package_weight(qty_text)
+
+        categories = item.get("categories", "")
+        # Take first category as the main category
+        category = None  # type: Optional[str]
+        if categories:
+            first = categories.split(",")[0].strip()
+            if first:
+                category = first
+
+        return {
+            "brand": brand,
+            "name": name,
+            "category": category,
+            "upc": item.get("code", ""),
+            "size": size,
+            "size_unit": size_unit,
+            "variant_name": name,
+            "image_url": item.get("image_url"),
+        }
+
+    # ── BaseScraper interface ───────────────────────────────────────────────
 
     def fetch(
-        self, cursor: Dict[str, Any], dry_run: bool = False
-    ) -> List[Dict[str, Any]]:
+        self, cursor, dry_run=False
+    ):
+        # type: (Dict[str, Any], bool) -> List[Dict[str, Any]]
         """Browse OFF categories and collect product data.
 
         Returns a list of product dicts.  Resumes from cursor if interrupted.
         """
         category_index = int(cursor.get("category_index", 0))
         start_page = int(cursor.get("page", 1))
-        items: List[Dict[str, Any]] = []
+        items = []  # type: List[Dict[str, Any]]
 
         for cat_idx in range(category_index, len(OFF_CATEGORIES)):
             category = OFF_CATEGORIES[cat_idx]
@@ -90,38 +143,36 @@ class OffDiscoveryScraper(BaseScraper):
         )
         return items
 
-    def source_id_for(self, item: Dict[str, Any]) -> str:
+    def source_id_for(self, item):
+        # type: (Dict[str, Any]) -> str
         return "off_disc_{}".format(item["code"])
 
-    def source_url_for(self, item: Dict[str, Any]) -> Optional[str]:
+    def source_url_for(self, item):
+        # type: (Dict[str, Any]) -> Optional[str]
         code = item.get("code", "")
         if code:
             return "https://world.openfoodfacts.org/product/{}".format(code)
         return None
 
-    def source_date_for(self, item: Dict[str, Any]) -> Optional[str]:
+    def source_date_for(self, item):
+        # type: (Dict[str, Any]) -> Optional[str]
         from datetime import date
         return date.today().isoformat()
 
-    def next_cursor(
-        self, items: List[Dict[str, Any]], prev_cursor: Dict[str, Any]
-    ) -> Dict[str, Any]:
-        # Reset to beginning so the next run re-crawls all categories
-        # (products are deduped by source_id on upsert, so re-crawling
-        # is safe and catches new/updated products)
+    def next_cursor(self, items, prev_cursor):
+        # type: (List[Dict[str, Any]], Dict[str, Any]) -> Dict[str, Any]
         return {
             "category_index": 0,
             "page": 1,
             "last_run_products": len(items),
         }
 
-    # ── Private helpers ────────────────────────────────────────────────────
+    # ── Private helpers ─────────────────────────────────────────────────────
 
-    def _fetch_page(
-        self, category: str, page: int
-    ) -> List[Dict[str, Any]]:
+    def _fetch_page(self, category, page):
+        # type: (str, int) -> List[Dict[str, Any]]
         """Fetch one page of products for a category.  Returns empty on error."""
-        params: Dict[str, Any] = {
+        params = {
             "search_simple": 1,
             "action": "process",
             "json": 1,
@@ -134,7 +185,7 @@ class OffDiscoveryScraper(BaseScraper):
             "tag_contains_1": "contains",
             "tag_1": "United States",
             "fields": _FIELDS,
-        }
+        }  # type: Dict[str, Any]
 
         resp = self._session.get(OFF_SEARCH_URL, params=params)
         if resp is None:
