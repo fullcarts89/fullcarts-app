@@ -1,8 +1,9 @@
 """Kroger API product discovery scraper.
 
 Searches Kroger's product catalog by food categories and major brands,
-storing every product found into raw_items.  Runs alongside kroger.py
-(which monitors known UPCs for price/size changes).
+cataloging every product found into product_entities + pack_variants +
+variant_observations.  Runs alongside kroger.py (which monitors known
+UPCs for price/size changes).
 
 Search terms and brands are configured in pipeline.config.
 """
@@ -19,21 +20,23 @@ from pipeline.config import (
 )
 from pipeline.lib.http_client import RateLimitedSession
 from pipeline.lib.kroger_auth import KrogerAuth
-from pipeline.lib.logging_setup import get_logger
-from pipeline.scrapers.base import BaseScraper
+from pipeline.lib.units import parse_package_weight
+from pipeline.scrapers.catalog_base import CatalogScraper
 
 _KROGER_RPS = 2.0
 _PAGE_SIZE = 50
 _MAX_PAGES_PER_TERM = 10  # 500 products per search term max
 
 
-class KrogerDiscoveryScraper(BaseScraper):
+class KrogerDiscoveryScraper(CatalogScraper):
     """Discover grocery products via Kroger Product API search."""
 
     scraper_name = "kroger_discovery"
     source_type = "kroger_api"
+    catalog_source = "kroger_catalog"
 
-    def __init__(self) -> None:
+    def __init__(self):
+        # type: () -> None
         super().__init__()
         self._session = RateLimitedSession(
             requests_per_second=_KROGER_RPS,
@@ -43,11 +46,64 @@ class KrogerDiscoveryScraper(BaseScraper):
         self._today = date.today().isoformat()
         self._request_count = 0
 
-    # ── BaseScraper interface ──────────────────────────────────────────────
+    # ── CatalogScraper interface ────────────────────────────────────────────
+
+    def extract_product(self, item):
+        # type: (Dict[str, Any]) -> Optional[Dict[str, Any]]
+        """Map Kroger product wrapper to catalog fields."""
+        product = item.get("_product", {})
+        brand = (product.get("brand") or "").strip()
+        desc = (product.get("description") or "").strip()
+        if not brand or not desc:
+            return None
+
+        upc = (product.get("upc") or "").strip()
+
+        # Extract size from the first item in the items array
+        size = None  # type: Optional[float]
+        size_unit = None  # type: Optional[str]
+        items_list = product.get("items", [])
+        if items_list:
+            first_item = items_list[0]
+            size_text = first_item.get("size", "")
+            if size_text:
+                size, size_unit = parse_package_weight(size_text)
+
+        # Category from aisles
+        category = None  # type: Optional[str]
+        aisles = product.get("aisles", [])
+        if aisles:
+            aisle = aisles[0]
+            cat = aisle.get("description", "")
+            if cat:
+                category = cat
+
+        # Image URL
+        image_url = None  # type: Optional[str]
+        images_list = product.get("images", [])
+        if images_list:
+            first_img = images_list[0]
+            sizes = first_img.get("sizes", [])
+            if sizes:
+                image_url = sizes[0].get("url")
+
+        return {
+            "brand": brand,
+            "name": desc,
+            "category": category,
+            "upc": upc,
+            "size": size,
+            "size_unit": size_unit,
+            "variant_name": desc,
+            "image_url": image_url,
+        }
+
+    # ── BaseScraper interface ───────────────────────────────────────────────
 
     def fetch(
-        self, cursor: Dict[str, Any], dry_run: bool = False
-    ) -> List[Dict[str, Any]]:
+        self, cursor, dry_run=False
+    ):
+        # type: (Dict[str, Any], bool) -> List[Dict[str, Any]]
         """Search Kroger by terms + brands and collect product data.
 
         Resumes from cursor if interrupted mid-term.  Stops at the
@@ -58,7 +114,7 @@ class KrogerDiscoveryScraper(BaseScraper):
         start_offset = int(cursor.get("offset", 0))
         store_id = KROGER_STORE_IDS[0] if KROGER_STORE_IDS else ""
 
-        items: List[Dict[str, Any]] = []
+        items = []  # type: List[Dict[str, Any]]
         self._request_count = 0
 
         for t_idx in range(term_index, len(all_terms)):
@@ -108,21 +164,20 @@ class KrogerDiscoveryScraper(BaseScraper):
         )
         return items
 
-    def source_id_for(self, item: Dict[str, Any]) -> str:
+    def source_id_for(self, item):
+        # type: (Dict[str, Any]) -> str
         return "kroger_disc_{}".format(item["_product_id"])
 
-    def source_url_for(self, item: Dict[str, Any]) -> Optional[str]:
+    def source_url_for(self, item):
+        # type: (Dict[str, Any]) -> Optional[str]
         return None
 
-    def source_date_for(self, item: Dict[str, Any]) -> Optional[str]:
+    def source_date_for(self, item):
+        # type: (Dict[str, Any]) -> Optional[str]
         return self._today
 
-    def next_cursor(
-        self, items: List[Dict[str, Any]], prev_cursor: Dict[str, Any]
-    ) -> Dict[str, Any]:
-        # Reset to beginning so the next run re-crawls all search terms
-        # (products are deduped by source_id on upsert, so re-crawling
-        # is safe and catches new/updated products)
+    def next_cursor(self, items, prev_cursor):
+        # type: (List[Dict[str, Any]], Dict[str, Any]) -> Dict[str, Any]
         return {
             "term_index": 0,
             "offset": 0,
@@ -130,22 +185,21 @@ class KrogerDiscoveryScraper(BaseScraper):
             "last_run_date": self._today,
         }
 
-    # ── Private helpers ────────────────────────────────────────────────────
+    # ── Private helpers ─────────────────────────────────────────────────────
 
-    def _search_products(
-        self, term: str, store_id: str, offset: int
-    ) -> List[Dict[str, Any]]:
+    def _search_products(self, term, store_id, offset):
+        # type: (str, str, int) -> List[Dict[str, Any]]
         """Search Kroger API for one page of products.  Returns empty on error."""
         token = self._auth.get_token()
         if token is None:
             return []
 
         url = "{}/products".format(KROGER_API_BASE)
-        params: Dict[str, Any] = {
+        params = {
             "filter.term": term,
             "filter.limit": _PAGE_SIZE,
             "filter.start": offset + 1,  # Kroger uses 1-based offset
-        }
+        }  # type: Dict[str, Any]
         if store_id:
             params["filter.locationId"] = store_id
 
