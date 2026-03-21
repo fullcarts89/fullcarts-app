@@ -6,6 +6,7 @@ import { updateClaimStatus } from "@/app/admin/claims/actions";
 
 const EVIDENCE_TAGS = [
   "Skimpflation",
+  "Stretchflation",
   "Slack Fill",
   "Paper Thin",
   "Spot the Difference",
