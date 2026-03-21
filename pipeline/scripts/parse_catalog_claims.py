@@ -94,7 +94,7 @@ def main():
     )
     parser.add_argument(
         "--source-type", type=str, default=None,
-        choices=["openfoodfacts", "kroger_api", "open_prices"],
+        choices=["openfoodfacts", "kroger_api", "open_prices", "walmart"],
         help="Only process this source type",
     )
     parser.add_argument(
@@ -121,7 +121,7 @@ def main():
 
     source_types = (
         [args.source_type] if args.source_type
-        else ["openfoodfacts", "kroger_api", "open_prices"]
+        else ["openfoodfacts", "kroger_api", "open_prices", "walmart"]
     )
 
     total_parsed = 0
@@ -210,6 +210,8 @@ def _parse_item(item):
         return _parse_kroger(payload)
     elif source_type == "open_prices":
         return _parse_open_prices(payload)
+    elif source_type == "walmart":
+        return _parse_walmart(payload)
     else:
         return None
 
@@ -441,6 +443,81 @@ def _parse_open_prices(payload):
         "upc": code,
         "observed_date": observed_date,
         "change_description": "price_observation",
+        "is_shrinkflation": False,
+        "confidence": {
+            "brand": conf_brand,
+            "product_name": conf_name,
+            "size_change": 0.0,
+            "overall": overall,
+        },
+    }
+
+
+def _parse_walmart(payload):
+    # type: (Dict[str, Any]) -> Optional[Dict[str, Any]]
+    """Parse a Walmart Affiliate API product record directly.
+
+    Walmart payload fields: name, brandName, upc, itemId,
+    salePrice, size, categoryPath, shortDescription
+    """
+    name = _safe_str(payload.get("name"))
+    brand = _safe_str(payload.get("brandName"))
+    upc = _safe_str(payload.get("upc"))
+    item_id = _safe_str(payload.get("itemId"))
+
+    if not name and not brand:
+        return None
+
+    # Parse size from the size field or product name
+    size = None  # type: Optional[float]
+    size_unit = None  # type: Optional[str]
+    size_str = _safe_str(payload.get("size"))
+    if size_str:
+        size, size_unit = parse_package_weight(size_str)
+    # Fall back to parsing size from product name if not in size field
+    if size is None and name:
+        size, size_unit = parse_package_weight(name)
+
+    # Price
+    price = None  # type: Optional[float]
+    raw_price = payload.get("salePrice") or payload.get("msrp")
+    if raw_price is not None:
+        try:
+            price = float(raw_price)
+            if price <= 0:
+                price = None
+        except (TypeError, ValueError):
+            pass
+
+    # Category from categoryPath
+    cat_path = _safe_str(payload.get("categoryPath"))
+    category = _classify_category(cat_path)
+
+    # Use UPC if available, otherwise item ID
+    product_code = upc or (str(item_id) if item_id else None)
+
+    conf_brand = 0.95 if brand else 0.0
+    conf_name = 0.95 if name else 0.0
+    conf_size = 0.9 if size else 0.0
+    overall = min(
+        0.95,
+        (conf_brand + conf_name + conf_size) / 3,
+    )
+
+    return {
+        "brand": _title_case(brand),
+        "product_name": name,
+        "category": category,
+        "old_size": None,
+        "old_size_unit": None,
+        "new_size": size,
+        "new_size_unit": size_unit,
+        "old_price": None,
+        "new_price": price,
+        "retailer": "Walmart",
+        "upc": product_code,
+        "observed_date": None,
+        "change_description": "catalog_entry",
         "is_shrinkflation": False,
         "confidence": {
             "brand": conf_brand,

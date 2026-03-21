@@ -444,8 +444,9 @@ The admin UI (`/admin/claims`) reads from the `claims` table and displays the re
 - ✅ Direct parser for OFF/Kroger/Open Prices (`pipeline/scripts/parse_catalog_claims.py`) — parses structured catalog data directly into claims without Anthropic API calls
 - ✅ BLS CPI parser fix — added Excel serial date handling to `_parse_period()` in `bls_shrinkflation.py`
 
+- ✅ Walmart discovery scraper (`pipeline/scrapers/walmart.py`) + auth (`pipeline/lib/walmart_auth.py`) + CLI registration + direct parser support
+
 ### Remaining:
-- 🔧 Walmart scraper build (no API credentials in repo yet)
 - 🔧 Product images (all NULL)
 - 🔧 Extraction cost optimization
 
