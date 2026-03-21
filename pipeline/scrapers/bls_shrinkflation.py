@@ -621,6 +621,7 @@ def _parse_period(cell_value: Any) -> Optional[date]:
 
     Handles:
       - Python datetime / date objects (openpyxl date-formatted cells)
+      - Excel serial dates (float/int, e.g. 42370 = 2016-01-01)
       - "Jan 2015"  / "Jan-2015"  / "Jan-15"
       - "2015 Jan"  / "2015-01"
       - "2015M01"   (BLS internal format)
@@ -632,6 +633,25 @@ def _parse_period(cell_value: Any) -> Optional[date]:
         return cell_value.date().replace(day=1)
     if isinstance(cell_value, date):
         return cell_value.replace(day=1)
+
+    # Excel serial date: when openpyxl reads with data_only=True and
+    # read_only=True, date-formatted cells may come through as numbers.
+    # Excel epoch: day 1 = 1900-01-01 (with the Lotus 1-2-3 leap year bug
+    # that counts 1900-02-29 as day 60, so day 61 = 1900-03-01).
+    # Valid BLS date range: serial ~34000 (1993) to ~55000 (2050).
+    if isinstance(cell_value, (int, float)):
+        serial = int(cell_value)
+        if 34000 <= serial <= 55000:
+            try:
+                from datetime import timedelta
+                # Excel epoch starts at 1899-12-30 to account for the
+                # Lotus 1-2-3 bug (day 1 = 1900-01-01, but 1900-02-29
+                # is counted as day 60 even though it doesn't exist).
+                epoch = date(1899, 12, 30)
+                d = epoch + timedelta(days=serial)
+                return d.replace(day=1)
+            except (ValueError, OverflowError):
+                pass
 
     s = str(cell_value).strip()
     if not s:

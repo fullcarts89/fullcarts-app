@@ -30,6 +30,25 @@ KROGER_DISCOVERY_MAX_REQUESTS = int(
     os.getenv("KROGER_DISCOVERY_MAX_REQUESTS", "5000")
 )
 
+# ── Walmart Affiliate API ─────────────────────────────────────────────────
+WALMART_CONSUMER_ID = os.getenv("WALMART_CONSUMER_ID", "")
+WALMART_PRIVATE_KEY = os.getenv("WALMART_PRIVATE_KEY", "")
+# File path fallback for the RSA private key (used if env var is empty)
+WALMART_PRIVATE_KEY_FILE = os.getenv(
+    "WALMART_PRIVATE_KEY_FILE",
+    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                 "walmart_private_key.pem"),
+)
+WALMART_API_BASE = "https://developer.api.walmart.com/api-proxy/service/affil/product/v2"
+WALMART_SEARCH_TERMS = [
+    "potato chips", "breakfast cereal", "cookies", "crackers",
+    "yogurt", "ice cream", "juice", "soda", "frozen meals",
+    "canned soup", "pasta sauce", "candy bars", "granola bars", "bread",
+]
+WALMART_DISCOVERY_MAX_REQUESTS = int(
+    os.getenv("WALMART_DISCOVERY_MAX_REQUESTS", "3000")
+)
+
 # ── Scraper identity ──────────────────────────────────────────────────────────
 SCRAPER_VERSION = "pipeline-v1.0"
 USER_AGENT = "FullCartsBot/2.0 (https://fullcarts.org; data pipeline)"

@@ -440,10 +440,13 @@ The admin UI (`/admin/claims`) reads from the `claims` table and displays the re
 - ✅ Anthropic API credits replenished ($47)
 - ✅ Claim Extraction #4 triggered (500 items, running)
 
+### Completed (session 2, 2026-03-21):
+- ✅ Direct parser for OFF/Kroger/Open Prices (`pipeline/scripts/parse_catalog_claims.py`) — parses structured catalog data directly into claims without Anthropic API calls
+- ✅ BLS CPI parser fix — added Excel serial date handling to `_parse_period()` in `bls_shrinkflation.py`
+
+- ✅ Walmart discovery scraper (`pipeline/scrapers/walmart.py`) + auth (`pipeline/lib/walmart_auth.py`) + CLI registration + direct parser support
+
 ### Remaining:
-- 🔧 Direct parsers for OFF/Kroger/Open Prices (skip AI, parse structured data directly)
-- 🔧 BLS CPI parser fix (Excel serial date handling)
-- 🔧 Walmart scraper build (credentials ready)
 - 🔧 Product images (all NULL)
 - 🔧 Extraction cost optimization
 
