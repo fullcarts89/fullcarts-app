@@ -157,19 +157,33 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
 
                 entity_cache[ekey] = entity_id
 
-            # 2. Create pack_variant
+            # 2. Find or create pack_variant
+            upc = claim.get("upc")
             variant_name = f"{name} ({new_size or old_size}{size_unit})"
-            variant_resp = (sb.table("pack_variants")
-                          .insert({
-                              "entity_id": entity_id,
-                              "variant_name": variant_name[:200],
-                              "current_size": new_size or old_size,
-                              "size_unit": size_unit,
-                              "upc": claim.get("upc"),
-                          })
-                          .execute())
-            variant_id = variant_resp.data[0]["id"]
-            stats["variants_created"] += 1
+            variant_id = None
+
+            # Check for existing variant by UPC first (UNIQUE constraint)
+            if upc:
+                existing_var = (sb.table("pack_variants")
+                               .select("id")
+                               .eq("upc", upc)
+                               .limit(1)
+                               .execute())
+                if existing_var.data:
+                    variant_id = existing_var.data[0]["id"]
+
+            if variant_id is None:
+                variant_resp = (sb.table("pack_variants")
+                              .insert({
+                                  "entity_id": entity_id,
+                                  "variant_name": variant_name[:200],
+                                  "current_size": new_size or old_size,
+                                  "size_unit": size_unit,
+                                  "upc": upc,
+                              })
+                              .execute())
+                variant_id = variant_resp.data[0]["id"]
+                stats["variants_created"] += 1
 
             # 3. Create variant_observations (before and after)
             obs_date = claim.get("observed_date") or date.today().isoformat()
@@ -261,11 +275,12 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
                  .execute())
                 stats["published"] += 1
 
-            # 6. Update claim's matched_entity_id
+            # 6. Update claim as matched
             (sb.table("claims")
              .update({
                  "matched_entity_id": entity_id,
                  "matched_variant_id": variant_id,
+                 "status": "matched",
              })
              .eq("id", claim["id"])
              .execute())

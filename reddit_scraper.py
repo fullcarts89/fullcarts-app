@@ -28,7 +28,7 @@ import time
 import logging
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Set
 
 try:
     from supabase import create_client, Client as SupabaseClient
@@ -78,7 +78,7 @@ TIER_AUTO_THRESHOLD   = 3   # fields found → auto-accept
 TIER_REVIEW_THRESHOLD = 1   # fields found → review queue
 
 # Existing FullCarts product UPCs for dedup (extend as product DB grows)
-KNOWN_UPCS: set[str] = {
+KNOWN_UPCS: Set[str] = {
     "016000275560", "024000016816", "021130126026", "011110859830",
     "048001214823", "078742035215", "049000042566", "013800133236",
     "038000845178", "070038588337",

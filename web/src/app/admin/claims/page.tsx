@@ -162,7 +162,7 @@ export default async function ClaimsReviewPage({
   // Pipeline stats queries (run in parallel with claims query)
   const [statusCountsRaw, dailyStatsRes, latestClaimRes] = await Promise.all([
     Promise.all(
-      (["pending", "approved", "evidence", "discarded"] as const).map((s) =>
+      (["pending", "approved", "matched", "evidence", "discarded"] as const).map((s) =>
         supabase.from("claims").select("*", { count: "exact", head: true }).eq("status", s)
       )
     ),
@@ -177,8 +177,9 @@ export default async function ClaimsReviewPage({
   const statusCounts = {
     pending: statusCountsRaw[0].count ?? 0,
     approved: statusCountsRaw[1].count ?? 0,
-    evidence: statusCountsRaw[2].count ?? 0,
-    discarded: statusCountsRaw[3].count ?? 0,
+    matched: statusCountsRaw[2].count ?? 0,
+    evidence: statusCountsRaw[3].count ?? 0,
+    discarded: statusCountsRaw[4].count ?? 0,
   };
 
   // Pivot DB function results (per date+source rows) into per-date objects
@@ -253,7 +254,7 @@ export default async function ClaimsReviewPage({
         </h1>
         {/* Status tabs */}
         <div className="flex gap-3">
-          {["pending", "approved", "evidence", "discarded"].map((s) => (
+          {["pending", "approved", "matched", "evidence", "discarded"].map((s) => (
             <a
               key={s}
               href={`/admin/claims?status=${s}&page=1${confFilter !== "all" ? `&conf=${confFilter}` : ""}${categoryFilter ? `&category=${categoryFilter}` : ""}`}
