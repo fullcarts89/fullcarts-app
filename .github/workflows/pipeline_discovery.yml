@@ -11,6 +11,7 @@ on:
         options:
           - off_discovery
           - kroger_discovery
+          - walmart_discovery
       dry_run:
         description: "Dry run (no database writes)"
         required: false
@@ -29,6 +30,7 @@ jobs:
         scraper:
           - off_discovery
           - kroger_discovery
+          - walmart_discovery
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -44,6 +46,8 @@ jobs:
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           KROGER_CLIENT_ID: ${{ secrets.KROGER_CLIENT_ID }}
           KROGER_CLIENT_SECRET: ${{ secrets.KROGER_CLIENT_SECRET }}
+          WALMART_CONSUMER_ID: ${{ secrets.WALMART_CONSUMER_ID }}
+          WALMART_PRIVATE_KEY: ${{ secrets.WALMART_PRIVATE_KEY }}
         run: |
           FLAGS=""
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then

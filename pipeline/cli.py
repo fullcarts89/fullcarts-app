@@ -18,6 +18,7 @@ Usage:
     python -m pipeline open_prices      [--dry-run]
     python -m pipeline fred_cpi         [--dry-run]
     python -m pipeline walmart          [--dry-run]
+    python -m pipeline walmart_discovery [--dry-run]
 """
 import argparse
 import sys
@@ -45,6 +46,7 @@ SCRAPER_MAP = {
     "open_prices": "pipeline.scrapers.open_prices:OpenPricesScraper",
     "fred_cpi": "pipeline.scrapers.fred_cpi:FredCpiScraper",
     "walmart": "pipeline.scrapers.walmart:WalmartDiscoveryScraper",
+    "walmart_discovery": "pipeline.scrapers.walmart:WalmartDiscoveryScraper",
 }
 
 
