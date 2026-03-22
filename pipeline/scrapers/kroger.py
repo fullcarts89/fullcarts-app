@@ -282,10 +282,13 @@ class KrogerScraper(BaseScraper):
         result: Dict[str, Any] = {}
         for row in (resp.data or []):
             sid = row["source_id"]
-            # "kroger_{upc}_{date}_{store_id}" → split on "_" carefully
-            parts = sid.split("_")
-            if len(parts) >= 4:
-                upc = parts[1]
-                store_id = parts[-1]
-                result[f"{upc}_{store_id}"] = row["id"]
+            # Strip "kroger_" prefix, then split from the right on "_" to
+            # isolate store_id and date, leaving the UPC intact even if it
+            # contains underscores.
+            remainder = sid[len("kroger_"):]  # "{upc}_{date}_{store_id}"
+            # store_id is the last segment
+            rest, store_id = remainder.rsplit("_", 1)
+            # date (YYYY-MM-DD) is the last segment of what remains
+            upc, _date = rest.rsplit("_", 1)
+            result[f"{upc}_{store_id}"] = row["id"]
         return result

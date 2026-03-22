@@ -19,6 +19,7 @@ Usage:
     python -m pipeline fred_cpi         [--dry-run]
     python -m pipeline walmart          [--dry-run]
     python -m pipeline walmart_discovery [--dry-run]
+    python -m pipeline upc_backfill     [--dry-run]
 """
 import argparse
 import sys
@@ -47,6 +48,7 @@ SCRAPER_MAP = {
     "fred_cpi": "pipeline.scrapers.fred_cpi:FredCpiScraper",
     "walmart": "pipeline.scrapers.walmart:WalmartDiscoveryScraper",
     "walmart_discovery": "pipeline.scrapers.walmart:WalmartDiscoveryScraper",
+    "upc_backfill": "pipeline.scrapers.upc_backfill:UpcBackfillScraper",
 }
 
 
