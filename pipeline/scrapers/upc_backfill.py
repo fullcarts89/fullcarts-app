@@ -1,12 +1,16 @@
-"""Open Food Facts daily spot-check scraper.
+"""UPC backfill scraper — enriches pack_variants missing OFF observations.
 
-For every active pack_variant UPC, fetches the current product record from
-the OFF API and writes to both raw_items and variant_observations.
+Finds active pack_variant UPCs that have never been checked against
+Open Food Facts (no variant_observations with source_type='openfoodfacts'),
+fetches product data from OFF, and writes raw_items + variant_observations.
+
+Runs daily to catch newly discovered UPCs from Kroger/Walmart discovery
+that haven't been through an off_daily cycle yet.
 """
 from datetime import date, datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
-from pipeline.config import OFF_API_BASE, SCRAPER_VERSION, USER_AGENT
+from pipeline.config import OFF_API_BASE, USER_AGENT
 from pipeline.lib.http_client import RateLimitedSession
 from pipeline.lib.supabase_client import get_client
 from pipeline.lib.units import parse_package_weight
@@ -15,7 +19,6 @@ from pipeline.scrapers.base import BaseScraper
 # OFF allows 100 req/min → 1 request per 0.6 seconds
 _OFF_RPS = 1.0 / 0.6
 
-# Fields to keep from the OFF product response (discard the rest)
 _KEEP_FIELDS = {
     "code",
     "product_name",
@@ -28,13 +31,14 @@ _KEEP_FIELDS = {
 }
 
 
-class OpenFoodFactsScraper(BaseScraper):
-    """Daily UPC spot-check against the Open Food Facts product API."""
+class UpcBackfillScraper(BaseScraper):
+    """Backfill OFF data for pack_variants missing observations."""
 
-    scraper_name = "off_daily"
+    scraper_name = "upc_backfill"
     source_type = "openfoodfacts"
 
-    def __init__(self) -> None:
+    def __init__(self):
+        # type: () -> None
         super().__init__()
         self._session = RateLimitedSession(
             requests_per_second=_OFF_RPS,
@@ -45,19 +49,16 @@ class OpenFoodFactsScraper(BaseScraper):
     # ── BaseScraper interface ──────────────────────────────────────────────
 
     def fetch(
-        self, cursor: Dict[str, Any], dry_run: bool = False
-    ) -> List[Dict[str, Any]]:
-        """Fetch OFF product data for every active pack_variant UPC.
+        self, cursor, dry_run=False
+    ):
+        # type: (Dict[str, Any], bool) -> List[Dict[str, Any]]
+        """Fetch OFF product data for active UPCs missing OFF observations."""
+        upcs = self._load_missing_upcs()
+        self.log.info(
+            "Found %d active UPCs without OFF observations", len(upcs)
+        )
 
-        Each returned item is a dict with:
-            _upc           — the UPC we queried
-            _found         — bool: whether OFF returned product data
-            _raw_product   — the filtered OFF product dict (or {} if not found)
-        """
-        upcs = self._load_active_upcs()
-        self.log.info("Loaded %d active UPCs from pack_variants", len(upcs))
-
-        items: List[Dict[str, Any]] = []
+        items = []  # type: List[Dict[str, Any]]
         for upc in upcs:
             product = self._fetch_product(upc)
             items.append({
@@ -67,44 +68,45 @@ class OpenFoodFactsScraper(BaseScraper):
             })
 
         self.log.info(
-            "OFF fetch complete: %d queried, %d found",
+            "UPC backfill fetch complete: %d queried, %d found",
             len(items),
             sum(1 for i in items if i["_found"]),
         )
         return items
 
-    def source_id_for(self, item: Dict[str, Any]) -> str:
-        return f"{item['_upc']}_{self._today}"
+    def source_id_for(self, item):
+        # type: (Dict[str, Any]) -> str
+        return "off_backfill_{}_{}".format(item["_upc"], self._today)
 
-    def source_url_for(self, item: Dict[str, Any]) -> Optional[str]:
-        return f"https://world.openfoodfacts.org/product/{item['_upc']}"
+    def source_url_for(self, item):
+        # type: (Dict[str, Any]) -> Optional[str]
+        return "https://world.openfoodfacts.org/product/{}".format(
+            item["_upc"]
+        )
 
-    def source_date_for(self, item: Dict[str, Any]) -> Optional[str]:
+    def source_date_for(self, item):
+        # type: (Dict[str, Any]) -> Optional[str]
         return self._today
 
-    def next_cursor(
-        self, items: List[Dict[str, Any]], prev_cursor: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    def next_cursor(self, items, prev_cursor):
+        # type: (List[Dict[str, Any]], Dict[str, Any]) -> Dict[str, Any]
         return {
-            "last_check_date": self._today,
+            "last_backfill_date": self._today,
             "upcs_checked": len(items),
+            "upcs_found": sum(1 for i in items if i["_found"]),
         }
 
-    def store(self, items: List[Dict[str, Any]]) -> int:
+    def store(self, items):
+        # type: (List[Dict[str, Any]]) -> int
         """Write raw_items (product dict only), then variant_observations."""
-        # 1. Write raw payloads via custom upsert.
-        #    Store only the product dict as raw_payload — not the internal
-        #    _upc/_found/_raw_product envelope — while still using the
-        #    envelope for source_id/source_url/source_date generation.
         stored = self._store_raw_items(items)
-
-        # 2. Write variant_observations for items that had product data.
         self._store_variant_observations(items)
-
         return stored
 
-    def _store_raw_items(self, items: List[Dict[str, Any]]) -> int:
+    def _store_raw_items(self, items):
+        # type: (List[Dict[str, Any]]) -> int
         """Upsert raw_items with only the product dict as raw_payload."""
+        from pipeline.config import SCRAPER_VERSION
         from pipeline.lib.hashing import content_hash
 
         client = get_client()
@@ -114,7 +116,7 @@ class OpenFoodFactsScraper(BaseScraper):
 
         for i in range(0, len(items), batch_size):
             batch = items[i:i + batch_size]
-            rows: List[Dict[str, Any]] = []
+            rows = []  # type: List[Dict[str, Any]]
             for item in batch:
                 payload = item["_raw_product"] if item["_found"] else {}
                 rows.append({
@@ -140,20 +142,59 @@ class OpenFoodFactsScraper(BaseScraper):
 
     # ── Private helpers ────────────────────────────────────────────────────
 
-    def _load_active_upcs(self) -> List[str]:
-        """Return all UPCs from pack_variants where is_active = true."""
+    def _load_missing_upcs(self):
+        # type: () -> List[str]
+        """Return active UPCs that have no OFF variant_observations."""
         client = get_client()
+
+        # Get all active UPCs
         resp = (
             client.table("pack_variants")
             .select("upc")
             .eq("is_active", True)
             .execute()
         )
-        return [row["upc"] for row in (resp.data or []) if row.get("upc")]
+        all_upcs = [
+            row["upc"] for row in (resp.data or []) if row.get("upc")
+        ]
+        if not all_upcs:
+            return []
 
-    def _fetch_product(self, upc: str) -> Optional[Dict[str, Any]]:
+        # Get UPCs that already have OFF observations
+        # Query variant_observations via pack_variants join
+        resp2 = (
+            client.table("variant_observations")
+            .select("variant_id")
+            .eq("source_type", "openfoodfacts")
+            .execute()
+        )
+        observed_variant_ids = {
+            row["variant_id"] for row in (resp2.data or [])
+        }
+
+        # Get variant_id → upc mapping
+        resp3 = (
+            client.table("pack_variants")
+            .select("id,upc")
+            .eq("is_active", True)
+            .execute()
+        )
+        observed_upcs = set()  # type: set
+        for row in (resp3.data or []):
+            if row["id"] in observed_variant_ids:
+                observed_upcs.add(row["upc"])
+
+        missing = [u for u in all_upcs if u not in observed_upcs]
+        self.log.info(
+            "Active UPCs: %d total, %d with OFF obs, %d missing",
+            len(all_upcs), len(observed_upcs), len(missing),
+        )
+        return missing
+
+    def _fetch_product(self, upc):
+        # type: (str) -> Optional[Dict[str, Any]]
         """Fetch a single UPC from OFF.  Returns filtered product dict or None."""
-        url = f"{OFF_API_BASE}/product/{upc}.json"
+        url = "{}/product/{}.json".format(OFF_API_BASE, upc)
         resp = self._session.get(url)
         if resp is None:
             self.log.warning("OFF request failed for UPC %s", upc)
@@ -173,39 +214,32 @@ class OpenFoodFactsScraper(BaseScraper):
         product = data.get("product", {})
         return {k: v for k, v in product.items() if k in _KEEP_FIELDS}
 
-    def _store_variant_observations(
-        self, items: List[Dict[str, Any]]
-    ) -> None:
+    def _store_variant_observations(self, items):
+        # type: (List[Dict[str, Any]]) -> None
         """Upsert variant_observations for items with OFF product data."""
         client = get_client()
         found_items = [i for i in items if i["_found"]]
         if not found_items:
             return
 
-        # Build UPC → variant_id lookup from pack_variants
         upcs = [i["_upc"] for i in found_items]
         variant_map = self._load_variant_map(upcs)
 
-        # Build UPC → raw_item_id lookup for items we just inserted
-        raw_id_map = self._load_raw_item_ids(items)
-
-        source_ref = f"off_daily_{self._today}"
-        rows: List[Dict[str, Any]] = []
+        source_ref = "off_backfill_{}".format(self._today)
+        rows = []  # type: List[Dict[str, Any]]
 
         for item in found_items:
             upc = item["_upc"]
             variant_id = variant_map.get(upc)
             if variant_id is None:
-                continue  # UPC not in pack_variants — skip
+                continue
 
             product = item["_raw_product"]
-
-            # Parse size from product_quantity + product_quantity_unit first,
-            # falling back to the combined quantity string (e.g. "340 g").
             size, size_unit = self._parse_off_size(product)
             if size is None:
                 self.log.debug(
-                    "Could not parse size for UPC %s; skipping observation", upc
+                    "Could not parse size for UPC %s; skipping observation",
+                    upc,
                 )
                 continue
 
@@ -216,14 +250,11 @@ class OpenFoodFactsScraper(BaseScraper):
                 "source_ref": source_ref,
                 "size": size,
                 "size_unit": size_unit,
-                "raw_item_id": raw_id_map.get(upc),
             })
 
         if not rows:
             return
 
-        # Batch upsert; unique index is (variant_id, observed_date, source_type,
-        # COALESCE(retailer, '')) — retailer is NULL for OFF observations.
         batch_size = 50
         for i in range(0, len(rows), batch_size):
             batch = rows[i:i + batch_size]
@@ -233,28 +264,27 @@ class OpenFoodFactsScraper(BaseScraper):
             ).execute()
 
         self.log.info(
-            "Upserted %d variant_observations for off_daily", len(rows)
+            "Upserted %d variant_observations for upc_backfill", len(rows)
         )
 
-    def _parse_off_size(
-        self, product: Dict[str, Any]
-    ) -> Tuple[Optional[float], Optional[str]]:
-        """Parse size from OFF product fields, preferring the numeric fields."""
+    def _parse_off_size(self, product):
+        # type: (Dict[str, Any]) -> Tuple[Optional[float], Optional[str]]
+        """Parse size from OFF product fields."""
         pq = product.get("product_quantity", "")
         pq_unit = product.get("product_quantity_unit", "")
         if pq and pq_unit:
-            size, unit = parse_package_weight(f"{pq} {pq_unit}")
+            size, unit = parse_package_weight("{} {}".format(pq, pq_unit))
             if size is not None:
                 return size, unit
 
-        # Fall back to the free-text quantity field
         quantity = product.get("quantity", "")
         if quantity:
             return parse_package_weight(quantity)
 
         return None, None
 
-    def _load_variant_map(self, upcs: List[str]) -> Dict[str, Any]:
+    def _load_variant_map(self, upcs):
+        # type: (List[str]) -> Dict[str, Any]
         """Return {upc: variant_id} for the given UPCs."""
         client = get_client()
         resp = (
@@ -264,25 +294,3 @@ class OpenFoodFactsScraper(BaseScraper):
             .execute()
         )
         return {row["upc"]: row["id"] for row in (resp.data or [])}
-
-    def _load_raw_item_ids(
-        self, items: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
-        """Return {upc: raw_item_id} by querying raw_items for today's source_ids."""
-        client = get_client()
-        source_ids = [self.source_id_for(i) for i in items if i["_found"]]
-        if not source_ids:
-            return {}
-        resp = (
-            client.table("raw_items")
-            .select("id,source_id")
-            .eq("source_type", self.source_type)
-            .in_("source_id", source_ids)
-            .execute()
-        )
-        # source_id is "{upc}_{date}" — extract upc from it
-        result: Dict[str, Any] = {}
-        for row in (resp.data or []):
-            upc = row["source_id"].rsplit("_", 1)[0]
-            result[upc] = row["id"]
-        return result
