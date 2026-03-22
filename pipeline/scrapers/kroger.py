@@ -215,16 +215,37 @@ class KrogerScraper(BaseScraper):
         if not rows:
             return
 
+        # Deduplicate rows by upsert conflict key before batching.
+        # Multiple stores can produce rows with the same
+        # (variant_id, observed_date, source_type, retailer) — keep last.
+        deduped: Dict[Tuple[str, str, str, str], Dict[str, Any]] = {}
+        for row in rows:
+            key = (
+                row["variant_id"],
+                row["observed_date"],
+                row["source_type"],
+                row["retailer"],
+            )
+            deduped[key] = row
+        unique_rows = list(deduped.values())
+
+        if len(unique_rows) < len(rows):
+            self.log.info(
+                "Deduped variant_observations: %d -> %d rows",
+                len(rows), len(unique_rows),
+            )
+
         batch_size = 50
-        for i in range(0, len(rows), batch_size):
-            batch = rows[i:i + batch_size]
+        for i in range(0, len(unique_rows), batch_size):
+            batch = unique_rows[i:i + batch_size]
             client.table("variant_observations").upsert(
                 batch,
                 on_conflict="variant_id,observed_date,source_type,retailer",
             ).execute()
 
         self.log.info(
-            "Upserted %d variant_observations for kroger_weekly", len(rows)
+            "Upserted %d variant_observations for kroger_weekly",
+            len(unique_rows),
         )
 
     def _parse_kroger_product(
