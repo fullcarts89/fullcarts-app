@@ -32,7 +32,7 @@ from pipeline.lib.extraction_prompt import (
     build_open_prices_message,
     parse_claim_response,
 )
-from pipeline.lib.image_archiver import archive_claim_image
+from pipeline.lib.image_archiver import archive_claim_image, extract_image_url
 from pipeline.lib.logging_setup import get_logger
 from pipeline.lib.supabase_client import get_client, reset_client
 
@@ -121,6 +121,9 @@ def main():
 
             for claim_index, result in enumerate(results):
                 if result["confidence"]["overall"] == 0:
+                    total_discarded += 1
+                    status = "discarded"
+                elif _should_auto_decline(item, result):
                     total_discarded += 1
                     status = "discarded"
                 else:
@@ -326,6 +329,43 @@ def _extract_single_item(item, extractor_version):
         return [parse_claim_response(r) for r in response]
     else:
         return [parse_claim_response(response)]
+
+
+def _should_auto_decline(item, claim_data):
+    # type: (Dict[str, Any], Dict[str, Any]) -> bool
+    """Auto-decline low-quality claims that aren't worth manual review.
+
+    Rules:
+    - News/GDELT: decline if no brand detected or no size change detected
+    - Reddit: decline if the post has no images
+    """
+    source_type = item.get("source_type", "")
+    payload = item.get("raw_payload", {})
+
+    if source_type in ("news", "gdelt"):
+        brand = claim_data.get("brand")
+        if not brand:
+            log.debug("Auto-decline %s: no brand detected", source_type)
+            return True
+        has_size_change = (
+            claim_data.get("old_size") is not None
+            and claim_data.get("new_size") is not None
+        )
+        has_price_change = (
+            claim_data.get("old_price") is not None
+            and claim_data.get("new_price") is not None
+        )
+        if not has_size_change and not has_price_change:
+            log.debug("Auto-decline %s: no size or price change", source_type)
+            return True
+
+    if source_type == "reddit":
+        image_url = extract_image_url(payload)
+        if not image_url:
+            log.debug("Auto-decline reddit: no image in post %s", item.get("source_id", "?"))
+            return True
+
+    return False
 
 
 def _write_claim(item, claim_data, extractor_version, status, claim_index=0):
