@@ -222,8 +222,8 @@ class OpenFoodFactsScraper(BaseScraper):
         if not rows:
             return
 
-        # Batch upsert; unique index is (variant_id, observed_date, source_type,
-        # COALESCE(retailer, '')) — retailer is NULL for OFF observations.
+        # Batch upsert; unique constraint is (variant_id, observed_date, source_type,
+        # retailer) NULLS NOT DISTINCT — retailer is NULL for OFF observations.
         batch_size = 50
         for i in range(0, len(rows), batch_size):
             batch = rows[i:i + batch_size]
