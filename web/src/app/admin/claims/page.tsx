@@ -5,6 +5,7 @@ import { ClaimEditor } from "@/components/admin/ClaimEditor";
 import { ClaimFilters } from "@/components/admin/ClaimFilters";
 import { SourceContent } from "@/components/admin/SourceContent";
 import { PipelineStats } from "@/components/admin/PipelineStats";
+import { WaybackLookup } from "@/components/admin/WaybackLookup";
 
 type Claim = {
   id: string;
@@ -388,6 +389,11 @@ export default async function ClaimsReviewPage({
                         new_size_unit: claim.new_size_unit || "",
                         change_description: claim.change_description || "",
                       }}
+                    />
+                    <WaybackLookup
+                      productName={claim.product_name || ""}
+                      brand={claim.brand || ""}
+                      sourceUrl={raw?.source_url || null}
                     />
                     <div className="ml-auto">
                       <ClaimActions claimId={claim.id} currentStatus={claim.status} currentTags={claim.evidence_tags || undefined} />
