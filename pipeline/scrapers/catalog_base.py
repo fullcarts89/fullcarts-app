@@ -276,8 +276,8 @@ class CatalogScraper(BaseScraper):
         # type: (Any, str, str, float, str) -> None
         """Insert a variant_observation if one doesn't exist for this date+source.
 
-        The unique index includes COALESCE(retailer, ''), so we check
-        for an existing row first, then insert if missing.
+        The unique constraint is NULLS NOT DISTINCT on (variant_id, observed_date,
+        source_type, retailer); check for an existing row first, then insert if missing.
         """
         try:
             existing = (
