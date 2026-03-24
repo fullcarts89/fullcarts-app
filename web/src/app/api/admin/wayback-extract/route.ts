@@ -132,32 +132,19 @@ function generateProductUrls(
 }
 
 /**
- * Known retailer product-page URL patterns.
- * CDX wildcard uses `*` as a suffix wildcard only — it matches any path
- * under the prefix.  We build retailer-specific prefix queries to target
- * product detail pages (not search / browse / category pages).
+ * Retailer product-page URL prefixes for CDX prefix matching.
+ * CDX `*` only works as a suffix (prefix match), so we query broad
+ * prefixes like `walmart.com/ip/` and use CDX `filter=original:.*keyword.*`
+ * to narrow results to the specific product.
  */
-const RETAILER_URL_PATTERNS: Record<
-  string,
-  (keywords: string[]) => string[]
-> = {
-  "www.walmart.com": (kw) => {
-    // Walmart product pages: /ip/Product-Name-Slug/123456
-    // CDX prefix search for /ip/ pages whose slug contains a keyword
-    return kw.map((w) => `www.walmart.com/ip/*${w}*`);
-  },
-  "www.amazon.com": (kw) => {
-    // Amazon product pages: /dp/ASIN or /gp/product/ASIN — keyword is in title slug
-    return kw.map((w) => `www.amazon.com/*/${w}*`);
-  },
-  "www.kroger.com": (kw) => {
-    // Kroger product pages: /p/brand-product-name/0001234567890
-    return kw.map((w) => `www.kroger.com/p/*${w}*`);
-  },
-  "www.target.com": (kw) => {
-    // Target product pages: /p/Product-Name/-/A-12345678
-    return kw.map((w) => `www.target.com/p/*${w}*`);
-  },
+const RETAILER_PRODUCT_PREFIXES: Record<string, string[]> = {
+  "www.walmart.com": ["https://www.walmart.com/ip/"],
+  "www.amazon.com": [
+    "https://www.amazon.com/dp/",
+    "https://www.amazon.com/gp/product/",
+  ],
+  "www.kroger.com": ["https://www.kroger.com/p/"],
+  "www.target.com": ["https://www.target.com/p/"],
 };
 
 /**
@@ -193,9 +180,9 @@ function parseCdxResponse(
  * Search CDX for product pages across a retailer.
  *
  * Strategy:
- *  1. Build retailer-specific URL prefix queries (e.g. walmart.com/ip/*keyword*)
- *  2. Query CDX for each prefix — NO matchType (let the `*` wildcard work)
- *  3. Filter to product detail pages, dedup by digest
+ *  1. Use retailer product-page prefix (e.g. walmart.com/ip/) with matchType=prefix
+ *  2. Use CDX `filter=original:.*keyword.*` to match the product keyword in the URL
+ *  3. Collapse by URL key to get unique pages, then query each page for its timeline
  *  4. Prefer recent results (from: 2010) so we get modern pages with extractable HTML
  */
 async function searchRetailerCdx(
@@ -204,11 +191,12 @@ async function searchRetailerCdx(
   brand: string,
 ): Promise<Array<{ url: string; timestamp: string; digest: string; length: string }>> {
   // Extract keywords from the product name (skip short/common words)
+  const stopWords = ["with", "from", "that", "this", "size", "family", "pack", "brand", "original"];
   const nameWords = `${brand} ${productName}`
     .toLowerCase()
     .replace(/[^a-z0-9\s]/g, "")
     .split(/\s+/)
-    .filter((w) => w.length > 3 && !["with", "from", "that", "this", "size", "family", "pack"].includes(w));
+    .filter((w) => w.length > 3 && !stopWords.includes(w));
 
   if (nameWords.length === 0) return [];
 
@@ -217,13 +205,19 @@ async function searchRetailerCdx(
     .sort((a, b) => b.length - a.length)
     .slice(0, 2);
 
-  // Build URL patterns
-  const patternFn = RETAILER_URL_PATTERNS[retailerDomain];
-  const urlPatterns = patternFn
-    ? patternFn(keywords)
-    : keywords.map((w) => `${retailerDomain}/*${w}*`);
+  // Get prefixes for this retailer
+  const prefixes = RETAILER_PRODUCT_PREFIXES[retailerDomain];
+  if (!prefixes) return [];
 
-  // Query CDX for each pattern in parallel
+  // Build queries: one per prefix × keyword combo
+  const queries: Array<{ prefix: string; keyword: string }> = [];
+  for (const prefix of prefixes) {
+    for (const kw of keywords) {
+      queries.push({ prefix, keyword: kw });
+    }
+  }
+
+  // Query CDX for each prefix+keyword in parallel
   const allResults: Array<{
     url: string;
     timestamp: string;
@@ -232,18 +226,23 @@ async function searchRetailerCdx(
   }> = [];
 
   const settled = await Promise.allSettled(
-    urlPatterns.map(async (pattern) => {
+    queries.map(async ({ prefix, keyword }) => {
+      // Use matchType=prefix with the retailer product path prefix,
+      // then filter by keyword appearing anywhere in the original URL.
+      // CDX filter syntax: "field:regex"
       const params = new URLSearchParams({
-        url: pattern,
+        url: prefix,
+        matchType: "prefix",
         output: "json",
         fl: "timestamp,original,statuscode,digest,length",
-        filter: "statuscode:200",
-        collapse: "timestamp:6",  // one per month
-        from: "20100101",         // modern pages only — better HTML for extraction
-        limit: "50",
+        collapse: "timestamp:6",  // one snapshot per month
+        from: "20100101",         // modern pages only — extractable HTML
+        limit: "100",
       });
+      // CDX supports multiple filter params; append keyword filter
+      const filterUrl = `${params.toString()}&filter=statuscode:200&filter=original:.*${encodeURIComponent(keyword)}.*`;
 
-      const resp = await fetch(`${CDX_API}?${params.toString()}`, {
+      const resp = await fetch(`${CDX_API}?${filterUrl}`, {
         headers: { "User-Agent": "FullCarts/1.0 (shrinkflation research)" },
         signal: AbortSignal.timeout(20000),
       });
@@ -256,20 +255,15 @@ async function searchRetailerCdx(
     if (r.status === "fulfilled") allResults.push(...r.value);
   }
 
-  // Filter out search / category / browse pages
+  // Dedup by digest and filter out non-product pages
   const skipPatterns = ["/search", "/s?", "/browse/", "/category/", "/aisle/", "/shop/"];
   const seen = new Set<string>();
   const filtered: typeof allResults = [];
 
   for (const row of allResults) {
     if (skipPatterns.some((p) => row.url.includes(p))) continue;
-    // Dedup by digest (same page content)
     if (seen.has(row.digest)) continue;
     seen.add(row.digest);
-    // Require that URL contains at least one keyword (confirms product relevance)
-    const urlLower = row.url.toLowerCase();
-    const hasKeyword = keywords.some((kw) => urlLower.includes(kw));
-    if (!hasKeyword) continue;
     filtered.push(row);
   }
 
