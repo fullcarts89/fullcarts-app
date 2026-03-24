@@ -2,18 +2,7 @@
 
 import { useState, useCallback } from "react";
 
-const CDX_API = "https://web.archive.org/cdx/search/cdx";
-const ARCHIVE_BASE = "https://web.archive.org/web";
-
 // ── Types ───────────────────────────────────────────────────────────────────
-
-type Snapshot = {
-  timestamp: string;
-  retailer: string;
-  sourceUrl: string;
-  archiveUrl: string;
-  digest: string;
-};
 
 type ExtractionResult = {
   timestamp: string;
@@ -74,51 +63,6 @@ function detectSizeChanges(results: ExtractionResult[]): SizeChange[] {
   return changes;
 }
 
-/** Detect retailer from URL for display name. */
-function detectRetailerDisplay(url: string): string {
-  const u = url.toLowerCase();
-  if (u.includes("walmart.com")) return "Walmart";
-  if (u.includes("amazon.com")) return "Amazon";
-  if (u.includes("kroger.com")) return "Kroger";
-  if (u.includes("target.com")) return "Target";
-  if (u.includes("openfoodfacts.org")) return "Open Food Facts";
-  if (u.includes("fdc.nal.usda.gov")) return "USDA FDC";
-  return "Other";
-}
-
-/** Query the CDX API for snapshots of a URL (used for initial discovery). */
-async function queryCdx(url: string): Promise<Array<{ timestamp: string; digest: string }>> {
-  const params = new URLSearchParams({
-    url,
-    output: "json",
-    fl: "timestamp,statuscode,digest",
-    filter: "statuscode:200",
-    collapse: "timestamp:6",
-    limit: "100",
-  });
-
-  try {
-    const resp = await fetch(`${CDX_API}?${params.toString()}`);
-    if (!resp.ok) return [];
-    const data = await resp.json();
-    if (!data || data.length < 2) return [];
-
-    const headers = data[0] as string[];
-    const seen = new Set<string>();
-    const results: Array<{ timestamp: string; digest: string }> = [];
-
-    for (let i = 1; i < data.length; i++) {
-      const record: Record<string, string> = {};
-      headers.forEach((h, j) => (record[h] = data[i][j]));
-      if (seen.has(record.digest)) continue;
-      seen.add(record.digest);
-      results.push({ timestamp: record.timestamp, digest: record.digest });
-    }
-    return results;
-  } catch {
-    return [];
-  }
-}
 
 const RETAILER_COLORS: Record<string, string> = {
   Walmart: "#0071dc",
@@ -150,75 +94,26 @@ export function WaybackLookup({
   const [sizeChanges, setSizeChanges] = useState<SizeChange[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  // Phase 1 results (CDX discovery, like the old flow)
-  const [discoveredSnapshots, setDiscoveredSnapshots] = useState<Snapshot[]>([]);
-
   const runLookup = useCallback(async () => {
     setLoading(true);
     setExtracting(false);
     setError(null);
     setResults([]);
     setSizeChanges([]);
-    setDiscoveredSnapshots([]);
     setProgress({ current: 0, total: 0, retailer: "", timestamp: "" });
 
     try {
-      // ── Phase 1: CDX Discovery (client-side, fast) ─────────────────
-      // We still do a quick client-side CDX check for the custom URL and
-      // source URL to show the user that something is happening immediately.
-      const quickSnapshots: Snapshot[] = [];
-      const urlsToCheck: Array<{ retailer: string; url: string }> = [];
-
-      if (customUrl.trim()) {
-        urlsToCheck.push({ retailer: detectRetailerDisplay(customUrl.trim()), url: customUrl.trim() });
-      }
-      if (sourceUrl) {
-        urlsToCheck.push({ retailer: detectRetailerDisplay(sourceUrl), url: sourceUrl });
-      }
-
-      // Quick CDX check for direct URLs only (not search URLs)
-      if (urlsToCheck.length > 0) {
-        const settled = await Promise.allSettled(
-          urlsToCheck.map(async ({ retailer, url }) => {
-            const snaps = await queryCdx(url);
-            return { retailer, url, snapshots: snaps };
-          }),
-        );
-        for (const r of settled) {
-          if (r.status !== "fulfilled") continue;
-          const { retailer, url, snapshots } = r.value;
-          for (const s of snapshots) {
-            quickSnapshots.push({
-              timestamp: s.timestamp,
-              retailer,
-              sourceUrl: url,
-              archiveUrl: `${ARCHIVE_BASE}/${s.timestamp}/${url}`,
-              digest: s.digest,
-            });
-          }
-        }
-      }
-
-      setDiscoveredSnapshots(quickSnapshots);
-
-      // ── Phase 2: Server-side extraction via SSE ────────────────────
+      // ── Server-side discovery + extraction via SSE ────────────────
+      // Let the server handle CDX discovery (with retailer-specific URL
+      // patterns) and extraction in a single SSE stream.  This avoids
+      // duplicating CDX queries client-side and ensures we get modern,
+      // extractable snapshots.
       setExtracting(true);
-
-      // Build snapshot input for the API. If we have custom/source URLs with
-      // CDX hits, send those. The API will also auto-discover via CDX wildcards
-      // for retailers using productName + brand.
-      const snapshotInput = quickSnapshots.map((s) => ({
-        timestamp: s.timestamp,
-        sourceUrl: s.sourceUrl,
-        retailer: s.retailer,
-        digest: s.digest,
-      }));
 
       const resp = await fetch("/api/admin/wayback-extract", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          snapshots: snapshotInput.length > 0 ? snapshotInput : undefined,
           productName,
           brand,
           customUrl: customUrl.trim() || undefined,
@@ -292,7 +187,7 @@ export function WaybackLookup({
         }
       }
 
-      if (accumulatedResults.length === 0 && quickSnapshots.length === 0) {
+      if (accumulatedResults.length === 0) {
         setError("No archived snapshots found. Try pasting a specific product page URL.");
       }
     } catch (e) {
