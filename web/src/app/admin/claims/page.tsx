@@ -23,6 +23,7 @@ type Claim = {
   status: string;
   observed_date: string | null;
   raw_item_id: string;
+  upc: string | null;
   evidence_tags: string[] | null;
   image_storage_path: string | null;
 };
@@ -217,7 +218,7 @@ export default async function ClaimsReviewPage({
   // Build query with filters
   let query = supabase
     .from("claims")
-    .select("id,brand,product_name,category,old_size,old_size_unit,new_size,new_size_unit,old_price,new_price,change_description,confidence,status,observed_date,raw_item_id,evidence_tags,image_storage_path", { count: "exact" })
+    .select("id,brand,product_name,category,old_size,old_size_unit,new_size,new_size_unit,old_price,new_price,change_description,confidence,status,observed_date,raw_item_id,upc,evidence_tags,image_storage_path", { count: "exact" })
     .eq("status", statusFilter)
     .order("confidence->overall" as any, { ascending: false });
 
@@ -394,6 +395,9 @@ export default async function ClaimsReviewPage({
                       productName={claim.product_name || ""}
                       brand={claim.brand || ""}
                       sourceUrl={raw?.source_url || null}
+                      upc={claim.upc || null}
+                      claimOldSize={claim.old_size}
+                      claimOldUnit={claim.old_size_unit}
                     />
                     <div className="ml-auto">
                       <ClaimActions claimId={claim.id} currentStatus={claim.status} currentTags={claim.evidence_tags || undefined} />

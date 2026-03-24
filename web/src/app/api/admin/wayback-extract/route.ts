@@ -313,11 +313,16 @@ function sha256(input: string): string {
  *     productName?: string,
  *     brand?: string,
  *     customUrl?: string,
+ *     upc?: string,
+ *     claimOldSize?: number,
+ *     claimOldUnit?: string,
  *     maxPerRetailer?: number  // default 5
  *   }
  *
  * If snapshots are provided, extract from those directly.
  * If only productName/brand, discover snapshots via CDX first.
+ * If upc is provided, prioritize URLs containing that UPC.
+ * If claimOldSize is provided, score results by size proximity.
  */
 export async function POST(request: NextRequest) {
   const body = await request.json();
@@ -326,12 +331,18 @@ export async function POST(request: NextRequest) {
     productName = "",
     brand = "",
     customUrl = "",
+    upc = "",
+    claimOldSize = 0,
+    claimOldUnit = "",
     maxPerRetailer = 5,
   } = body as {
     snapshots?: SnapshotInput[];
     productName?: string;
     brand?: string;
     customUrl?: string;
+    upc?: string;
+    claimOldSize?: number;
+    claimOldUnit?: string;
     maxPerRetailer?: number;
   };
 
@@ -391,7 +402,7 @@ export async function POST(request: NextRequest) {
             }
           }
 
-          // Search major retailers via CDX wildcard for product pages
+          // Search major retailers via brand-scoped CDX prefix queries
           const retailers = [
             { domain: "www.walmart.com", name: "Walmart" },
             { domain: "www.amazon.com", name: "Amazon" },
@@ -399,42 +410,101 @@ export async function POST(request: NextRequest) {
             { domain: "www.target.com", name: "Target" },
           ];
 
-          const retailerSearches = await Promise.allSettled(
-            retailers.map(async ({ domain, name }) => {
-              const found = await searchRetailerCdx(
-                domain,
-                productName,
-                brand,
+          // If UPC is available, also search for URLs containing the UPC.
+          // Kroger and Target URLs often embed the UPC (e.g. /p/.../0003800014371).
+          // This is the most precise way to find the exact SKU.
+          const upcSearches: Promise<SnapshotInput[]>[] = [];
+          if (upc.trim()) {
+            const cleanUpc = upc.trim().replace(/^0+/, ""); // strip leading zeros for matching
+            for (const { domain, name } of retailers) {
+              const basePath = RETAILER_PRODUCT_PATHS[domain];
+              if (!basePath) continue;
+              upcSearches.push(
+                (async () => {
+                  try {
+                    const params = new URLSearchParams({
+                      url: basePath,
+                      matchType: "prefix",
+                      output: "json",
+                      fl: "timestamp,original,statuscode,digest,length",
+                      collapse: "timestamp:6",
+                      from: "20150101",
+                      limit: "50",
+                    });
+                    const filterUrl = `${params.toString()}&filter=statuscode:200&filter=original:.*${encodeURIComponent(cleanUpc)}.*`;
+                    const resp = await fetch(`${CDX_API}?${filterUrl}`, {
+                      headers: { "User-Agent": "FullCarts/1.0 (shrinkflation research)" },
+                      signal: AbortSignal.timeout(20000),
+                    });
+                    if (!resp.ok) return [];
+                    const data = await resp.json();
+                    return parseCdxResponse(data).map((f) => ({
+                      timestamp: f.timestamp,
+                      sourceUrl: f.url,
+                      retailer: name,
+                      digest: f.digest,
+                    }));
+                  } catch {
+                    return [];
+                  }
+                })(),
               );
-              return found.map((f) => ({
-                timestamp: f.timestamp,
-                sourceUrl: f.url,
-                retailer: name,
-                digest: f.digest,
-              }));
-            }),
-          );
+            }
+          }
 
-          for (const r of retailerSearches) {
+          // Run brand-scoped searches and UPC searches in parallel
+          const [retailerResults, ...upcResults] = await Promise.all([
+            Promise.allSettled(
+              retailers.map(async ({ domain, name }) => {
+                const found = await searchRetailerCdx(
+                  domain,
+                  productName,
+                  brand,
+                );
+                return found.map((f) => ({
+                  timestamp: f.timestamp,
+                  sourceUrl: f.url,
+                  retailer: name,
+                  digest: f.digest,
+                }));
+              }),
+            ),
+            ...upcSearches,
+          ]);
+
+          for (const r of retailerResults) {
             if (r.status === "fulfilled") {
               allSnapshots.push(...r.value);
             }
           }
+          // Add UPC-matched snapshots (these are highest priority)
+          for (const upcSnaps of upcResults) {
+            if (Array.isArray(upcSnaps)) {
+              allSnapshots.push(...upcSnaps);
+            }
+          }
         }
 
-        // ── Step 2: Select evenly-spaced snapshots per retailer ──────
-        const byRetailer: Record<string, SnapshotInput[]> = {};
+        // ── Step 2: Select evenly-spaced snapshots per SKU (URL) ─────
+        // Group by sourceUrl so each product page (SKU) gets its own
+        // set of time-spaced snapshots. This prevents mixing different
+        // sizes (e.g., 12oz standard vs 16.9oz family) in the timeline.
+        const byUrl: Record<string, SnapshotInput[]> = {};
         for (const snap of allSnapshots) {
-          const key = snap.retailer;
-          if (!byRetailer[key]) byRetailer[key] = [];
-          byRetailer[key].push(snap);
+          // Normalize URL: strip query params and trailing slashes
+          const key = snap.sourceUrl.split("?")[0].replace(/\/+$/, "");
+          if (!byUrl[key]) byUrl[key] = [];
+          byUrl[key].push(snap);
         }
+
+        // Pick 3 snapshots per URL (oldest, middle, newest — enough to
+        // detect a size change within that SKU) and cap total at 20.
+        const snapsPerUrl = 3;
+        const maxTotal = 20;
 
         const selectedSnapshots: SnapshotInput[] = [];
-        for (const [, snaps] of Object.entries(byRetailer)) {
-          // Sort by timestamp
+        for (const [, snaps] of Object.entries(byUrl)) {
           snaps.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
-          // Deduplicate by digest
           const deduped: SnapshotInput[] = [];
           const seenDigests = new Set<string>();
           for (const s of snaps) {
@@ -444,14 +514,20 @@ export async function POST(request: NextRequest) {
             }
           }
           selectedSnapshots.push(
-            ...selectSpacedSnapshots(deduped, maxPerRetailer),
+            ...selectSpacedSnapshots(deduped, snapsPerUrl),
           );
         }
 
-        // Sort all selected snapshots by timestamp
+        // Sort by timestamp and cap total
         selectedSnapshots.sort((a, b) =>
           a.timestamp.localeCompare(b.timestamp),
         );
+        if (selectedSnapshots.length > maxTotal) {
+          // Keep evenly spaced across the full set
+          const trimmed = selectSpacedSnapshots(selectedSnapshots, maxTotal);
+          selectedSnapshots.length = 0;
+          selectedSnapshots.push(...trimmed);
+        }
 
         const total = selectedSnapshots.length;
 

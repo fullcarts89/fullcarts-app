@@ -35,29 +35,38 @@ function formatSize(size: number | null, unit: string | null): string {
 }
 
 function detectSizeChanges(results: ExtractionResult[]): SizeChange[] {
-  // Filter to results that have extracted sizes, sort by date
-  const withSize = results
-    .filter((r) => r.size !== null && r.unit !== null)
-    .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
-
-  if (withSize.length < 2) return [];
+  // Group by sourceUrl (each URL = one SKU) to avoid cross-SKU false positives
+  const byUrl: Record<string, ExtractionResult[]> = {};
+  for (const r of results) {
+    if (r.size === null || r.unit === null) continue;
+    const key = r.sourceUrl || "unknown";
+    if (!byUrl[key]) byUrl[key] = [];
+    byUrl[key].push(r);
+  }
 
   const changes: SizeChange[] = [];
-  for (let i = 1; i < withSize.length; i++) {
-    const prev = withSize[i - 1];
-    const curr = withSize[i];
-    // Only compare same retailer and same unit for meaningful changes
-    if (prev.unit !== curr.unit) continue;
-    if (prev.size === curr.size) continue;
 
-    const pct = ((curr.size! - prev.size!) / prev.size!) * 100;
-    changes.push({
-      from: prev,
-      to: curr,
-      oldSize: formatSize(prev.size, prev.unit),
-      newSize: formatSize(curr.size, curr.unit),
-      changePercent: pct,
-    });
+  for (const [, group] of Object.entries(byUrl)) {
+    // Sort by date within the same SKU
+    group.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+    if (group.length < 2) continue;
+
+    for (let i = 1; i < group.length; i++) {
+      const prev = group[i - 1];
+      const curr = group[i];
+      // Only compare same unit for meaningful changes
+      if (prev.unit !== curr.unit) continue;
+      if (prev.size === curr.size) continue;
+
+      const pct = ((curr.size! - prev.size!) / prev.size!) * 100;
+      changes.push({
+        from: prev,
+        to: curr,
+        oldSize: formatSize(prev.size, prev.unit),
+        newSize: formatSize(curr.size, curr.unit),
+        changePercent: pct,
+      });
+    }
   }
 
   return changes;
@@ -80,10 +89,16 @@ export function WaybackLookup({
   productName,
   brand,
   sourceUrl,
+  upc,
+  claimOldSize,
+  claimOldUnit,
 }: {
   productName: string;
   brand: string;
   sourceUrl: string | null;
+  upc?: string | null;
+  claimOldSize?: number | null;
+  claimOldUnit?: string | null;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [customUrl, setCustomUrl] = useState("");
@@ -117,6 +132,9 @@ export function WaybackLookup({
           productName,
           brand,
           customUrl: customUrl.trim() || undefined,
+          upc: upc || undefined,
+          claimOldSize: claimOldSize || undefined,
+          claimOldUnit: claimOldUnit || undefined,
           maxPerRetailer: 5,
         }),
       });
@@ -346,11 +364,11 @@ export function WaybackLookup({
               .sort((a, b) => a.timestamp.localeCompare(b.timestamp))
               .map((r, i) => {
                 const color = RETAILER_COLORS[r.retailer] || "#6b7280";
-                // Detect if this row represents a change from the previous same-unit result
-                const prevSameRetailer = results
+                // Detect if this row represents a change from the previous same-URL result
+                const prevSameUrl = results
                   .filter(
                     (x) =>
-                      x.retailer === r.retailer &&
+                      x.sourceUrl === r.sourceUrl &&
                       x.timestamp < r.timestamp &&
                       x.size !== null &&
                       x.unit === r.unit,
@@ -358,8 +376,8 @@ export function WaybackLookup({
                   .sort((a, b) => b.timestamp.localeCompare(a.timestamp))[0];
                 const isChange =
                   r.size !== null &&
-                  prevSameRetailer &&
-                  prevSameRetailer.size !== r.size;
+                  prevSameUrl &&
+                  prevSameUrl.size !== r.size;
 
                 return (
                   <div
