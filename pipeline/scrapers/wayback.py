@@ -527,13 +527,32 @@ class WaybackScraper(BaseScraper):
     For each target product URL, queries the CDX API for monthly snapshots,
     fetches the archived HTML, extracts size/weight, and stores results
     in raw_items with source_type='wayback'.
+
+    Can run in two modes:
+      1. Default: processes the built-in POC_TARGETS list
+      2. Ad-hoc:  pass --url (one or more URLs) with --brand and --product
+                  to investigate any product on the fly
+
+    Examples:
+        # Default POC targets
+        python -m pipeline wayback --dry-run
+
+        # Investigate a specific product by URL(s)
+        python -m pipeline wayback \\
+            --url https://www.walmart.com/ip/Oreo-Cookies/123456 \\
+            --url https://www.amazon.com/dp/B00EXAMPLE \\
+            --brand "Mondelez" --product "Oreo Original"
+
+        # Single URL, minimal metadata
+        python -m pipeline wayback --url https://www.target.com/p/test/-/A-123
     """
 
     scraper_name = "wayback"
     source_type = "wayback"
 
-    def __init__(self):
-        # type: () -> None
+    def __init__(self, urls=None, brand=None, product_name=None,
+                 upc=None, category=None):
+        # type: (Optional[List[str]], Optional[str], Optional[str], Optional[str], Optional[str]) -> None
         super().__init__()
         self._cdx_session = RateLimitedSession(
             requests_per_second=_CDX_RPS,
@@ -544,12 +563,31 @@ class WaybackScraper(BaseScraper):
             user_agent=USER_AGENT,
             timeout=WAYBACK_FETCH_TIMEOUT,
         )
+        # Ad-hoc target overrides (set via CLI args)
+        self._adhoc_urls = urls
+        self._adhoc_brand = brand
+        self._adhoc_product = product_name
+        self._adhoc_upc = upc
+        self._adhoc_category = category
+
+    def _resolve_targets(self):
+        # type: () -> List[Dict[str, Any]]
+        """Build the target list — either from CLI args or POC defaults."""
+        if self._adhoc_urls:
+            return [{
+                "brand": self._adhoc_brand or "Unknown",
+                "product_name": self._adhoc_product or "Unknown Product",
+                "upc": self._adhoc_upc,
+                "category": self._adhoc_category,
+                "urls": self._adhoc_urls,
+            }]
+        return POC_TARGETS
 
     def fetch(self, cursor, dry_run=False):
         # type: (Dict[str, Any], bool) -> List[Dict[str, Any]]
         """For each target product, query CDX and fetch archived snapshots."""
         items = []  # type: List[Dict[str, Any]]
-        targets = POC_TARGETS
+        targets = self._resolve_targets()
 
         for target in targets:
             brand = target["brand"]
