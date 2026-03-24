@@ -3206,6 +3206,26 @@ function renderResult() {
     <div class="section-title">Shrink Timeline</div>
     <div class="duo-card" style="padding:14px 16px">${timelineHTML}</div>
 
+    ${isAdmin ? `
+    <div class="section-title" style="display:flex;align-items:center;gap:8px">
+      Wayback Machine Lookup
+      <span style="font-size:10px;font-weight:900;color:var(--duo-red);background:rgba(255,75,75,0.12);padding:2px 6px;border-radius:6px">ADMIN</span>
+    </div>
+    <div class="duo-card" style="padding:14px 16px">
+      <p style="font-size:12px;color:var(--wolf);font-weight:700;margin-bottom:10px">
+        Query the Internet Archive for historical product page snapshots across 6 retailers.
+      </p>
+      <div style="margin-bottom:10px">
+        <label style="font-size:11px;font-weight:900;color:var(--duo-orange);text-transform:uppercase;letter-spacing:0.5px">Product URL (or use auto-lookup by UPC)</label>
+        <input type="url" id="wb-custom-url" placeholder="Paste any product page URL (optional)" style="width:100%;padding:8px 10px;margin-top:4px;background:rgba(255,255,255,0.06);border:2px solid var(--card-border);border-radius:8px;color:var(--snow);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;box-sizing:border-box" />
+      </div>
+      <button class="btn-duo btn-blue" style="width:100%;font-size:13px" onclick="runWaybackLookup('${escapeHTML(p.upc)}','${escapeHTML(p.name)}','${escapeHTML(p.brand)}')">
+        Investigate History
+      </button>
+      <div id="wb-results" style="margin-top:12px"></div>
+    </div>
+    ` : ''}
+
     ${(() => {
       const cr = p.companyResponse;
       if (!cr) return `
@@ -5766,6 +5786,197 @@ function showToast(msg, color) {
   toast.style.cssText = `position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:${color || 'var(--duo-green)'};color:white;padding:10px 20px;border-radius:12px;font-weight:900;font-size:14px;z-index:700;font-family:Nunito,sans-serif`;
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 3000);
+}
+
+// ============================================================
+// WAYBACK MACHINE LOOKUP (Admin only)
+// ============================================================
+const WB_CDX_API = 'https://web.archive.org/cdx/search/cdx';
+const WB_ARCHIVE_BASE = 'https://web.archive.org/web';
+
+// Auto-generate retail URLs from UPC for cross-retailer lookup
+function generateRetailUrls(upc, productName, brand) {
+  const slug = (productName || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+  const paddedUpc = upc.padStart(13, '0');
+  const urls = [];
+
+  // Open Food Facts (most reliable archive coverage for product data)
+  urls.push({ retailer: 'Open Food Facts', url: `https://world.openfoodfacts.org/product/${paddedUpc}` });
+  // USDA FDC — search by UPC (exact URL unknown, but common pattern)
+  urls.push({ retailer: 'Open Food Facts', url: `https://world.openfoodfacts.org/product/${upc}` });
+  // Walmart — search-style URL that Wayback may have crawled
+  urls.push({ retailer: 'Walmart', url: `https://www.walmart.com/search?q=${encodeURIComponent(productName)}` });
+  // Kroger
+  urls.push({ retailer: 'Kroger', url: `https://www.kroger.com/p/${slug}/${paddedUpc.slice(0,13)}` });
+  // Amazon — search URL
+  urls.push({ retailer: 'Amazon', url: `https://www.amazon.com/s?k=${encodeURIComponent(productName)}` });
+  // Target — search URL
+  urls.push({ retailer: 'Target', url: `https://www.target.com/s?searchTerm=${encodeURIComponent(productName)}` });
+
+  return urls;
+}
+
+// Query CDX API for snapshots of a single URL
+async function queryCdx(url) {
+  const params = new URLSearchParams({
+    url: url,
+    output: 'json',
+    fl: 'timestamp,statuscode,digest,original',
+    filter: 'statuscode:200',
+    collapse: 'timestamp:6',
+    limit: '100',
+  });
+  try {
+    const resp = await fetch(`${WB_CDX_API}?${params}`);
+    if (!resp.ok) return [];
+    const data = await resp.json();
+    if (!data || data.length < 2) return [];
+    const headers = data[0];
+    const seen = new Set();
+    const results = [];
+    for (let i = 1; i < data.length; i++) {
+      const record = {};
+      headers.forEach((h, j) => record[h] = data[i][j]);
+      if (seen.has(record.digest)) continue;
+      seen.add(record.digest);
+      results.push(record);
+    }
+    return results;
+  } catch (e) {
+    console.warn('CDX query failed:', url, e);
+    return [];
+  }
+}
+
+// Extract size from a page title (replicates the Python title extraction)
+function extractSizeFromTitle(title) {
+  if (!title) return null;
+  const m = title.match(/(\d+(?:\.\d+)?)\s*(fl\.?\s*oz|oz|lb|lbs|g|kg|ml|l|ct|count|sheets|rolls|gal|qt|pt)/i);
+  if (m) return { size: parseFloat(m[1]), unit: m[2].toLowerCase().replace(/\./g, '').replace(/\s+/g, ' ').trim() };
+  return null;
+}
+
+// Main lookup function — called from the UI
+async function runWaybackLookup(upc, productName, brand) {
+  const resultsDiv = document.getElementById('wb-results');
+  if (!resultsDiv) return;
+
+  // Check for custom URL
+  const customUrlInput = document.getElementById('wb-custom-url');
+  const customUrl = customUrlInput ? customUrlInput.value.trim() : '';
+
+  resultsDiv.innerHTML = `
+    <div style="text-align:center;padding:16px">
+      <div style="font-size:24px;animation:bounce 1s infinite">🔍</div>
+      <div style="font-size:13px;font-weight:800;color:var(--snow);margin-top:8px">Querying Internet Archive...</div>
+      <div style="font-size:11px;color:var(--wolf);font-weight:700;margin-top:4px">Searching across multiple retailers</div>
+    </div>`;
+
+  // Build URL list
+  let urlsToCheck = [];
+  if (customUrl) {
+    const retailerName = customUrl.includes('walmart') ? 'Walmart' :
+      customUrl.includes('amazon') ? 'Amazon' :
+      customUrl.includes('kroger') ? 'Kroger' :
+      customUrl.includes('target') ? 'Target' :
+      customUrl.includes('openfoodfacts') ? 'Open Food Facts' :
+      customUrl.includes('fdc.nal.usda') ? 'USDA FDC' : 'Custom';
+    urlsToCheck.push({ retailer: retailerName, url: customUrl });
+  }
+
+  // Always also check auto-generated URLs
+  urlsToCheck = urlsToCheck.concat(generateRetailUrls(upc, productName, brand));
+
+  // Query CDX for each URL in parallel
+  const allResults = [];
+  const retailerResults = {};
+
+  const promises = urlsToCheck.map(async ({ retailer, url }) => {
+    const snapshots = await queryCdx(url);
+    return { retailer, url, snapshots };
+  });
+
+  const settled = await Promise.allSettled(promises);
+
+  for (const result of settled) {
+    if (result.status === 'fulfilled' && result.value.snapshots.length > 0) {
+      const { retailer, url, snapshots } = result.value;
+      if (!retailerResults[retailer]) retailerResults[retailer] = [];
+      for (const snap of snapshots) {
+        retailerResults[retailer].push({
+          timestamp: snap.timestamp,
+          url: url,
+          archiveUrl: `${WB_ARCHIVE_BASE}/${snap.timestamp}/${url}`,
+        });
+      }
+      allResults.push(...snapshots.map(s => ({ ...s, retailer, sourceUrl: url })));
+    }
+  }
+
+  // Render results
+  if (allResults.length === 0) {
+    resultsDiv.innerHTML = `
+      <div style="text-align:center;padding:16px">
+        <div style="font-size:32px;margin-bottom:8px">📭</div>
+        <div style="font-size:13px;font-weight:800;color:var(--snow)">No archived snapshots found</div>
+        <div style="font-size:11px;color:var(--wolf);font-weight:700;margin-top:4px">
+          Try pasting a specific product page URL above (e.g. a Walmart product link)
+        </div>
+      </div>`;
+    return;
+  }
+
+  // Build summary by retailer
+  const retailerSummary = Object.entries(retailerResults).map(([retailer, snaps]) => {
+    const sorted = snaps.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+    const oldest = sorted[0].timestamp;
+    const newest = sorted[sorted.length - 1].timestamp;
+    const fmtTs = (ts) => ts.length >= 8 ? `${ts.slice(0,4)}-${ts.slice(4,6)}-${ts.slice(6,8)}` : ts;
+
+    const retailerColors = {
+      'Walmart': '#0071dc', 'Amazon': '#ff9900', 'Kroger': '#e31837',
+      'Target': '#cc0000', 'Open Food Facts': '#201a17', 'USDA FDC': '#336b3d', 'Custom': '#1cb0f6'
+    };
+    const color = retailerColors[retailer] || '#58CC02';
+
+    return `
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+        <span style="font-size:10px;font-weight:900;padding:3px 8px;border-radius:6px;background:${color}22;color:${color};white-space:nowrap;min-width:70px;text-align:center">${escapeHTML(retailer)}</span>
+        <div style="flex:1">
+          <div style="font-size:12px;font-weight:800;color:var(--snow)">${snaps.length} snapshot${snaps.length !== 1 ? 's' : ''}</div>
+          <div style="font-size:11px;color:var(--wolf);font-weight:700">${fmtTs(oldest)} → ${fmtTs(newest)}</div>
+        </div>
+        <a href="${snaps[snaps.length-1].archiveUrl}" target="_blank" rel="noopener" style="font-size:11px;font-weight:900;color:var(--duo-blue);text-decoration:none">View Latest</a>
+      </div>`;
+  }).join('');
+
+  // Build timeline of all snapshots
+  const sorted = allResults.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+  const timelineRows = sorted.slice(0, 30).map(s => {
+    const fmtTs = s.timestamp.length >= 8 ? `${s.timestamp.slice(0,4)}-${s.timestamp.slice(4,6)}-${s.timestamp.slice(6,8)}` : s.timestamp;
+    const archiveUrl = `${WB_ARCHIVE_BASE}/${s.timestamp}/${s.sourceUrl}`;
+    return `
+      <div style="display:flex;align-items:center;gap:8px;padding:5px 0;font-size:11px">
+        <span style="font-weight:900;color:var(--snow);min-width:72px">${fmtTs}</span>
+        <span style="font-weight:700;color:var(--wolf);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHTML(s.retailer)}</span>
+        <a href="${archiveUrl}" target="_blank" rel="noopener" style="font-weight:800;color:var(--duo-blue);text-decoration:none;white-space:nowrap">View</a>
+      </div>`;
+  }).join('');
+
+  resultsDiv.innerHTML = `
+    <div style="font-size:13px;font-weight:900;color:var(--duo-green);margin-bottom:8px">
+      Found ${allResults.length} snapshots across ${Object.keys(retailerResults).length} source${Object.keys(retailerResults).length !== 1 ? 's' : ''}
+    </div>
+    <div style="margin-bottom:12px">${retailerSummary}</div>
+    <div style="font-size:11px;font-weight:900;color:var(--duo-orange);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">
+      Snapshot Timeline ${sorted.length > 30 ? '(showing first 30)' : ''}
+    </div>
+    <div style="max-height:300px;overflow-y:auto;border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:6px 10px">
+      ${timelineRows}
+    </div>
+    <div style="font-size:11px;color:var(--wolf);font-weight:700;margin-top:8px;text-align:center">
+      Click "View" to see the archived page and verify product size/weight at that date
+    </div>`;
 }
 
 // ============================================================

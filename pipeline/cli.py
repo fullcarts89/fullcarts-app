@@ -20,6 +20,8 @@ Usage:
     python -m pipeline walmart          [--dry-run]
     python -m pipeline walmart_discovery [--dry-run]
     python -m pipeline upc_backfill     [--dry-run]
+    python -m pipeline wayback          [--dry-run]
+    python -m pipeline wayback --url URL [--url URL2] --brand BRAND --product NAME [--upc UPC]
 """
 import argparse
 import sys
@@ -49,6 +51,7 @@ SCRAPER_MAP = {
     "walmart": "pipeline.scrapers.walmart:WalmartDiscoveryScraper",
     "walmart_discovery": "pipeline.scrapers.walmart:WalmartDiscoveryScraper",
     "upc_backfill": "pipeline.scrapers.upc_backfill:UpcBackfillScraper",
+    "wayback": "pipeline.scrapers.wayback:WaybackScraper",
 }
 
 
@@ -82,9 +85,51 @@ def main() -> None:
         help="Fetch data but do not write to Supabase",
     )
 
+    # ── Wayback-specific arguments ────────────────────────────────────────
+    wayback_group = parser.add_argument_group(
+        "wayback options",
+        "Options for the wayback scraper (ignored by other scrapers)",
+    )
+    wayback_group.add_argument(
+        "--url",
+        action="append",
+        dest="urls",
+        metavar="URL",
+        help="Product page URL to investigate (repeatable). "
+             "Any retailer: Walmart, Amazon, Kroger, Target, OFF, USDA",
+    )
+    wayback_group.add_argument(
+        "--brand",
+        help="Brand name for the product (used with --url)",
+    )
+    wayback_group.add_argument(
+        "--product",
+        help="Product name (used with --url)",
+    )
+    wayback_group.add_argument(
+        "--upc",
+        help="UPC barcode (used with --url)",
+    )
+    wayback_group.add_argument(
+        "--category",
+        help="Product category (used with --url)",
+    )
+
     args = parser.parse_args()
 
-    scraper = _load_scraper(args.scraper)
+    if args.scraper == "wayback" and args.urls:
+        # Build WaybackScraper with ad-hoc target
+        from pipeline.scrapers.wayback import WaybackScraper
+        scraper = WaybackScraper(
+            urls=args.urls,
+            brand=args.brand,
+            product_name=args.product,
+            upc=args.upc,
+            category=args.category,
+        )
+    else:
+        scraper = _load_scraper(args.scraper)
+
     try:
         scraper.run(dry_run=args.dry_run)
     except KeyboardInterrupt:
