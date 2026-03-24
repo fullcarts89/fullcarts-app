@@ -200,24 +200,18 @@ async function searchRetailerCdx(
 
   if (nameWords.length === 0) return [];
 
-  // Sort by length (most specific first) and take top 2
+  // Sort by length (most specific first) and take top 3
   const keywords = nameWords
     .sort((a, b) => b.length - a.length)
-    .slice(0, 2);
+    .slice(0, 3);
 
   // Get prefixes for this retailer
   const prefixes = RETAILER_PRODUCT_PREFIXES[retailerDomain];
   if (!prefixes) return [];
 
-  // Build queries: one per prefix × keyword combo
-  const queries: Array<{ prefix: string; keyword: string }> = [];
-  for (const prefix of prefixes) {
-    for (const kw of keywords) {
-      queries.push({ prefix, keyword: kw });
-    }
-  }
-
-  // Query CDX for each prefix+keyword in parallel
+  // Query CDX for each prefix, requiring ALL keywords match in the URL.
+  // Multiple CDX `filter=` params are AND'd, so passing one filter per
+  // keyword ensures only URLs containing every keyword are returned.
   const allResults: Array<{
     url: string;
     timestamp: string;
@@ -226,10 +220,7 @@ async function searchRetailerCdx(
   }> = [];
 
   const settled = await Promise.allSettled(
-    queries.map(async ({ prefix, keyword }) => {
-      // Use matchType=prefix with the retailer product path prefix,
-      // then filter by keyword appearing anywhere in the original URL.
-      // CDX filter syntax: "field:regex"
+    prefixes.map(async (prefix) => {
       const params = new URLSearchParams({
         url: prefix,
         matchType: "prefix",
@@ -239,8 +230,12 @@ async function searchRetailerCdx(
         from: "20100101",         // modern pages only — extractable HTML
         limit: "100",
       });
-      // CDX supports multiple filter params; append keyword filter
-      const filterUrl = `${params.toString()}&filter=statuscode:200&filter=original:.*${encodeURIComponent(keyword)}.*`;
+      // Append one filter per keyword — CDX AND's multiple filters,
+      // so only URLs containing ALL keywords are returned.
+      let filterUrl = `${params.toString()}&filter=statuscode:200`;
+      for (const kw of keywords) {
+        filterUrl += `&filter=original:.*${encodeURIComponent(kw)}.*`;
+      }
 
       const resp = await fetch(`${CDX_API}?${filterUrl}`, {
         headers: { "User-Agent": "FullCarts/1.0 (shrinkflation research)" },
