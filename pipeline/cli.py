@@ -20,6 +20,7 @@ Usage:
     python -m pipeline walmart          [--dry-run]
     python -m pipeline walmart_discovery [--dry-run]
     python -m pipeline upc_backfill     [--dry-run]
+    python -m pipeline wayback          [--dry-run]
 """
 import argparse
 import sys
@@ -49,6 +50,7 @@ SCRAPER_MAP = {
     "walmart": "pipeline.scrapers.walmart:WalmartDiscoveryScraper",
     "walmart_discovery": "pipeline.scrapers.walmart:WalmartDiscoveryScraper",
     "upc_backfill": "pipeline.scrapers.upc_backfill:UpcBackfillScraper",
+    "wayback": "pipeline.scrapers.wayback:WaybackScraper",
 }
 
 

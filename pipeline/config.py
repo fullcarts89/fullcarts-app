@@ -129,6 +129,13 @@ FRED_SERIES = [
     ("CUSR0000SEFV",   "CPI: Food Away from Home",               "food_away_from_home"),
 ]
 
+# ── Wayback Machine (Internet Archive) ────────────────────────────────────────
+WAYBACK_CDX_API = "https://web.archive.org/cdx/search/cdx"
+WAYBACK_ARCHIVE_BASE = "https://web.archive.org/web"
+WAYBACK_CDX_RPS = 0.5          # ~30 req/min, well under 60/min limit
+WAYBACK_FETCH_RPS = 0.5        # 1 req/2s for archived page retrieval
+WAYBACK_FETCH_TIMEOUT = 60     # archived pages can be slow to serve
+
 # ── Rate limiting defaults ────────────────────────────────────────────────────
 DEFAULT_MAX_RETRIES = 3
 DEFAULT_TIMEOUT = 30           # seconds
