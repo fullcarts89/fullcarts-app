@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 const CDX_API = "https://web.archive.org/cdx/search/cdx";
 const ARCHIVE_BASE = "https://web.archive.org/web";
+
+// ── Types ───────────────────────────────────────────────────────────────────
 
 type Snapshot = {
   timestamp: string;
@@ -13,51 +15,67 @@ type Snapshot = {
   digest: string;
 };
 
-type RetailerResult = {
+type ExtractionResult = {
+  timestamp: string;
   retailer: string;
-  snapshots: Snapshot[];
-  oldest: string;
-  newest: string;
+  archiveUrl: string;
+  sourceUrl: string;
+  size: number | null;
+  unit: string | null;
+  method: string | null;
 };
 
-/** Generate retail URLs from a product name + brand for cross-retailer lookup. */
-function generateRetailUrls(productName: string, brand: string): Array<{ retailer: string; url: string }> {
-  const query = `${brand} ${productName}`.trim();
-  if (!query) return [];
+type SizeChange = {
+  from: ExtractionResult;
+  to: ExtractionResult;
+  oldSize: string;
+  newSize: string;
+  changePercent: number;
+};
 
-  const urls: Array<{ retailer: string; url: string }> = [];
+// ── Helpers ─────────────────────────────────────────────────────────────────
 
-  // Open Food Facts search (clean HTML, good archive coverage)
-  urls.push({
-    retailer: "Open Food Facts",
-    url: `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process`,
-  });
-  // Walmart search
-  urls.push({
-    retailer: "Walmart",
-    url: `https://www.walmart.com/search?q=${encodeURIComponent(query)}`,
-  });
-  // Amazon search
-  urls.push({
-    retailer: "Amazon",
-    url: `https://www.amazon.com/s?k=${encodeURIComponent(query)}`,
-  });
-  // Kroger search
-  urls.push({
-    retailer: "Kroger",
-    url: `https://www.kroger.com/search?query=${encodeURIComponent(query)}`,
-  });
-  // Target search
-  urls.push({
-    retailer: "Target",
-    url: `https://www.target.com/s?searchTerm=${encodeURIComponent(query)}`,
-  });
-
-  return urls;
+function formatTimestamp(ts: string): string {
+  if (ts.length >= 8) return `${ts.slice(0, 4)}-${ts.slice(4, 6)}-${ts.slice(6, 8)}`;
+  return ts;
 }
 
-/** Detect retailer from URL. */
-function detectRetailer(url: string): string {
+function formatSize(size: number | null, unit: string | null): string {
+  if (size === null || unit === null) return "—";
+  return `${size} ${unit}`;
+}
+
+function detectSizeChanges(results: ExtractionResult[]): SizeChange[] {
+  // Filter to results that have extracted sizes, sort by date
+  const withSize = results
+    .filter((r) => r.size !== null && r.unit !== null)
+    .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+
+  if (withSize.length < 2) return [];
+
+  const changes: SizeChange[] = [];
+  for (let i = 1; i < withSize.length; i++) {
+    const prev = withSize[i - 1];
+    const curr = withSize[i];
+    // Only compare same retailer and same unit for meaningful changes
+    if (prev.unit !== curr.unit) continue;
+    if (prev.size === curr.size) continue;
+
+    const pct = ((curr.size! - prev.size!) / prev.size!) * 100;
+    changes.push({
+      from: prev,
+      to: curr,
+      oldSize: formatSize(prev.size, prev.unit),
+      newSize: formatSize(curr.size, curr.unit),
+      changePercent: pct,
+    });
+  }
+
+  return changes;
+}
+
+/** Detect retailer from URL for display name. */
+function detectRetailerDisplay(url: string): string {
   const u = url.toLowerCase();
   if (u.includes("walmart.com")) return "Walmart";
   if (u.includes("amazon.com")) return "Amazon";
@@ -68,14 +86,14 @@ function detectRetailer(url: string): string {
   return "Other";
 }
 
-/** Query the CDX API for snapshots of a URL. */
+/** Query the CDX API for snapshots of a URL (used for initial discovery). */
 async function queryCdx(url: string): Promise<Array<{ timestamp: string; digest: string }>> {
   const params = new URLSearchParams({
     url,
     output: "json",
     fl: "timestamp,statuscode,digest",
     filter: "statuscode:200",
-    collapse: "timestamp:6", // ~monthly
+    collapse: "timestamp:6",
     limit: "100",
   });
 
@@ -102,11 +120,6 @@ async function queryCdx(url: string): Promise<Array<{ timestamp: string; digest:
   }
 }
 
-function formatTimestamp(ts: string): string {
-  if (ts.length >= 8) return `${ts.slice(0, 4)}-${ts.slice(4, 6)}-${ts.slice(6, 8)}`;
-  return ts;
-}
-
 const RETAILER_COLORS: Record<string, string> = {
   Walmart: "#0071dc",
   Amazon: "#ff9900",
@@ -116,6 +129,8 @@ const RETAILER_COLORS: Record<string, string> = {
   "USDA FDC": "#336b3d",
   Other: "#6b7280",
 };
+
+// ── Component ───────────────────────────────────────────────────────────────
 
 export function WaybackLookup({
   productName,
@@ -129,99 +144,164 @@ export function WaybackLookup({
   const [isOpen, setIsOpen] = useState(false);
   const [customUrl, setCustomUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<RetailerResult[] | null>(null);
-  const [allSnapshots, setAllSnapshots] = useState<Snapshot[]>([]);
+  const [extracting, setExtracting] = useState(false);
+  const [progress, setProgress] = useState({ current: 0, total: 0, retailer: "", timestamp: "" });
+  const [results, setResults] = useState<ExtractionResult[]>([]);
+  const [sizeChanges, setSizeChanges] = useState<SizeChange[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  async function runLookup() {
+  // Phase 1 results (CDX discovery, like the old flow)
+  const [discoveredSnapshots, setDiscoveredSnapshots] = useState<Snapshot[]>([]);
+
+  const runLookup = useCallback(async () => {
     setLoading(true);
+    setExtracting(false);
     setError(null);
-    setResults(null);
-    setAllSnapshots([]);
+    setResults([]);
+    setSizeChanges([]);
+    setDiscoveredSnapshots([]);
+    setProgress({ current: 0, total: 0, retailer: "", timestamp: "" });
 
     try {
-      // Build URL list
+      // ── Phase 1: CDX Discovery (client-side, fast) ─────────────────
+      // We still do a quick client-side CDX check for the custom URL and
+      // source URL to show the user that something is happening immediately.
+      const quickSnapshots: Snapshot[] = [];
       const urlsToCheck: Array<{ retailer: string; url: string }> = [];
 
-      // Custom URL first
       if (customUrl.trim()) {
-        urlsToCheck.push({ retailer: detectRetailer(customUrl.trim()), url: customUrl.trim() });
+        urlsToCheck.push({ retailer: detectRetailerDisplay(customUrl.trim()), url: customUrl.trim() });
       }
-
-      // Source URL from the claim's raw_item
       if (sourceUrl) {
-        urlsToCheck.push({ retailer: detectRetailer(sourceUrl), url: sourceUrl });
+        urlsToCheck.push({ retailer: detectRetailerDisplay(sourceUrl), url: sourceUrl });
       }
 
-      // Auto-generated URLs from product name + brand
-      urlsToCheck.push(...generateRetailUrls(productName, brand));
+      // Quick CDX check for direct URLs only (not search URLs)
+      if (urlsToCheck.length > 0) {
+        const settled = await Promise.allSettled(
+          urlsToCheck.map(async ({ retailer, url }) => {
+            const snaps = await queryCdx(url);
+            return { retailer, url, snapshots: snaps };
+          }),
+        );
+        for (const r of settled) {
+          if (r.status !== "fulfilled") continue;
+          const { retailer, url, snapshots } = r.value;
+          for (const s of snapshots) {
+            quickSnapshots.push({
+              timestamp: s.timestamp,
+              retailer,
+              sourceUrl: url,
+              archiveUrl: `${ARCHIVE_BASE}/${s.timestamp}/${url}`,
+              digest: s.digest,
+            });
+          }
+        }
+      }
 
-      // Deduplicate by URL
-      const seen = new Set<string>();
-      const unique = urlsToCheck.filter(({ url }) => {
-        if (seen.has(url)) return false;
-        seen.add(url);
-        return true;
+      setDiscoveredSnapshots(quickSnapshots);
+
+      // ── Phase 2: Server-side extraction via SSE ────────────────────
+      setExtracting(true);
+
+      // Build snapshot input for the API. If we have custom/source URLs with
+      // CDX hits, send those. The API will also auto-discover via CDX wildcards
+      // for retailers using productName + brand.
+      const snapshotInput = quickSnapshots.map((s) => ({
+        timestamp: s.timestamp,
+        sourceUrl: s.sourceUrl,
+        retailer: s.retailer,
+        digest: s.digest,
+      }));
+
+      const resp = await fetch("/api/admin/wayback-extract", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          snapshots: snapshotInput.length > 0 ? snapshotInput : undefined,
+          productName,
+          brand,
+          customUrl: customUrl.trim() || undefined,
+          maxPerRetailer: 5,
+        }),
       });
 
-      // Query all in parallel
-      const settled = await Promise.allSettled(
-        unique.map(async ({ retailer, url }) => {
-          const snapshots = await queryCdx(url);
-          return { retailer, url, snapshots };
-        })
-      );
+      if (!resp.ok) {
+        throw new Error(`API returned ${resp.status}`);
+      }
 
-      // Aggregate results by retailer
-      const retailerMap: Record<string, Snapshot[]> = {};
-      const all: Snapshot[] = [];
+      // Read SSE stream
+      const reader = resp.body?.getReader();
+      if (!reader) throw new Error("No response body");
 
-      for (const result of settled) {
-        if (result.status !== "fulfilled") continue;
-        const { retailer, url, snapshots } = result.value;
-        if (snapshots.length === 0) continue;
+      const decoder = new TextDecoder();
+      let buffer = "";
+      const accumulatedResults: ExtractionResult[] = [];
 
-        if (!retailerMap[retailer]) retailerMap[retailer] = [];
-        for (const snap of snapshots) {
-          const s: Snapshot = {
-            timestamp: snap.timestamp,
-            retailer,
-            sourceUrl: url,
-            archiveUrl: `${ARCHIVE_BASE}/${snap.timestamp}/${url}`,
-            digest: snap.digest,
-          };
-          retailerMap[retailer].push(s);
-          all.push(s);
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n\n");
+        buffer = lines.pop() || "";
+
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          try {
+            const event = JSON.parse(line.slice(6));
+
+            if (event.type === "progress") {
+              setProgress({
+                current: event.index || 0,
+                total: event.total || 0,
+                retailer: event.retailer || "",
+                timestamp: event.timestamp || "",
+              });
+            } else if (event.type === "result" || event.type === "cached") {
+              const r: ExtractionResult = {
+                timestamp: event.timestamp,
+                retailer: event.retailer,
+                archiveUrl: event.archiveUrl,
+                sourceUrl: event.sourceUrl,
+                size: event.size,
+                unit: event.unit,
+                method: event.method,
+              };
+              accumulatedResults.push(r);
+              setResults([...accumulatedResults]);
+              setSizeChanges(detectSizeChanges([...accumulatedResults]));
+              setProgress({
+                current: event.index || 0,
+                total: event.total || 0,
+                retailer: event.retailer || "",
+                timestamp: event.timestamp || "",
+              });
+            } else if (event.type === "error" && event.error && !event.index) {
+              // Global error
+              setError(event.error);
+            } else if (event.type === "done") {
+              if (event.results) {
+                setResults(event.results);
+                setSizeChanges(detectSizeChanges(event.results));
+              }
+            }
+          } catch {
+            // Skip malformed SSE events
+          }
         }
       }
 
-      // Build retailer summary
-      const retailerResults: RetailerResult[] = Object.entries(retailerMap).map(
-        ([retailer, snaps]) => {
-          const sorted = snaps.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
-          return {
-            retailer,
-            snapshots: sorted,
-            oldest: sorted[0].timestamp,
-            newest: sorted[sorted.length - 1].timestamp,
-          };
-        }
-      );
-
-      const sortedAll = all.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
-
-      setResults(retailerResults);
-      setAllSnapshots(sortedAll);
-
-      if (all.length === 0) {
+      if (accumulatedResults.length === 0 && quickSnapshots.length === 0) {
         setError("No archived snapshots found. Try pasting a specific product page URL.");
       }
     } catch (e) {
       setError(`Lookup failed: ${e instanceof Error ? e.message : "Unknown error"}`);
     } finally {
       setLoading(false);
+      setExtracting(false);
     }
-  }
+  }, [customUrl, sourceUrl, productName, brand]);
 
   if (!isOpen) {
     return (
@@ -234,6 +314,11 @@ export function WaybackLookup({
       </button>
     );
   }
+
+  const isWorking = loading || extracting;
+  const progressPercent =
+    progress.total > 0 ? Math.round((progress.current / progress.total) * 100) : 0;
+  const resultsWithSize = results.filter((r) => r.size !== null);
 
   return (
     <div className="mt-3 pt-3 border-t border-[var(--bg-tertiary)] space-y-3">
@@ -250,13 +335,13 @@ export function WaybackLookup({
       </div>
 
       <p className="text-xs text-[var(--text-tertiary)]">
-        Search the Internet Archive for historical snapshots of this product across retailers.
+        Search the Internet Archive for historical snapshots and auto-extract product sizes.
       </p>
 
       {/* Custom URL input */}
       <div>
         <label className="block text-xs text-[var(--text-tertiary)] mb-1">
-          Product page URL (optional — auto-searches 5 retailers by name)
+          Product page URL (optional — auto-searches retailers by name)
         </label>
         <input
           type="url"
@@ -264,17 +349,48 @@ export function WaybackLookup({
           onChange={(e) => setCustomUrl(e.target.value)}
           placeholder="https://www.walmart.com/ip/Product-Name/123456"
           className="w-full px-2 py-1.5 text-sm rounded border border-[var(--bg-tertiary)] bg-[var(--bg-primary)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-purple-500/50"
+          disabled={isWorking}
         />
       </div>
 
       {/* Run button */}
       <button
         onClick={runLookup}
-        disabled={loading}
+        disabled={isWorking}
         className="w-full px-3 py-2 text-sm font-medium rounded border border-purple-500/30 bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-all disabled:opacity-50"
       >
-        {loading ? "Searching Internet Archive..." : "Investigate History"}
+        {isWorking ? "Investigating..." : "Investigate History"}
       </button>
+
+      {/* Progress bar */}
+      {isWorking && progress.total > 0 && (
+        <div className="space-y-1">
+          <div className="flex items-center justify-between text-[10px] text-[var(--text-tertiary)]">
+            <span>
+              Extracting {progress.current}/{progress.total}
+              {progress.retailer ? ` — ${progress.retailer}` : ""}
+            </span>
+            <span>{progressPercent}%</span>
+          </div>
+          <div className="w-full h-1.5 bg-[var(--bg-tertiary)] rounded-full overflow-hidden">
+            <div
+              className="h-full bg-purple-500 rounded-full transition-all duration-300"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+          {progress.timestamp && (
+            <div className="text-[10px] text-[var(--text-tertiary)]">
+              Snapshot: {formatTimestamp(progress.timestamp)}
+            </div>
+          )}
+        </div>
+      )}
+
+      {isWorking && progress.total === 0 && (
+        <div className="text-xs text-[var(--text-tertiary)] animate-pulse">
+          Searching Internet Archive for snapshots...
+        </div>
+      )}
 
       {/* Error */}
       {error && (
@@ -283,85 +399,119 @@ export function WaybackLookup({
         </div>
       )}
 
-      {/* Results */}
-      {results && results.length > 0 && (
-        <div className="space-y-3">
-          {/* Summary */}
-          <div className="text-xs font-bold text-[var(--green-base)]">
-            Found {allSnapshots.length} snapshot{allSnapshots.length !== 1 ? "s" : ""} across{" "}
-            {results.length} source{results.length !== 1 ? "s" : ""}
-          </div>
-
-          {/* Per-retailer breakdown */}
+      {/* Size Changes — the headline finding */}
+      {sizeChanges.length > 0 && (
+        <div className="space-y-2">
+          <h5 className="text-xs font-bold uppercase tracking-wider text-[var(--amber-base)]">
+            Size Changes Detected ({sizeChanges.length})
+          </h5>
           <div className="space-y-1">
-            {results.map((r) => {
-              const color = RETAILER_COLORS[r.retailer] || "#6b7280";
-              const latest = r.snapshots[r.snapshots.length - 1];
+            {sizeChanges.map((c, i) => {
+              const isShrink = c.changePercent < 0;
+              const color = isShrink
+                ? "text-[var(--red-base)]"
+                : "text-[var(--green-base)]";
               return (
                 <div
-                  key={r.retailer}
-                  className="flex items-center gap-2 py-1.5 border-b border-[var(--bg-tertiary)] last:border-0"
+                  key={i}
+                  className="flex items-center gap-2 py-1.5 px-2 rounded bg-[var(--bg-secondary)] border border-[var(--bg-tertiary)]"
                 >
-                  <span
-                    className="inline-block px-2 py-0.5 text-[10px] font-bold rounded"
-                    style={{ backgroundColor: `${color}22`, color }}
-                  >
-                    {r.retailer}
+                  <span className="text-[10px] text-[var(--text-tertiary)] font-mono min-w-[70px]">
+                    {formatTimestamp(c.from.timestamp)}
                   </span>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-xs font-medium text-[var(--text-primary)]">
-                      {r.snapshots.length} snapshot{r.snapshots.length !== 1 ? "s" : ""}
-                    </span>
-                    <span className="text-[10px] text-[var(--text-tertiary)] ml-2">
-                      {formatTimestamp(r.oldest)} &rarr; {formatTimestamp(r.newest)}
-                    </span>
-                  </div>
-                  <a
-                    href={latest.archiveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[10px] font-bold text-[var(--blue-base)] hover:underline shrink-0"
-                  >
-                    View Latest
-                  </a>
+                  <span className="text-xs font-mono font-bold text-[var(--text-primary)]">
+                    {c.oldSize}
+                  </span>
+                  <span className="text-[var(--text-tertiary)]">&rarr;</span>
+                  <span className={`text-xs font-mono font-bold ${color}`}>
+                    {c.newSize}
+                  </span>
+                  <span className={`text-[10px] font-bold ${color}`}>
+                    ({c.changePercent > 0 ? "+" : ""}
+                    {c.changePercent.toFixed(1)}%)
+                  </span>
+                  <span className="text-[10px] text-[var(--text-tertiary)] ml-auto">
+                    {c.to.retailer} &middot; {formatTimestamp(c.to.timestamp)}
+                  </span>
                 </div>
               );
             })}
           </div>
+        </div>
+      )}
 
-          {/* Timeline */}
-          <details className="group">
-            <summary className="text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)] cursor-pointer hover:text-[var(--text-secondary)]">
-              Snapshot Timeline ({allSnapshots.length}){" "}
-              <span className="group-open:hidden">+</span>
-              <span className="hidden group-open:inline">&minus;</span>
-            </summary>
-            <div className="mt-2 max-h-60 overflow-y-auto border border-[var(--bg-tertiary)] rounded p-2 space-y-0.5">
-              {allSnapshots.slice(0, 50).map((s, i) => (
-                <div key={i} className="flex items-center gap-2 py-0.5 text-[11px]">
-                  <span className="font-mono font-bold text-[var(--text-primary)] min-w-[70px]">
-                    {formatTimestamp(s.timestamp)}
-                  </span>
-                  <span className="text-[var(--text-tertiary)] flex-1 truncate">
-                    {s.retailer}
-                  </span>
-                  <a
-                    href={s.archiveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-bold text-[var(--blue-base)] hover:underline shrink-0"
+      {/* Extraction Results Timeline */}
+      {results.length > 0 && (
+        <div className="space-y-2">
+          <h5 className="text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
+            Extracted Sizes ({resultsWithSize.length}/{results.length} snapshots)
+          </h5>
+          <div className="max-h-60 overflow-y-auto border border-[var(--bg-tertiary)] rounded p-2 space-y-0.5">
+            {results
+              .sort((a, b) => a.timestamp.localeCompare(b.timestamp))
+              .map((r, i) => {
+                const color = RETAILER_COLORS[r.retailer] || "#6b7280";
+                // Detect if this row represents a change from the previous same-unit result
+                const prevSameRetailer = results
+                  .filter(
+                    (x) =>
+                      x.retailer === r.retailer &&
+                      x.timestamp < r.timestamp &&
+                      x.size !== null &&
+                      x.unit === r.unit,
+                  )
+                  .sort((a, b) => b.timestamp.localeCompare(a.timestamp))[0];
+                const isChange =
+                  r.size !== null &&
+                  prevSameRetailer &&
+                  prevSameRetailer.size !== r.size;
+
+                return (
+                  <div
+                    key={i}
+                    className={`flex items-center gap-2 py-1 text-[11px] rounded px-1 ${
+                      isChange
+                        ? "bg-[var(--amber-bg)] border border-[var(--amber-base)]/20"
+                        : ""
+                    }`}
                   >
-                    View
-                  </a>
-                </div>
-              ))}
-              {allSnapshots.length > 50 && (
-                <div className="text-[10px] text-[var(--text-tertiary)] pt-1">
-                  ...and {allSnapshots.length - 50} more
-                </div>
-              )}
-            </div>
-          </details>
+                    <span className="font-mono font-bold text-[var(--text-primary)] min-w-[70px]">
+                      {formatTimestamp(r.timestamp)}
+                    </span>
+                    <span
+                      className="inline-block px-1.5 py-0.5 text-[9px] font-bold rounded min-w-[60px] text-center"
+                      style={{ backgroundColor: `${color}22`, color }}
+                    >
+                      {r.retailer}
+                    </span>
+                    <span
+                      className={`font-mono font-bold min-w-[60px] ${
+                        r.size !== null
+                          ? isChange
+                            ? "text-[var(--amber-base)]"
+                            : "text-[var(--green-base)]"
+                          : "text-[var(--text-tertiary)]"
+                      }`}
+                    >
+                      {formatSize(r.size, r.unit)}
+                    </span>
+                    {r.method && (
+                      <span className="text-[9px] text-[var(--text-tertiary)] truncate">
+                        via {r.method}
+                      </span>
+                    )}
+                    <a
+                      href={r.archiveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-bold text-[var(--blue-base)] hover:underline shrink-0 ml-auto"
+                    >
+                      View
+                    </a>
+                  </div>
+                );
+              })}
+          </div>
         </div>
       )}
     </div>
