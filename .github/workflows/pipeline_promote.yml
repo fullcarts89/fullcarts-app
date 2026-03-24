@@ -1,0 +1,28 @@
+name: "Pipeline — Promote Claims"
+
+on:
+  schedule:
+    - cron: "0 12 * * *"  # Daily at 12:00 UTC (after extraction at ~6AM)
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  promote-claims:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: "pipeline/requirements.txt"
+      - name: Install dependencies
+        run: pip install -r pipeline/requirements.txt
+      - name: Promote approved claims
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python3 pipeline/scripts/promote_claims.py
