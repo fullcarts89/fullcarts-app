@@ -132,20 +132,35 @@ function generateProductUrls(
 }
 
 /**
- * Retailer product-page URL prefixes for CDX prefix matching.
- * CDX `*` only works as a suffix (prefix match), so we query broad
- * prefixes like `walmart.com/ip/` and use CDX `filter=original:.*keyword.*`
- * to narrow results to the specific product.
+ * Retailer product-page path prefixes.
+ * Used with a brand slug to build a tight CDX prefix like
+ * `walmart.com/ip/Kellogg*` instead of scanning all of `/ip/`.
  */
-const RETAILER_PRODUCT_PREFIXES: Record<string, string[]> = {
-  "www.walmart.com": ["https://www.walmart.com/ip/"],
-  "www.amazon.com": [
-    "https://www.amazon.com/dp/",
-    "https://www.amazon.com/gp/product/",
-  ],
-  "www.kroger.com": ["https://www.kroger.com/p/"],
-  "www.target.com": ["https://www.target.com/p/"],
+const RETAILER_PRODUCT_PATHS: Record<string, string> = {
+  "www.walmart.com": "https://www.walmart.com/ip/",
+  "www.kroger.com": "https://www.kroger.com/p/",
+  "www.target.com": "https://www.target.com/p/",
+  "www.amazon.com": "https://www.amazon.com/",
 };
+
+/**
+ * Slugify a brand name for URL prefix matching.
+ * Retailer URLs use the brand as the first segment of the slug,
+ * e.g. "Kellogg's" → "Kellogg" in walmart.com/ip/Kellogg-s-...
+ *
+ * We take the first word of the brand (before apostrophes, spaces,
+ * hyphens) to keep the prefix broad enough to catch URL variations.
+ */
+function slugifyBrand(brand: string): string {
+  // Remove possessives, special chars, take first meaningful word
+  const cleaned = brand
+    .replace(/['']s?\b/g, "")   // Remove 's and possessives
+    .replace(/[^a-zA-Z0-9\s-]/g, "")
+    .trim();
+  // Take first word (brands like "Frito-Lay" → "Frito", "Betty Crocker" → "Betty")
+  const firstWord = cleaned.split(/[\s-]+/)[0];
+  return firstWord || cleaned;
+}
 
 /**
  * Parse a CDX JSON response into typed rows.
@@ -177,92 +192,85 @@ function parseCdxResponse(
 }
 
 /**
- * Search CDX for product pages across a retailer.
+ * Search CDX for product pages across a retailer using brand-scoped prefixes.
  *
  * Strategy:
- *  1. Use retailer product-page prefix (e.g. walmart.com/ip/) with matchType=prefix
- *  2. Use CDX `filter=original:.*keyword.*` to match the product keyword in the URL
- *  3. Collapse by URL key to get unique pages, then query each page for its timeline
- *  4. Prefer recent results (from: 2010) so we get modern pages with extractable HTML
+ *  1. Build a tight prefix using brand slug (e.g. `walmart.com/ip/Kellogg`)
+ *     instead of scanning the entire product catalog
+ *  2. Use CDX `filter=original:.*keyword.*` for each product keyword (AND'd)
+ *  3. Collapse by month, dedup by digest
+ *
+ * This is dramatically faster than scanning all of `/ip/` because the CDX
+ * index only needs to scan URLs starting with the brand name.
  */
 async function searchRetailerCdx(
   retailerDomain: string,
   productName: string,
   brand: string,
 ): Promise<Array<{ url: string; timestamp: string; digest: string; length: string }>> {
-  // Extract keywords from the product name (skip short/common words)
-  const stopWords = ["with", "from", "that", "this", "size", "family", "pack", "brand", "original"];
-  const nameWords = `${brand} ${productName}`
+  const basePath = RETAILER_PRODUCT_PATHS[retailerDomain];
+  if (!basePath) return [];
+
+  // Build brand-scoped prefix
+  const brandSlug = slugifyBrand(brand);
+  if (!brandSlug || brandSlug.length < 2) return [];
+  const prefix = `${basePath}${brandSlug}`;
+
+  // Extract product keywords (excluding brand words already in prefix)
+  const stopWords = ["with", "from", "that", "this", "size", "family", "pack", "brand", "original", "value", "giant"];
+  const brandWords = brand.toLowerCase().replace(/[^a-z0-9\s]/g, "").split(/\s+/);
+  const productKeywords = productName
     .toLowerCase()
     .replace(/[^a-z0-9\s]/g, "")
     .split(/\s+/)
-    .filter((w) => w.length > 3 && !stopWords.includes(w));
-
-  if (nameWords.length === 0) return [];
+    .filter((w) => w.length > 2 && !stopWords.includes(w) && !brandWords.includes(w));
 
   // Sort by length (most specific first) and take top 3
-  const keywords = nameWords
+  const keywords = productKeywords
     .sort((a, b) => b.length - a.length)
     .slice(0, 3);
 
-  // Get prefixes for this retailer
-  const prefixes = RETAILER_PRODUCT_PREFIXES[retailerDomain];
-  if (!prefixes) return [];
+  // Build CDX query with brand-scoped prefix + product keyword filters
+  const params = new URLSearchParams({
+    url: prefix,
+    matchType: "prefix",
+    output: "json",
+    fl: "timestamp,original,statuscode,digest,length",
+    collapse: "timestamp:6",
+    from: "20150101",
+    limit: "100",
+  });
 
-  // Query CDX for each prefix, requiring ALL keywords match in the URL.
-  // Multiple CDX `filter=` params are AND'd, so passing one filter per
-  // keyword ensures only URLs containing every keyword are returned.
-  const allResults: Array<{
-    url: string;
-    timestamp: string;
-    digest: string;
-    length: string;
-  }> = [];
-
-  const settled = await Promise.allSettled(
-    prefixes.map(async (prefix) => {
-      const params = new URLSearchParams({
-        url: prefix,
-        matchType: "prefix",
-        output: "json",
-        fl: "timestamp,original,statuscode,digest,length",
-        collapse: "timestamp:6",  // one snapshot per month
-        from: "20100101",         // modern pages only — extractable HTML
-        limit: "100",
-      });
-      // Append one filter per keyword — CDX AND's multiple filters,
-      // so only URLs containing ALL keywords are returned.
-      let filterUrl = `${params.toString()}&filter=statuscode:200`;
-      for (const kw of keywords) {
-        filterUrl += `&filter=original:.*${encodeURIComponent(kw)}.*`;
-      }
-
-      const resp = await fetch(`${CDX_API}?${filterUrl}`, {
-        headers: { "User-Agent": "FullCarts/1.0 (shrinkflation research)" },
-        signal: AbortSignal.timeout(20000),
-      });
-      if (!resp.ok) return [];
-      return parseCdxResponse(await resp.json());
-    }),
-  );
-
-  for (const r of settled) {
-    if (r.status === "fulfilled") allResults.push(...r.value);
+  let filterUrl = `${params.toString()}&filter=statuscode:200`;
+  for (const kw of keywords) {
+    filterUrl += `&filter=original:.*${encodeURIComponent(kw)}.*`;
   }
 
-  // Dedup by digest and filter out non-product pages
-  const skipPatterns = ["/search", "/s?", "/browse/", "/category/", "/aisle/", "/shop/"];
-  const seen = new Set<string>();
-  const filtered: typeof allResults = [];
+  try {
+    const resp = await fetch(`${CDX_API}?${filterUrl}`, {
+      headers: { "User-Agent": "FullCarts/1.0 (shrinkflation research)" },
+      signal: AbortSignal.timeout(20000),
+    });
+    if (!resp.ok) return [];
+    const data = await resp.json();
+    const rows = parseCdxResponse(data);
 
-  for (const row of allResults) {
-    if (skipPatterns.some((p) => row.url.includes(p))) continue;
-    if (seen.has(row.digest)) continue;
-    seen.add(row.digest);
-    filtered.push(row);
+    // Dedup by digest and filter out non-product pages
+    const skipPatterns = ["/search", "/s?", "/browse/", "/category/", "/aisle/", "/shop/"];
+    const seen = new Set<string>();
+    const filtered: typeof rows = [];
+
+    for (const row of rows) {
+      if (skipPatterns.some((p) => row.url.includes(p))) continue;
+      if (seen.has(row.digest)) continue;
+      seen.add(row.digest);
+      filtered.push(row);
+    }
+
+    return filtered;
+  } catch {
+    return [];
   }
-
-  return filtered;
 }
 
 /**
