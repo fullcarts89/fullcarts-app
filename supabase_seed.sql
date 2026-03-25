@@ -170,7 +170,7 @@ CREATE TABLE IF NOT EXISTS evidence_wall (
   brand            text,
   product_name     text,
   category         text,
-  tag              text DEFAULT 'slack-fill',   -- slack-fill, paper-thin, spot-the-difference, phantom-shrink, the-audacity, caught-in-4k
+  tag              text DEFAULT 'slack-fill',   -- slack-fill, paper-thin, spot-the-difference, phantom-shrink, the-audacity, caught-in-4k, not-as-advertised
   signal_type      text DEFAULT 'unverified_size_change',  -- stealth_redesign, ppu_increase, ingredient_swap, count_reduction, regional_test, unverified_size_change
   severity         integer DEFAULT 2 CHECK (severity BETWEEN 1 AND 3),  -- 1=low, 2=medium, 3=high
   source_url       text,

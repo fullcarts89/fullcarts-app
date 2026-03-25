@@ -11,6 +11,7 @@ const EVIDENCE_TAGS = [
   "Paper Thin",
   "Spot the Difference",
   "So Smol",
+  "Not as Advertised",
 ] as const;
 
 export function ClaimActions({
