@@ -219,6 +219,16 @@ class UsdaQuarterlyScraper(BaseScraper):
             self.log.info("No variant_observations to write for usda_quarterly")
             return
 
+        # Deduplicate by conflict key: multiple fdc_ids can share a UPC, producing
+        # identical (variant_id, observed_date, source_type, retailer=NULL) rows.
+        # Sending duplicates in one batch causes PostgreSQL error 21000.
+        # Keep the last occurrence so the most recent fdc_id's size wins.
+        seen: Dict[Tuple[Any, ...], int] = {}
+        for idx, row in enumerate(rows):
+            key = (row["variant_id"], row["observed_date"], row["source_type"], row.get("retailer"))
+            seen[key] = idx
+        rows = [rows[idx] for idx in seen.values()]
+
         batch_size = 50
         for i in range(0, len(rows), batch_size):
             batch = rows[i:i + batch_size]
