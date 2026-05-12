@@ -71,7 +71,7 @@ def _fetch_eligible_claims(sb, threshold: int) -> List[Dict[str, Any]]:
 def main():
     parser = argparse.ArgumentParser(description="Auto-approve high-confidence claims")
     parser.add_argument("--threshold", type=int, default=DEFAULT_CONFIDENCE_THRESHOLD,
-                        help="Min overall confidence %% (default: %d)" % DEFAULT_CONFIDENCE_THRESHOLD)
+                        help="Min overall confidence (default: %(default)s)")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--approve-only", action="store_true",
                         help="Only approve, don't promote")

@@ -187,10 +187,10 @@ def _merge_cluster(
 def main():
     parser = argparse.ArgumentParser(description="Deduplicate product_entities")
     parser.add_argument("--auto", action="store_true",
-                        help="Auto-merge clusters with similarity > %.2f" % AUTO_MERGE_THRESHOLD)
+                        help="Auto-merge clusters with similarity > 0.85")
     parser.add_argument("--dry-run", action="store_true", help="Preview only")
     parser.add_argument("--threshold", type=float, default=DEFAULT_THRESHOLD,
-                        help="Minimum similarity threshold (default: %.2f)" % DEFAULT_THRESHOLD)
+                        help="Minimum similarity threshold (default: %(default)s)")
     args = parser.parse_args()
 
     sb = _get_client()
