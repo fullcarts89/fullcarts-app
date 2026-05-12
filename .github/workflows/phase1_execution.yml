@@ -1,0 +1,113 @@
+name: "Phase 1 — Data Credibility Execution"
+
+on:
+  workflow_dispatch:
+    inputs:
+      step:
+        description: "Which step to run"
+        required: true
+        type: choice
+        options:
+          - "1-dedup-dry-run"
+          - "2-dedup-auto"
+          - "3-bls-fix"
+          - "4-auto-approve-dry-run"
+          - "5-auto-approve-live"
+          - "6-backfill-images"
+          - "7-activate-variants-dry-run"
+          - "8-activate-variants-live"
+          - "all-dry-run"
+          - "all-live"
+
+permissions:
+  contents: read
+
+jobs:
+  phase1:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: "pipeline/requirements.txt"
+      - name: Install dependencies
+        run: pip install -r pipeline/requirements.txt
+
+      # Step 1: Dedup dry run
+      - name: "Step 1: Dedup entities (dry run)"
+        if: inputs.step == '1-dedup-dry-run' || inputs.step == 'all-dry-run'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python3 -m pipeline.scripts.dedup_entities --dry-run --auto
+
+      # Step 2: Dedup live
+      - name: "Step 2: Dedup entities (live)"
+        if: inputs.step == '2-dedup-auto' || inputs.step == 'all-live'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python3 -m pipeline.scripts.dedup_entities --auto
+
+      # Step 3: BLS scraper re-run
+      - name: "Step 3: BLS shrinkflation scraper (CPI fix)"
+        if: inputs.step == '3-bls-fix' || inputs.step == 'all-dry-run' || inputs.step == 'all-live'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python3 -m pipeline.cli bls_shrinkflation
+
+      # Step 4: Auto-approve dry run
+      - name: "Step 4: Auto-approve claims (dry run)"
+        if: inputs.step == '4-auto-approve-dry-run' || inputs.step == 'all-dry-run'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python3 -m pipeline.scripts.auto_approve_claims --dry-run --threshold 80
+
+      # Step 5: Auto-approve live + promote
+      - name: "Step 5: Auto-approve claims (live)"
+        if: inputs.step == '5-auto-approve-live' || inputs.step == 'all-live'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python3 -m pipeline.scripts.auto_approve_claims --threshold 80
+
+      # Step 6: Backfill images
+      - name: "Step 6a: Backfill claim images (approved)"
+        if: inputs.step == '6-backfill-images' || inputs.step == 'all-live'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python3 -m pipeline.scripts.backfill_claim_images --status approved --limit 2000
+      - name: "Step 6b: Backfill claim images (matched)"
+        if: inputs.step == '6-backfill-images' || inputs.step == 'all-live'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python3 -m pipeline.scripts.backfill_claim_images --status matched --limit 2000
+      - name: "Step 6c: Backfill entity images"
+        if: inputs.step == '6-backfill-images' || inputs.step == 'all-live'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python3 -m pipeline.scripts.backfill_entity_images --limit 2000
+
+      # Step 7: Activate variants dry run
+      - name: "Step 7: Activate variants (dry run)"
+        if: inputs.step == '7-activate-variants-dry-run' || inputs.step == 'all-dry-run'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python3 -m pipeline.scripts.activate_variants --dry-run
+
+      # Step 8: Activate variants live
+      - name: "Step 8: Activate variants (live)"
+        if: inputs.step == '8-activate-variants-live' || inputs.step == 'all-live'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python3 -m pipeline.scripts.activate_variants
