@@ -1,7 +1,71 @@
 # FullCarts: Data → Insights → Content Plan
 
 **Date:** May 12, 2026
-**Status:** Draft — pending founder review
+**Last updated:** May 12, 2026
+**Status:** Phase 1 code complete — ready for execution against database
+
+---
+
+## Progress Tracker
+
+### Phase 1: Make the Data Credible
+
+| Task | Script / File | Status | Notes |
+|------|--------------|--------|-------|
+| 1.1 Dedup audit | `pipeline/scripts/dedup_entities.py` | **Code complete** | Run with `--dry-run` first. Supports interactive and `--auto` modes. |
+| 1.2 Image backfill | `pipeline/scripts/backfill_entity_images.py` | **Code complete** | Also added to `pipeline_promote.yml` daily workflow. Run `backfill_claim_images` first. |
+| 1.3 BLS CPI fix | `pipeline/scrapers/bls_shrinkflation.py` | **Code complete** | Normalized series name matching + added diagnostic logging. Re-run `bls_shrinkflation` scraper. |
+| 1.4 Activate variants | `pipeline/scripts/activate_variants.py` | **Code complete** | Sets `is_active=true` on real-UPC variants. Unblocks `off_daily` and `kroger_weekly`. |
+| 1.5 Auto-approve claims | `pipeline/scripts/auto_approve_claims.py` | **Code complete** | Approves pending claims with confidence >= 80% and promotes in one step. |
+| — Insight views | `db/migrations/049_insight_views.sql` | **Code complete** | 6 views: brand_rankings, biggest_shrinks, timeline, CPI context, content_candidates, news mentions. Deploy to Supabase SQL Editor. |
+
+### Phase 2: Build the Insight Layer
+
+| Task | Status | Notes |
+|------|--------|-------|
+| 2.1 Insight queries | **SQL written** | Included in migration 049. Deploy to Supabase. |
+| 2.2 Public website pages | **Not started** | Homepage, /products, /products/[id], /brands/[name], /insights, /about |
+| 2.3 Content generation API | **Not started** | Thin JSON wrappers over Supabase views |
+| 2.4 Skimpflation pipeline | **Not started** | Connect nutrition_skimp_results → published_changes |
+
+### Phase 3: Launch Content Engine
+
+| Task | Status | Notes |
+|------|--------|-------|
+| 3.1 Platform & audience | **Planned** | Instagram, TikTok, X, newsletter, blog |
+| 3.2 Content pillar templates | **Planned** | 6 pillars with SQL queries defined in plan |
+| 3.3 Content scoring | **SQL written** | `content_candidates` view in migration 049 |
+| 3.4 Content calendar | **Planned** | Weekly rhythm defined in plan |
+| 3.5 Remaining gaps | **Identified** | OG tags, image generation, tip form, tracking |
+
+### Execution Order for Phase 1
+
+Run these in order with `SUPABASE_KEY` set. Use `--dry-run` first on each.
+
+```bash
+# 1. Dedup audit (cleans entity table)
+python -m pipeline.scripts.dedup_entities --dry-run
+python -m pipeline.scripts.dedup_entities --auto
+
+# 2. BLS scraper re-run (fills NULL CPI values)
+python -m pipeline.cli bls_shrinkflation
+
+# 3. Auto-approve high-confidence pending claims
+python -m pipeline.scripts.auto_approve_claims --dry-run
+python -m pipeline.scripts.auto_approve_claims --threshold 80
+
+# 4. Backfill images (claim images first, then entity propagation)
+python -m pipeline.scripts.backfill_claim_images --status approved
+python -m pipeline.scripts.backfill_claim_images --status matched
+python -m pipeline.scripts.backfill_entity_images
+
+# 5. Activate variants for weekly monitoring
+python -m pipeline.scripts.activate_variants --dry-run
+python -m pipeline.scripts.activate_variants
+
+# 6. Deploy insight views
+# → Run db/migrations/049_insight_views.sql in Supabase SQL Editor
+```
 
 ---
 
