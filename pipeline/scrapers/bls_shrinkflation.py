@@ -132,13 +132,25 @@ class BlsShrinkflationScraper(BaseScraper):
                     len(data_records),
                 )
 
-        # Merge on (series, period) — either file may have rows the other lacks
+        # Merge on (series, period) — either file may have rows the other lacks.
+        # Normalize series names for matching: the counts file hardcodes
+        # "All food" while the data file reads from Excel cells which may
+        # differ in case or whitespace (e.g. "All Food", "All food ").
         merged: Dict[Tuple[str, date], Dict[str, Any]] = {}
         now_iso = datetime.now(timezone.utc).isoformat()
 
+        def _norm_key(key: Tuple[str, date]) -> Tuple[str, date]:
+            return (key[0].strip().lower(), key[1])
+
+        # Build a normalized-key → original-series-name map so we preserve
+        # the display name from whichever file we see first
+        display_names: Dict[Tuple[str, date], str] = {}
+
         for key, rec in counts_records.items():
-            merged[key] = {
-                "series": key[0],
+            nk = _norm_key(key)
+            display_names.setdefault(nk, key[0])
+            merged[nk] = {
+                "series": display_names[nk],
                 "period": key[1].isoformat(),
                 "downsizing_count": rec.get("downsizing_count"),
                 "upsizing_count": rec.get("upsizing_count"),
@@ -150,13 +162,15 @@ class BlsShrinkflationScraper(BaseScraper):
             }
 
         for key, rec in data_records.items():
-            if key in merged:
-                merged[key]["official_cpi"] = rec.get("official_cpi")
-                merged[key]["rcpi_sc"] = rec.get("rcpi_sc")
-                merged[key]["data_url"] = _DATA_URL
+            nk = _norm_key(key)
+            display_names.setdefault(nk, key[0])
+            if nk in merged:
+                merged[nk]["official_cpi"] = rec.get("official_cpi")
+                merged[nk]["rcpi_sc"] = rec.get("rcpi_sc")
+                merged[nk]["data_url"] = _DATA_URL
             else:
-                merged[key] = {
-                    "series": key[0],
+                merged[nk] = {
+                    "series": display_names[nk],
                     "period": key[1].isoformat(),
                     "downsizing_count": None,
                     "upsizing_count": None,
@@ -168,7 +182,13 @@ class BlsShrinkflationScraper(BaseScraper):
                 }
 
         items = list(merged.values())
-        self.log.info("Total merged records: %d", len(items))
+        with_cpi = sum(1 for r in items if r.get("official_cpi") is not None)
+        with_rcpi = sum(1 for r in items if r.get("rcpi_sc") is not None)
+        with_counts = sum(1 for r in items if r.get("downsizing_count") is not None)
+        self.log.info(
+            "Total merged records: %d (with CPI: %d, with R-CPI-SC: %d, with counts: %d)",
+            len(items), with_cpi, with_rcpi, with_counts,
+        )
         return items
 
     def source_id_for(self, item: Dict[str, Any]) -> str:
