@@ -1,7 +1,7 @@
 # FullCarts: Data → Insights → Content Plan
 
 **Date:** May 12, 2026
-**Last updated:** May 12, 2026
+**Last updated:** May 13, 2026
 **Status:** Phase 1 code complete — ready for execution against database
 
 ---
@@ -24,8 +24,8 @@
 | Task | Status | Notes |
 |------|--------|-------|
 | 2.1 Insight queries | **SQL written** | Included in migration 049. Deploy to Supabase. |
-| 2.2 Public website pages | **Not started** | Homepage, /products, /products/[id], /brands/[name], /insights, /about |
-| 2.3 Content generation API | **Not started** | Thin JSON wrappers over Supabase views |
+| 2.2 Public website pages | **Not started** | 10 page routes with 20+ visualization types. See expanded structure below. |
+| 2.3 Content generation API | **Not started** | JSON endpoints + `/api/charts/*.png` image export + `/api/og/*.png` social cards |
 | 2.4 Skimpflation pipeline | **Not started** | Connect nutrition_skimp_results → published_changes |
 
 ### Phase 3: Launch Content Engine
@@ -432,82 +432,226 @@ ORDER BY news_mentions DESC;
 
 ### Task 2.2: Build Public Website Pages
 
-**Why:** The current public site is a "Coming Soon" page. The admin UI works but is private. You need public pages that display insights to visitors and serve as landing pages for social media links.
+**Why:** The current public site is a "Coming Soon" page. The admin UI works but is private. You need public pages that display insights to visitors and serve as landing pages for social media links. Every visualization built for the website also becomes social content via chart export routes (see Task 2.3).
 
-**Tech:** Next.js app already exists at `/web/src/app/`. Supabase client is configured. Design system is documented in `FULLCARTS_DESIGN_EXPORT.md`.
+**Tech:** Next.js app at `/web/src/app/`. Supabase client configured. Design system in `globals.css` (dark theme, Space Grotesk + Inter fonts, red/green/blue/amber palette). **No chart library currently installed** — add **Recharts** for React chart components.
 
-#### Page 1: Homepage Dashboard (`/`)
-Replace the "Coming Soon" page with a live dashboard showing:
-
-- **Hero stats row:** Total products tracked, total shrinkflation events detected, number of brands, average shrink %
-  - Data source: `dashboard_stats()` function (already exists)
-- **"Latest Catches" feed:** 5 most recent published_changes with product image, brand, product name, size change, and date
-  - Data source: `recent_changes` view
-- **"Worst Offenders" mini-leaderboard:** Top 5 brands by shrinkflation event count
-  - Data source: `brand_scorecard` view
-- **CTA:** "Explore the full database" → links to products page
-
-**Key implementation notes:**
+**Key implementation notes (all pages):**
 - Server-rendered (SSR) for SEO — use Supabase server client
 - Revalidate every hour (`revalidate: 3600`)
-- Apply existing design system (dark theme, Space Grotesk headings, red accent for shrinkflation)
+- Every page gets `generateMetadata()` with OG image via `/api/og/` routes
 
-#### Page 2: Products Listing (`/products`)
-Searchable, filterable product catalog:
+#### Site Map
 
-- **Search bar:** Full-text search on product name / brand (product_entities has tsvector)
-- **Filter sidebar:** Category dropdown, sort by (worst shrink %, most events, most recent)
-- **Product cards:** Image, brand, product name, total shrink %, number of events, latest event date
-- **Pagination:** 20 per page
+```
+/                           ← Landing page (hero + latest changes + stats counter)
+/explore                    ← Browse all documented changes (search + filter)
+/explore/[id]               ← Single change detail page (evidence trail)
+/brands                     ← Brand rankings table + shame chart
+/brands/[slug]              ← Brand profile (all changes, timeline, score)
+/categories                 ← Category breakdown (treemap + grid)
+/categories/[slug]          ← Category detail (products, trends)
+/trends                     ← Macro dashboard (timeline, CPI overlay, monthly reports)
+/trends/monthly/[yyyy-mm]   ← Auto-generated monthly shrinkflation report
+/about                      ← Mission, methodology, data sources
+/submit                     ← Community tip submission form
 
-Data source: `product_entities` joined with aggregate data from `published_changes`
+/admin/claims               ← (existing) Claim review
+/admin/login                ← (existing) Auth
 
-#### Page 3: Product Detail (`/products/[id]`)
-Individual product page — this is what social media posts link to:
+/api/charts/[type].png      ← Server-rendered chart images for social sharing
+/api/og/[type].png          ← Open Graph images for link previews
+```
 
-- **Product header:** Image, brand, product name, category
-- **Size timeline:** Visual chart showing size over time (from `variant_observations`)
-- **Change history:** List of all published_changes for this product with evidence links
-- **Evidence trail:** Links to original Reddit posts, news articles, or API sources
-- **Price data:** If available from Kroger/OFF, show price-per-unit trend
-- **Related products:** Other products from the same brand
+#### Page 1: Landing Page (`/`)
 
-Data source: `product_entities` + `published_changes` + `variant_observations` + `raw_items`
+| Section | Content | Visualization |
+|---------|---------|---------------|
+| Hero | "X products have shrunk. We tracked every one." | **Animated counter** ticking up from `dashboard_stats()` |
+| Latest catches | 5 most recent published_changes | **Card grid** with product images, red % badges |
+| Worst offenders | Top 5 brands from brand_rankings | **Horizontal bar chart** — red bars, brand names |
+| The trend | Shrinkflation events over time | **Sparkline** (compact line chart, no axes) |
+| CTA | "Explore the full database" / "Follow us" | Buttons to /explore + social links |
 
-#### Page 4: Brand Scorecard (`/brands/[name]`)
-Brand accountability page:
+Data sources: `dashboard_stats()`, `recent_changes`, `brand_scorecard`, `shrinkflation_timeline`
 
-- **Brand header:** Brand name, total products tracked, total events
-- **Products list:** All products from this brand with their shrink data
-- **Timeline:** When did this brand's shrinkflation events occur?
-- **Restoration credit:** Any restorations get highlighted positively
-- **News coverage:** Related news articles mentioning this brand
+Social media value: Hero stat + worst offenders chart are instant screenshot material. OG image (`/api/og/home.png`) renders counter + top 5 dynamically — every link share becomes a branded infographic.
 
-Data source: `brand_scorecard` view + `published_changes` filtered by brand
+#### Page 2: Explore (`/explore`)
 
-#### Page 5: Insights / Trends (`/insights`)
-The "By the Numbers" page for macro context:
+| Feature | Implementation |
+|---------|---------------|
+| Search bar | Full-text search via product_entities tsvector |
+| Filters | Category, brand, severity, date range, change type |
+| Sort | By date, by % change, by brand |
+| Results | Card grid — product image, brand, product, old→new size, % badge |
+| Pagination | Cursor-based, 20 per page |
 
-- **Shrinkflation timeline chart:** Events per month over time
-- **CPI comparison:** FRED food CPI vs. shrinkflation event frequency
-- **BLS official data:** Government downsizing counts by quarter
-- **Category breakdown:** Bar chart of most-affected categories
-- **Skimpflation section:** Top nutrition change findings from USDA data
+Visualizations on this page:
+- **Category donut chart** in sidebar showing distribution of current results
+- **Severity histogram** — how many changes fall in each severity band
 
-Data source: `shrinkflation_timeline`, `cpi_shrinkflation_context`, `bls_shrinkflation`, `category_stats`, `skimpflation_highlights`
+Data source: `published_changes` + `product_entities` with full-text search
 
-#### Page 6: About (`/about`)
-Static page explaining FullCarts mission, methodology, data sources, and evidence standards.
+Social media value: Filtered views become content — "All Frito-Lay changes" or "Everything that shrunk more than 20%" can be screenshotted or linked.
 
-**Estimated effort:** 5–7 days for all pages. Prioritize Pages 1, 2, 3, and 5 — these are the most linkable from social media.
+#### Page 3: Change Detail (`/explore/[id]`)
+
+| Section | Data Source |
+|---------|------------|
+| Product header | product_entities (image, brand, name) |
+| The change | published_changes (before/after sizes, date, severity) |
+| Evidence | evidence_summary JSONB — source links, screenshots |
+| Price context | variant_observations — price timeline if available |
+| Related | Other changes for same brand or product |
+
+Visualizations:
+- **Before/after bar** — single large horizontal comparison
+- **Price-per-unit line chart** — if variant_observations has multiple snapshots, show $/oz over time
+- **Size erosion step chart** — if product has multiple published_changes, show the full shrink history
+
+Social media value: This is the "link in bio" destination. Every social post links here. OG image (`/api/og/change/[id].png`) renders the before/after bar automatically so link previews are visual.
+
+#### Page 4: Brand Rankings (`/brands`)
+
+| Section | Visualization |
+|---------|---------------|
+| Rankings table | Sortable: brand, # events, total shrinkage %, avg per event, last detected |
+| Top 10 chart | **Horizontal bar chart** — brand_rankings view |
+| Shame vs praise | **Split bar chart** — shrinkflation events (red) vs restorations (green) side by side |
+| News cross-ref | Brands that made headlines — news_brand_mentions view |
+| Activity heatmap | **Calendar heatmap** (GitHub contribution graph style) showing when each brand's events were detected |
+
+Data sources: `brand_rankings`, `brand_scorecard`, `news_brand_mentions`, `published_changes`
+
+Social media value: "Top 10 Worst Brands" is evergreen weekly content. The shame/praise split chart is shareable on its own. The activity heatmap reveals timing patterns no other creator surfaces.
+
+#### Page 5: Brand Profile (`/brands/[slug]`)
+
+| Section | Visualization |
+|---------|---------------|
+| Brand header | Total events, overall shrinkage, first/last detected |
+| All changes | Filterable list of all published_changes for this brand |
+| Brand timeline | **Line chart** — events over time for this brand |
+| Product breakdown | **Treemap** — which products were hit, sized by severity |
+| Category spread | Which categories this brand shrinks most |
+| Report card | **Radar/spider chart** scoring frequency, severity, restorations, recency |
+
+Data sources: `brand_scorecard`, `published_changes`, `product_entities` filtered by brand
+
+Social media value: "Brand Spotlight" monthly post. The radar report card graphic is highly shareable — especially when the brand looks bad.
+
+#### Page 6: Categories (`/categories`)
+
+| Section | Visualization |
+|---------|---------------|
+| Overview | **Treemap** — category_stats view, sized by event count, colored by avg severity |
+| Category grid | Cards with category name, event count, avg shrinkage, top brand |
+| Comparison | **Grouped bar chart** — categories compared on event count + avg % change |
+
+Data source: `category_stats`
+
+Social media value: "Which grocery aisle got hit hardest?" with treemap visual.
+
+#### Page 7: Category Detail (`/categories/[slug]`)
+
+| Section | Visualization |
+|---------|---------------|
+| Stats | Total events, avg shrinkage, worst brand in category |
+| Products | All published_changes in this category |
+| Brand breakdown | **Bar chart** — which brands dominate this category's shrinkflation |
+| Timeline | Monthly events for this category only |
+
+Data source: `category_stats` + `published_changes` filtered by category
+
+#### Page 8: Trends Dashboard (`/trends`)
+
+This is where the government data shines — the most credible page on the site.
+
+| Section | Visualization |
+|---------|---------------|
+| Master timeline | **Dual-axis chart** — shrinkflation events (bars) + CPI food-at-home (line) |
+| Monthly summary | Current month stats vs prior month with % change indicators |
+| Category trends | **Small multiples** — one sparkline per category showing trend direction |
+| CPI breakdown | **Multi-line chart** — FRED CPI for all 9 food categories overlaid |
+| BLS context | Key BLS R-CPI-SC findings alongside FullCarts data |
+| Shrinkflation Index | **Single number + trend arrow** — custom composite metric (see below) |
+| Inflation gap | **Scatter plot** — months where CPI dropped but shrinkflation continued |
+
+Data sources: `cpi_shrinkflation_context`, `shrinkflation_timeline`, `fred_cpi_data`, `bls_shrinkflation`, `category_stats`
+
+**New concept — "FullCarts Shrinkflation Index":** A composite monthly metric combining event frequency + average severity + CPI context into a single ownable number. Publish it monthly. A single number with a trend arrow that media can cite.
+
+**New concept — "Inflation Gap" scatter:** Shows months where CPI was high but shrinkflation events lagged (brands hadn't started yet) vs months where CPI dropped but shrinkflation continued (brands kept the smaller sizes). This gap proves shrinkflation outlasts the inflation that caused it — newsworthy.
+
+Social media value: CPI overlay and inflation gap chart are the most credible, media-worthy visuals. These get cited by journalists.
+
+#### Page 9: Monthly Report (`/trends/monthly/[yyyy-mm]`)
+
+Auto-generated monthly summary page (also doubles as newsletter content).
+
+| Section | Content |
+|---------|---------|
+| Headline stat | "X new shrinkflation events detected in [Month]" |
+| Top changes | 5 biggest shrinks from biggest_shrinks, filtered by month |
+| Worst brand | Brand with most events that month |
+| Category breakdown | **Donut chart** of events by category |
+| CPI context | Food CPI for that month + trend |
+| Full list | All changes detected that month |
+
+Data sources: `biggest_shrinks`, `brand_rankings`, `category_stats`, `cpi_shrinkflation_context` — all filtered to single month
+
+Social media value: Entire page is a content piece. Share on the 1st of every month. OG image auto-generates headline stat as branded graphic.
+
+#### Page 10: About (`/about`)
+Static page: mission, methodology, data sources (with logos), evidence standards, team.
+
+#### Page 11: Submit a Tip (`/submit`)
+Public form writing to the `tips` table. Fields: product name, brand, what changed, photo upload (optional), email (optional).
+
+**Estimated effort:** 7–10 days for all pages. Priority order: Pages 1, 2, 3, 8 (most linkable from social media), then 4, 5, 9, 6, 7, 10, 11.
 
 ---
 
-### Task 2.3: Build an API for Content Generation
+### Visualization Summary
 
-**Why:** Social media content creation tools (and potentially future automation) need clean JSON endpoints to pull insight data.
+All 20+ visualization types across the website:
 
-**Endpoints to add (Next.js API routes):**
+| # | Chart Type | Page(s) | Data Source | Social Reuse |
+|---|-----------|---------|-------------|-------------|
+| 1 | Animated stat counter | Landing | `dashboard_stats()` | OG image |
+| 2 | Product card grid w/ % badges | Landing, Explore | `recent_changes` | Screenshots |
+| 3 | Horizontal bar (top brands) | Landing, Brands | `brand_rankings` | Weekly post |
+| 4 | Sparkline (trend) | Landing | `shrinkflation_timeline` | — |
+| 5 | Category donut | Explore sidebar | `category_stats` | — |
+| 6 | Severity histogram | Explore sidebar | `published_changes` | — |
+| 7 | Before/after bar | Change Detail | `published_changes` | Every "Gotcha" post |
+| 8 | Price-per-unit line | Change Detail | `variant_observations` | Price watchdog posts |
+| 9 | Size erosion step chart | Change Detail | `published_changes` (multi) | Product deep-dives |
+| 10 | Sortable rankings table | Brands | `brand_rankings` | — |
+| 11 | Shame vs praise split bar | Brands | `brand_scorecard` | Shareable standalone |
+| 12 | Brand activity heatmap | Brands | `published_changes` | Reveals timing patterns |
+| 13 | Brand timeline (line) | Brand Profile | `published_changes` by brand | Brand spotlight posts |
+| 14 | Product treemap | Brand Profile | `product_entities` by brand | — |
+| 15 | Brand report card (radar) | Brand Profile | Computed from scorecard | Brand spotlight posts |
+| 16 | Category treemap | Categories | `category_stats` | Monthly category post |
+| 17 | Grouped bar (category compare) | Categories | `category_stats` | — |
+| 18 | Dual-axis CPI overlay | Trends | `cpi_shrinkflation_context` | Monthly macro post |
+| 19 | Small multiples sparklines | Trends | `shrinkflation_timeline` by category | — |
+| 20 | Multi-line CPI breakdown | Trends | `fred_cpi_data` (9 series) | — |
+| 21 | Shrinkflation Index | Trends | Composite metric | Monthly signature stat |
+| 22 | Inflation gap scatter | Trends | CPI vs events lag analysis | Media-worthy visual |
+| 23 | Monthly donut | Monthly Report | `published_changes` by category | Monthly report posts |
+
+**Chart library:** Recharts (React-native, works with Next.js). For server-side PNG export, use Satori (Vercel's OG image library) or @nivo/core.
+
+---
+
+### Task 2.3: Build APIs for Content Generation + Chart Image Export
+
+**Why:** Social media content tools need clean JSON endpoints AND server-rendered chart images. The website becomes the single source of truth for both interactive visuals (on-site) and static PNGs (social posts). Build once, output twice.
+
+#### A. JSON Data Endpoints
 
 ```
 GET /api/stats              → dashboard_stats() output
@@ -521,9 +665,56 @@ GET /api/insights/cpi       → cpi_shrinkflation_context view
 GET /api/insights/bls       → bls_shrinkflation data
 ```
 
-These are thin wrappers over the Supabase views/functions. Cache with `Cache-Control: s-maxage=3600` (1 hour).
+Cache with `Cache-Control: s-maxage=3600` (1 hour).
 
-**Estimated effort:** 1 day
+#### B. Chart Image Export Routes (`/api/charts/`)
+
+Server-rendered PNG images for social media posts. Each route accepts query params for customization.
+
+```
+GET /api/charts/change/[id].png         → Before/after bar for a single product
+GET /api/charts/brands.png?top=10       → Top N brand ranking bars
+GET /api/charts/categories.png          → Category treemap
+GET /api/charts/cpi.png?months=12       → CPI vs shrinkflation dual-axis overlay
+GET /api/charts/erosion/[entity_id].png → Size erosion step chart for one product
+GET /api/charts/monthly/[yyyy-mm].png   → Monthly summary card
+GET /api/charts/brand/[slug].png        → Brand report card (radar chart)
+GET /api/charts/index.png               → Shrinkflation Index single-number card
+GET /api/charts/gap.png                 → Inflation gap scatter plot
+```
+
+Implementation: Use **Satori** (Vercel's OG image library, already optimized for Next.js) to render React components to PNG server-side. Same chart components used on the website pages, just rendered to image instead of HTML.
+
+#### C. Open Graph Image Routes (`/api/og/`)
+
+Dynamic OG images for link previews when pages are shared on social media.
+
+```
+GET /api/og/home.png                    → Homepage: counter + top 5 brands
+GET /api/og/change/[id].png             → Change detail: before/after bar + product name
+GET /api/og/brand/[slug].png            → Brand profile: name + event count + report card
+GET /api/og/trends.png                  → Trends: current month stats
+GET /api/og/monthly/[yyyy-mm].png       → Monthly report: headline stat
+```
+
+Every page's `generateMetadata()` references its corresponding OG image route.
+
+#### Website → Social Content Flow
+
+```
+Supabase insight views (migration 049)
+    │
+    ▼
+fullcarts.org public pages (interactive Recharts)
+    │
+    ├── /api/charts/*.png  → Placid branding overlay → Buffer/Postiz scheduling
+    │
+    └── /api/og/*.png      → Automatic link previews on all platforms
+```
+
+Phase 3's content pipeline just calls these PNG endpoints, overlays branding via Placid, and schedules — no duplicate chart generation code.
+
+**Estimated effort:** 2–3 days (JSON endpoints: 1 day, chart/OG image routes: 1–2 days)
 
 ---
 
@@ -797,8 +988,8 @@ These are items not covered by Phases 1-2 that the content strategy depends on:
 
 | Gap | Impact | Suggested Fix | Priority |
 |-----|--------|--------------|----------|
-| **No OG meta tags / social cards** | Links shared on social media show no preview image or description | Add `generateMetadata()` to each Next.js page with og:image, og:title, og:description | High — do during Phase 2 page build |
-| **No image generation for social posts** | Can't auto-create branded graphics from data | Build a template system (Canvas API, or use a service like Placid/Bannerbear, or generate with HTML→PNG) | Medium — manual design works initially |
+| **No OG meta tags / social cards** | Links shared on social media show no preview image or description | Add `generateMetadata()` to each Next.js page with og:image via `/api/og/` routes (Task 2.3C) | High — do during Phase 2 page build |
+| **No image generation for social posts** | Can't auto-create branded graphics from data | `/api/charts/*.png` routes (Task 2.3B) generate charts server-side → Placid adds branding | **Solved in Phase 2** — website is the single source |
 | **No URL shortener / tracking** | Can't track which social posts drive traffic | Use Vercel Analytics (free) or add UTM params to links | Medium |
 | **No community engagement loop** | Social followers can't easily submit tips back to FullCarts | Add a public tip submission form on the website that writes to the `tips` table | Medium — do after Phase 2 |
 | **Open Prices geographic coverage** | Open Prices data is crowdsourced — coverage may be sparse in the US | Check: `SELECT COUNT(*), country_code FROM open_prices_data GROUP BY country_code` — if US coverage is thin, deprioritize this source | Low |
@@ -812,11 +1003,12 @@ These are items not covered by Phases 1-2 that the content strategy depends on:
 | Week | Phase | Key Deliverables |
 |------|-------|-----------------|
 | **1** | Phase 1 | Dedup audit complete. Image backfill running. BLS fix verified. Pack_variants activated. |
-| **2** | Phase 1→2 | Pending claims processed. Insight queries deployed. Start homepage rebuild. |
-| **3** | Phase 2 | Homepage + Products page + Product detail page live. API endpoints working. |
-| **4** | Phase 2 | Brand scorecard page + Insights page live. Skimpflation pipeline connected. OG meta tags added. |
-| **5** | Phase 3 | Social accounts created. First week of content posted (5 posts). Newsletter #1 sent. |
-| **6+** | Phase 3 | Ongoing content cadence. Kroger price data available for Pillar 4. Iterate based on engagement data. |
+| **2** | Phase 1→2 | Pending claims processed. Insight queries deployed. Recharts installed. Start homepage + explore pages. |
+| **3** | Phase 2 | Landing + /explore + /explore/[id] live with visualizations (#1-9). JSON API endpoints working. |
+| **4** | Phase 2 | /brands + /brands/[slug] + /categories live (#10-17). Chart export routes (`/api/charts/`) working. |
+| **5** | Phase 2 | /trends + /trends/monthly + /about + /submit live (#18-23). OG image routes live. Skimpflation pipeline connected. |
+| **6** | Phase 3 | Social accounts created. Placid templates pull from chart export routes. First week of content posted (5 posts). |
+| **7+** | Phase 3 | Ongoing content cadence. Kroger price data available for Pillar 4. Monthly reports auto-generate. Iterate based on engagement. |
 
 ---
 
@@ -830,15 +1022,22 @@ Phase 1.4 (Pack Variants) ──┐          │        │
 Phase 1.5 (Pending Claims) ─┤          │        │
                              │          │        │
                              ▼          ▼        ▼
-                     Phase 2.1 (Insight Queries) ─┐
-                                                   │
-                     Phase 2.2 (Website Pages) ◄───┤
-                     Phase 2.3 (API Endpoints) ◄───┤
-                     Phase 2.4 (Skimpflation)  ◄───┘
+                     Phase 2.1 (Insight Queries) ──┐
+                                                    │
+                     Phase 2.2 (Website + Charts) ◄─┤
+                             │                      │
+                     Phase 2.3 (JSON + Chart PNGs   │
+                               + OG Images) ◄───────┤
+                     Phase 2.4 (Skimpflation)  ◄────┘
                              │
+                             │  Website visuals are the
+                             │  single source for social content
                              ▼
                      Phase 3.1-3.5 (Content Launch)
-                             │
+                       │  Placid pulls from /api/charts/*.png
+                       │  OG images auto-generate from /api/og/*.png
+                       │  Monthly reports from /trends/monthly/
+                       │
                      Phase 1.4 (2 weeks later)
                              │
                              ▼
