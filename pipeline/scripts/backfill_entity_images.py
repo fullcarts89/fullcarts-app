@@ -46,19 +46,35 @@ def _public_storage_url(path: str) -> str:
 
 
 def _fetch_entities_without_images(sb, limit: int = 0) -> List[Dict[str, Any]]:
-    """Fetch product_entities where image_url IS NULL."""
-    q = (
-        sb.table("product_entities")
-        .select("id, brand, canonical_name")
-        .is_("image_url", "null")
-        .order("brand")
-    )
-    if limit > 0:
-        q = q.limit(limit)
-    else:
-        q = q.limit(5000)
-    resp = q.execute()
-    return resp.data or []
+    """Fetch product_entities where image_url IS NULL.
+
+    Paginates via id-keyset to bypass PostgREST's per-request row cap
+    (default 1000). Ordered by id (not brand) so updating a row's image_url
+    in-flight doesn't shift the cursor.
+    """
+    out = []  # type: List[Dict[str, Any]]
+    last_id = None
+    while True:
+        q = (
+            sb.table("product_entities")
+            .select("id, brand, canonical_name")
+            .is_("image_url", "null")
+            .order("id")
+            .limit(PAGE_SIZE)
+        )
+        if last_id is not None:
+            q = q.gt("id", last_id)
+        resp = q.execute()
+        batch = resp.data or []
+        if not batch:
+            break
+        out.extend(batch)
+        last_id = batch[-1]["id"]
+        if limit > 0 and len(out) >= limit:
+            return out[:limit]
+        if len(batch) < PAGE_SIZE:
+            break
+    return out
 
 
 def _try_claim_image(sb, entity_id: str) -> Optional[str]:
