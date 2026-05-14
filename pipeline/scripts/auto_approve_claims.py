@@ -39,8 +39,12 @@ def _get_client():
     return create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
-def _fetch_eligible_claims(sb, threshold: int) -> List[Dict[str, Any]]:
-    """Fetch pending claims that meet auto-approval criteria."""
+def _fetch_eligible_claims(sb, threshold: float) -> List[Dict[str, Any]]:
+    """Fetch pending claims that meet auto-approval criteria.
+
+    `confidence` is a JSONB column with sub-keys {overall, brand, size_change,
+    product_name} on a 0-1 scale. We filter on `overall` >= threshold.
+    """
     eligible = []  # type: List[Dict[str, Any]]
     offset = 0
 
@@ -57,7 +61,9 @@ def _fetch_eligible_claims(sb, threshold: int) -> List[Dict[str, Any]]:
         )
         batch = resp.data or []
         for claim in batch:
-            scores = claim.get("confidence_scores") or {}
+            scores = claim.get("confidence") or {}
+            if not isinstance(scores, dict):
+                continue
             overall = scores.get("overall")
             if overall is not None and float(overall) >= threshold:
                 eligible.append(claim)
@@ -70,14 +76,17 @@ def _fetch_eligible_claims(sb, threshold: int) -> List[Dict[str, Any]]:
 
 def main():
     parser = argparse.ArgumentParser(description="Auto-approve high-confidence claims")
-    parser.add_argument("--threshold", type=int, default=DEFAULT_CONFIDENCE_THRESHOLD,
-                        help="Min overall confidence (default: %(default)s)")
+    parser.add_argument("--threshold", type=float, default=DEFAULT_CONFIDENCE_THRESHOLD,
+                        help="Min overall confidence; values > 1 are treated as percentages")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--approve-only", action="store_true",
                         help="Only approve, don't promote")
     parser.add_argument("--limit", type=int, default=0,
                         help="Max claims to approve (0=all)")
     args = parser.parse_args()
+
+    # Normalize threshold: accept 0-100 percentage or 0-1 fraction.
+    threshold = args.threshold / 100.0 if args.threshold > 1 else args.threshold
 
     sb = _get_client()
 
@@ -90,8 +99,8 @@ def main():
     )
     LOG.info("Total pending claims: %d", pending_resp.count or 0)
 
-    LOG.info("Fetching eligible claims (confidence >= %d%%)...", args.threshold)
-    eligible = _fetch_eligible_claims(sb, args.threshold)
+    LOG.info("Fetching eligible claims (overall confidence >= %.2f)...", threshold)
+    eligible = _fetch_eligible_claims(sb, threshold)
 
     if args.limit > 0:
         eligible = eligible[:args.limit]
@@ -111,10 +120,12 @@ def main():
 
     # Show sample
     for c in eligible[:5]:
-        scores = c.get("confidence_scores") or {}
+        scores = c.get("confidence") or {}
+        if not isinstance(scores, dict):
+            scores = {}
         LOG.info(
             "  [%.0f%%] %s / %s: %s → %s %s",
-            float(scores.get("overall", 0)),
+            float(scores.get("overall", 0)) * 100,
             c.get("brand", "?"),
             c.get("product_name", "?"),
             c.get("old_size", "?"),
