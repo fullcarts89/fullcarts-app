@@ -12,13 +12,21 @@ import os
 import sys
 import argparse
 import hashlib
-from datetime import datetime, timezone, date
+from datetime import datetime, timezone, date, timedelta
 from typing import Any, Dict, List, Optional, Tuple
 
 from supabase import create_client
 
 SUPABASE_URL = os.getenv("SUPABASE_URL", "https://ntyhbapphnzlariakgrw.supabase.co")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
+
+# When a new approved claim describes the same (entity, sizes) event that an
+# existing published_changes row already documents within this many days,
+# treat the new claim as additional evidence rather than a separate event.
+# 30 days catches news-syndication waves (Newsquest, Reach plc local papers
+# republishing the same wire copy across dozens of sites) while leaving room
+# for genuinely-distinct shrink events that happen to share before/after sizes.
+EVENT_DEDUP_WINDOW_DAYS = 30
 
 
 def get_client():
@@ -65,6 +73,47 @@ def calc_delta_pct(old: Optional[float], new: Optional[float]) -> Optional[float
     return None
 
 
+def find_existing_event(
+    sb,
+    entity_id: str,
+    size_before: float,
+    size_after: float,
+    observed_date_str: Optional[str],
+    window_days: int = EVENT_DEDUP_WINDOW_DAYS,
+) -> Optional[Dict[str, Any]]:
+    """Look for an already-published_changes row that documents the same event.
+
+    Same event = same entity, same size_before, same size_after, observed
+    within `window_days`. Used by promote_claims to merge syndicated /
+    duplicate reports into a single event row instead of creating a new
+    published_change for each.
+
+    Returns the matching row (with id, evidence_count, evidence_summary) if
+    found, else None.
+    """
+    try:
+        obs_d = date.fromisoformat((observed_date_str or "")[:10])
+    except (ValueError, TypeError):
+        return None
+
+    earliest = (obs_d - timedelta(days=window_days)).isoformat()
+    latest = (obs_d + timedelta(days=window_days)).isoformat()
+
+    resp = (sb.table("published_changes")
+            .select("id, evidence_count, evidence_summary, observed_date")
+            .eq("entity_id", entity_id)
+            .eq("size_before", size_before)
+            .eq("size_after", size_after)
+            .eq("is_retracted", False)
+            .gte("observed_date", earliest)
+            .lte("observed_date", latest)
+            .order("observed_date")
+            .limit(1)
+            .execute())
+
+    return resp.data[0] if resp.data else None
+
+
 def classify_change(delta_pct: Optional[float]) -> Tuple[str, str, bool]:
     """Returns (change_type, severity, is_shrinkflation)."""
     if delta_pct is None:
@@ -93,6 +142,7 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
         "observations_created": 0,
         "candidates_created": 0,
         "published": 0,
+        "evidence_added_to_existing": 0,  # syndicated claims merged into an existing event
         "skipped_no_size": 0,
         "errors": 0,
     }
@@ -230,50 +280,79 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
             change_type, severity, is_shrinkflation = classify_change(delta_pct)
 
             if obs_before_id and obs_after_id and old_size and new_size:
-                resp = (sb.table("change_candidates")
-                       .insert({
-                           "variant_id": variant_id,
-                           "observation_before": obs_before_id,
-                           "observation_after": obs_after_id,
-                           "size_before": old_size,
-                           "size_after": new_size,
-                           "size_delta_pct": delta_pct or 0,
-                           "price_before": claim.get("old_price"),
-                           "price_after": claim.get("new_price"),
-                           "change_type": change_type,
-                           "severity": severity,
-                           "is_shrinkflation": is_shrinkflation,
-                           "status": "approved",
-                           "supporting_claims": [str(claim["id"])],
-                           "evidence_count": 1,
-                       })
-                       .execute())
-                candidate_id = resp.data[0]["id"]
-                stats["candidates_created"] += 1
+                # Check whether this same event is already documented by a
+                # prior published_change (within EVENT_DEDUP_WINDOW_DAYS).
+                # If so, treat this claim as additional corroborating evidence
+                # rather than a separate event. Solves the news-syndication
+                # explosion where one wire story becomes dozens of rows.
+                existing_event = find_existing_event(
+                    sb, entity_id, old_size, new_size, obs_date,
+                )
 
-                # 5. Create published_change
-                (sb.table("published_changes")
-                 .insert({
-                     "candidate_id": candidate_id,
-                     "variant_id": variant_id,
-                     "entity_id": entity_id,
-                     "brand": brand,
-                     "product_name": name,
-                     "size_before": old_size,
-                     "size_after": new_size,
-                     "size_unit": size_unit,
-                     "size_delta_pct": delta_pct or 0,
-                     "change_type": change_type,
-                     "severity": severity,
-                     "observed_date": obs_date,
-                     "evidence_summary": [{
-                         "source": "claim",
-                         "claim_id": str(claim["id"]),
-                         "description": claim.get("change_description", ""),
-                     }],
-                 })
-                 .execute())
-                stats["published"] += 1
+                new_evidence_entry = {
+                    "source": "claim",
+                    "claim_id": str(claim["id"]),
+                    "description": claim.get("change_description", ""),
+                }
+
+                if existing_event:
+                    # Append evidence to existing event; no new candidate /
+                    # published_change row.
+                    existing_summary = existing_event.get("evidence_summary") or []
+                    if not isinstance(existing_summary, list):
+                        existing_summary = []
+                    updated_summary = existing_summary + [new_evidence_entry]
+                    new_count = (existing_event.get("evidence_count") or 1) + 1
+                    (sb.table("published_changes")
+                     .update({
+                         "evidence_summary": updated_summary,
+                         "evidence_count": new_count,
+                     })
+                     .eq("id", existing_event["id"])
+                     .execute())
+                    stats["evidence_added_to_existing"] += 1
+                else:
+                    # First time we see this event — create candidate + published_change.
+                    resp = (sb.table("change_candidates")
+                           .insert({
+                               "variant_id": variant_id,
+                               "observation_before": obs_before_id,
+                               "observation_after": obs_after_id,
+                               "size_before": old_size,
+                               "size_after": new_size,
+                               "size_delta_pct": delta_pct or 0,
+                               "price_before": claim.get("old_price"),
+                               "price_after": claim.get("new_price"),
+                               "change_type": change_type,
+                               "severity": severity,
+                               "is_shrinkflation": is_shrinkflation,
+                               "status": "approved",
+                               "supporting_claims": [str(claim["id"])],
+                               "evidence_count": 1,
+                           })
+                           .execute())
+                    candidate_id = resp.data[0]["id"]
+                    stats["candidates_created"] += 1
+
+                    (sb.table("published_changes")
+                     .insert({
+                         "candidate_id": candidate_id,
+                         "variant_id": variant_id,
+                         "entity_id": entity_id,
+                         "brand": brand,
+                         "product_name": name,
+                         "size_before": old_size,
+                         "size_after": new_size,
+                         "size_unit": size_unit,
+                         "size_delta_pct": delta_pct or 0,
+                         "change_type": change_type,
+                         "severity": severity,
+                         "observed_date": obs_date,
+                         "evidence_summary": [new_evidence_entry],
+                         "evidence_count": 1,
+                     })
+                     .execute())
+                    stats["published"] += 1
 
             # 6. Update claim as matched
             (sb.table("claims")
