@@ -21,6 +21,16 @@ jobs:
           cache-dependency-path: "pipeline/requirements.txt"
       - name: Install dependencies
         run: pip install -r pipeline/requirements.txt
+      - name: Auto-decline low-quality pending claims
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        # Clears junk before auto-approve evaluates the queue:
+        #  - news/gdelt with no brand or no size/price change
+        #  - reddit with no image (text-only complaints)
+        #  - openfoodfacts catalog rows that aren't actually shrinkflation
+        # Summary of declined claims lands in the workflow's job summary.
+        run: python3 -m pipeline.scripts.auto_decline_pending
       - name: Auto-approve high-confidence claims
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
