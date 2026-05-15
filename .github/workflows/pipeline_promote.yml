@@ -21,6 +21,15 @@ jobs:
           cache-dependency-path: "pipeline/requirements.txt"
       - name: Install dependencies
         run: pip install -r pipeline/requirements.txt
+      - name: Auto-approve high-confidence claims
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        # --approve-only so this step doesn't run promotion; the dedicated
+        # promote step below picks up everything (auto-approved + manually
+        # approved) in one pass. Summary of approved claims lands in the
+        # workflow's job summary.
+        run: python3 -m pipeline.scripts.auto_approve_claims --threshold 90 --approve-only
       - name: Promote approved claims
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
