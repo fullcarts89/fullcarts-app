@@ -20,13 +20,17 @@ from supabase import create_client
 SUPABASE_URL = os.getenv("SUPABASE_URL", "https://ntyhbapphnzlariakgrw.supabase.co")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 
-# When a new approved claim describes the same (entity, sizes) event that an
-# existing published_changes row already documents within this many days,
-# treat the new claim as additional evidence rather than a separate event.
-# 30 days catches news-syndication waves (Newsquest, Reach plc local papers
-# republishing the same wire copy across dozens of sites) while leaving room
-# for genuinely-distinct shrink events that happen to share before/after sizes.
-EVENT_DEDUP_WINDOW_DAYS = 30
+# (entity_id, size_before, size_after) is the canonical dedup key for an
+# event. A product shrinks 200g → 180g once. If a new claim with the same
+# entity and same sizes arrives later (whether minutes or years), it's
+# evidence for the same event, not a new one. We do NOT use a date window:
+#   - Tight windows (e.g. 30 days) missed cases where GDELT re-indexed the
+#     same wire story years later as a second wave, producing apparent
+#     "new" events with identical headlines + sizes
+#   - A genuine re-shrinkage of the exact same magnitude is theoretically
+#     possible but extremely rare (would require a full restoration first)
+#     and we'd rather collapse the rare case than under-report syndication
+EVENT_DEDUP_WINDOW_DAYS = None  # retained for legacy callers; None = no window
 
 
 def get_client():
@@ -78,35 +82,26 @@ def find_existing_event(
     entity_id: str,
     size_before: float,
     size_after: float,
-    observed_date_str: Optional[str],
-    window_days: int = EVENT_DEDUP_WINDOW_DAYS,
+    observed_date_str: Optional[str] = None,  # kept for backwards-compat; unused
+    window_days: Optional[int] = EVENT_DEDUP_WINDOW_DAYS,
 ) -> Optional[Dict[str, Any]]:
     """Look for an already-published_changes row that documents the same event.
 
-    Same event = same entity, same size_before, same size_after, observed
-    within `window_days`. Used by promote_claims to merge syndicated /
-    duplicate reports into a single event row instead of creating a new
-    published_change for each.
+    Dedup key: (entity_id, size_before, size_after). A product can only shrink
+    from 200g to 180g once — any future report with that same (entity, before,
+    after) tuple is referring to the same event, regardless of when it was
+    reported. Returns the earliest matching row.
 
-    Returns the matching row (with id, evidence_count, evidence_summary) if
-    found, else None.
+    `observed_date_str` and `window_days` are retained as parameters for
+    backwards-compatibility with callers passing them through, but they no
+    longer constrain the query.
     """
-    try:
-        obs_d = date.fromisoformat((observed_date_str or "")[:10])
-    except (ValueError, TypeError):
-        return None
-
-    earliest = (obs_d - timedelta(days=window_days)).isoformat()
-    latest = (obs_d + timedelta(days=window_days)).isoformat()
-
     resp = (sb.table("published_changes")
             .select("id, evidence_count, evidence_summary, observed_date")
             .eq("entity_id", entity_id)
             .eq("size_before", size_before)
             .eq("size_after", size_after)
             .eq("is_retracted", False)
-            .gte("observed_date", earliest)
-            .lte("observed_date", latest)
             .order("observed_date")
             .limit(1)
             .execute())

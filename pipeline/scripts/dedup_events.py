@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
-"""One-time backfill: collapse duplicate published_changes into single events.
+"""Backfill: collapse duplicate published_changes into single events.
 
-Two news articles syndicated across 39 sites become 39 published_changes rows
-under today's pipeline. Each "shrinkflation event" should instead be a single
-published_changes row with N corroborating sources. This script does that
-collapse.
+A product shrinks 200g → 180g exactly once. Multiple published_changes rows
+for the same (entity, size_before, size_after) tuple are by definition
+documenting the same event — whether they came from a wire-story syndicated
+across 40 regional papers in one week (Newsquest UK), or from a "best of"
+republication years later that GDELT re-indexed.
 
-Dedup key: (entity_id, size_before, size_after, observed_date ± window)
+Dedup key: (entity_id, size_before, size_after). No date window by default
+because date dispersion across re-publishings of the same wire story can
+span years, and same-product/same-magnitude re-shrinkages are vanishingly
+rare. Use --window-days N if you want a narrower window for some reason.
 
-For each cluster of >=2 published_changes matching that key:
+For each cluster of >=2 published_changes matching the key:
   - Keep the EARLIEST as canonical
   - Merge all evidence_summary arrays into the canonical
   - Sum evidence_count
@@ -19,7 +23,7 @@ Designed to be safe to re-run. Skips singletons.
 Usage:
     python -m pipeline.scripts.dedup_events --dry-run
     python -m pipeline.scripts.dedup_events --brand Cadbury  # single brand
-    python -m pipeline.scripts.dedup_events --window-days 30  # tighten window
+    python -m pipeline.scripts.dedup_events --window-days 30  # opt back into a window
     python -m pipeline.scripts.dedup_events                  # all brands, live
 """
 import argparse
@@ -39,7 +43,10 @@ logging.basicConfig(
 SUPABASE_URL = os.getenv("SUPABASE_URL", "https://ntyhbapphnzlariakgrw.supabase.co")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 PAGE_SIZE = 1000
-DEFAULT_WINDOW_DAYS = 30
+# Effectively no window — 100 years. Use --window-days N to override.
+# Rationale: (entity, size_before, size_after) uniquely identifies an event;
+# date constraints under-merge syndication that GDELT re-indexes over years.
+DEFAULT_WINDOW_DAYS = 36500
 
 
 def _get_client():
