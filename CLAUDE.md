@@ -108,12 +108,16 @@ Cursor state persists in `scraper_state` table. Config lives in `pipeline/config
 
 ### Database migrations
 
-SQL migrations in `db/migrations/` numbered `001_` through `049_`. Deploy manually via Supabase SQL Editor. Views in `043_rewrite_views_new_schema.sql` and `049_insight_views.sql` power the frontend.
+SQL migrations in `db/migrations/` numbered `001_` through `050_`. Deploy manually via Supabase SQL Editor (or via the Management API with a PAT). Views in `043_rewrite_views_new_schema.sql` and `049_insight_views.sql` power the frontend. Migration `050_event_dedup.sql` added `published_changes.evidence_count` + a dedup index.
+
+### Design reference
+
+`web/public/mockups/brands-cadbury.html` is the locked visual reference for the future `/brands/[name]` Next.js route. Uses the existing `FULLCARTS_DESIGN_EXPORT.md` system (dark graphite + Space Grotesk + JetBrains Mono + alert red). Deploys to `/mockups/brands-cadbury.html` once Vercel picks up the merge.
 
 ### GitHub Actions
 
 17 workflows in `.github/workflows/` run scrapers on schedule (daily/weekly/monthly/quarterly). Key ones:
-- `pipeline_promote.yml` — Daily: promotes approved claims + backfills images
-- `pipeline_extraction.yml` — Daily: AI claim extraction from raw_items
-- `pipeline_reddit.yml` / `pipeline_news.yml` — Daily: ingest new data
-- `phase1_execution.yml` — Manual: run Phase 1 data credibility scripts
+- `pipeline_promote.yml` — Daily 12:00 UTC: auto-decline junk → auto-approve high-confidence claims (threshold 90 + hard filters) → promote → backfill entity images. Markdown summaries in job output.
+- `pipeline_extraction.yml` — Daily 10:00 UTC: AI claim extraction from `raw_items` (Claude Haiku) + nightly vision enrichment
+- `pipeline_reddit.yml` / `pipeline_news.yml` — Daily/12h: ingest new data
+- `phase1_execution.yml` — Manual: run individual Phase 1 data-credibility scripts (event dedup, entity dedup, etc.)
