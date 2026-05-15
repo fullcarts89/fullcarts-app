@@ -1,37 +1,48 @@
 # FullCarts: Data → Insights → Content Plan
 
 **Date:** May 12, 2026
-**Last updated:** May 12, 2026
-**Status:** Phase 1 code complete — ready for execution against database
+**Last updated:** May 15, 2026
+**Status:** Phase 1 complete and shipped. Data pipeline cleanups landed (event dedup, entity dedup, image fallbacks). Brand-page mockup mature; Phase 2 (real Next.js pages) is the next active workstream.
 
 ---
 
 ## Progress Tracker
 
-### Phase 1: Make the Data Credible
+### Phase 1: Make the Data Credible — ✅ COMPLETE
 
-| Task | Script / File | Status | Notes |
-|------|--------------|--------|-------|
-| 1.1 Dedup audit | `pipeline/scripts/dedup_entities.py` | **Code complete** | Run with `--dry-run` first. Supports interactive and `--auto` modes. |
-| 1.2 Image backfill | `pipeline/scripts/backfill_entity_images.py` | **Code complete** | Also added to `pipeline_promote.yml` daily workflow. Run `backfill_claim_images` first. |
-| 1.3 BLS CPI fix | `pipeline/scrapers/bls_shrinkflation.py` | **Code complete** | Normalized series name matching + added diagnostic logging. Re-run `bls_shrinkflation` scraper. |
-| 1.4 Activate variants | `pipeline/scripts/activate_variants.py` | **Code complete** | Sets `is_active=true` on real-UPC variants. Unblocks `off_daily` and `kroger_weekly`. |
-| 1.5 Auto-approve claims | `pipeline/scripts/auto_approve_claims.py` | **Code complete** | Approves pending claims with confidence >= 80% and promotes in one step. |
-| — Insight views | `db/migrations/049_insight_views.sql` | **Code complete** | 6 views: brand_rankings, biggest_shrinks, timeline, CPI context, content_candidates, news mentions. Deploy to Supabase SQL Editor. |
+| Task | Status | Outcome |
+|------|--------|---------|
+| 1.1 Dedup audit | ✅ Shipped (#60) | Strict-mode dedup merged 707 obvious dupes (14,856 → 14,149). Per-brand fuzzy passes possible via `--fuzzy`. |
+| 1.2 Image backfill | ✅ Shipped (#60) | `backfill_entity_images.py` paginates correctly; daily cron in `pipeline_promote.yml`. 1,108 entity images populated; coverage now 85%+ for brands with news coverage. |
+| 1.3 BLS CPI fix | ✅ Live | Re-run produced 825 CPI + 134 counts rows in `bls_shrinkflation`. NULL R-CPI-SC is a BLS-side data gap (no fix possible). |
+| 1.4 Activate variants | ✅ Live | All 3,489 pack_variants now `is_active=true`. |
+| 1.5 Auto-approve claims | ✅ Shipped (#61) | Wired into daily `pipeline_promote.yml` workflow with threshold 90 + hard filters: image required, CPG-unit allowlist, sub-score floors. Daily markdown summary lands in GitHub Actions. |
+| — Insight views | ✅ Live | Migration 049 deployed; 6 views queryable. |
+| — Auto-decline | ✅ Shipped (#62) | OFF + news/gdelt + reddit no-image rules; cleared 12,896 pending claims (queue: 14,844 → 1,948). Wired daily. |
+| — Event dedup (syndication) | ✅ Shipped (#63, #64) | Collapse `published_changes` on `(entity_id, size_before, size_after)`. **3,899 → 2,800** rows platform-wide. Cadbury: **395 → 105** events. Each event tracks `evidence_count` + full source list. |
+| — Cadbury manual dedup | ✅ Live | 32 ghost entities deleted + 16 fuzzy merges executed. Cadbury entities: **138 → 88**. With-changes count: **94 → 76**. |
+| — Daily workflow | ✅ Live | `pipeline_promote.yml` now runs: auto_decline → auto_approve → promote → backfill_entity_images. One workflow, one schedule (12:00 UTC), one job summary. |
 
 ### Phase 2: Build the Insight Layer
 
 | Task | Status | Notes |
 |------|--------|-------|
-| 2.1 Insight queries | **SQL written** | Included in migration 049. Deploy to Supabase. |
-| 2.2 Public website pages | **Not started** | Homepage, /products, /products/[id], /brands/[name], /insights, /about |
-| 2.3 Content generation API | **Not started** | Thin JSON wrappers over Supabase views |
-| 2.4 Skimpflation pipeline | **Not started** | Connect nutrition_skimp_results → published_changes |
+| 2.1 Insight queries | ✅ Deployed | Migration 049 in production. |
+| 2.2.0 `/brands/[name]` mockup | ✅ **Cadbury reference mockup at `web/public/mockups/brands-cadbury.html`** | Includes hero stats, year-by-year timeline (with caveat about coverage gaps), wall-of-shame with source links + socialimage fallback, products grid with image-first sort + top-25 + expand, **event-led evidence trail** with parent-network grouping (Newsquest UK / Reach plc / DMGT / News UK), inline expand to per-source list, typographic placeholders, route-intent toast. All numbers consistent (105 events / 76 products / 526 sources). **Aesthetic locked in: existing FULLCARTS_DESIGN_EXPORT.md — "Investigative Journalism meets Modern Product Design"**, dark graphite + Space Grotesk + JetBrains Mono. |
+| 2.2.1 `/brands/[name]` Next.js | **Next active workstream** | Mockup is mature enough to translate into Server Components with live Supabase queries + ISR (revalidate: 3600). |
+| 2.2.2 `/products/[id]` mockup | Pending | Where brand-page cards route to. Pattern after the brand page. |
+| 2.2.3 Homepage / `/products` / `/insights` / `/about` | Pending | Per design doc. Homepage depends on brand-page patterns. |
+| 2.3 Content generation API | Pending | Thin JSON wrappers over Supabase views. |
+| 2.4 Skimpflation pipeline | Pending | Connect `nutrition_skimp_results` → `published_changes`. |
+| — `socialimage` → `entity.image_url` backfill | Designed, queued | GDELT raw_payload already has the URLs; just need to plumb to `entity.image_url` via `backfill_entity_images.py` extension. ~30 min PR. |
+| — URL-pattern syndication detection | Designed, queued | Replace hand-curated Newsquest/Reach domain table with URL-pattern detection (e.g. Newsquest's `/resources/images/{id}/?type=og-image`). |
+| — `event_evidence_summary` SQL view | Pending | For real Next.js page to render event-led trail without N+1 queries. |
 
 ### Phase 3: Launch Content Engine
 
 | Task | Status | Notes |
 |------|--------|-------|
+| Strategy doc | ✅ Shipped (#59) | `docs/plans/2026-05-13-social-content-engine.md` — faceless social content engine plan. |
 | 3.1 Platform & audience | **Planned** | Instagram, TikTok, X, newsletter, blog |
 | 3.2 Content pillar templates | **Planned** | 6 pillars with SQL queries defined in plan |
 | 3.3 Content scoring | **SQL written** | `content_candidates` view in migration 049 |
