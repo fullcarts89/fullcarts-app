@@ -108,11 +108,11 @@ export default async function BrandPage({ params }: PageProps) {
 
         <BrandHero ranking={ranking} manufacturer={manufacturer} />
 
+        <TimelineExplorer ranking={ranking} events={events} />
+
         <WallOfShame events={events} entities={entities} />
 
         <ProductGrid products={products} brand={ranking.brand} />
-
-        <TimelineExplorer ranking={ranking} events={events} />
       </div>
     </>
   );

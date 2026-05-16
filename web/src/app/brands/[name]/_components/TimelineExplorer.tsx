@@ -20,6 +20,7 @@ interface Props {
 const MAX_BAR_PX = 180;
 const ZERO_BAR_PX = 2;
 const SOURCES_PREVIEW = 12;
+const YEAR_EVENTS_PREVIEW = 5;
 
 function eventYear(e: EventRow): number {
   const y = parseInt(isoDay(e.observed_date).slice(0, 4), 10);
@@ -74,6 +75,7 @@ export default function TimelineExplorer({ ranking, events }: Props) {
 
   const [activeYear, setActiveYear] = useState<number | null>(defaultYear);
   const [openEventId, setOpenEventId] = useState<string | null>(null);
+  const [showAllInYear, setShowAllInYear] = useState(false);
 
   const yearEvents = useMemo(() => {
     if (activeYear == null) return [];
@@ -122,6 +124,7 @@ export default function TimelineExplorer({ ranking, events }: Props) {
                 if (isZero) return;
                 setActiveYear(b.year);
                 setOpenEventId(null);
+                setShowAllInYear(false);
               }}
               role={isZero ? undefined : "button"}
               tabIndex={isZero ? undefined : 0}
@@ -169,7 +172,10 @@ export default function TimelineExplorer({ ranking, events }: Props) {
             </span>
           </div>
           <div className={styles["evt-list"]}>
-            {yearEvents.map((e) => {
+            {(showAllInYear
+              ? yearEvents
+              : yearEvents.slice(0, YEAR_EVENTS_PREVIEW)
+            ).map((e) => {
               const dom = dominantSource(e.sources);
               const sourceType = dom?.source_type || "news";
               const delta = num(e.size_delta_pct);
@@ -308,6 +314,25 @@ export default function TimelineExplorer({ ranking, events }: Props) {
               );
             })}
           </div>
+          {yearEvents.length > YEAR_EVENTS_PREVIEW && (
+            <div className={styles["expand-row"]}>
+              <span>
+                Showing{" "}
+                {showAllInYear ? yearEvents.length : YEAR_EVENTS_PREVIEW} of{" "}
+                {yearEvents.length}
+              </span>
+              <button
+                type="button"
+                className={`${styles["expand-btn"]} ${showAllInYear ? styles.collapse : ""}`}
+                onClick={() => setShowAllInYear((x) => !x)}
+              >
+                {showAllInYear
+                  ? "Show top 5"
+                  : `Show all ${yearEvents.length} events`}{" "}
+                <span className={styles.arrow}>↓</span>
+              </button>
+            </div>
+          )}
         </>
       )}
     </section>
