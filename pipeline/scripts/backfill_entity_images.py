@@ -6,6 +6,7 @@ Priority order:
   2. Kroger API product images (from raw_items.raw_payload)
   3. Walmart API product images (from raw_items.raw_payload)
   4. Open Food Facts product images (from raw_items.raw_payload)
+  5. GDELT article hero image (raw_payload.socialimage via matched claims)
 
 Usage:
     python -m pipeline.scripts.backfill_entity_images
@@ -129,6 +130,42 @@ def _try_api_image(sb, entity_id: str, source_type: str) -> Optional[str]:
     return None
 
 
+def _try_news_socialimage(sb, entity_id: str) -> Optional[str]:
+    """Pull a GDELT article hero image via the entity's matched claims.
+
+    Path: entity -> claims (matched_entity_id) -> raw_items.raw_payload.socialimage.
+    Only GDELT articles carry socialimage; Google News RSS items have no image
+    field, so source_type is restricted to 'gdelt'.
+    """
+    claims = (
+        sb.table("claims")
+        .select("raw_item_id")
+        .eq("matched_entity_id", entity_id)
+        .not_.is_("raw_item_id", "null")
+        .limit(20)
+        .execute()
+    )
+    raw_ids = [
+        c["raw_item_id"] for c in (claims.data or []) if c.get("raw_item_id")
+    ]
+    if not raw_ids:
+        return None
+
+    resp = (
+        sb.table("raw_items")
+        .select("raw_payload")
+        .in_("id", raw_ids)
+        .eq("source_type", "gdelt")
+        .execute()
+    )
+    for row in resp.data or []:
+        payload = row.get("raw_payload") or {}
+        url = (payload.get("socialimage") or "").strip()
+        if url:
+            return url
+    return None
+
+
 def _extract_image_from_payload(
     payload: Dict[str, Any], source_type: str
 ) -> Optional[str]:
@@ -167,26 +204,27 @@ def main():
         return
 
     stats = {"updated": 0, "still_missing": 0, "errors": 0}
+    by_source = {"claim": 0, "kroger_api": 0, "walmart": 0,
+                 "openfoodfacts": 0, "gdelt_socialimage": 0}
     sources_tried = [
-        ("claim", None),
-        ("kroger_api", "kroger_api"),
-        ("walmart", "walmart"),
-        ("openfoodfacts", "openfoodfacts"),
+        ("claim", lambda sb, eid: _try_claim_image(sb, eid)),
+        ("kroger_api", lambda sb, eid: _try_api_image(sb, eid, "kroger_api")),
+        ("walmart", lambda sb, eid: _try_api_image(sb, eid, "walmart")),
+        ("openfoodfacts",
+         lambda sb, eid: _try_api_image(sb, eid, "openfoodfacts")),
+        ("gdelt_socialimage", lambda sb, eid: _try_news_socialimage(sb, eid)),
     ]
 
     for i, entity in enumerate(entities):
         eid = entity["id"]
         image_url = None
+        matched_source = None
 
         try:
-            # Try each source in priority order
-            for source_name, source_type in sources_tried:
-                if source_name == "claim":
-                    image_url = _try_claim_image(sb, eid)
-                else:
-                    image_url = _try_api_image(sb, eid, source_type)
-
+            for source_name, fetcher in sources_tried:
+                image_url = fetcher(sb, eid)
                 if image_url:
+                    matched_source = source_name
                     break
 
             if image_url:
@@ -195,13 +233,14 @@ def main():
                         {"image_url": image_url}
                     ).eq("id", eid).execute()
                 stats["updated"] += 1
+                by_source[matched_source] = by_source.get(matched_source, 0) + 1
                 if stats["updated"] <= 5:
                     LOG.info(
                         "  [%s] %s / %s → %s",
                         "DRY" if args.dry_run else "SET",
                         entity.get("brand", "?"),
                         entity.get("canonical_name", "?"),
-                        source_name,
+                        matched_source,
                     )
             else:
                 stats["still_missing"] += 1
@@ -221,6 +260,9 @@ def main():
     LOG.info("\n%s RESULTS:", mode)
     for k, v in stats.items():
         LOG.info("  %s: %d", k, v)
+    LOG.info("  by_source:")
+    for k, v in by_source.items():
+        LOG.info("    %s: %d", k, v)
 
 
 if __name__ == "__main__":
