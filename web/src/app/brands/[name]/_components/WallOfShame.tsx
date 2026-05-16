@@ -1,10 +1,14 @@
-// Server component. Top 8 biggest individual shrinks for this brand.
-// Card image picks the entity's image_url first; falls back to the lead
-// source's archived/socialimage. Card link goes to that source's article URL
-// when available; otherwise the card is unclickable.
+// Server component. Showcases the most-damning events with strong
+// visual evidence. Selection logic favors events that have a real
+// archived photo (Reddit user side-by-sides, then article hero images)
+// over text-only events, so the cards always carry visible proof.
+//
+// Card anatomy: photo / source caption / size diagram / title / size+%
+// / source-type badge + date.
 import styles from "../styles.module.css";
-import type { EventRow, ProductEntity } from "../types";
+import type { EventRow, EventSource, ProductEntity } from "../types";
 import { isoDay, leadImageFromSources, num } from "../lib";
+import SizeDiagram from "./SizeDiagram";
 
 interface Props {
   events: EventRow[];
@@ -12,14 +16,51 @@ interface Props {
 }
 
 const TOP_N = 8;
+const POOL_N = 30;
+
+/** 0 = best (Reddit-archived photo). 1 = article hero. 2 = no image.
+ *  Used to rank the showcase pool toward events with visible evidence. */
+function evidenceScore(e: EventRow): number {
+  for (const s of e.sources) if (s.claim_image_path) return 0;
+  for (const s of e.sources) if (s.image) return 1;
+  return 2;
+}
+
+/** Pick the first source whose image we end up showing, so the caption
+ *  matches the photo. Mirrors leadImageFromSources priority order. */
+function leadSource(sources: EventSource[]): EventSource | null {
+  for (const s of sources) if (s.claim_image_path) return s;
+  for (const s of sources) if (s.image) return s;
+  return sources[0] || null;
+}
+
+function sourceLabel(s: EventSource | null): string {
+  if (!s) return "Source";
+  if (s.source_type === "reddit") return "Reddit";
+  if (s.publisher) return s.publisher;
+  if (s.domain) return s.domain;
+  return "News";
+}
 
 export default function WallOfShame({ events, entities }: Props) {
   const byEntity = new Map<string, ProductEntity>();
   for (const e of entities) byEntity.set(e.id, e);
 
-  const top = [...events]
+  // Pool the top POOL_N biggest drops, rank by evidence quality,
+  // take the first TOP_N, then re-sort that subset by biggest drop
+  // so the displayed order still reads "biggest first".
+  const pool = [...events]
     .sort((a, b) => num(a.size_delta_pct) - num(b.size_delta_pct))
-    .slice(0, TOP_N);
+    .slice(0, POOL_N);
+  const ranked = [...pool].sort((a, b) => {
+    const sa = evidenceScore(a);
+    const sb = evidenceScore(b);
+    if (sa !== sb) return sa - sb;
+    return num(a.size_delta_pct) - num(b.size_delta_pct);
+  });
+  const top = ranked
+    .slice(0, TOP_N)
+    .sort((a, b) => num(a.size_delta_pct) - num(b.size_delta_pct));
 
   if (top.length === 0) return null;
 
@@ -28,33 +69,30 @@ export default function WallOfShame({ events, entities }: Props) {
       <div className={styles["section-head"]}>
         <h2>Biggest individual shrinks</h2>
         <div className={styles.meta}>
-          Top {top.length} of {events.length} events · sorted by % drop
+          Top {top.length} of {events.length} events · best evidence first
         </div>
       </div>
       <div className={styles["shame-grid"]}>
         {top.map((e) => {
           const entity = e.entity_id ? byEntity.get(e.entity_id) : null;
           const lead = leadImageFromSources(e.sources);
-          const imgUrl = entity?.image_url || lead.url;
-          const linkUrl = e.sources[0]?.url || null;
-          const sourceType = e.sources[0]?.source_type || "news";
+          const leadSrc = leadSource(e.sources);
+          const imgUrl = lead.url || entity?.image_url || null;
+          const linkUrl = leadSrc?.url || null;
+          const sourceType = leadSrc?.source_type || "news";
           const delta = num(e.size_delta_pct);
           const sizeBefore = num(e.size_before);
           const sizeAfter = num(e.size_after);
           const unit = e.size_unit || "";
           const productName = entity?.canonical_name || e.product_name;
-          const showImageTag = sourceType !== "reddit" && lead.url && !entity?.image_url;
+          const captionDate = isoDay(leadSrc?.date || e.observed_date);
+          const captionLabel = sourceLabel(leadSrc);
 
           const cardInner = (
             <>
               <div className={styles["shame-img"]}>
                 {imgUrl ? (
-                  <>
-                    <img src={imgUrl} alt="" loading="lazy" />
-                    {showImageTag && (
-                      <span className={styles["img-tag"]}>News</span>
-                    )}
-                  </>
+                  <img src={imgUrl} alt="" loading="lazy" />
                 ) : (
                   <div className={styles["placeholder-stub"]}>
                     <span className={styles["ps-tag"]}>No archive</span>
@@ -63,6 +101,18 @@ export default function WallOfShame({ events, entities }: Props) {
                   </div>
                 )}
               </div>
+              {imgUrl && (
+                <div className={styles["shame-caption"]}>
+                  <span className={styles["sc-type"]}>{captionLabel}</span>
+                  <span>·</span>
+                  <span>{captionDate}</span>
+                </div>
+              )}
+              <SizeDiagram
+                before={sizeBefore}
+                after={sizeAfter}
+                unit={unit}
+              />
               <div className={styles["shame-body"]}>
                 <div className={styles["shame-title"]}>{productName}</div>
                 <div className={styles["shame-stat"]}>
@@ -82,7 +132,7 @@ export default function WallOfShame({ events, entities }: Props) {
                     {sourceType === "reddit"
                       ? "Reddit ↗"
                       : sourceType === "gdelt"
-                        ? "GDELT News ↗"
+                        ? "News ↗"
                         : "News ↗"}
                   </span>
                   <span>{isoDay(e.observed_date)}</span>

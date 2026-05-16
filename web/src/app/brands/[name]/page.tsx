@@ -1,10 +1,9 @@
 import { notFound } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import BrandHero from "./_components/BrandHero";
-import Timeline from "./_components/Timeline";
+import TimelineExplorer from "./_components/TimelineExplorer";
 import WallOfShame from "./_components/WallOfShame";
 import ProductGrid from "./_components/ProductGrid";
-import EventEvidenceTrail from "./_components/EventEvidenceTrail";
 import { rollupProducts, dominantManufacturer } from "./lib";
 import type {
   BrandRanking,
@@ -109,13 +108,11 @@ export default async function BrandPage({ params }: PageProps) {
 
         <BrandHero ranking={ranking} manufacturer={manufacturer} />
 
-        <Timeline ranking={ranking} events={events} />
-
         <WallOfShame events={events} entities={entities} />
 
         <ProductGrid products={products} brand={ranking.brand} />
 
-        <EventEvidenceTrail events={events} />
+        <TimelineExplorer ranking={ranking} events={events} />
       </div>
     </>
   );

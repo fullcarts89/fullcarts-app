@@ -73,6 +73,32 @@
 .shame-source.reddit { background: var(--amber-bg); color: var(--amber-base); border: 1px solid var(--border-subtle); }
 .shame-source.news, .shame-source.gdelt { background: var(--blue-bg); color: var(--blue-base); border: 1px solid var(--blue-border); }
 
+/* Photo caption: small line under the WoS image identifying provenance */
+.shame-caption { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); padding: 6px 16px 0; display: flex; gap: 6px; align-items: baseline; }
+.shame-caption .sc-type { color: var(--text-secondary); font-weight: 700; }
+
+/* Size diff diagram — small horizontal bar chart inside WoS cards.
+   Two stacked bars: top = before (full width of available track),
+   bottom = after (proportional). Labels sit to the right of each bar. */
+.size-diagram { padding: 12px 16px; display: flex; flex-direction: column; gap: 6px; background: rgba(255,255,255,.02); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); }
+.sd-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; }
+.sd-track { position: relative; height: 10px; background: transparent; }
+.sd-bar-before { height: 100%; background: rgba(255,255,255,.18); border-right: 2px solid var(--text-secondary); }
+.sd-bar-after { height: 100%; background: var(--red-bg); border-right: 2px solid var(--red-base); }
+.sd-label { font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--text-primary); white-space: nowrap; min-width: 60px; text-align: right; }
+.sd-label.after { color: var(--red-base); }
+
+/* Year-driven evidence explorer: clickable timeline + scoped event list. */
+.bar-wrap.clickable { cursor: pointer; transition: opacity .15s; }
+.bar-wrap.clickable:hover .bar { background: var(--red-border); }
+.bar-wrap.active .bar { background: var(--red-border); border-top-color: var(--red-hover); }
+.bar-wrap.active .bar-year { color: var(--red-base); font-weight: 700; }
+.bar-wrap.active .bar-count { color: var(--red-base); }
+.year-empty { padding: 64px 0; text-align: center; font-family: var(--font-mono); font-size: 13px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; }
+.year-heading { display: flex; align-items: baseline; gap: 12px; margin-top: 40px; margin-bottom: 24px; font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
+.year-heading .yh-year { font-family: var(--font-headline); font-size: 22px; font-weight: 700; color: var(--red-base); letter-spacing: -0.02em; text-transform: none; }
+.year-heading .yh-count { color: var(--text-secondary); }
+
 .grid-note { background: rgba(245,158,11,.07); border: 1px solid var(--border-subtle); border-left: 2px solid var(--amber-base); padding: 12px 16px; margin-bottom: 24px; font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); letter-spacing: 0.05em; }
 .grid-note code { background: var(--bg-secondary); padding: 1px 6px; border-radius: 2px; color: var(--amber-base); }
 .controls { display: flex; gap: 12px; align-items: center; margin-bottom: 24px; font-family: var(--font-mono); font-size: 12px; flex-wrap: wrap; }
