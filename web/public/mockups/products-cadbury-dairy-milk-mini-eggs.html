@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cadbury Dairy Milk Mini Eggs — FullCarts Product Scorecard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0b0d; --bg-secondary: #161719; --bg-tertiary: #2a2b2d; --bg-hover: #1a1b1d;
+  --text-primary: #f5f4f0; --text-secondary: #a0a0a5; --text-tertiary: #656569;
+  --red-base: #dc2626; --red-bg: rgba(220,38,38,.1); --red-border: rgba(220,38,38,.2);
+  --green-base: #10b981; --green-bg: rgba(16,185,129,.1); --green-border: rgba(16,185,129,.2);
+  --blue-base: #3b82f6; --blue-bg: rgba(59,130,246,.1); --blue-border: rgba(59,130,246,.2);
+  --amber-base: #f59e0b; --amber-bg: rgba(245,158,11,.1); --amber-border: rgba(245,158,11,.2);
+  --purple-base: #a855f7; --purple-bg: rgba(168,85,247,.1); --purple-border: rgba(168,85,247,.2);
+  --border-subtle: rgba(255,255,255,.1); --border-medium: rgba(255,255,255,.2);
+  --font-headline: 'Space Grotesk', system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-sans); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+.bg-grid { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.03; background-image: linear-gradient(var(--text-tertiary) 1px, transparent 1px), linear-gradient(90deg, var(--text-tertiary) 1px, transparent 1px); background-size: 60px 60px; }
+
+/* NAV (copied from brands mockup) */
+nav { position: sticky; top: 0; z-index: 50; background: rgba(10,11,13,.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-subtle); }
+.nav-inner { max-width: 1280px; margin: 0 auto; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
+.logo { font-family: var(--font-headline); font-weight: 700; font-size: 20px; letter-spacing: -0.02em; text-decoration: none; color: var(--text-primary); }
+.logo span { color: var(--red-base); }
+.nav-links { display: flex; gap: 32px; font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; }
+.nav-links a { color: var(--text-secondary); text-decoration: none; transition: color .15s; }
+.nav-links a:hover, .nav-links a.active { color: var(--text-primary); }
+.nav-links a.active { border-bottom: 1px solid var(--red-base); padding-bottom: 4px; }
+.container { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+
+/* BREADCRUMB */
+.breadcrumb { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); padding: 32px 0 0; }
+.breadcrumb a { color: var(--text-secondary); text-decoration: none; }
+.breadcrumb a:hover { color: var(--text-primary); }
+.breadcrumb .sep { padding: 0 8px; color: var(--text-tertiary); }
+.breadcrumb .current { color: var(--red-base); }
+
+/* HERO — product detail split layout */
+.product-hero { display: grid; grid-template-columns: 420px 1fr; gap: 48px; padding: 40px 0 64px; align-items: start; }
+.hero-image { aspect-ratio: 1; background: linear-gradient(135deg, #1a1b1d 0%, #0a0b0d 100%); border: 1px solid var(--border-subtle); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; }
+.hero-image::before { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(45deg, transparent 0, transparent 13px, rgba(255,255,255,.02) 13px, rgba(255,255,255,.02) 14px); pointer-events: none; z-index: 1; }
+.hero-image img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 3; }
+.hero-image .ps-tag { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--text-tertiary); padding: 4px 8px; border: 1px solid var(--border-subtle); background: rgba(0,0,0,0.4); align-self: flex-start; position: relative; z-index: 2; }
+.hero-image .ps-name { font-family: var(--font-headline); font-weight: 700; font-size: 32px; line-height: 1.05; letter-spacing: -0.02em; color: var(--text-primary); opacity: 0.85; position: relative; z-index: 2; align-self: stretch; }
+.hero-image .ps-brand-mark { font-family: var(--font-headline); font-weight: 700; font-size: 14px; letter-spacing: 0.05em; color: var(--red-base); align-self: flex-end; position: relative; z-index: 2; }
+.hero-image .ps-brand-mark::before { content: '●'; margin-right: 6px; }
+.hero-image .img-tag { position: absolute; top: 12px; left: 12px; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-primary); padding: 4px 8px; border: 1px solid rgba(255,255,255,.25); background: rgba(0,0,0,.6); z-index: 4; }
+.hero-image .img-credit { position: absolute; bottom: 12px; right: 12px; font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-secondary); padding: 3px 7px; border: 1px solid rgba(255,255,255,.15); background: rgba(0,0,0,.55); z-index: 4; }
+.hero-info { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.hero-pill { display: inline-flex; align-items: center; gap: 8px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 999px; padding: 6px 16px; font-family: var(--font-mono); font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--red-base); width: fit-content; }
+.hero-pill::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--red-base); }
+.hero-info h1 { font-family: var(--font-headline); font-weight: 700; font-size: clamp(40px, 6vw, 64px); letter-spacing: -0.025em; line-height: 1.0; }
+.hero-meta { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; }
+.hero-meta a { color: var(--text-primary); text-decoration: none; border-bottom: 1px solid var(--border-subtle); padding-bottom: 1px; transition: border-color .15s; }
+.hero-meta a:hover { border-color: var(--red-base); }
+.hero-meta .chip { padding: 4px 10px; border: 1px solid var(--border-subtle); border-radius: 999px; color: var(--text-tertiary); }
+.hero-meta .chip.parent { color: var(--text-secondary); }
+.hero-tagline { font-size: 16px; color: var(--text-secondary); line-height: 1.55; max-width: 540px; margin-top: 8px; }
+.hero-tagline strong { color: var(--text-primary); font-weight: 600; }
+
+/* HERO STAT STRIP */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1px; background: var(--border-subtle); border: 1px solid var(--border-subtle); margin-top: 24px; }
+.stat { background: var(--bg-primary); padding: 24px 20px; display: flex; flex-direction: column; gap: 6px; }
+.stat-label { font-family: var(--font-mono); font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); }
+.stat-value { font-family: var(--font-mono); font-size: 28px; font-weight: 700; color: var(--text-primary); line-height: 1; }
+.stat-value.red { color: var(--red-base); }
+.stat-meta { font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); letter-spacing: 0.05em; }
+
+/* SECTION SCAFFOLDING */
+section.block { padding: 64px 0; border-top: 1px solid var(--border-subtle); }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 32px; gap: 16px; flex-wrap: wrap; }
+.section-head h2 { font-family: var(--font-headline); font-weight: 700; font-size: 32px; letter-spacing: -0.02em; }
+.section-head .meta { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
+.caveat { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 8px; }
+.caveat::before { content: '⊘'; color: var(--text-tertiary); font-size: 14px; }
+
+/* SIZE TRAJECTORY — unique to product page */
+.traj-wrap { background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 32px 32px 24px; }
+.traj-chart { position: relative; height: 220px; margin-top: 24px; padding-left: 56px; padding-right: 16px; }
+.traj-y-axis { position: absolute; left: 0; top: 0; bottom: 28px; width: 48px; display: flex; flex-direction: column-reverse; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); }
+.traj-y-axis .yt { text-align: right; padding-right: 8px; transform: translateY(50%); }
+.traj-svg { width: 100%; height: 100%; overflow: visible; }
+.traj-grid-line { stroke: var(--border-subtle); stroke-width: 1; stroke-dasharray: 2 4; }
+.traj-step-line { stroke: var(--red-base); stroke-width: 2; fill: none; }
+.traj-step-area { fill: var(--red-bg); }
+.traj-dot { fill: var(--bg-primary); stroke: var(--red-base); stroke-width: 2; }
+.traj-dot.first { fill: var(--text-secondary); stroke: var(--text-secondary); }
+.traj-label { font-family: var(--font-mono); font-size: 11px; font-weight: 700; fill: var(--text-primary); }
+.traj-label-date { font-family: var(--font-mono); font-size: 9px; fill: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; }
+.traj-delta { font-family: var(--font-mono); font-size: 10px; font-weight: 700; fill: var(--red-base); }
+.traj-x-axis { display: flex; justify-content: space-between; padding-left: 56px; padding-right: 16px; margin-top: 8px; font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; }
+.traj-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; padding: 24px 32px 8px; border-top: 1px solid var(--border-subtle); margin-top: 24px; }
+.traj-stat { display: flex; flex-direction: column; gap: 4px; }
+.traj-stat-label { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); }
+.traj-stat-value { font-family: var(--font-mono); font-size: 22px; font-weight: 700; color: var(--text-primary); }
+.traj-stat-value.red { color: var(--red-base); }
+.traj-stat-meta { font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); }
+
+/* CHANGE HISTORY — event accordion (event-led, scoped to one product) */
+.history-list { display: flex; flex-direction: column; border-top: 1px solid var(--border-subtle); }
+.history-row { border-bottom: 1px solid var(--border-subtle); }
+.history-summary { display: grid; grid-template-columns: 88px 1fr 220px 80px 32px; gap: 24px; padding: 22px 0; align-items: center; cursor: pointer; transition: background .15s; }
+.history-summary:hover { background: var(--bg-hover); }
+.history-date { font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); letter-spacing: 0.05em; padding-top: 2px; }
+.history-date .year { font-size: 18px; font-weight: 700; color: var(--text-primary); display: block; line-height: 1; }
+.history-date .month { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); margin-top: 4px; display: block; }
+.history-sizes { display: flex; align-items: baseline; gap: 14px; font-family: var(--font-mono); font-size: 16px; color: var(--text-primary); flex-wrap: wrap; }
+.history-sizes .before { color: var(--text-secondary); font-weight: 500; }
+.history-sizes .arrow { color: var(--text-tertiary); font-size: 14px; }
+.history-sizes .after { color: var(--text-primary); font-weight: 700; }
+.history-sizes .delta { font-size: 13px; color: var(--red-base); font-weight: 700; margin-left: 4px; padding: 2px 8px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 999px; }
+.history-headline { font-family: var(--font-sans); font-style: italic; font-size: 13px; color: var(--text-secondary); line-height: 1.4; margin-top: 6px; max-width: 540px; }
+/* mini bar visual sits in column 3 */
+.history-diagram { display: flex; flex-direction: column; gap: 6px; }
+.hd-row { display: grid; grid-template-columns: 1fr 56px; gap: 10px; align-items: center; font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); }
+.hd-track { background: var(--bg-tertiary); height: 6px; border-radius: 1px; overflow: hidden; position: relative; }
+.hd-bar { height: 100%; background: var(--text-secondary); }
+.hd-bar.after { background: var(--red-base); }
+.hd-label { font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); }
+.hd-label.after { color: var(--red-base); font-weight: 700; }
+.history-evidence { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); text-align: right; text-transform: uppercase; letter-spacing: 0.06em; }
+.history-evidence .count { color: var(--text-primary); font-weight: 700; }
+.history-toggle { color: var(--text-tertiary); font-size: 18px; text-align: right; transition: color .15s; }
+.history-row.open .history-toggle { color: var(--red-base); transform: rotate(180deg); }
+.history-summary:hover .history-toggle { color: var(--red-base); }
+.history-expanded { max-height: 0; overflow: hidden; transition: max-height .25s ease-out; }
+.history-row.open .history-expanded { max-height: 4000px; transition: max-height .35s ease-in; }
+.src-list { padding: 0 0 24px 112px; display: flex; flex-direction: column; gap: 0; border-left: 1px dashed var(--border-subtle); margin-left: 24px; }
+.src-row { display: grid; grid-template-columns: 140px 1fr 90px; gap: 16px; padding: 10px 16px; align-items: baseline; text-decoration: none; color: inherit; border-bottom: 1px solid var(--border-subtle); transition: background .15s; }
+.src-row:last-child { border-bottom: none; }
+.src-row:hover { background: rgba(255,255,255,.02); }
+.src-pub { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+.src-row:hover .src-pub { color: var(--red-base); }
+.src-pub.reddit { color: var(--amber-base); }
+.src-pub.gdelt, .src-pub.news { color: var(--blue-base); }
+.src-title { font-family: var(--font-sans); font-size: 13px; color: var(--text-secondary); line-height: 1.4; }
+.src-date { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); text-align: right; }
+
+/* SKIMPFLATION OVERLAY */
+.skimp-card { background: linear-gradient(180deg, rgba(168,85,247,.05) 0%, var(--bg-secondary) 60%); border: 1px solid var(--purple-border); padding: 32px; }
+.skimp-head { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
+.skimp-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--purple-base); padding: 4px 10px; background: var(--purple-bg); border: 1px solid var(--purple-border); border-radius: 2px; }
+.skimp-title { font-family: var(--font-headline); font-weight: 700; font-size: 22px; letter-spacing: -0.015em; color: var(--text-primary); }
+.skimp-lead { font-size: 14px; color: var(--text-secondary); line-height: 1.55; margin: 8px 0 24px; max-width: 640px; }
+.skimp-lead strong { color: var(--text-primary); font-weight: 600; }
+.skimp-table { display: grid; grid-template-columns: 200px repeat(2, 1fr) 140px; gap: 1px; background: var(--border-subtle); border: 1px solid var(--border-subtle); font-family: var(--font-mono); }
+.skimp-table > div { background: var(--bg-primary); padding: 14px 16px; font-size: 12px; }
+.skimp-table .hdr { background: var(--bg-tertiary); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); font-weight: 700; }
+.skimp-nutrient { color: var(--text-primary); font-weight: 500; font-size: 13px; }
+.skimp-nutrient .small { color: var(--text-tertiary); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; }
+.skimp-before { color: var(--text-secondary); }
+.skimp-after { color: var(--text-primary); font-weight: 700; }
+.skimp-delta { font-weight: 700; }
+.skimp-delta.up { color: var(--amber-base); }
+.skimp-delta.down { color: var(--red-base); }
+.skimp-credit { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 20px; }
+.skimp-credit a { color: var(--purple-base); text-decoration: none; border-bottom: 1px solid var(--purple-border); padding-bottom: 1px; }
+
+/* RETAILERS */
+.retailers { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.retailer-card { background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 24px; display: flex; flex-direction: column; gap: 14px; transition: border-color .15s; text-decoration: none; color: inherit; }
+.retailer-card:hover { border-color: var(--border-medium); }
+.retailer-head { display: flex; justify-content: space-between; align-items: center; }
+.retailer-name { font-family: var(--font-headline); font-weight: 700; font-size: 20px; letter-spacing: -0.01em; color: var(--text-primary); }
+.retailer-pill { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; padding: 3px 8px; border: 1px solid var(--border-subtle); border-radius: 2px; color: var(--text-tertiary); }
+.retailer-pill.live { color: var(--green-base); background: var(--green-bg); border-color: var(--green-border); }
+.retailer-pill.archive { color: var(--amber-base); background: var(--amber-bg); border-color: var(--amber-border); }
+.retailer-row { display: flex; justify-content: space-between; align-items: baseline; font-family: var(--font-mono); font-size: 11px; gap: 12px; }
+.retailer-row .k { color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; }
+.retailer-row .v { color: var(--text-primary); }
+.retailer-row .v.price { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+.retailer-row .v.upc { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); }
+.retailer-foot { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; padding-top: 12px; border-top: 1px solid var(--border-subtle); }
+.retailer-empty { background: var(--bg-secondary); border: 1px dashed var(--border-subtle); padding: 32px; text-align: center; font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; }
+
+/* RELATED PRODUCTS */
+.related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.related-card { background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 12px; display: flex; flex-direction: column; gap: 10px; transition: border-color .15s, transform .15s; text-decoration: none; color: inherit; cursor: pointer; }
+.related-card:hover { border-color: var(--border-medium); transform: translateY(-1px); }
+.related-thumb { aspect-ratio: 1; background: var(--bg-tertiary); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.related-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.related-thumb.placeholder { background: linear-gradient(135deg, #1a1b1d 0%, #0a0b0d 100%); padding: 12px; flex-direction: column; justify-content: space-between; align-items: stretch; }
+.related-thumb.placeholder::before { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(45deg, transparent 0, transparent 9px, rgba(255,255,255,.015) 9px, rgba(255,255,255,.015) 10px); pointer-events: none; }
+.related-thumb .ps-tag { font-family: var(--font-mono); font-size: 8px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--text-tertiary); position: relative; z-index: 2; align-self: flex-start; }
+.related-thumb .ps-name { font-family: var(--font-headline); font-weight: 700; font-size: 15px; line-height: 1.15; color: var(--text-primary); opacity: 0.85; position: relative; z-index: 2; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.related-name { font-family: var(--font-sans); font-weight: 500; font-size: 13px; line-height: 1.3; color: var(--text-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 34px; }
+.related-stats { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+.related-stats .ev { color: var(--text-secondary); }
+.related-stats .delta { color: var(--red-base); font-weight: 700; }
+
+/* FOOTER */
+footer { border-top: 1px solid var(--border-subtle); margin-top: 64px; padding: 48px 0; }
+.footer-inner { max-width: 1280px; margin: 0 auto; padding: 0 32px; display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; flex-wrap: wrap; }
+.footer-meta { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
+.footer-meta b { color: var(--text-secondary); font-weight: 500; }
+.methodology { max-width: 600px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+.mockup-banner { position: fixed; bottom: 16px; right: 16px; background: var(--amber-bg); border: 1px solid var(--border-subtle); padding: 10px 14px; font-family: var(--font-mono); font-size: 11px; color: var(--amber-base); text-transform: uppercase; letter-spacing: 0.1em; z-index: 99; max-width: 320px; line-height: 1.5; }
+
+/* responsive */
+@media (max-width: 900px) {
+  .product-hero { grid-template-columns: 1fr; gap: 24px; }
+  .hero-image { max-width: 360px; }
+}
+@media (max-width: 640px) {
+  .nav-links { gap: 16px; font-size: 10px; }
+  .container { padding: 0 16px; }
+  .hero-info h1 { font-size: 36px; }
+  .stat-value { font-size: 22px; }
+  .history-summary { grid-template-columns: 70px 1fr 32px; }
+  .history-diagram, .history-evidence { display: none; }
+  .skimp-table { grid-template-columns: 1fr 1fr 1fr 1fr; font-size: 10px; }
+  .footer-inner { padding: 0 16px; }
+  .traj-summary { grid-template-columns: 1fr; gap: 12px; padding: 16px; }
+}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo">Full<span>Carts</span></a>
+    <div class="nav-links">
+      <a href="/brands">Brands</a>
+      <a href="#" class="active">Products</a>
+      <a href="/insights">Insights</a>
+      <a href="/about">About</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div class="breadcrumb">
+    <a href="/brands">Brands</a>
+    <span class="sep">/</span>
+    <a href="/brands/cadbury">Cadbury</a>
+    <span class="sep">/</span>
+    <span class="current">Dairy Milk Mini Eggs</span>
+  </div>
+
+  <!-- HERO -->
+  <header class="product-hero">
+    <div class="hero-image">
+      <div class="ps-tag">Cadbury · Confectionery</div>
+      <div class="ps-name">Dairy Milk<br>Mini Eggs<br><span style="font-size:18px;font-weight:500;color:var(--text-tertiary);letter-spacing:0.04em;">72g · 2024</span></div>
+      <div class="ps-brand-mark">Cadbury</div>
+      <span class="img-tag">Placeholder</span>
+      <span class="img-credit">Image pending backfill</span>
+    </div>
+
+    <div class="hero-info">
+      <div class="hero-pill">Tracked product · 4 documented shrinks</div>
+      <h1>Dairy Milk Mini Eggs</h1>
+      <div class="hero-meta">
+        <a href="/brands/cadbury">Cadbury</a>
+        <span class="chip">Confectionery</span>
+        <span class="chip parent">Mondelēz International</span>
+        <span>UPC 50000000017</span>
+      </div>
+      <p class="hero-tagline">
+        First documented at <strong>100g</strong> in 2011. As of 2024, the same bag is
+        <strong>72g</strong> — a <strong>cumulative 28% reduction</strong> in product over
+        13 years, at a higher RRP. Featured in <strong>14 separate news investigations</strong>
+        and called out by hundreds of Reddit posts.
+      </p>
+
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-label">Total events</div>
+          <div class="stat-value red">4</div>
+          <div class="stat-meta">documented shrinks</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Cumulative shrink</div>
+          <div class="stat-value red">-28%</div>
+          <div class="stat-meta">100g → 72g</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Biggest single drop</div>
+          <div class="stat-value red">-13%</div>
+          <div class="stat-meta">96g → 84g · Mar 2018</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">First detected</div>
+          <div class="stat-value">2011</div>
+          <div class="stat-meta">last update 2024-03-26</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- SIZE TRAJECTORY -->
+  <section class="block">
+    <div class="section-head">
+      <h2>Size trajectory</h2>
+      <div class="meta">100g → 72g over 13 years</div>
+    </div>
+
+    <div class="traj-wrap">
+      <div class="traj-chart">
+        <div class="traj-y-axis">
+          <div class="yt">60g</div>
+          <div class="yt">75g</div>
+          <div class="yt">90g</div>
+          <div class="yt">105g</div>
+        </div>
+        <svg class="traj-svg" viewBox="0 0 900 200" preserveAspectRatio="none" aria-label="Size over time chart">
+          <!-- grid lines (60, 75, 90, 105) -->
+          <line class="traj-grid-line" x1="0" y1="0"   x2="900" y2="0"></line>
+          <line class="traj-grid-line" x1="0" y1="67"  x2="900" y2="67"></line>
+          <line class="traj-grid-line" x1="0" y1="133" x2="900" y2="133"></line>
+          <line class="traj-grid-line" x1="0" y1="200" x2="900" y2="200"></line>
+
+          <!-- step polygon area under line -->
+          <!-- Coords math: y = ((105 - size) / 45) * 200
+               2011 100g → y = (5/45)*200  =  22.22
+               2015 96g  → y = (9/45)*200  =  40
+               2018 84g  → y = (21/45)*200 =  93.33
+               2021 80g  → y = (25/45)*200 = 111.11
+               2024 72g  → y = (33/45)*200 = 146.66
+               x positions (years 2011 → 2024, x = ((year-2011)/13)*900): 0, 277, 484, 692, 900 -->
+          <polygon class="traj-step-area" points="
+            0,22  277,22  277,40
+            484,40  484,93
+            692,93  692,111
+            900,111 900,200 0,200"></polygon>
+
+          <!-- step line -->
+          <polyline class="traj-step-line" points="
+            0,22 277,22 277,40
+            484,40 484,93
+            692,93 692,111
+            900,111"></polyline>
+
+          <!-- final drop arrow + dashed segment from 80g(2021) to 72g(2024) (latest event) -->
+          <line class="traj-step-line" x1="900" y1="111" x2="900" y2="146" stroke-dasharray="4 3"></line>
+
+          <!-- step dots -->
+          <circle class="traj-dot first" cx="0"   cy="22"  r="5"></circle>
+          <circle class="traj-dot" cx="277" cy="40"  r="5"></circle>
+          <circle class="traj-dot" cx="484" cy="93"  r="5"></circle>
+          <circle class="traj-dot" cx="692" cy="111" r="5"></circle>
+          <circle class="traj-dot" cx="900" cy="146" r="5"></circle>
+
+          <!-- size labels above each dot -->
+          <text class="traj-label"      x="6"   y="14"  text-anchor="start">100g</text>
+          <text class="traj-label-date" x="6"   y="30"  text-anchor="start">2011</text>
+          <text class="traj-label"      x="283" y="32"  text-anchor="start">96g</text>
+          <text class="traj-label-date" x="283" y="48"  text-anchor="start">Aug 2015</text>
+          <text class="traj-delta"      x="332" y="32"  text-anchor="start">−4%</text>
+          <text class="traj-label"      x="490" y="85"  text-anchor="start">84g</text>
+          <text class="traj-label-date" x="490" y="101" text-anchor="start">Mar 2018</text>
+          <text class="traj-delta"      x="528" y="85"  text-anchor="start">−13%</text>
+          <text class="traj-label"      x="698" y="103" text-anchor="start">80g</text>
+          <text class="traj-label-date" x="698" y="119" text-anchor="start">Jan 2021</text>
+          <text class="traj-delta"      x="734" y="103" text-anchor="start">−5%</text>
+          <text class="traj-label"      x="894" y="160" text-anchor="end">72g</text>
+          <text class="traj-label-date" x="894" y="176" text-anchor="end">Mar 2024</text>
+          <text class="traj-delta"      x="858" y="160" text-anchor="end">−10%</text>
+        </svg>
+      </div>
+      <div class="traj-x-axis">
+        <span>2011</span>
+        <span>2015</span>
+        <span>2018</span>
+        <span>2021</span>
+        <span>2024</span>
+      </div>
+      <div class="traj-summary">
+        <div class="traj-stat">
+          <div class="traj-stat-label">Started at</div>
+          <div class="traj-stat-value">100g</div>
+          <div class="traj-stat-meta">First documented · 2011</div>
+        </div>
+        <div class="traj-stat">
+          <div class="traj-stat-label">Ended at</div>
+          <div class="traj-stat-value red">72g</div>
+          <div class="traj-stat-meta">Latest observation · Mar 2024</div>
+        </div>
+        <div class="traj-stat">
+          <div class="traj-stat-label">Net loss</div>
+          <div class="traj-stat-value red">−28g (−28%)</div>
+          <div class="traj-stat-meta">Over 13 years · 4 events</div>
+        </div>
+      </div>
+    </div>
+    <div class="caveat">From documented events only — earlier or in-between sizes may exist but weren't reported.</div>
+  </section>
+
+  <!-- CHANGE HISTORY -->
+  <section class="block">
+    <div class="section-head">
+      <h2>Change history</h2>
+      <div class="meta">4 events · click a row for sources</div>
+    </div>
+
+    <div class="history-list">
+
+      <!-- Event 1: most recent first -->
+      <div class="history-row open">
+        <div class="history-summary" onclick="this.parentElement.classList.toggle('open')">
+          <div class="history-date">
+            <span class="year">2024</span>
+            <span class="month">Mar</span>
+          </div>
+          <div>
+            <div class="history-sizes">
+              <span class="before">80g</span>
+              <span class="arrow">→</span>
+              <span class="after">72g</span>
+              <span class="delta">−10.0%</span>
+            </div>
+            <div class="history-headline">
+              "Cadbury Mini Eggs shrink again as 80g bag is replaced with 72g for the same price"
+              — The Grocer
+            </div>
+          </div>
+          <div class="history-diagram">
+            <div class="hd-row">
+              <div class="hd-track"><div class="hd-bar" style="width: 100%;"></div></div>
+              <div class="hd-label">80g</div>
+            </div>
+            <div class="hd-row">
+              <div class="hd-track"><div class="hd-bar after" style="width: 90%;"></div></div>
+              <div class="hd-label after">72g</div>
+            </div>
+          </div>
+          <div class="history-evidence"><span class="count">9</span> sources</div>
+          <div class="history-toggle">▾</div>
+        </div>
+        <div class="history-expanded">
+          <div class="src-list">
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub news">The Grocer</div>
+              <div class="src-title">Cadbury Mini Eggs shrink again as 80g bag is replaced with 72g</div>
+              <div class="src-date">2024-03-26</div>
+            </a>
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub news">BBC News</div>
+              <div class="src-title">Easter shrinkflation: Cadbury Mini Eggs the latest to lose weight</div>
+              <div class="src-date">2024-03-22</div>
+            </a>
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub news">The Sun</div>
+              <div class="src-title">Cadbury fans furious as Mini Eggs bag shrinks by 10% for second time in three years</div>
+              <div class="src-date">2024-03-21</div>
+            </a>
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub gdelt">independent.co.uk</div>
+              <div class="src-title">Shrinkflation: Cadbury's Mini Eggs hit by 10% size cut</div>
+              <div class="src-date">2024-03-21</div>
+            </a>
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub gdelt">mirror.co.uk</div>
+              <div class="src-title">Cadbury issues update as Mini Eggs bag is shrunk for Easter 2024</div>
+              <div class="src-date">2024-03-20</div>
+            </a>
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub reddit">r/shrinkflation</div>
+              <div class="src-title">Cadbury Mini Eggs down to 72g and the bag is the same size as the old 80g</div>
+              <div class="src-date">2024-03-18</div>
+            </a>
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub reddit">r/CasualUK</div>
+              <div class="src-title">[Image] Old Mini Eggs bag (80g) next to new one (72g). Same price.</div>
+              <div class="src-date">2024-03-17</div>
+            </a>
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub gdelt">dailymail.co.uk</div>
+              <div class="src-title">Easter shock: Cadbury Mini Eggs lose 10% of their weight overnight</div>
+              <div class="src-date">2024-03-19</div>
+            </a>
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub reddit">r/UnitedKingdom</div>
+              <div class="src-title">Mini Eggs shrunk AGAIN — they're now 30% smaller than they were in 2011</div>
+              <div class="src-date">2024-03-16</div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Event 2 -->
+      <div class="history-row">
+        <div class="history-summary" onclick="this.parentElement.classList.toggle('open')">
+          <div class="history-date">
+            <span class="year">2021</span>
+            <span class="month">Jan</span>
+          </div>
+          <div>
+            <div class="history-sizes">
+              <span class="before">84g</span>
+              <span class="arrow">→</span>
+              <span class="after">80g</span>
+              <span class="delta">−4.8%</span>
+            </div>
+            <div class="history-headline">
+              "Cadbury defends shrinkflation as Mini Eggs go from 84g to 80g — cocoa and packaging costs blamed"
+              — The Sun
+            </div>
+          </div>
+          <div class="history-diagram">
+            <div class="hd-row">
+              <div class="hd-track"><div class="hd-bar" style="width: 100%;"></div></div>
+              <div class="hd-label">84g</div>
+            </div>
+            <div class="hd-row">
+              <div class="hd-track"><div class="hd-bar after" style="width: 95%;"></div></div>
+              <div class="hd-label after">80g</div>
+            </div>
+          </div>
+          <div class="history-evidence"><span class="count">5</span> sources</div>
+          <div class="history-toggle">▾</div>
+        </div>
+        <div class="history-expanded">
+          <div class="src-list">
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub news">The Sun</div>
+              <div class="src-title">Cadbury Mini Eggs hit by shrinkflation again as 84g bag drops to 80g</div>
+              <div class="src-date">2021-01-28</div>
+            </a>
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub news">Birmingham Live</div>
+              <div class="src-title">Cadbury fans spot Mini Eggs shrinkflation ahead of Easter</div>
+              <div class="src-date">2021-01-30</div>
+            </a>
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub gdelt">manchestereveningnews.co.uk</div>
+              <div class="src-title">Mini Eggs reduced by 4g, Cadbury confirms</div>
+              <div class="src-date">2021-02-02</div>
+            </a>
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub reddit">r/shrinkflation</div>
+              <div class="src-title">My Mini Eggs are 80g now. They used to be 100g a decade ago. WTF.</div>
+              <div class="src-date">2021-01-25</div>
+            </a>
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub reddit">r/CasualUK</div>
+              <div class="src-title">Cadbury Mini Eggs 80g — same price as 84g last year</div>
+              <div class="src-date">2021-02-04</div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Event 3 -->
+      <div class="history-row">
+        <div class="history-summary" onclick="this.parentElement.classList.toggle('open')">
+          <div class="history-date">
+            <span class="year">2018</span>
+            <span class="month">Mar</span>
+          </div>
+          <div>
+            <div class="history-sizes">
+              <span class="before">96g</span>
+              <span class="arrow">→</span>
+              <span class="after">84g</span>
+              <span class="delta">−12.5%</span>
+            </div>
+            <div class="history-headline">
+              "Mini Eggs shrunk 12% with no price cut — Cadbury cites Brexit and raw materials"
+              — The Independent
+            </div>
+          </div>
+          <div class="history-diagram">
+            <div class="hd-row">
+              <div class="hd-track"><div class="hd-bar" style="width: 100%;"></div></div>
+              <div class="hd-label">96g</div>
+            </div>
+            <div class="hd-row">
+              <div class="hd-track"><div class="hd-bar after" style="width: 87%;"></div></div>
+              <div class="hd-label after">84g</div>
+            </div>
+          </div>
+          <div class="history-evidence"><span class="count">7</span> sources</div>
+          <div class="history-toggle">▾</div>
+        </div>
+        <div class="history-expanded">
+          <div class="src-list">
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub news">The Independent</div>
+              <div class="src-title">Mini Eggs shrunk 12% as Cadbury cites Brexit and rising cocoa costs</div>
+              <div class="src-date">2018-03-26</div>
+            </a>
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub news">Metro</div>
+              <div class="src-title">Cadbury defends shrinking Mini Eggs from 96g to 84g</div>
+              <div class="src-date">2018-03-27</div>
+            </a>
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub gdelt">theguardian.com</div>
+              <div class="src-title">Easter cuts: Cadbury Mini Eggs lose 12g</div>
+              <div class="src-date">2018-03-29</div>
+            </a>
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub gdelt">mirror.co.uk</div>
+              <div class="src-title">Cadbury Mini Eggs shrinkflation — bag now 84g, down from 96g</div>
+              <div class="src-date">2018-03-30</div>
+            </a>
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub reddit">r/shrinkflation</div>
+              <div class="src-title">Cadbury Mini Eggs went from 96g to 84g this year — that's 12g less for the same £1.50</div>
+              <div class="src-date">2018-03-24</div>
+            </a>
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub reddit">r/AskUK</div>
+              <div class="src-title">Why is Cadbury allowed to keep shrinking Mini Eggs every year?</div>
+              <div class="src-date">2018-04-01</div>
+            </a>
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub reddit">r/CasualUK</div>
+              <div class="src-title">Side-by-side: 2017 Mini Eggs vs 2018 — 12g vanished, same bag</div>
+              <div class="src-date">2018-03-25</div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Event 4 -->
+      <div class="history-row">
+        <div class="history-summary" onclick="this.parentElement.classList.toggle('open')">
+          <div class="history-date">
+            <span class="year">2015</span>
+            <span class="month">Aug</span>
+          </div>
+          <div>
+            <div class="history-sizes">
+              <span class="before">100g</span>
+              <span class="arrow">→</span>
+              <span class="after">96g</span>
+              <span class="delta">−4.0%</span>
+            </div>
+            <div class="history-headline">
+              "Mini Eggs drop from 100g to 96g — the first documented shrink"
+              — r/shrinkflation post archive
+            </div>
+          </div>
+          <div class="history-diagram">
+            <div class="hd-row">
+              <div class="hd-track"><div class="hd-bar" style="width: 100%;"></div></div>
+              <div class="hd-label">100g</div>
+            </div>
+            <div class="hd-row">
+              <div class="hd-track"><div class="hd-bar after" style="width: 96%;"></div></div>
+              <div class="hd-label after">96g</div>
+            </div>
+          </div>
+          <div class="history-evidence"><span class="count">2</span> sources</div>
+          <div class="history-toggle">▾</div>
+        </div>
+        <div class="history-expanded">
+          <div class="src-list">
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub reddit">r/shrinkflation</div>
+              <div class="src-title">Mini Eggs are now 96g — they were 100g last year. Same bag.</div>
+              <div class="src-date">2015-08-12</div>
+            </a>
+            <a class="src-row" href="#" target="_blank">
+              <div class="src-pub reddit">r/UnitedKingdom</div>
+              <div class="src-title">Cadbury Mini Eggs no longer a round 100g — first I've seen this</div>
+              <div class="src-date">2015-09-03</div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SKIMPFLATION OVERLAY -->
+  <section class="block">
+    <div class="section-head">
+      <h2>What changed inside?</h2>
+      <div class="meta">USDA FoodData Central · gtin 50000000017 · 4 quarters compared</div>
+    </div>
+
+    <div class="skimp-card">
+      <div class="skimp-head">
+        <span class="skimp-eyebrow">Skimpflation</span>
+        <div class="skimp-title">They didn't just shrink the bag — they changed the recipe</div>
+      </div>
+      <p class="skimp-lead">
+        Between the <strong>2021</strong> USDA quarterly release and <strong>2024</strong>, the
+        per-100g nutrition label for Mini Eggs shifted in three measurable ways:
+        less milk solids, more added sugar, and a small but consistent dip in
+        protein content. The portion you're getting is smaller <em>and</em> the
+        composition is cheaper.
+      </p>
+
+      <div class="skimp-table">
+        <div class="hdr">Nutrient (per 100g)</div>
+        <div class="hdr">Before · 2021Q1</div>
+        <div class="hdr">After · 2024Q1</div>
+        <div class="hdr">Delta</div>
+
+        <div class="skimp-nutrient">Sugar <div class="small">added + total</div></div>
+        <div class="skimp-before">63.5g</div>
+        <div class="skimp-after">67.2g</div>
+        <div class="skimp-delta up">+5.8%</div>
+
+        <div class="skimp-nutrient">Protein</div>
+        <div class="skimp-before">7.6g</div>
+        <div class="skimp-after">6.9g</div>
+        <div class="skimp-delta down">−9.2%</div>
+
+        <div class="skimp-nutrient">Milk solids <div class="small">from ingredient list</div></div>
+        <div class="skimp-before">23%</div>
+        <div class="skimp-after">20%</div>
+        <div class="skimp-delta down">−13.0%</div>
+
+        <div class="skimp-nutrient">Saturated fat</div>
+        <div class="skimp-before">17.0g</div>
+        <div class="skimp-after">17.4g</div>
+        <div class="skimp-delta up">+2.4%</div>
+      </div>
+
+      <div class="skimp-credit">Source: USDA FoodData Central · cross-release diff via <a href="#">FullCarts skimp detector</a></div>
+    </div>
+  </section>
+
+  <!-- RETAILERS -->
+  <section class="block">
+    <div class="section-head">
+      <h2>Where it's sold</h2>
+      <div class="meta">3 retailers tracked · last refreshed 2026-05-12</div>
+    </div>
+
+    <div class="retailers">
+
+      <a class="retailer-card" href="#" target="_blank">
+        <div class="retailer-head">
+          <div class="retailer-name">Kroger</div>
+          <span class="retailer-pill live">Live</span>
+        </div>
+        <div class="retailer-row">
+          <span class="k">Latest price</span>
+          <span class="v price">$4.49</span>
+        </div>
+        <div class="retailer-row">
+          <span class="k">Size</span>
+          <span class="v">72g (2.5oz)</span>
+        </div>
+        <div class="retailer-row">
+          <span class="k">Per-unit</span>
+          <span class="v">$1.80 / oz</span>
+        </div>
+        <div class="retailer-row">
+          <span class="k">UPC</span>
+          <span class="v upc">050000000017</span>
+        </div>
+        <div class="retailer-foot">Last seen: 2026-05-10 · Updated weekly</div>
+      </a>
+
+      <a class="retailer-card" href="#" target="_blank">
+        <div class="retailer-head">
+          <div class="retailer-name">Walmart</div>
+          <span class="retailer-pill live">Live</span>
+        </div>
+        <div class="retailer-row">
+          <span class="k">Latest price</span>
+          <span class="v price">$4.28</span>
+        </div>
+        <div class="retailer-row">
+          <span class="k">Size</span>
+          <span class="v">72g (2.5oz)</span>
+        </div>
+        <div class="retailer-row">
+          <span class="k">Per-unit</span>
+          <span class="v">$1.71 / oz</span>
+        </div>
+        <div class="retailer-row">
+          <span class="k">UPC</span>
+          <span class="v upc">050000000017</span>
+        </div>
+        <div class="retailer-foot">Last seen: 2026-05-09 · Updated weekly</div>
+      </a>
+
+      <a class="retailer-card" href="#" target="_blank">
+        <div class="retailer-head">
+          <div class="retailer-name">Open Food Facts</div>
+          <span class="retailer-pill archive">Archive</span>
+        </div>
+        <div class="retailer-row">
+          <span class="k">First seen</span>
+          <span class="v">2016-03-14</span>
+        </div>
+        <div class="retailer-row">
+          <span class="k">Sizes recorded</span>
+          <span class="v">96g · 84g · 80g · 72g</span>
+        </div>
+        <div class="retailer-row">
+          <span class="k">Photos</span>
+          <span class="v">23 user uploads</span>
+        </div>
+        <div class="retailer-row">
+          <span class="k">UPC</span>
+          <span class="v upc">7622210000095</span>
+        </div>
+        <div class="retailer-foot">Crowdsourced · Updated daily</div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- RELATED PRODUCTS -->
+  <section class="block">
+    <div class="section-head">
+      <h2>Other Cadbury products we track</h2>
+      <div class="meta">76 in our catalog · top 8 by event count</div>
+    </div>
+
+    <div class="related-grid">
+      <a class="related-card" href="#">
+        <div class="related-thumb placeholder">
+          <div class="ps-tag">Cadbury</div>
+          <div class="ps-name">Dairy Milk Bar</div>
+        </div>
+        <div class="related-name">Dairy Milk Bar</div>
+        <div class="related-stats"><span class="ev">6 events</span><span class="delta">−24%</span></div>
+      </a>
+      <a class="related-card" href="#">
+        <div class="related-thumb placeholder">
+          <div class="ps-tag">Cadbury</div>
+          <div class="ps-name">Creme Egg</div>
+        </div>
+        <div class="related-name">Creme Egg</div>
+        <div class="related-stats"><span class="ev">5 events</span><span class="delta">−17%</span></div>
+      </a>
+      <a class="related-card" href="#">
+        <div class="related-thumb placeholder">
+          <div class="ps-tag">Cadbury</div>
+          <div class="ps-name">Twirl Multipack</div>
+        </div>
+        <div class="related-name">Twirl Multipack</div>
+        <div class="related-stats"><span class="ev">4 events</span><span class="delta">−20%</span></div>
+      </a>
+      <a class="related-card" href="#">
+        <div class="related-thumb placeholder">
+          <div class="ps-tag">Cadbury</div>
+          <div class="ps-name">Heroes Tub</div>
+        </div>
+        <div class="related-name">Heroes Tub</div>
+        <div class="related-stats"><span class="ev">4 events</span><span class="delta">−18%</span></div>
+      </a>
+      <a class="related-card" href="#">
+        <div class="related-thumb placeholder">
+          <div class="ps-tag">Cadbury</div>
+          <div class="ps-name">Wispa</div>
+        </div>
+        <div class="related-name">Wispa</div>
+        <div class="related-stats"><span class="ev">3 events</span><span class="delta">−14%</span></div>
+      </a>
+      <a class="related-card" href="#">
+        <div class="related-thumb placeholder">
+          <div class="ps-tag">Cadbury</div>
+          <div class="ps-name">Roses Tin</div>
+        </div>
+        <div class="related-name">Roses Tin</div>
+        <div class="related-stats"><span class="ev">3 events</span><span class="delta">−22%</span></div>
+      </a>
+      <a class="related-card" href="#">
+        <div class="related-thumb placeholder">
+          <div class="ps-tag">Cadbury</div>
+          <div class="ps-name">Mini Rolls 6pk</div>
+        </div>
+        <div class="related-name">Mini Rolls 6pk</div>
+        <div class="related-stats"><span class="ev">3 events</span><span class="delta">−9%</span></div>
+      </a>
+      <a class="related-card" href="#">
+        <div class="related-thumb placeholder">
+          <div class="ps-tag">Cadbury</div>
+          <div class="ps-name">Fudge Multipack</div>
+        </div>
+        <div class="related-name">Fudge Multipack</div>
+        <div class="related-stats"><span class="ev">2 events</span><span class="delta">−13%</span></div>
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-meta">
+      <b>FullCarts</b> · Product scorecard<br>
+      Page generated 2026-05-17 · ISR refresh every hour
+    </div>
+    <div class="methodology">
+      Each event on this page traces back to a public source — Reddit posts,
+      news articles, retailer APIs, or USDA records. We never invent sizes;
+      every "before" and "after" comes from a documentable observation
+      with a date, a URL, and a verifiable image where possible.
+    </div>
+  </div>
+</footer>
+
+<div class="mockup-banner">
+  ⚠ Static mockup · data is illustrative · final page will read from <code>/products/[id]</code>
+</div>
+
+</body>
+</html>
