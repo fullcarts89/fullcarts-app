@@ -240,7 +240,11 @@ export default async function ClaimsReviewPage({
     .order("confidence->overall" as any, { ascending: false });
 
   if (sourceFilter) {
-    query = query.eq("raw_items.source_type" as any, sourceFilter);
+    // Cast through `any` here: the supabase-js generic for an embedded INNER
+    // JOIN filter inflates the type tree past TypeScript's inference depth
+    // (TS2589) — without this the entire claims query type goes "excessively
+    // deep". Behavior is the standard PostgREST `raw_items.source_type=eq.X`.
+    query = (query as any).eq("raw_items.source_type", sourceFilter);
   }
 
   if (confFilter !== "all") {
@@ -253,10 +257,14 @@ export default async function ClaimsReviewPage({
     query = query.eq("category", categoryFilter);
   }
 
-  const { data: claims, count } = await query.range(offset, offset + perPage - 1);
+  // The dynamic `selectExpr` (which may include an embedded raw_items inner
+  // join) defeats supabase-js generic inference and returns `GenericStringError`
+  // unless we widen here. The underlying rows are still Claim[].
+  const { data: rawClaims, count } = await query.range(offset, offset + perPage - 1);
+  const claims = (rawClaims || []) as unknown as Claim[];
 
   // Fetch raw_items for these claims
-  const rawItemIds = (claims || []).map((c: Claim) => c.raw_item_id);
+  const rawItemIds = claims.map((c) => c.raw_item_id);
   const { data: rawItems } = rawItemIds.length > 0
     ? await supabase
         .from("raw_items")
@@ -306,7 +314,7 @@ export default async function ClaimsReviewPage({
       />
 
       <main className="max-w-5xl mx-auto px-6 py-6 space-y-4">
-        {(claims || []).map((claim: Claim) => {
+        {claims.map((claim) => {
           const raw = rawMap.get(claim.raw_item_id);
           const payload = raw?.raw_payload;
           const imageUrl = payload ? getImageUrl(payload) : null;
