@@ -1,16 +1,10 @@
+import SiteNav from "@/components/SiteNav";
 import styles from "./styles.module.css";
 
 export default function BrandNotFound() {
   return (
     <>
-      <div className={styles["bp-grid"]} />
-      <nav className={styles.nav}>
-        <div className={styles["nav-inner"]}>
-          <a href="/" className={styles.logo}>
-            Full<span>Carts</span>
-          </a>
-        </div>
-      </nav>
+      <SiteNav />
       <div className={styles.container}>
         <div style={{ padding: "120px 0 80px", textAlign: "center" }}>
           <h1

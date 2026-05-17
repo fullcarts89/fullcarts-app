@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
+import SiteNav from "@/components/SiteNav";
 import BrandHero from "./_components/BrandHero";
 import TimelineExplorer from "./_components/TimelineExplorer";
 import WallOfShame from "./_components/WallOfShame";
@@ -82,23 +83,7 @@ export default async function BrandPage({ params }: PageProps) {
 
   return (
     <>
-      <div className={styles["bp-grid"]} />
-      <nav className={styles.nav}>
-        <div className={styles["nav-inner"]}>
-          <a href="/" className={styles.logo}>
-            Full<span>Carts</span>
-          </a>
-          <div className={styles["nav-links"]}>
-            <a href="/brands" className="active">
-              Brands
-            </a>
-            <a href="/products">Products</a>
-            <a href="/insights">Insights</a>
-            <a href="/about">About</a>
-          </div>
-        </div>
-      </nav>
-
+      <SiteNav />
       <div className={styles.container}>
         <div className={styles.breadcrumb}>
           <a href="/">Brands</a>

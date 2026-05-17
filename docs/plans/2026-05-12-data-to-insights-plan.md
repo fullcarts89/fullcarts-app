@@ -1,8 +1,8 @@
 # FullCarts: Data → Insights → Content Plan
 
 **Date:** May 12, 2026
-**Last updated:** May 15, 2026
-**Status:** Phase 1 complete and shipped. Data pipeline cleanups landed (event dedup, entity dedup, image fallbacks). Brand-page mockup mature; Phase 2 (real Next.js pages) is the next active workstream.
+**Last updated:** May 17, 2026
+**Status:** Phase 1 complete and shipped. **Phase 2A (Public Site Navigation) complete in feature branches** — homepage, `/brands` index, `/brands/[name]`, stub pages, shared SiteNav. Phase 2B (`/products/[id]`) is the next active workstream.
 
 ---
 
@@ -25,18 +25,51 @@
 
 ### Phase 2: Build the Insight Layer
 
+#### Phase 2A — Public Site Navigation — ✅ COMPLETE (in feature branches; awaiting merge to main)
+
 | Task | Status | Notes |
 |------|--------|-------|
 | 2.1 Insight queries | ✅ Deployed | Migration 049 in production. |
-| 2.2.0 `/brands/[name]` mockup | ✅ **Cadbury reference mockup at `web/public/mockups/brands-cadbury.html`** | Includes hero stats, year-by-year timeline (with caveat about coverage gaps), wall-of-shame with source links + socialimage fallback, products grid with image-first sort + top-25 + expand, **event-led evidence trail** with parent-network grouping (Newsquest UK / Reach plc / DMGT / News UK), inline expand to per-source list, typographic placeholders, route-intent toast. All numbers consistent (105 events / 76 products / 526 sources). **Aesthetic locked in: existing FULLCARTS_DESIGN_EXPORT.md — "Investigative Journalism meets Modern Product Design"**, dark graphite + Space Grotesk + JetBrains Mono. |
-| 2.2.1 `/brands/[name]` Next.js | **Next active workstream** | Mockup is mature enough to translate into Server Components with live Supabase queries + ISR (revalidate: 3600). |
-| 2.2.2 `/products/[id]` mockup | Pending | Where brand-page cards route to. Pattern after the brand page. |
-| 2.2.3 Homepage / `/products` / `/insights` / `/about` | Pending | Per design doc. Homepage depends on brand-page patterns. |
-| 2.3 Content generation API | Pending | Thin JSON wrappers over Supabase views. |
-| 2.4 Skimpflation pipeline | Pending | Connect `nutrition_skimp_results` → `published_changes`. |
-| — `socialimage` → `entity.image_url` backfill | Designed, queued | GDELT raw_payload already has the URLs; just need to plumb to `entity.image_url` via `backfill_entity_images.py` extension. ~30 min PR. |
-| — URL-pattern syndication detection | Designed, queued | Replace hand-curated Newsquest/Reach domain table with URL-pattern detection (e.g. Newsquest's `/resources/images/{id}/?type=og-image`). |
-| — `event_evidence_summary` SQL view | Pending | For real Next.js page to render event-led trail without N+1 queries. |
+| 2.2.0 `/brands/[name]` mockup | ✅ Shipped | `web/public/mockups/brands-cadbury.html` — locked visual reference. |
+| 2.2.1 `/brands/[name]` Next.js | ✅ Shipped (PR #69) | Live Server Component with ISR (revalidate: 3600). 20 brand pages pre-built by `generateStaticParams`. |
+| — `event_evidence_summary` SQL view | ✅ Shipped (PR #68, migration 051) | Powers the event-led evidence trail on `/brands/[name]` in a single round-trip — no N+1. |
+| — `socialimage` → `entity.image_url` backfill | ✅ Shipped (PR #67) | ~20% recovery on previously-imageless entities. Daily cron exercises it via `pipeline_promote.yml`. |
+| — `/brands` index page | ✅ Shipped (PR #71) | 1,167-brand sortable grid; severity tiers (Chronic / Repeat / Occasional / Single Incident) with per-tier "top 12 / expand to all" toggle; category chip filter (top 12 categories, casing-merged in JS); search input; per-tier expand state; same FULLCARTS aesthetic. Migration 052 + 053 added `brand_index` view. |
+| — `/brands/[name]` UX upgrades | ✅ Shipped | Year-driven evidence explorer (clickable timeline + cap-to-5 per year); Wall of Shame with Reddit-first picker + size schematic + source caption; bug fix for nav links. |
+| — Homepage replacing Coming Soon | ✅ Shipped (claude/homepage-live) | Hero with mission + search + 4-counter strip (events / brands / products / BLS-confirmed downsizings); "Just documented" sidecar; methodology trust strip (9 source pills including Consumer Reports + Wikidata); Brand of the week (rotates by most-cited event in last 14 days); Most active this month (top 6 by recent events); Recent biggest shrinks (top 6 with images); 7-tag evidence-channel grid (So Smol / Slack Fill / Spot the Difference / Skimpflation / Paper Thin / Not as Advertised / Stretchflation); 4-column footer. All real data, no hardcoded numbers. |
+| — Phase 2A polish | ✅ Shipped (claude/homepage-live) | Shared `SiteNav` component (replaces 4 duplicated inline navs); stub pages for `/products`, `/insights`, `/about` with "Coming in Phase X" treatment; brand-page Product Grid now filters entities with 0 events (Mondelez 36 → 8). |
+
+#### Phase 2B — Product Depth — ⏳ NEXT
+
+| Task | Status | Notes |
+|------|--------|-------|
+| 2.2.2 `/products/[id]` mockup | Pending | Hero + size-over-time timeline + change history + retailers + skimpflation overlay (if `nutrition_skimp_results` row exists for that entity). Design pass first, then port to Next.js. |
+| 2.2.3 `/products/[id]` live | Pending | Server component, ISR, generateStaticParams pre-builds top 30 products by event count. Brand-page product cards already route there via toast. |
+
+#### Phase 2C — Macro Insights + Corporate Tree — ⏳ AFTER 2B
+
+| Task | Status | Notes |
+|------|--------|-------|
+| 2.2.4 `/insights` page | Pending | 8 sections approved: hero counter, three-line chart (our events + BLS + FRED CPI), worst categories (`category_stats`), skimpflation leaderboard (`nutrition_skimp_results`, top 10 by skimp_score), repeat-offender products (`shrinkflation_leaderboard`), restoration corner (`restorations` + upsizing — needs cleanup of 75 corrupted upsizing events first), in the news (`news_feed`), spot-the-difference wall (`evidence_wall`, currently 4 rows — manually curated, can grow). |
+| — Google Trends integration | Pending | New ingest pipeline for "shrinkflation" search interest over time. Approved. Adds a 4th line to the macro chart. |
+| — Consumer Reports integration | Pending | Cross-reference our data against their annual shrinkflation reporting. Approved. |
+| — Wikidata manufacturer backfill | Pending | Populates `product_entities.manufacturer` (currently 100% null across 14,154 entities). Unlocks corporate-parent tree. Approved. |
+| — Corporate-parent tree visualisation | Pending | Once manufacturer backfilled: cluster brands by parent (e.g. Mondelez owns Cadbury, Oreo, Wheat Thins, Nabisco, Christie, Mondelez International). Section on `/insights` OR dedicated `/companies/[parent]` route. |
+| — "Shrinking grocery cart" widget | Pending | Interactive: "Your $100 grocery cart in 2020 vs the same brand+size combo today." Approved. Real math from tracked deltas. |
+| 2.2.5 `/about` page | Pending | Mission + methodology + sources + submit-a-tip form. |
+| 2.4 Skimpflation pipeline | Pending | Connect `nutrition_skimp_results` → `published_changes` so it shows up alongside size-shrinkflation events instead of being a separate dataset. |
+
+#### Phase 2D — Admin Entity Tool — ⏳ LAST (per user direction: build at end after rest of site is "good to go")
+
+| Task | Status | Notes |
+|------|--------|-------|
+| Admin entity browser | Pending | New `/admin/entities` page. Browse + search entities by brand, name, status. |
+| Retract entity | Pending | New `is_retracted` column on `product_entities` (migration). Sets flag; hides from public; reversible. |
+| Edit entity inline | Pending | Direct field edits for canonical_name, brand, category, image_url, manufacturer. Audit log per change. |
+| Send back to pending | Pending | Reverse a `matched` claim back to `pending` so user can re-approve after fixing the entity. |
+| Merge two entities | Pending | Move all events, claims, variants from A → B; retract A. Reversible. |
+
+**Why deferred:** User direction — build admin tool AFTER the public site is fully shipped. Data-quality issues (e.g. "Poor" entity, Wheat Thins fragmented across 6 brand strings, 75 corrupted upsizing events) are queued for cleanup once this tool ships.
 
 ### Phase 3: Launch Content Engine
 

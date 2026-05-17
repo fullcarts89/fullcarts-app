@@ -83,8 +83,9 @@ export function timelineBuckets(
 }
 
 /** Aggregate events by entity_id to produce per-product rollups for
- *  the product grid. Entities with zero matched events are still
- *  emitted so the grid lists everything the brand owns. */
+ *  the product grid. Only entities with at least one published event
+ *  are returned — the OFF / Kroger / etc. monitoring placeholders stay
+ *  in the database but don't clutter the public brand page. */
 export function rollupProducts(
   entities: ProductEntity[],
   events: EventRow[],
@@ -97,26 +98,28 @@ export function rollupProducts(
     byEntity.set(e.entity_id, arr);
   }
 
-  return entities.map((ent) => {
-    const evs = byEntity.get(ent.id) || [];
-    let worst = 0; // most-negative size_delta_pct
-    let leadType: string | null = null;
-    for (const e of evs) {
-      const d = num(e.size_delta_pct);
-      if (d < worst) worst = d;
-      if (!leadType && e.sources.length > 0) {
-        leadType = e.sources[0].source_type;
+  return entities
+    .map((ent) => {
+      const evs = byEntity.get(ent.id) || [];
+      let worst = 0; // most-negative size_delta_pct
+      let leadType: string | null = null;
+      for (const e of evs) {
+        const d = num(e.size_delta_pct);
+        if (d < worst) worst = d;
+        if (!leadType && e.sources.length > 0) {
+          leadType = e.sources[0].source_type;
+        }
       }
-    }
-    return {
-      entity_id: ent.id,
-      canonical_name: ent.canonical_name,
-      image_url: ent.image_url,
-      event_count: evs.length,
-      worst_delta_pct: worst,
-      lead_source_type: leadType,
-    };
-  });
+      return {
+        entity_id: ent.id,
+        canonical_name: ent.canonical_name,
+        image_url: ent.image_url,
+        event_count: evs.length,
+        worst_delta_pct: worst,
+        lead_source_type: leadType,
+      };
+    })
+    .filter((p) => p.event_count > 0);
 }
 
 /** Most-common manufacturer across the brand's entities, for the

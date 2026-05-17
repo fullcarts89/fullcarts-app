@@ -1,0 +1,22 @@
+/* Shared "coming soon" treatment for /products, /insights, /about. */
+
+.container { position: relative; z-index: 1; max-width: 880px; margin: 0 auto; padding: 80px 32px 120px; }
+.breadcrumb { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); padding-bottom: 24px; }
+.breadcrumb .current { color: var(--amber-base); }
+.tag { display: inline-flex; align-items: center; gap: 8px; background: var(--amber-bg); border: 1px solid var(--border-subtle); border-radius: 999px; padding: 6px 16px; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--amber-base); margin-bottom: 24px; }
+.tag::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--amber-base); }
+.h1 { font-family: var(--font-headline); font-weight: 700; font-size: clamp(40px, 7vw, 72px); letter-spacing: -0.03em; line-height: 1; margin-bottom: 24px; }
+.lede { font-size: 18px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 40px; max-width: 640px; }
+.lede strong { color: var(--text-primary); font-weight: 600; }
+
+.planned { display: grid; gap: 16px; margin-bottom: 48px; }
+.row { background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 18px 22px; display: grid; grid-template-columns: 1fr; gap: 6px; }
+.row-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); }
+.row-title { font-family: var(--font-headline); font-weight: 600; font-size: 18px; color: var(--text-primary); }
+.row-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+
+.cta-row { display: flex; gap: 12px; flex-wrap: wrap; padding-top: 24px; border-top: 1px solid var(--border-subtle); }
+.cta { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--red-base); text-decoration: none; padding: 12px 18px; border: 1px solid var(--red-border); transition: all .15s; }
+.cta:hover { background: var(--red-bg); }
+.cta-secondary { color: var(--text-secondary); border-color: var(--border-subtle); }
+.cta-secondary:hover { color: var(--text-primary); border-color: var(--border-medium); background: var(--bg-hover); }

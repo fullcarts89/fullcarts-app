@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import SiteNav from "@/components/SiteNav";
 import BrandIndex from "./_components/BrandIndex";
 import type { BrandIndexRow, RankedBrand } from "./types";
 import styles from "./styles.module.css";
@@ -48,29 +49,7 @@ export default async function BrandsPage() {
 
   return (
     <>
-      <div className={styles["bp-grid"]} />
-      <nav className={styles.nav}>
-        <div className={styles["nav-inner"]}>
-          <a href="/" className={styles.logo}>
-            Full<span>Carts</span>
-          </a>
-          <div className={styles["nav-links"]}>
-            <a href="/brands" className="active">
-              Brands
-            </a>
-            <a href="/products" className="stub" title="Coming in Phase B">
-              Products
-            </a>
-            <a href="/insights" className="stub" title="Coming in Phase C">
-              Insights
-            </a>
-            <a href="/about" className="stub" title="Coming in Phase C">
-              About
-            </a>
-          </div>
-        </div>
-      </nav>
-
+      <SiteNav />
       <div className={styles.container}>
         <div className={styles.breadcrumb}>
           <span className={styles.current}>All brands</span>
