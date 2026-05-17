@@ -85,6 +85,17 @@ def main():
                 _flag(claim["id"], "openfoodfacts: missing before/after size")
                 continue
 
+        if source_type == "kroger_change":
+            # v1 analyzer fired on any adjacent-week size delta ≥2%, which
+            # produced almost-pure noise from Kroger's API toggling between
+            # two size representations for the same SKU (14oz ↔ 8oz week to
+            # week). v2 adds oscillation and unit-stability guards; until a
+            # claim is stamped with v2+ extractor_version we treat it as junk.
+            ev = claim.get("extractor_version") or ""
+            if ev == "kroger-change-v1" or ev.startswith("kroger-change-v0"):
+                _flag(claim["id"], "kroger_change: legacy v1 analyzer (noise)")
+                continue
+
     log.info("Will decline %d of %d pending claims", len(to_decline), len(pending_claims))
     for reason, count in sorted(reason_counts.items(), key=lambda kv: -kv[1]):
         log.info("  %d × %s", count, reason)
@@ -163,7 +174,8 @@ def _fetch_pending_claims_with_raw(client):
         resp = (
             client.table("claims")
             .select(
-                "id,brand,product_name,old_size,new_size,old_price,new_price,"
+                "id,brand,product_name,extractor_version,"
+                "old_size,new_size,old_price,new_price,"
                 "raw_items(source_type,raw_payload)"
             )
             .eq("status", "pending")

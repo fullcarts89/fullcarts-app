@@ -104,6 +104,7 @@ function SourceBadge({ sourceType, sourceName }: { sourceType: string; sourceNam
     news: { label: sourceName || "News", color: "bg-[var(--blue-bg)] text-[var(--blue-base)] border-[var(--blue-border)]" },
     gdelt: { label: sourceName || "GDELT", color: "bg-purple-500/10 text-purple-400 border-purple-500/20" },
     usda_nutrition: { label: "USDA", color: "bg-[var(--green-bg)] text-[var(--green-base)] border-[var(--green-border)]" },
+    kroger_change: { label: "Kroger", color: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20" },
   };
   const c = config[sourceType] || { label: sourceType, color: "bg-[var(--bg-tertiary)] text-[var(--text-secondary)] border-[var(--bg-tertiary)]" };
   return (
@@ -132,6 +133,8 @@ function formatDate(raw: RawItem | undefined): string | null {
   }
   // GDELT: seendate
   if (p.seendate) return p.seendate.slice(0, 10);
+  // Kroger analyzer claims: new_date is the observation date of the change
+  if (p.new_date) return String(p.new_date).slice(0, 10);
   return null;
 }
 
