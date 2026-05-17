@@ -122,7 +122,7 @@ def cleanup(sb, dry_run: bool = False) -> Dict[str, int]:
         "folded_into_event": 0,
         "already_in_evidence": 0,      # idempotent re-run case
         "entity_cleared_for_retry": 0,
-        "unmatched_no_size": 0,        # missing sizes — can't fold or promote
+        "discarded_no_size": 0,        # missing sizes — can't fold or promote
         "errors": 0,
     }
 
@@ -140,16 +140,16 @@ def cleanup(sb, dry_run: bool = False) -> Dict[str, int]:
             old_size = c.get("old_size")
             new_size = c.get("new_size")
 
-            # No sizes: demote to unmatched, can't recover.
+            # No sizes: demote to discarded, can't recover.
             if old_size is None or new_size is None:
                 if dry_run:
-                    LOG.info("[DRY] claim %s (no sizes): would set status='unmatched'", c["id"])
+                    LOG.info("[DRY] claim %s (no sizes): would set status='discarded'", c["id"])
                 else:
                     (sb.table("claims")
-                     .update({"status": "unmatched"})
+                     .update({"status": "discarded"})
                      .eq("id", c["id"])
                      .execute())
-                stats["unmatched_no_size"] += 1
+                stats["discarded_no_size"] += 1
                 continue
 
             event = _find_existing_event(sb, c["matched_entity_id"], old_size, new_size)

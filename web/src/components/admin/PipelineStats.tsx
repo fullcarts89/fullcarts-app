@@ -7,7 +7,7 @@ type DailyCount = {
 };
 
 type Props = {
-  statusCounts: { pending: number; matched: number; evidence: number; unmatched: number; discarded: number };
+  statusCounts: { pending: number; matched: number; evidence: number; discarded: number };
   dailyCounts: DailyCount[];
   pipelineHealthy: boolean;
   lastExtractionAgo: string;
@@ -61,7 +61,7 @@ export function PipelineStats({
       </div>
 
       {/* Status summary cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <StatusCard
           label="Pending"
           count={statusCounts.pending}
@@ -76,11 +76,6 @@ export function PipelineStats({
           label="Evidence"
           count={statusCounts.evidence}
           colorClass="bg-purple-500/10 border-purple-500/20 text-purple-400"
-        />
-        <StatusCard
-          label="Unmatched"
-          count={statusCounts.unmatched}
-          colorClass="bg-[var(--bg-tertiary)] border-[var(--bg-tertiary)] text-[var(--text-secondary)]"
         />
         <StatusCard
           label="Discarded"

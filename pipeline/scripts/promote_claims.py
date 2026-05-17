@@ -155,7 +155,7 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
         "published": 0,
         "evidence_added_to_existing": 0,  # syndicated claims merged into an existing event
         "skipped_no_size": 0,
-        "unmatched_no_size": 0,  # no-size claims demoted out of the approved queue
+        "discarded_no_size": 0,  # no-size claims demoted out of the promote queue
         "errors": 0,
     }
 
@@ -175,16 +175,16 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
             # Skip claims without any size data. Without a before/after size we
             # can't produce a published_change row — but if we leave the claim
             # in 'matched' it sits in the promote queue forever, getting
-            # re-fetched on every daily run. Demote to 'unmatched' so it drops
+            # re-fetched on every daily run. Demote to 'discarded' so it drops
             # out cleanly.
             if not old_size and not new_size:
                 stats["skipped_no_size"] += 1
                 if not dry_run:
                     (sb.table("claims")
-                     .update({"status": "unmatched"})
+                     .update({"status": "discarded"})
                      .eq("id", claim["id"])
                      .execute())
-                    stats["unmatched_no_size"] += 1
+                    stats["discarded_no_size"] += 1
                 continue
 
             ekey = entity_key(brand, name)
