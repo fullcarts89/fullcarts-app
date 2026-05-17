@@ -16,6 +16,11 @@ import type { RankedBrand } from "../types";
 type SortKey = "events" | "avg" | "products" | "name";
 type Tier = 1 | 2 | 3 | 4;
 
+// Number of brand cards shown per tier before user expands. Three rows
+// of four at 1280px width — enough to make the tier's character clear
+// without dominating the page.
+const TIER_PREVIEW = 12;
+
 interface Props {
   brands: RankedBrand[];
 }
@@ -72,7 +77,16 @@ export default function BrandIndex({ brands }: Props) {
   const [sort, setSort] = useState<SortKey>("events");
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string | null>(null);
-  const [showSingles, setShowSingles] = useState(false);
+  // Track which tiers are expanded. Each tier previews TIER_PREVIEW
+  // cards by default; toggle expands to all brands in that tier.
+  const [expandedTiers, setExpandedTiers] = useState<Set<Tier>>(new Set());
+  const toggleTier = (t: Tier) =>
+    setExpandedTiers((prev) => {
+      const next = new Set(prev);
+      if (next.has(t)) next.delete(t);
+      else next.add(t);
+      return next;
+    });
 
   // Category chip strip data: normalised category → brand count.
   // Cap rendered chips to the top N most-populated categories; the
@@ -202,9 +216,14 @@ export default function BrandIndex({ brands }: Props) {
         <div className={styles.empty}>No brands match your filters</div>
       ) : tiersActive ? (
         <div className={styles.grid}>
-          {([1, 2, 3] as Tier[]).map((t) => {
+          {([1, 2, 3, 4] as Tier[]).map((t) => {
             const tierBrands = byTier[t];
             if (tierBrands.length === 0) return null;
+            const isExpanded = expandedTiers.has(t);
+            const shown = isExpanded
+              ? tierBrands
+              : tierBrands.slice(0, TIER_PREVIEW);
+            const hasMore = tierBrands.length > TIER_PREVIEW;
             return (
               <Fragment key={t}>
                 <div className={styles.tier}>
@@ -216,39 +235,31 @@ export default function BrandIndex({ brands }: Props) {
                   <span className={styles["tier-meta"]}>
                     {TIER_META[t].sub} · {tierBrands.length} brand
                     {tierBrands.length === 1 ? "" : "s"}
+                    {hasMore && !isExpanded && (
+                      <>
+                        {" "}· showing top {TIER_PREVIEW}
+                      </>
+                    )}
                   </span>
                 </div>
-                {tierBrands.map((b) => renderCard(b))}
+                {shown.map((b) => renderCard(b))}
+                {hasMore && (
+                  <div className={styles["tier-toggle"]}>
+                    <button
+                      type="button"
+                      className={`${styles["tier-toggle-btn"]} ${isExpanded ? styles.open : ""}`}
+                      onClick={() => toggleTier(t)}
+                    >
+                      {isExpanded
+                        ? `Show top ${TIER_PREVIEW}`
+                        : `Show all ${tierBrands.length} ${TIER_META[t].label.toLowerCase()}`}{" "}
+                      <span className={styles.arrow}>↓</span>
+                    </button>
+                  </div>
+                )}
               </Fragment>
             );
           })}
-          {byTier[4].length > 0 && (
-            <Fragment>
-              <div className={styles.tier}>
-                <span className={`${styles["tier-label"]} ${styles["tier-4"]}`}>
-                  {TIER_META[4].label}
-                </span>
-                <span className={styles["tier-meta"]}>
-                  {TIER_META[4].sub} · {byTier[4].length} brands
-                </span>
-              </div>
-              {showSingles
-                ? byTier[4].map((b) => renderCard(b))
-                : null}
-              <div className={styles["tier-toggle"]}>
-                <button
-                  type="button"
-                  className={`${styles["tier-toggle-btn"]} ${showSingles ? styles.open : ""}`}
-                  onClick={() => setShowSingles((x) => !x)}
-                >
-                  {showSingles
-                    ? "Hide single-incident brands"
-                    : `Show all ${byTier[4].length} single-incident brands`}{" "}
-                  <span className={styles.arrow}>↓</span>
-                </button>
-              </div>
-            </Fragment>
-          )}
         </div>
       ) : (
         <div className={styles.grid}>{sorted.map((b) => renderCard(b))}</div>
