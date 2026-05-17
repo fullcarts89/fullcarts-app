@@ -109,7 +109,7 @@
 .sort-pill:hover { color: var(--text-primary); border-color: var(--border-medium); }
 .sort-pill.active { background: var(--red-bg); border-color: var(--red-border); color: var(--red-base); }
 .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
-.product-card { background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 12px; display: flex; flex-direction: column; gap: 8px; transition: border-color .15s, transform .15s; cursor: pointer; position: relative; }
+.product-card { background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 12px; display: flex; flex-direction: column; gap: 8px; transition: border-color .15s, transform .15s; cursor: pointer; position: relative; text-decoration: none; color: inherit; }
 .product-card:hover { border-color: var(--border-medium); transform: translateY(-1px); }
 .product-card.hidden { display: none; }
 .product-card::after { content: '↗'; position: absolute; top: 8px; right: 8px; font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); opacity: 0; transition: opacity .15s; }
