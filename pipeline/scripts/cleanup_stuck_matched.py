@@ -1,30 +1,28 @@
 #!/usr/bin/env python3
-"""Resolve approved claims that are stuck because of an orphaned matched_entity_id.
+"""Resolve legacy approved claims (and matched claims with a partial entity link).
 
-`fetch_approved_claims` in promote_claims.py filters on
-`matched_entity_id IS NULL`, so any claim whose entity was set by some other
-path (admin UI, older promote_claims code) but whose status wasn't advanced
-gets passed over on every daily run. This script handles them:
+Two stuck shapes get handled here:
 
-  - If a published_changes row already exists for the
-    (entity_id, size_before, size_after) tuple this claim describes:
-      add the claim to that event's evidence_summary (if not already there),
-      bump evidence_count, and set claim status='evidence'.
+  1. Legacy status='approved' rows. The pre-refactor flow had an 'approved'
+     bucket between admin-clicks-OK and the daily promote run. That bucket
+     is gone — admin clicks now write status='matched' directly. Any leftover
+     approved rows get migrated to 'matched' with matched_entity_id cleared
+     so promote_claims will pick them up on its next pass.
 
-  - Otherwise: clear matched_entity_id so the regular promote_claims run
-    picks the claim up on its next pass and produces a published_change for
-    it (entity will be reused because brand+name still resolve to the same
-    row).
+  2. status='matched' rows with matched_entity_id already set but no
+     published_change row covering (entity_id, old_size, new_size). The
+     entity got linked by some older path but the event was never built.
+     If a published_change for that tuple now exists (e.g. created by a
+     different claim): add this claim to its evidence_summary and flip the
+     status to 'evidence'. Otherwise: clear matched_entity_id so the
+     regular promote run picks them up.
 
-  - Claims missing sizes (old_size IS NULL AND new_size IS NULL) are demoted
-    straight to 'unmatched' — without sizes they can't produce or join an
-    event.
+  3. Claims missing sizes are demoted to 'unmatched' (can't build an event).
 
-Idempotent: re-running after a successful pass is a no-op (no more approved
-claims will have matched_entity_id set).
+Idempotent: re-running on a healthy queue is a no-op.
 
 Usage:
-    python -m pipeline.scripts.cleanup_stuck_approved [--dry-run]
+    python -m pipeline.scripts.cleanup_stuck_matched [--dry-run]
 """
 import argparse
 import logging
@@ -32,7 +30,7 @@ import os
 import sys
 from typing import Any, Dict, List, Optional
 
-LOG = logging.getLogger("cleanup_stuck_approved")
+LOG = logging.getLogger("cleanup_stuck_matched")
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(name)s] %(levelname)s %(message)s",
@@ -52,13 +50,45 @@ def _get_client():
 
 def _fetch_stuck_with_entity(sb) -> List[Dict[str, Any]]:
     """Approved claims that have a matched_entity_id but status hasn't moved on."""
+    # status='matched' with a matched_entity_id set — but the promote run
+    # skips these (its fetch filters on matched_entity_id IS NULL). They
+    # need either a fold-into-event or an entity-clear-and-retry.
     resp = (sb.table("claims")
             .select("id,brand,product_name,old_size,new_size,old_size_unit,new_size_unit,"
                     "matched_entity_id,matched_variant_id,observed_date,change_description")
-            .eq("status", "approved")
+            .eq("status", "matched")
             .not_.is_("matched_entity_id", "null")
             .execute())
     return resp.data or []
+
+
+def _migrate_legacy_approved(sb, dry_run: bool = False) -> int:
+    """Flip any straggler status='approved' rows to 'matched' with entity
+    cleared, so the regular promote run handles them. Returns count migrated.
+    """
+    resp = (sb.table("claims")
+            .select("id")
+            .eq("status", "approved")
+            .execute()).data or []
+    if not resp:
+        return 0
+    if dry_run:
+        return len(resp)
+    ids = [r["id"] for r in resp]
+    # Batch in chunks of 100 to keep the URL short.
+    migrated = 0
+    for i in range(0, len(ids), 100):
+        batch = ids[i:i + 100]
+        (sb.table("claims")
+         .update({
+             "status": "matched",
+             "matched_entity_id": None,
+             "matched_variant_id": None,
+         })
+         .in_("id", batch)
+         .execute())
+        migrated += len(batch)
+    return migrated
 
 
 def _find_existing_event(sb, entity_id: str, old_size, new_size) -> Optional[Dict[str, Any]]:
@@ -87,16 +117,22 @@ def _claim_already_in_summary(summary: Any, claim_id: str) -> bool:
 
 def cleanup(sb, dry_run: bool = False) -> Dict[str, int]:
     stats = {
+        "legacy_approved_migrated": 0, # status='approved' stragglers post-refactor
         "scanned": 0,
-        "folded_into_event": 0,        # 30 of 34 in current data
+        "folded_into_event": 0,
         "already_in_evidence": 0,      # idempotent re-run case
-        "entity_cleared_for_retry": 0, # 4 of 34: no matching event exists yet
+        "entity_cleared_for_retry": 0,
         "unmatched_no_size": 0,        # missing sizes — can't fold or promote
         "errors": 0,
     }
 
+    legacy = _migrate_legacy_approved(sb, dry_run=dry_run)
+    stats["legacy_approved_migrated"] = legacy
+    if legacy:
+        LOG.info("Migrated %d legacy status='approved' rows to 'matched'", legacy)
+
     claims = _fetch_stuck_with_entity(sb)
-    LOG.info("Found %d approved claims with matched_entity_id set", len(claims))
+    LOG.info("Found %d matched claims with matched_entity_id set", len(claims))
 
     for c in claims:
         stats["scanned"] += 1

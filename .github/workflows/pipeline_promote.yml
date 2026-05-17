@@ -31,29 +31,24 @@ jobs:
         #  - openfoodfacts catalog rows that aren't actually shrinkflation
         # Summary of declined claims lands in the workflow's job summary.
         run: python3 -m pipeline.scripts.auto_decline_pending
-      - name: Auto-approve high-confidence claims
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-        # --approve-only so this step doesn't run promotion; the dedicated
-        # promote step below picks up everything (auto-approved + manually
-        # approved) in one pass. Summary of approved claims lands in the
-        # workflow's job summary.
-        run: python3 -m pipeline.scripts.auto_approve_claims --threshold 90 --approve-only
-      - name: Clean up stuck approved claims
+      - name: Clean up stuck matched claims
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         # Resolves claims whose matched_entity_id was set by an older code
-        # path but whose status never advanced past 'approved'. Either folds
-        # into the matching published_change as evidence, or clears the entity
-        # link so the promote step below picks them up cleanly. No-op on a
+        # path but whose status never advanced. Either folds into the
+        # matching published_change as evidence, or clears the entity link
+        # so the promote step below picks them up cleanly. No-op on a
         # healthy queue.
-        run: python3 -m pipeline.scripts.cleanup_stuck_approved
-      - name: Promote approved claims
+        run: python3 -m pipeline.scripts.cleanup_stuck_matched
+      - name: Promote matched claims
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        # Picks up claims that an admin manually moved to 'matched' but
+        # haven't had a published_change created yet. Creates entity,
+        # variant, observations, candidate, published_change (or folds
+        # into existing event). No-op when the queue is empty.
         run: python3 pipeline/scripts/promote_claims.py
       - name: Backfill entity images
         env:

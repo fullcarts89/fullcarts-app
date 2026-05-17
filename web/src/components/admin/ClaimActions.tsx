@@ -91,9 +91,10 @@ export function ClaimActions({
       {currentStatus === "pending" && (
         <>
           <button
-            onClick={() => handleAction("approved")}
+            onClick={() => handleAction("matched")}
             disabled={isPending}
             className="px-3 py-1 text-xs font-medium rounded border border-[var(--green-border)] bg-[var(--green-bg)] text-[var(--green-base)] hover:brightness-125 transition-all disabled:opacity-50"
+            title="Mark this claim as a real shrinkflation event. The next daily promote run will create or fold it into a published_change."
           >
             {isPending ? "..." : "Approve"}
           </button>
@@ -131,7 +132,7 @@ export function ClaimActions({
           </button>
         </>
       )}
-      {(currentStatus === "approved" || currentStatus === "evidence") && (
+      {(currentStatus === "matched" || currentStatus === "evidence" || currentStatus === "unmatched") && (
         <div className="flex items-center gap-2">
           {currentTags && currentTags.length > 0 && (
             <div className="flex gap-1">
