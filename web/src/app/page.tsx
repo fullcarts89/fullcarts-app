@@ -1,4 +1,5 @@
 import { loadHomeData, brandHref } from "./_lib/home-data";
+import SiteNav from "@/components/SiteNav";
 import styles from "./home.module.css";
 
 // ISR: regenerate at most once per hour.
@@ -48,27 +49,7 @@ export default async function Home() {
 
   return (
     <>
-      <div className={styles["bp-grid"]} />
-      <nav className={styles.nav}>
-        <div className={styles["nav-inner"]}>
-          <a href="/" className={styles.logo}>
-            Full<span>Carts</span>
-          </a>
-          <div className={styles["nav-links"]}>
-            <a href="/brands">Brands</a>
-            <a href="/products" className="stub" title="Coming in Phase B">
-              Products
-            </a>
-            <a href="/insights" className="stub" title="Coming in Phase C">
-              Insights
-            </a>
-            <a href="/about" className="stub" title="Coming in Phase C">
-              About
-            </a>
-          </div>
-        </div>
-      </nav>
-
+      <SiteNav />
       <div className={styles.container}>
         {/* HERO */}
         <header className={styles.hero}>

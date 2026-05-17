@@ -1,0 +1,21 @@
+/* Shared site nav — replaces the duplicated inline navs in homepage,
+   /brands, /brands/[name], and (now) the stub pages. */
+
+.bp-grid { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.03; background-image: linear-gradient(var(--text-tertiary) 1px, transparent 1px), linear-gradient(90deg, var(--text-tertiary) 1px, transparent 1px); background-size: 60px 60px; }
+
+.nav { position: sticky; top: 0; z-index: 50; background: rgba(10,11,13,.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-subtle); }
+.nav-inner { max-width: 1280px; margin: 0 auto; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
+.logo { font-family: var(--font-headline); font-weight: 700; font-size: 20px; letter-spacing: -0.02em; text-decoration: none; color: var(--text-primary); }
+.logo span { color: var(--red-base); }
+
+.nav-links { display: flex; gap: 32px; font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; }
+.nav-link { color: var(--text-secondary); text-decoration: none; transition: color .15s; padding-bottom: 4px; border-bottom: 1px solid transparent; }
+.nav-link:hover { color: var(--text-primary); }
+.nav-link.active { color: var(--text-primary); border-bottom-color: var(--red-base); }
+.nav-link.stub { color: var(--text-tertiary); font-style: italic; }
+.nav-link.stub::after { content: '·'; margin-left: 4px; color: var(--amber-base); }
+.nav-link.stub.active { color: var(--amber-base); border-bottom-color: var(--amber-base); }
+
+@media (max-width: 640px) {
+  .nav-links { gap: 16px; font-size: 10px; }
+}
