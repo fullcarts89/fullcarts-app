@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
 """
-Promote approved claims into the product catalog.
+Promote admin-matched claims into the product catalog.
 
-Flow: claims (approved) -> product_entities -> pack_variants ->
+A claim is "admin-matched" when an admin clicked Approve in /admin/claims
+(which sets status='matched') but no published_change has been built for it
+yet (matched_entity_id IS NULL).
+
+Flow: claims (matched, no entity) -> product_entities -> pack_variants ->
       variant_observations -> change_candidates -> published_changes
+
+The status stays 'matched' the whole time — this script only fills in the
+matched_entity_id / matched_variant_id columns and creates the downstream
+event rows. Claims folded into an existing event flip to status='evidence'.
 
 Usage:
     python -m pipeline promote_claims [--limit N] [--dry-run]
@@ -40,17 +48,25 @@ def get_client():
     return create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
-def fetch_approved_claims(sb, limit: int = 0) -> List[Dict[str, Any]]:
-    """Fetch approved claims that haven't been promoted yet."""
+def fetch_matched_claims_to_promote(sb, limit: int = 0) -> List[Dict[str, Any]]:
+    """Fetch matched claims that don't yet have a published_change.
+
+    `matched_entity_id IS NULL` is the marker for "admin clicked Approve
+    but the daily promote run hasn't built the event yet."
+    """
     q = (sb.table("claims")
          .select("*")
-         .eq("status", "approved")
+         .eq("status", "matched")
          .is_("matched_entity_id", "null")
          .order("extracted_at", desc=False))
     if limit > 0:
         q = q.limit(limit)
     resp = q.execute()
     return resp.data or []
+
+
+# Backwards-compat alias for any caller still importing the old name.
+fetch_approved_claims = fetch_matched_claims_to_promote
 
 
 def normalize_brand(brand: Optional[str]) -> str:
@@ -139,6 +155,7 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
         "published": 0,
         "evidence_added_to_existing": 0,  # syndicated claims merged into an existing event
         "skipped_no_size": 0,
+        "unmatched_no_size": 0,  # no-size claims demoted out of the approved queue
         "errors": 0,
     }
 
@@ -155,9 +172,19 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
             new_unit = claim.get("new_size_unit", old_unit or "oz")
             size_unit = new_unit or old_unit or "oz"
 
-            # Skip claims without any size data
+            # Skip claims without any size data. Without a before/after size we
+            # can't produce a published_change row — but if we leave the claim
+            # in 'matched' it sits in the promote queue forever, getting
+            # re-fetched on every daily run. Demote to 'unmatched' so it drops
+            # out cleanly.
             if not old_size and not new_size:
                 stats["skipped_no_size"] += 1
+                if not dry_run:
+                    (sb.table("claims")
+                     .update({"status": "unmatched"})
+                     .eq("id", claim["id"])
+                     .execute())
+                    stats["unmatched_no_size"] += 1
                 continue
 
             ekey = entity_key(brand, name)
@@ -273,6 +300,7 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
             candidate_id = None
             delta_pct = calc_delta_pct(old_size, new_size)
             change_type, severity, is_shrinkflation = classify_change(delta_pct)
+            folded_into_existing = False
 
             if obs_before_id and obs_after_id and old_size and new_size:
                 # Check whether this same event is already documented by a
@@ -306,6 +334,7 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
                      .eq("id", existing_event["id"])
                      .execute())
                     stats["evidence_added_to_existing"] += 1
+                    folded_into_existing = True
                 else:
                     # First time we see this event — create candidate + published_change.
                     resp = (sb.table("change_candidates")
@@ -349,12 +378,16 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
                      .execute())
                     stats["published"] += 1
 
-            # 6. Update claim as matched
+            # 6. Fill in the entity/variant link. Status is already 'matched'
+            # (the admin's Approve click set it). If we folded this claim into
+            # an existing event instead of publishing a new one, flip status
+            # to 'evidence' so the admin queue distinguishes the two.
+            new_status = "evidence" if folded_into_existing else "matched"
             (sb.table("claims")
              .update({
                  "matched_entity_id": entity_id,
                  "matched_variant_id": variant_id,
-                 "status": "matched",
+                 "status": new_status,
              })
              .eq("id", claim["id"])
              .execute())
@@ -375,16 +408,16 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Promote approved claims to product catalog")
+    parser = argparse.ArgumentParser(description="Promote admin-matched claims into the product catalog")
     parser.add_argument("--limit", type=int, default=0, help="Max claims to process (0=all)")
     parser.add_argument("--dry-run", action="store_true", help="Don't write to DB")
     args = parser.parse_args()
 
     sb = get_client()
 
-    print("Fetching approved claims...")
-    claims = fetch_approved_claims(sb, limit=args.limit)
-    print(f"Found {len(claims)} approved claims to promote")
+    print("Fetching matched claims to promote...")
+    claims = fetch_matched_claims_to_promote(sb, limit=args.limit)
+    print(f"Found {len(claims)} matched claims awaiting promotion")
 
     if not claims:
         print("Nothing to promote.")

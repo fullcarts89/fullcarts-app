@@ -1,9 +1,28 @@
 #!/usr/bin/env python3
 """Detect size/price changes from Kroger weekly observations.
 
-Compares variant_observations (source_type='kroger_api') for the same
-product across consecutive weeks. Flags size decreases >=2% or
-price-per-unit increases >=5%. Creates claims for detected changes.
+v2 (2026-05-17): guarded against oscillation/unit-flip noise that polluted v1.
+
+Compares variant_observations (source_type='kroger_api') for the same product
+across consecutive weeks. Flags a transition only when ALL of the following
+hold:
+
+  1. The unit *family* is stable across the change (mass → mass, volume →
+     volume, count → count). Cross-family transitions like oz → fl oz are
+     skipped — Kroger's API toggles between two representations for the same
+     SKU and the size value is meaningless in that case.
+  2. The old size was stable for at least 3 consecutive observations before
+     the change.
+  3. The new size is stable for at least 1 observation after the change AND
+     does not revert to the old size within the lookback window. (Pure
+     oscillation between two values gets filtered out.)
+  4. The new size never appeared *before* the change in the lookback series.
+     If it had, this isn't a one-way transition, it's flapping.
+
+v1 fired on any adjacent-week delta ≥2%. Real shrinkflation is a one-way
+event (200g → 180g, and it stays at 180g). Kroger's API noise looks like
+weekly oscillation. The four guards above keep the former and drop the
+latter.
 
 Usage:
     python -m pipeline.scripts.analyze_kroger_changes
@@ -21,53 +40,141 @@ from pipeline.lib.units import convert_to_base
 
 log = get_logger("analyze_kroger_changes")
 
-EXTRACTOR_VERSION = "kroger-change-v1"
+EXTRACTOR_VERSION = "kroger-change-v2"
 SCRAPER_VERSION = "pipeline-v2.0-kroger-change"
 SOURCE_TYPE = "kroger_change"
 SIZE_DECREASE_THRESHOLD = 2.0   # percent
 PPU_INCREASE_THRESHOLD = 5.0    # percent
+
+# Minimum consecutive prior observations at the same size before we'll trust
+# the "old" baseline. v1 used 1 (i.e. any adjacent change), which is what let
+# Kroger's API toggling 14oz↔8oz week to week generate hundreds of fake
+# shrinkflation events.
+_MIN_PRIOR_STABLE = 3
+_MIN_POST_STABLE = 1
+
 _PAGE_SIZE = 1000
 _LOOKBACK_DAYS = 30
 
 
+# Unit family map. Crossing families is never legitimate shrinkflation —
+# it's a data-quality problem in the source feed.
+_UNIT_FAMILIES = {
+    # mass
+    "g": "mass", "kg": "mass", "mg": "mass", "oz": "mass", "lb": "mass",
+    # volume
+    "ml": "volume", "l": "volume", "fl oz": "volume",
+    "pt": "volume", "qt": "volume", "gal": "volume",
+    # count
+    "ct": "count", "count": "count", "pack": "count",
+    "sheets": "count", "rolls": "count",
+}
+
+
+def _unit_family(unit):
+    # type: (Optional[str]) -> Optional[str]
+    if not unit:
+        return None
+    return _UNIT_FAMILIES.get(unit.strip().lower())
+
+
+def _size_key(observation):
+    # type: (Dict[str, Any]) -> Optional[Tuple[float, str]]
+    """Return a comparable (base_value, base_unit) tuple for an observation.
+
+    Returns None if the observation has no size or its unit family is unknown.
+    """
+    size = observation.get("size")
+    unit = observation.get("size_unit")
+    if size is None or not unit:
+        return None
+    fam = _unit_family(unit)
+    if fam is None:
+        return None
+    base_value, base_unit = convert_to_base(float(size), unit)
+    return (round(base_value, 4), base_unit)
+
+
 def detect_changes(observations):
     # type: (List[Dict[str, Any]]) -> List[Dict[str, Any]]
-    """Detect size/price changes in a list of observations for one variant+store.
+    """Detect size/price changes in a sorted observation list for one variant+store.
 
     observations must be sorted by observed_date ascending.
-    Each observation has: observed_date, size, size_unit, price, price_per_unit.
 
-    Returns list of change dicts.
+    Applies the v2 guards: unit family stability, prior stability ≥3 obs,
+    post stability ≥1 obs, no later revert to old size, new size unseen
+    earlier in series.
     """
     changes = []  # type: List[Dict[str, Any]]
+    n = len(observations)
+    if n < _MIN_PRIOR_STABLE + 1:
+        return changes
 
-    for i in range(1, len(observations)):
-        old = observations[i - 1]
-        new = observations[i]
+    # Precompute a comparable key per observation. None = unparseable size or
+    # cross-family unit. We index into this for the oscillation checks below.
+    keys = [_size_key(o) for o in observations]  # type: List[Optional[Tuple[float, str]]]
 
-        old_size = old.get("size")
-        new_size = new.get("size")
-        old_unit = old.get("size_unit", "")
-        new_unit = new.get("size_unit", "")
-        old_price = old.get("price")
-        new_price = new.get("price")
-        old_ppu = old.get("price_per_unit")
-        new_ppu = new.get("price_per_unit")
+    for i in range(_MIN_PRIOR_STABLE, n):
+        prev = observations[i - 1]
+        cur = observations[i]
 
+        prev_key = keys[i - 1]
+        cur_key = keys[i]
+
+        # Guard 1: both sides must have a parseable size + a known family.
+        if prev_key is None or cur_key is None:
+            continue
+
+        # Guard 1 (cont.): same unit family on both sides.
+        if prev_key[1] != cur_key[1]:
+            continue
+
+        # Same key = no change.
+        if prev_key == cur_key:
+            continue
+
+        old_base, _ = prev_key
+        new_base, _ = cur_key
+        if old_base <= 0:
+            continue
+
+        # Guard 2: prior stability — the old size must have held for the last
+        # _MIN_PRIOR_STABLE observations.
+        prior_stable = all(
+            keys[j] == prev_key
+            for j in range(max(0, i - _MIN_PRIOR_STABLE), i)
+        )
+        if not prior_stable:
+            continue
+
+        # Guard 3a: post stability — the new size must persist for at least
+        # _MIN_POST_STABLE additional observations after i, OR be the final
+        # observation (we'll trust the latest snapshot).
+        if i < n - 1:
+            post_window = keys[i + 1 : i + 1 + _MIN_POST_STABLE]
+            if not all(k == cur_key for k in post_window if k is not None):
+                continue
+
+        # Guard 3b: no revert. If the old size reappears anywhere AFTER i in
+        # the lookback window, this is flapping, not a one-way change.
+        if any(k == prev_key for k in keys[i + 1 :] if k is not None):
+            continue
+
+        # Guard 4: new size unseen before i. If the new size already appeared
+        # earlier in the series, this is oscillation.
+        if any(k == cur_key for k in keys[:i] if k is not None):
+            continue
+
+        # Compute deltas and classify.
+        size_pct = ((new_base - old_base) / old_base) * 100.0
         change_type = None
+        if size_pct <= -SIZE_DECREASE_THRESHOLD:
+            change_type = "size_decrease"
 
-        # Check size decrease
-        if old_size and new_size and old_size > 0:
-            old_base, old_base_unit = convert_to_base(float(old_size), old_unit)
-            new_base, new_base_unit = convert_to_base(float(new_size), new_unit)
-
-            if old_base_unit == new_base_unit and old_base > 0:
-                size_pct = ((new_base - old_base) / old_base) * 100.0
-                if size_pct <= -SIZE_DECREASE_THRESHOLD:
-                    change_type = "size_decrease"
-
-        # Check price-per-unit increase (only if size didn't change)
-        if change_type is None and old_ppu and new_ppu and old_ppu > 0:
+        # Price-per-unit increase fallback (only if no size change qualified).
+        old_ppu = prev.get("price_per_unit")
+        new_ppu = cur.get("price_per_unit")
+        if change_type is None and old_ppu and new_ppu and float(old_ppu) > 0:
             ppu_pct = ((float(new_ppu) - float(old_ppu)) / float(old_ppu)) * 100.0
             if ppu_pct >= PPU_INCREASE_THRESHOLD:
                 change_type = "price_hike"
@@ -75,19 +182,24 @@ def detect_changes(observations):
         if change_type is None:
             continue
 
+        old_size = prev.get("size")
+        new_size = cur.get("size")
+        old_price = prev.get("price")
+        new_price = cur.get("price")
+
         changes.append({
             "change_type": change_type,
-            "old_date": str(old["observed_date"]),
-            "new_date": str(new["observed_date"]),
+            "old_date": str(prev["observed_date"]),
+            "new_date": str(cur["observed_date"]),
             "old_size": float(old_size) if old_size else None,
-            "old_size_unit": old_unit,
+            "old_size_unit": prev.get("size_unit", ""),
             "new_size": float(new_size) if new_size else None,
-            "new_size_unit": new_unit,
+            "new_size_unit": cur.get("size_unit", ""),
             "old_price": float(old_price) if old_price else None,
             "new_price": float(new_price) if new_price else None,
             "old_ppu": float(old_ppu) if old_ppu else None,
             "new_ppu": float(new_ppu) if new_ppu else None,
-            "store_location": old.get("store_location", ""),
+            "store_location": prev.get("store_location", ""),
         })
 
     return changes
@@ -198,6 +310,13 @@ def main():
         if store_count > 1:
             desc += " (confirmed at %d stores)" % store_count
 
+        # Title + source_url so the admin claims UI can render a useful card.
+        # See web/src/app/admin/claims/page.tsx (title falls back to "Untitled"
+        # if absent, link falls back to "#" if source_url is null).
+        title = "%s %s" % (brand or "", product_name or "")
+        title = title.strip() or ("Kroger UPC %s" % upc if upc else "Kroger change")
+        source_url = "https://www.kroger.com/p/%s" % upc if upc else None
+
         if args.dry_run:
             log.info("[DRY RUN] %s", desc)
             created += 1
@@ -208,6 +327,7 @@ def main():
             variant_id, change["old_date"], change["new_date"],
         )
         raw_payload = {
+            "title": title,
             "variant_id": variant_id,
             "upc": upc,
             "brand": brand,
@@ -226,6 +346,7 @@ def main():
 
         raw_item_id = upsert_raw_item(
             SOURCE_TYPE, source_id, raw_payload, SCRAPER_VERSION,
+            source_url=source_url,
         )
         if raw_item_id is None:
             skipped += 1

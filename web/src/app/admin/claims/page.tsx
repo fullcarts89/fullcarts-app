@@ -104,6 +104,9 @@ function SourceBadge({ sourceType, sourceName }: { sourceType: string; sourceNam
     news: { label: sourceName || "News", color: "bg-[var(--blue-bg)] text-[var(--blue-base)] border-[var(--blue-border)]" },
     gdelt: { label: sourceName || "GDELT", color: "bg-purple-500/10 text-purple-400 border-purple-500/20" },
     usda_nutrition: { label: "USDA", color: "bg-[var(--green-bg)] text-[var(--green-base)] border-[var(--green-border)]" },
+    kroger_change: { label: "Kroger", color: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20" },
+    usda_size_change: { label: "USDA", color: "bg-[var(--green-bg)] text-[var(--green-base)] border-[var(--green-border)]" },
+    openfoodfacts: { label: "OFF", color: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20" },
   };
   const c = config[sourceType] || { label: sourceType, color: "bg-[var(--bg-tertiary)] text-[var(--text-secondary)] border-[var(--bg-tertiary)]" };
   return (
@@ -132,6 +135,8 @@ function formatDate(raw: RawItem | undefined): string | null {
   }
   // GDELT: seendate
   if (p.seendate) return p.seendate.slice(0, 10);
+  // Kroger analyzer claims: new_date is the observation date of the change
+  if (p.new_date) return String(p.new_date).slice(0, 10);
   return null;
 }
 
@@ -147,13 +152,14 @@ const CONFIDENCE_TIERS = [
 export default async function ClaimsReviewPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; status?: string; conf?: string; category?: string }>;
+  searchParams: Promise<{ page?: string; status?: string; conf?: string; category?: string; source?: string }>;
 }) {
   const params = await searchParams;
   const page = parseInt(params.page || "1", 10);
   const statusFilter = params.status || "pending";
   const confFilter = params.conf || "all";
   const categoryFilter = params.category || "";
+  const sourceFilter = params.source || "";
   const perPage = 20;
   const offset = (page - 1) * perPage;
 
@@ -164,7 +170,7 @@ export default async function ClaimsReviewPage({
   // Pipeline stats queries (run in parallel with claims query)
   const [statusCountsRaw, dailyStatsRes, latestClaimRes] = await Promise.all([
     Promise.all(
-      (["pending", "approved", "matched", "evidence", "discarded"] as const).map((s) =>
+      (["pending", "matched", "evidence", "unmatched", "discarded"] as const).map((s) =>
         supabase.from("claims").select("*", { count: "exact", head: true }).eq("status", s)
       )
     ),
@@ -178,9 +184,9 @@ export default async function ClaimsReviewPage({
 
   const statusCounts = {
     pending: statusCountsRaw[0].count ?? 0,
-    approved: statusCountsRaw[1].count ?? 0,
-    matched: statusCountsRaw[2].count ?? 0,
-    evidence: statusCountsRaw[3].count ?? 0,
+    matched: statusCountsRaw[1].count ?? 0,
+    evidence: statusCountsRaw[2].count ?? 0,
+    unmatched: statusCountsRaw[3].count ?? 0,
     discarded: statusCountsRaw[4].count ?? 0,
   };
 
@@ -215,12 +221,25 @@ export default async function ClaimsReviewPage({
           ? `${hoursAgo}h ago`
           : `${Math.floor(hoursAgo / 24)}d ago`;
 
-  // Build query with filters
+  // Build query with filters. When a source filter is active we INNER JOIN
+  // raw_items so PostgREST will filter the claim rows by raw_items.source_type.
+  const baseSelect =
+    "id,brand,product_name,category,old_size,old_size_unit,new_size,new_size_unit," +
+    "old_price,new_price,change_description,confidence,status,observed_date," +
+    "raw_item_id,upc,evidence_tags,image_storage_path";
+  const selectExpr = sourceFilter
+    ? `${baseSelect},raw_items!inner(source_type)`
+    : baseSelect;
+
   let query = supabase
     .from("claims")
-    .select("id,brand,product_name,category,old_size,old_size_unit,new_size,new_size_unit,old_price,new_price,change_description,confidence,status,observed_date,raw_item_id,upc,evidence_tags,image_storage_path", { count: "exact" })
+    .select(selectExpr, { count: "exact" })
     .eq("status", statusFilter)
     .order("confidence->overall" as any, { ascending: false });
+
+  if (sourceFilter) {
+    query = query.eq("raw_items.source_type" as any, sourceFilter);
+  }
 
   if (confFilter !== "all") {
     query = query
@@ -256,10 +275,10 @@ export default async function ClaimsReviewPage({
         </h1>
         {/* Status tabs */}
         <div className="flex gap-3">
-          {["pending", "approved", "matched", "evidence", "discarded"].map((s) => (
+          {["pending", "matched", "evidence", "unmatched", "discarded"].map((s) => (
             <a
               key={s}
-              href={`/admin/claims?status=${s}&page=1${confFilter !== "all" ? `&conf=${confFilter}` : ""}${categoryFilter ? `&category=${categoryFilter}` : ""}`}
+              href={`/admin/claims?status=${s}&page=1${confFilter !== "all" ? `&conf=${confFilter}` : ""}${categoryFilter ? `&category=${categoryFilter}` : ""}${sourceFilter ? `&source=${encodeURIComponent(sourceFilter)}` : ""}`}
               className={`px-3 py-1.5 text-sm rounded-md border transition-colors ${
                 statusFilter === s
                   ? "bg-[var(--bg-tertiary)] border-[var(--text-tertiary)] text-[var(--text-primary)]"
@@ -274,7 +293,7 @@ export default async function ClaimsReviewPage({
           </span>
         </div>
         {/* Confidence + Category filters */}
-        <ClaimFilters status={statusFilter} conf={confFilter} category={categoryFilter} />
+        <ClaimFilters status={statusFilter} conf={confFilter} category={categoryFilter} source={sourceFilter} />
       </header>
 
       <PipelineStats
@@ -292,7 +311,10 @@ export default async function ClaimsReviewPage({
           const permalink = payload?.permalink
             ? `https://www.reddit.com${payload.permalink}`
             : raw?.source_url;
-          const title = payload?.title || "Untitled";
+          const title =
+            payload?.title ||
+            [claim.brand, claim.product_name].filter(Boolean).join(" ") ||
+            "Untitled";
 
           return (
             <article
