@@ -11,6 +11,7 @@ export interface BrandIndexRow {
   last_detected: string;
   thumbnail: string | null;
   worst_delta_pct: string | null;
+  primary_category: string | null;
 }
 
 /** Brand + a canonical rank assigned server-side (rank = position in
