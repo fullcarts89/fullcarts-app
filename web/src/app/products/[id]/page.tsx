@@ -1,0 +1,213 @@
+import { notFound } from "next/navigation";
+import { createAdminClient } from "@/lib/supabase/admin";
+import SiteNav from "@/components/SiteNav";
+import ProductHero from "./_components/ProductHero";
+import SizeTrajectory from "./_components/SizeTrajectory";
+import ChangeHistory from "./_components/ChangeHistory";
+import RetailersGrid from "./_components/RetailersGrid";
+import RelatedProducts from "./_components/RelatedProducts";
+import {
+  buildTrajectory,
+  eventsByDateDesc,
+  num,
+  totalEvidenceCount,
+} from "./lib";
+import type {
+  EventRow,
+  PackVariant,
+  ProductEntity,
+  RelatedProduct,
+  VariantObservation,
+} from "./types";
+import styles from "./styles.module.css";
+
+// ISR: per-product pages regenerate at most once per hour in the
+// background. Same cadence as /brands/[name].
+export const revalidate = 3600;
+
+// Pre-build the top 30 products at deploy time by event count;
+// everything else renders on first visit and gets cached.
+export async function generateStaticParams() {
+  const sb = createAdminClient();
+  const { data } = await sb
+    .from("shrinkflation_leaderboard")
+    .select("entity_id")
+    .order("shrink_count", { ascending: false })
+    .limit(30);
+  return (data ?? [])
+    .filter((r) => r.entity_id)
+    .map((r) => ({ id: String(r.entity_id) }));
+}
+
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
+async function loadProduct(id: string): Promise<{
+  entity: ProductEntity;
+  events: EventRow[];
+  variants: PackVariant[];
+  observations: VariantObservation[];
+  related: RelatedProduct[];
+} | null> {
+  const sb = createAdminClient();
+
+  const { data: entity } = await sb
+    .from("product_entities")
+    .select("id, brand, canonical_name, category, image_url, manufacturer")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (!entity) return null;
+
+  const [eventsRes, variantsRes, relatedRes] = await Promise.all([
+    sb
+      .from("event_evidence_summary")
+      .select("*")
+      .eq("entity_id", entity.id)
+      .order("observed_date", { ascending: false }),
+    sb
+      .from("pack_variants")
+      .select("id, variant_name, current_size, size_unit, upc, is_active")
+      .eq("entity_id", entity.id),
+    sb
+      .from("shrinkflation_leaderboard")
+      .select("entity_id, name, image_url, shrink_count, cumulative_shrink_pct")
+      .eq("brand", entity.brand)
+      .neq("entity_id", entity.id)
+      .order("shrink_count", { ascending: false })
+      .limit(8),
+  ]);
+
+  const variants = (variantsRes.data ?? []) as PackVariant[];
+
+  // Pull observations for these variants in a second round-trip — the
+  // brand page proved this is cheap enough at per-page scale to skip
+  // a denormalised view. Skip the query entirely when no variants
+  // exist (no observations possible).
+  let observations: VariantObservation[] = [];
+  if (variants.length > 0) {
+    const { data } = await sb
+      .from("variant_observations")
+      .select("variant_id, observed_date, source_type, size, size_unit, price, retailer")
+      .in("variant_id", variants.map((v) => v.id));
+    observations = (data ?? []) as VariantObservation[];
+  }
+
+  const related: RelatedProduct[] = ((relatedRes.data ?? []) as Array<{
+    entity_id: string;
+    name: string;
+    image_url: string | null;
+    shrink_count: number;
+    cumulative_shrink_pct: string | number | null;
+  }>).map((r) => ({
+    entity_id: r.entity_id,
+    canonical_name: r.name,
+    image_url: r.image_url,
+    event_count: r.shrink_count,
+    worst_delta_pct: num(r.cumulative_shrink_pct),
+  }));
+
+  return {
+    entity: entity as ProductEntity,
+    events: (eventsRes.data ?? []) as EventRow[],
+    variants,
+    observations,
+    related,
+  };
+}
+
+export async function generateMetadata({ params }: PageProps) {
+  const { id } = await params;
+  const data = await loadProduct(id);
+  if (!data) return { title: "Product not found · FullCarts" };
+  const { entity, events } = data;
+  const ev = events.length;
+  return {
+    title: `${entity.brand} ${entity.canonical_name} — ${ev} documented shrink${
+      ev === 1 ? "" : "s"
+    } · FullCarts`,
+    description: `Size-over-time history, every documented event, and full evidence trail for ${entity.brand} ${entity.canonical_name}.`,
+  };
+}
+
+export default async function ProductPage({ params }: PageProps) {
+  const { id } = await params;
+  const data = await loadProduct(id);
+  if (!data) notFound();
+
+  const { entity, events, variants, observations, related } = data;
+  const eventsDesc = eventsByDateDesc(events);
+  const trajectory = buildTrajectory(events);
+  const evidenceTotal = totalEvidenceCount(events);
+  const unit = events[0]?.size_unit || "";
+
+  return (
+    <>
+      <SiteNav />
+      <div className={styles.container}>
+        <div className={styles.breadcrumb}>
+          <a href="/brands">Brands</a>
+          <span className={styles.sep}>/</span>
+          <a href={`/brands/${encodeURIComponent(entity.brand.toLowerCase())}`}>
+            {entity.brand}
+          </a>
+          <span className={styles.sep}>/</span>
+          <span className={styles.current}>{entity.canonical_name}</span>
+        </div>
+
+        <ProductHero entity={entity} events={events} variants={variants} />
+
+        <section className={styles.block}>
+          <div className={styles["section-head"]}>
+            <h2>Size trajectory</h2>
+            {trajectory.length >= 2 && (
+              <div className={styles.meta}>
+                {trajectory[0].size}
+                {unit} → {trajectory[trajectory.length - 1].size}
+                {unit} across {events.length} event
+                {events.length === 1 ? "" : "s"}
+              </div>
+            )}
+          </div>
+          <SizeTrajectory steps={trajectory} unit={unit} />
+        </section>
+
+        <section className={styles.block}>
+          <div className={styles["section-head"]}>
+            <h2>Change history</h2>
+            <div className={styles.meta}>
+              {events.length} event{events.length === 1 ? "" : "s"} ·{" "}
+              {evidenceTotal} total source
+              {evidenceTotal === 1 ? "" : "s"} · click a row for sources
+            </div>
+          </div>
+          <ChangeHistory events={eventsDesc} />
+        </section>
+
+        <section className={styles.block}>
+          <div className={styles["section-head"]}>
+            <h2>Where it&apos;s sold</h2>
+            <div className={styles.meta}>
+              {variants.length} variant{variants.length === 1 ? "" : "s"} ·
+              monitored via retailer APIs
+            </div>
+          </div>
+          <RetailersGrid variants={variants} observations={observations} />
+        </section>
+
+        {related.length > 0 && (
+          <section className={styles.block}>
+            <div className={styles["section-head"]}>
+              <h2>Other {entity.brand} products we track</h2>
+              <div className={styles.meta}>
+                Top {Math.min(related.length, 8)} by event count
+              </div>
+            </div>
+            <RelatedProducts brand={entity.brand} products={related} />
+          </section>
+        )}
+      </div>
+    </>
+  );
+}

@@ -26,6 +26,14 @@
 
   --amber-base: #f59e0b;
   --amber-bg: rgba(245, 158, 11, 0.1);
+  --amber-border: rgba(245, 158, 11, 0.2);
+
+  --purple-base: #a855f7;
+  --purple-bg: rgba(168, 85, 247, 0.1);
+  --purple-border: rgba(168, 85, 247, 0.2);
+
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --border-medium: rgba(255, 255, 255, 0.2);
 
   --background: var(--bg-primary);
   --foreground: var(--text-primary);
