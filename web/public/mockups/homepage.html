@@ -133,7 +133,18 @@ section.block { padding: 64px 0; border-top: 1px solid var(--border-subtle); }
 .rb-delta { font-family: var(--font-mono); font-weight: 700; font-size: 16px; color: var(--red-base); }
 .rb-sizes { font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); }
 
-/* SKIMPFLATION TEASER */
+/* BEYOND-SIZE TAG GRID */
+.tag-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.tag-card { background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 22px 24px; display: flex; flex-direction: column; gap: 14px; text-decoration: none; color: inherit; transition: border-color .15s, transform .15s; cursor: pointer; }
+.tag-card:hover { border-color: var(--red-border); transform: translateY(-2px); }
+.tag-card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.tag-card-name { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-primary); font-weight: 700; }
+.tag-card-count { font-family: var(--font-mono); font-size: 24px; font-weight: 700; color: var(--red-base); line-height: 1; }
+.tag-card-desc { font-family: var(--font-sans); font-size: 13px; color: var(--text-secondary); line-height: 1.5; flex: 1; }
+.tag-card-cta { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); display: inline-flex; align-items: center; gap: 4px; padding-top: 8px; border-top: 1px solid var(--border-subtle); }
+.tag-card:hover .tag-card-cta { color: var(--red-base); }
+
+/* (Legacy) SKIMPFLATION TEASER — superseded by tag-grid, kept for reference */
 .skimp-teaser { background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); border: 1px solid var(--border-subtle); border-left: 3px solid var(--amber-base); padding: 32px; display: grid; grid-template-columns: 1fr 1.2fr; gap: 32px; align-items: center; }
 .skimp-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--amber-base); margin-bottom: 12px; }
 .skimp-head h3 { font-family: var(--font-headline); font-weight: 700; font-size: 30px; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 16px; }
@@ -413,42 +424,69 @@ footer { border-top: 1px solid var(--border-subtle); margin-top: 64px; padding: 
     </div>
   </section>
 
-  <!-- SKIMPFLATION TEASER -->
+  <!-- BEYOND SIZE — tag-driven evidence channels -->
   <section class="block">
-    <div class="skimp-teaser">
-      <div class="skimp-head">
-        <div class="skimp-eyebrow">Beyond size</div>
-        <h3>Sometimes the box stays the same — but the food doesn&rsquo;t.</h3>
-        <p>
-          We track <strong>254 products</strong> where the package size didn&rsquo;t
-          change, but the nutrition did: less protein, less fiber, more sugar,
-          more sodium. We call it <em>skimpflation</em>.
-        </p>
-        <a class="skimp-cta" href="/insights#skimpflation">See the skimpflation leaderboard <span class="arrow">→</span></a>
-      </div>
-      <div class="skimp-products">
-        <div class="skimp-row">
-          <div class="skimp-row-name">
-            <span class="brand">Kid Cuisine</span>
-            <span class="prod">All American Chicken Breast Nuggets</span>
-          </div>
-          <span class="skimp-score">112.9</span>
+    <div class="section-head">
+      <h2>Beyond size shrinks</h2>
+      <div class="meta">Shrinkflation is one signal · here&rsquo;s the rest of what we tag</div>
+    </div>
+    <div class="tag-grid">
+      <a class="tag-card" href="/evidence/so-smol">
+        <div class="tag-card-head">
+          <span class="tag-card-name">So Smol</span>
+          <span class="tag-card-count">188</span>
         </div>
-        <div class="skimp-row">
-          <div class="skimp-row-name">
-            <span class="brand">Marie Callender&rsquo;s</span>
-            <span class="prod">Chicken Teriyaki</span>
-          </div>
-          <span class="skimp-score">99.2</span>
+        <div class="tag-card-desc">Comically small versions of things you remember being big.</div>
+        <span class="tag-card-cta">Browse claims →</span>
+      </a>
+      <a class="tag-card" href="/evidence/slack-fill">
+        <div class="tag-card-head">
+          <span class="tag-card-name">Slack Fill</span>
+          <span class="tag-card-count">180</span>
         </div>
-        <div class="skimp-row">
-          <div class="skimp-row-name">
-            <span class="brand">Marie Callender&rsquo;s</span>
-            <span class="prod">Chicken Pot Pie Style Soup</span>
-          </div>
-          <span class="skimp-score">91.5</span>
+        <div class="tag-card-desc">Same package, visible empty space, less product than the box implies.</div>
+        <span class="tag-card-cta">Browse claims →</span>
+      </a>
+      <a class="tag-card" href="/evidence/spot-the-difference">
+        <div class="tag-card-head">
+          <span class="tag-card-name">Spot the Difference</span>
+          <span class="tag-card-count">141</span>
         </div>
-      </div>
+        <div class="tag-card-desc">Side-by-side visual proof — old packaging next to new.</div>
+        <span class="tag-card-cta">Browse claims →</span>
+      </a>
+      <a class="tag-card" href="/evidence/skimpflation">
+        <div class="tag-card-head">
+          <span class="tag-card-name">Skimpflation</span>
+          <span class="tag-card-count">110</span>
+        </div>
+        <div class="tag-card-desc">Same package, worse ingredients — less protein, more sugar, more sodium.</div>
+        <span class="tag-card-cta">Browse claims →</span>
+      </a>
+      <a class="tag-card" href="/evidence/paper-thin">
+        <div class="tag-card-head">
+          <span class="tag-card-name">Paper Thin</span>
+          <span class="tag-card-count">46</span>
+        </div>
+        <div class="tag-card-desc">Quality drops — thinner toilet paper, weaker bags, cheaper materials.</div>
+        <span class="tag-card-cta">Browse claims →</span>
+      </a>
+      <a class="tag-card" href="/evidence/not-as-advertised">
+        <div class="tag-card-head">
+          <span class="tag-card-name">Not as Advertised</span>
+          <span class="tag-card-count">12</span>
+        </div>
+        <div class="tag-card-desc">Weight or count on the label doesn&rsquo;t match what&rsquo;s inside.</div>
+        <span class="tag-card-cta">Browse claims →</span>
+      </a>
+      <a class="tag-card" href="/evidence/stretchflation">
+        <div class="tag-card-head">
+          <span class="tag-card-name">Stretchflation</span>
+          <span class="tag-card-count">11</span>
+        </div>
+        <div class="tag-card-desc">Package looks bigger, but the product stays the same — or shrinks.</div>
+        <span class="tag-card-cta">Browse claims →</span>
+      </a>
     </div>
   </section>
 
