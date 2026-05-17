@@ -108,11 +108,31 @@ Cursor state persists in `scraper_state` table. Config lives in `pipeline/config
 
 ### Database migrations
 
-SQL migrations in `db/migrations/` numbered `001_` through `050_`. Deploy manually via Supabase SQL Editor (or via the Management API with a PAT). Views in `043_rewrite_views_new_schema.sql` and `049_insight_views.sql` power the frontend. Migration `050_event_dedup.sql` added `published_changes.evidence_count` + a dedup index.
+SQL migrations in `db/migrations/` numbered `001_` through `053_`. Deploy manually via Supabase SQL Editor or via the Management API with a PAT (`POST /v1/projects/{ref}/database/query`; **set a `User-Agent` header** or Cloudflare returns 1010). Views in `043_rewrite_views_new_schema.sql` and `049_insight_views.sql` plus newer per-page views power the frontend. Notable recent additions:
+
+- `050_event_dedup.sql` — `published_changes.evidence_count` + dedup index on `(entity_id, size_before, size_after)`
+- `051_event_evidence_summary_view.sql` — `event_evidence_summary` view, used by `/brands/[name]` evidence trail
+- `052_brand_index_view.sql` + `053_brand_index_primary_category.sql` — `brand_index` view (1,167 rows), used by `/brands` index page; includes per-brand thumbnail, worst delta, primary category
+
+### Web routes (Next.js App Router)
+
+| Route | Type | Notes |
+|---|---|---|
+| `/` | Static + ISR 1h | Live homepage. Hero, counters, "Just documented" sidecar, methodology, Brand of the Week, Most Active, Recent Shrinks, 7-tag evidence grid. |
+| `/brands` | Static + ISR 1h | All 1,167 brands. Severity tiers + category chips + search. Pre-builds at deploy. |
+| `/brands/[name]` | SSG + ISR 1h | Per-brand scorecard. 20 brands pre-built; rest lazy. Includes TimelineExplorer (clickable year chart + cap-to-5-per-year events). |
+| `/products`, `/insights`, `/about` | Stubs | "Coming soon" content pages — see Phase 2B/C/D in `docs/plans/2026-05-12-data-to-insights-plan.md`. |
+| `/admin/*` | SSR | Internal admin tool (claim review). Has its own nav, not the public SiteNav. |
+
+Shared nav lives at `web/src/components/SiteNav.tsx` (client component, uses `usePathname` for active detection). All public routes render `<SiteNav />` once at the top of their JSX.
 
 ### Design reference
 
-`web/public/mockups/brands-cadbury.html` is the locked visual reference for the future `/brands/[name]` Next.js route. Uses the existing `FULLCARTS_DESIGN_EXPORT.md` system (dark graphite + Space Grotesk + JetBrains Mono + alert red). Deploys to `/mockups/brands-cadbury.html` once Vercel picks up the merge.
+Visual targets are committed alongside the routes that realised them:
+- `web/public/mockups/brands-cadbury.html` → `/brands/[name]`
+- `web/public/mockups/homepage.html` → `/`
+
+Both use the `FULLCARTS_DESIGN_EXPORT.md` system (dark graphite + Space Grotesk + JetBrains Mono + alert red). New pages should match this aesthetic. Mockups stay in `web/public/mockups/` as historical references — useful when diffing the real page against the originally-approved design.
 
 ### GitHub Actions
 
