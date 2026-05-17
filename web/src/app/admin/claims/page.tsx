@@ -47,6 +47,8 @@ type RawItem = {
     created_utc?: number;
     preview?: { images?: Array<{ source?: { url?: string } }> };
     media_metadata?: Record<string, { s?: { u?: string } }>;
+    // Kroger analyzer raw_items: written by analyze_kroger_changes.py
+    new_date?: string;
   };
 };
 
