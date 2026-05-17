@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FullCarts — Look it up. We have receipts.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0b0d; --bg-secondary: #161719; --bg-tertiary: #2a2b2d; --bg-hover: #1a1b1d;
+  --text-primary: #f5f4f0; --text-secondary: #a0a0a5; --text-tertiary: #656569;
+  --red-base: #dc2626; --red-hover: #ef4444; --red-bg: rgba(220,38,38,.1); --red-border: rgba(220,38,38,.2);
+  --green-base: #10b981; --green-bg: rgba(16,185,129,.1); --green-border: rgba(16,185,129,.2);
+  --blue-base: #3b82f6; --blue-bg: rgba(59,130,246,.1); --blue-border: rgba(59,130,246,.2);
+  --amber-base: #f59e0b; --amber-bg: rgba(245,158,11,.1);
+  --border-subtle: rgba(255,255,255,.1); --border-medium: rgba(255,255,255,.2);
+  --font-headline: 'Space Grotesk', system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-sans); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+.bg-grid { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.03; background-image: linear-gradient(var(--text-tertiary) 1px, transparent 1px), linear-gradient(90deg, var(--text-tertiary) 1px, transparent 1px); background-size: 60px 60px; }
+
+nav { position: sticky; top: 0; z-index: 50; background: rgba(10,11,13,.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-subtle); }
+.nav-inner { max-width: 1280px; margin: 0 auto; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
+.logo { font-family: var(--font-headline); font-weight: 700; font-size: 20px; letter-spacing: -0.02em; text-decoration: none; color: var(--text-primary); }
+.logo span { color: var(--red-base); }
+.nav-links { display: flex; gap: 32px; font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; }
+.nav-links a { color: var(--text-secondary); text-decoration: none; transition: color .15s; }
+.nav-links a:hover, .nav-links a.active { color: var(--text-primary); }
+.nav-links a.active { border-bottom: 1px solid var(--red-base); padding-bottom: 4px; }
+.nav-links a.stub { color: var(--text-tertiary); font-style: italic; cursor: not-allowed; }
+.nav-links a.stub::after { content: '·'; margin-left: 4px; color: var(--amber-base); }
+
+.container { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+
+/* HERO */
+.hero { padding: 80px 0 64px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 48px; align-items: start; }
+.hero-mark { display: inline-flex; align-items: center; gap: 8px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 999px; padding: 6px 16px; font-family: var(--font-mono); font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; color: var(--red-base); margin-bottom: 24px; }
+.hero-mark::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--red-base); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:0.3 } }
+.hero h1 { font-family: var(--font-headline); font-weight: 700; font-size: clamp(48px, 7vw, 84px); letter-spacing: -0.03em; line-height: 0.98; margin-bottom: 24px; }
+.hero-mission { font-size: 18px; color: var(--text-secondary); max-width: 580px; margin-bottom: 36px; line-height: 1.5; }
+.hero-mission strong { color: var(--text-primary); font-weight: 600; }
+.search-wrap { position: relative; max-width: 580px; }
+.search-wrap input { width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-medium); color: var(--text-primary); font-family: var(--font-mono); font-size: 14px; padding: 18px 56px 18px 20px; letter-spacing: 0.02em; outline: none; transition: border-color .15s; }
+.search-wrap input:focus { border-color: var(--red-base); }
+.search-wrap .search-icon { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--text-tertiary); font-family: var(--font-mono); font-size: 18px; }
+.search-hint { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); margin-top: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+.counter-strip { margin-top: 36px; display: flex; gap: 32px; padding-top: 32px; border-top: 1px solid var(--border-subtle); flex-wrap: wrap; }
+.ctr { display: flex; flex-direction: column; gap: 4px; }
+.ctr-val { font-family: var(--font-mono); font-size: 28px; font-weight: 700; color: var(--red-base); line-height: 1; }
+.ctr-lbl { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); }
+
+/* JUST DOCUMENTED (side card) */
+.just-doc { background: var(--bg-secondary); border: 1px solid var(--border-subtle); display: flex; flex-direction: column; overflow: hidden; }
+.just-doc-tag { background: var(--red-bg); color: var(--red-base); padding: 10px 16px; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; font-weight: 700; border-bottom: 1px solid var(--red-border); display: flex; align-items: center; gap: 8px; }
+.just-doc-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--red-base); animation: pulse 2s infinite; }
+.just-doc-img { aspect-ratio: 4/3; background: var(--bg-tertiary); position: relative; }
+.just-doc-img img { width: 100%; height: 100%; object-fit: cover; }
+.just-doc-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; }
+.just-doc-brand { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
+.just-doc-name { font-family: var(--font-headline); font-weight: 600; font-size: 18px; line-height: 1.2; color: var(--text-primary); }
+.just-doc-stat { display: flex; gap: 12px; align-items: baseline; padding-top: 6px; }
+.just-doc-delta { font-family: var(--font-mono); font-weight: 700; font-size: 22px; color: var(--red-base); }
+.just-doc-sizes { font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); }
+.just-doc-foot { padding: 12px 18px 16px; font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; }
+.just-doc-foot a { color: var(--red-base); text-decoration: none; }
+
+/* METHODOLOGY TRUST STRIP */
+.methodology { padding: 48px 0; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); display: grid; grid-template-columns: 320px 1fr; gap: 48px; align-items: start; }
+.meth-head { display: flex; flex-direction: column; gap: 8px; }
+.meth-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-tertiary); }
+.meth-head h2 { font-family: var(--font-headline); font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+.meth-body { font-size: 15px; line-height: 1.65; color: var(--text-secondary); }
+.meth-body strong { color: var(--text-primary); font-weight: 600; }
+.meth-sources { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.meth-src { font-family: var(--font-mono); font-size: 11px; padding: 6px 12px; border: 1px solid var(--border-subtle); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; }
+.meth-cta { display: inline-flex; align-items: center; gap: 6px; margin-top: 20px; font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--red-base); text-decoration: none; padding-top: 4px; }
+.meth-cta:hover { color: var(--red-hover); }
+.meth-cta .arrow { transition: transform .15s; display: inline-block; }
+.meth-cta:hover .arrow { transform: translateX(4px); }
+
+/* GENERIC SECTION */
+section.block { padding: 64px 0; border-top: 1px solid var(--border-subtle); }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 32px; gap: 16px; flex-wrap: wrap; }
+.section-head h2 { font-family: var(--font-headline); font-weight: 700; font-size: 32px; letter-spacing: -0.02em; }
+.section-head .meta { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
+.section-head .meta a { color: var(--red-base); text-decoration: none; }
+.section-head .meta a:hover { color: var(--red-hover); }
+
+/* BRAND OF THE WEEK */
+.botw { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 0; overflow: hidden; align-items: stretch; }
+.botw-img { background: var(--bg-tertiary); aspect-ratio: 5/4; overflow: hidden; }
+.botw-img img { width: 100%; height: 100%; object-fit: cover; }
+.botw-body { padding: 32px; display: flex; flex-direction: column; gap: 16px; justify-content: center; }
+.botw-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--amber-base); display: flex; align-items: center; gap: 8px; }
+.botw-eyebrow::before { content: '★'; }
+.botw h3 { font-family: var(--font-headline); font-weight: 700; font-size: 48px; letter-spacing: -0.02em; line-height: 1; }
+.botw-reason { font-size: 15px; color: var(--text-secondary); line-height: 1.5; }
+.botw-stats { display: flex; gap: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
+.botw-stat { display: flex; flex-direction: column; gap: 2px; }
+.botw-stat .v { font-family: var(--font-mono); font-size: 22px; font-weight: 700; color: var(--red-base); }
+.botw-stat .l { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
+.botw-cta { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--red-base); text-decoration: none; padding-top: 8px; display: inline-flex; align-items: center; gap: 6px; }
+.botw-cta .arrow { transition: transform .15s; display: inline-block; }
+.botw-cta:hover .arrow { transform: translateX(4px); }
+
+/* ACTIVE THIS WEEK */
+.active-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+.active-card { background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 18px; text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 8px; transition: border-color .15s, transform .15s; }
+.active-card:hover { border-color: var(--red-border); transform: translateY(-2px); }
+.active-rank { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); }
+.active-brand { font-family: var(--font-headline); font-weight: 700; font-size: 22px; letter-spacing: -0.01em; color: var(--text-primary); line-height: 1.1; }
+.active-recent { font-family: var(--font-mono); font-size: 13px; color: var(--red-base); font-weight: 700; }
+.active-foot { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); padding-top: 6px; border-top: 1px solid var(--border-subtle); margin-top: 4px; }
+
+/* RECENT BIGGEST SHRINKS */
+.recent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+.rb-card { background: var(--bg-secondary); border: 1px solid var(--border-subtle); overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: inherit; transition: border-color .15s, transform .15s; }
+.rb-card:hover { border-color: var(--red-border); transform: translateY(-2px); }
+.rb-img { aspect-ratio: 4/3; background: var(--bg-tertiary); overflow: hidden; }
+.rb-img img { width: 100%; height: 100%; object-fit: cover; }
+.rb-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+.rb-brand { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
+.rb-name { font-family: var(--font-headline); font-weight: 600; font-size: 14px; color: var(--text-primary); line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 34px; }
+.rb-stat { display: flex; justify-content: space-between; align-items: baseline; padding-top: 6px; border-top: 1px solid var(--border-subtle); margin-top: 4px; }
+.rb-delta { font-family: var(--font-mono); font-weight: 700; font-size: 16px; color: var(--red-base); }
+.rb-sizes { font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary); }
+
+/* BEYOND-SIZE TAG GRID */
+.tag-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.tag-card { background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 22px 24px; display: flex; flex-direction: column; gap: 14px; text-decoration: none; color: inherit; transition: border-color .15s, transform .15s; cursor: pointer; }
+.tag-card:hover { border-color: var(--red-border); transform: translateY(-2px); }
+.tag-card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.tag-card-name { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-primary); font-weight: 700; }
+.tag-card-count { font-family: var(--font-mono); font-size: 24px; font-weight: 700; color: var(--red-base); line-height: 1; }
+.tag-card-desc { font-family: var(--font-sans); font-size: 13px; color: var(--text-secondary); line-height: 1.5; flex: 1; }
+.tag-card-cta { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); display: inline-flex; align-items: center; gap: 4px; padding-top: 8px; border-top: 1px solid var(--border-subtle); }
+.tag-card:hover .tag-card-cta { color: var(--red-base); }
+
+/* (Legacy) SKIMPFLATION TEASER — superseded by tag-grid, kept for reference */
+.skimp-teaser { background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); border: 1px solid var(--border-subtle); border-left: 3px solid var(--amber-base); padding: 32px; display: grid; grid-template-columns: 1fr 1.2fr; gap: 32px; align-items: center; }
+.skimp-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--amber-base); margin-bottom: 12px; }
+.skimp-head h3 { font-family: var(--font-headline); font-weight: 700; font-size: 30px; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 16px; }
+.skimp-head p { color: var(--text-secondary); font-size: 15px; line-height: 1.55; margin-bottom: 20px; }
+.skimp-cta { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--amber-base); text-decoration: none; }
+.skimp-cta:hover { filter: brightness(1.2); }
+.skimp-cta .arrow { transition: transform .15s; display: inline-block; }
+.skimp-cta:hover .arrow { transform: translateX(4px); }
+.skimp-products { display: flex; flex-direction: column; gap: 1px; background: var(--border-subtle); border: 1px solid var(--border-subtle); }
+.skimp-row { background: var(--bg-secondary); padding: 14px 16px; display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; }
+.skimp-row-name { display: flex; flex-direction: column; gap: 2px; }
+.skimp-row-name .brand { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); }
+.skimp-row-name .prod { font-family: var(--font-sans); font-size: 13px; color: var(--text-primary); line-height: 1.25; }
+.skimp-score { font-family: var(--font-mono); font-weight: 700; font-size: 14px; color: var(--amber-base); padding: 4px 8px; background: var(--amber-bg); border: 1px solid var(--amber-bg); }
+
+/* FOOTER */
+footer { border-top: 1px solid var(--border-subtle); margin-top: 64px; padding: 48px 0 32px; }
+.footer-inner { max-width: 1280px; margin: 0 auto; padding: 0 32px; display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 32px; }
+.foot-col h4 { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); margin-bottom: 12px; }
+.foot-col ul { list-style: none; }
+.foot-col li { margin-bottom: 6px; }
+.foot-col a { color: var(--text-secondary); text-decoration: none; font-size: 14px; }
+.foot-col a:hover { color: var(--text-primary); }
+.foot-credit { padding: 24px 32px 0; margin: 32px auto 0; max-width: 1280px; border-top: 1px solid var(--border-subtle); font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.foot-credit .logo-mini { color: var(--text-primary); font-family: var(--font-headline); font-weight: 700; font-size: 14px; letter-spacing: -0.01em; text-transform: none; }
+.foot-credit .logo-mini span { color: var(--red-base); }
+
+/* MOCKUP BANNER */
+.mockup-banner { position: fixed; bottom: 16px; right: 16px; background: var(--amber-bg); border: 1px solid var(--border-subtle); padding: 10px 14px; font-family: var(--font-mono); font-size: 11px; color: var(--amber-base); text-transform: uppercase; letter-spacing: 0.1em; z-index: 99; max-width: 320px; line-height: 1.5; }
+
+@media (max-width: 960px) {
+  .hero { grid-template-columns: 1fr; }
+  .methodology { grid-template-columns: 1fr; }
+  .botw { grid-template-columns: 1fr; }
+  .skimp-teaser { grid-template-columns: 1fr; }
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .nav-links { gap: 16px; font-size: 10px; }
+  .container { padding: 0 16px; }
+  .hero { padding: 48px 0 40px; }
+  .counter-strip { gap: 20px; }
+  .ctr-val { font-size: 22px; }
+  .footer-inner { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo">Full<span>Carts</span></a>
+    <div class="nav-links">
+      <a href="/brands">Brands</a>
+      <a href="/products" class="stub" title="Coming in Phase B">Products</a>
+      <a href="/insights" class="stub" title="Coming in Phase C">Insights</a>
+      <a href="/about" class="stub" title="Coming in Phase C">About</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-left">
+      <div class="hero-mark">Live · Updated Daily</div>
+      <h1>Look it up.<br/>We have receipts.</h1>
+      <p class="hero-mission">
+        <strong>FullCarts</strong> is a public database of every shrinkflation
+        event we can verify with a real source. We&rsquo;re not guessing —
+        we&rsquo;re citing.
+      </p>
+      <div class="search-wrap">
+        <input type="text" placeholder="Did your favorite product shrink? Search 14,000+ products" autocomplete="off" />
+        <span class="search-icon">⌕</span>
+      </div>
+      <div class="search-hint">Try &ldquo;Cadbury&rdquo;, &ldquo;Pringles&rdquo;, &ldquo;Charmin&rdquo; · 1,167 brands tracked</div>
+
+      <div class="counter-strip">
+        <div class="ctr">
+          <div class="ctr-val">2,828</div>
+          <div class="ctr-lbl">Documented events</div>
+        </div>
+        <div class="ctr">
+          <div class="ctr-val">1,167</div>
+          <div class="ctr-lbl">Brands tracked</div>
+        </div>
+        <div class="ctr">
+          <div class="ctr-val">14,154</div>
+          <div class="ctr-lbl">Products monitored</div>
+        </div>
+        <div class="ctr">
+          <div class="ctr-val">3,663</div>
+          <div class="ctr-lbl">BLS-confirmed downsizings since 2015</div>
+        </div>
+      </div>
+    </div>
+
+    <a class="just-doc" href="#" style="text-decoration: none; color: inherit;">
+      <div class="just-doc-tag">Just documented · today</div>
+      <div class="just-doc-img">
+        <img src="https://ntyhbapphnzlariakgrw.supabase.co/storage/v1/object/public/claim-images/dabae931-e0be-4d0d-8f7b-12ca17445c16.webp" alt="Charmin toilet paper" loading="lazy">
+      </div>
+      <div class="just-doc-body">
+        <div class="just-doc-brand">Charmin · paper goods</div>
+        <div class="just-doc-name">Toilet paper width</div>
+        <div class="just-doc-stat">
+          <span class="just-doc-delta">-13.3%</span>
+          <span class="just-doc-sizes">4.5&Prime; → 3.9&Prime;</span>
+        </div>
+      </div>
+      <div class="just-doc-foot">
+        <span>Reddit · r/shrinkflation</span>
+        <span style="color:var(--red-base)">See evidence →</span>
+      </div>
+    </a>
+  </header>
+
+  <!-- METHODOLOGY TRUST STRIP -->
+  <section class="methodology">
+    <div class="meth-head">
+      <span class="meth-eyebrow">How we know</span>
+      <h2>Every event is backed by at least one verifiable source.</h2>
+    </div>
+    <div class="meth-body">
+      We ingest from public sources — Reddit, news outlets, OpenFoodFacts,
+      Kroger, USDA, and BLS — extract claims with AI, then a human reviewer
+      approves each one before it goes live. Government data and consumer
+      reporting back the macro story.
+      <div class="meth-sources">
+        <span class="meth-src">Reddit r/shrinkflation</span>
+        <span class="meth-src">News (GDELT)</span>
+        <span class="meth-src">OpenFoodFacts</span>
+        <span class="meth-src">Kroger API</span>
+        <span class="meth-src">USDA FDC</span>
+        <span class="meth-src">BLS</span>
+        <span class="meth-src">FRED CPI</span>
+        <span class="meth-src">Consumer Reports</span>
+        <span class="meth-src">Wikidata</span>
+      </div>
+      <a class="meth-cta" href="/about">Read the full methodology <span class="arrow">→</span></a>
+    </div>
+  </section>
+
+  <!-- BRAND OF THE WEEK -->
+  <section class="block">
+    <div class="section-head">
+      <h2>Brand of the week</h2>
+      <div class="meta">Rotated by most-cited event in the last 7 days</div>
+    </div>
+    <a class="botw" href="/brands/cadbury" style="text-decoration: none; color: inherit;">
+      <div class="botw-img">
+        <img src="https://ntyhbapphnzlariakgrw.supabase.co/storage/v1/object/public/claim-images/9d623244-070f-4d35-b95c-3a1977dba573.webp" alt="Cadbury">
+      </div>
+      <div class="botw-body">
+        <span class="botw-eyebrow">Top of mind this week</span>
+        <h3>Cadbury</h3>
+        <p class="botw-reason">
+          4 new events documented in the last 30 days, and the biggest
+          syndicated story this year — <em>&ldquo;Cadbury Easter eggs smaller
+          than last year but price stays the same&rdquo;</em> — was covered by
+          40+ outlets in a single week.
+        </p>
+        <div class="botw-stats">
+          <div class="botw-stat"><span class="v">106</span><span class="l">total events</span></div>
+          <div class="botw-stat"><span class="v">77</span><span class="l">products tracked</span></div>
+          <div class="botw-stat"><span class="v">-16.9%</span><span class="l">avg shrinkage</span></div>
+        </div>
+        <span class="botw-cta">See the full scorecard <span class="arrow">→</span></span>
+      </div>
+    </a>
+  </section>
+
+  <!-- MOST ACTIVE THIS WEEK -->
+  <section class="block">
+    <div class="section-head">
+      <h2>Most active this month</h2>
+      <div class="meta"><a href="/brands">See all 1,167 brands →</a></div>
+    </div>
+    <div class="active-grid">
+      <a class="active-card" href="/brands/cadbury">
+        <span class="active-rank">#1 this month</span>
+        <span class="active-brand">Cadbury</span>
+        <span class="active-recent">4 new events</span>
+        <span class="active-foot">106 total · 77 products</span>
+      </a>
+      <a class="active-card" href="/brands/monster">
+        <span class="active-rank">#2 this month</span>
+        <span class="active-brand">Monster</span>
+        <span class="active-recent">3 new events</span>
+        <span class="active-foot">7 total · 5 products</span>
+      </a>
+      <a class="active-card" href="/brands/nestle">
+        <span class="active-rank">#3 this month</span>
+        <span class="active-brand">Nestlé</span>
+        <span class="active-recent">3 new events</span>
+        <span class="active-foot">33 total · 29 products</span>
+      </a>
+      <a class="active-card" href="/brands/haribo">
+        <span class="active-rank">#4 this month</span>
+        <span class="active-brand">Haribo</span>
+        <span class="active-recent">2 new events</span>
+        <span class="active-foot">11 total · 10 products</span>
+      </a>
+      <a class="active-card" href="/brands/good-sense">
+        <span class="active-rank">#5 this month</span>
+        <span class="active-brand">Good Sense</span>
+        <span class="active-recent">2 new events</span>
+        <span class="active-foot">2 total · 1 product</span>
+      </a>
+      <a class="active-card" href="/brands/charmin">
+        <span class="active-rank">#6 this month</span>
+        <span class="active-brand">Charmin</span>
+        <span class="active-recent">2 new events</span>
+        <span class="active-foot">30 total · 28 products</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- RECENT BIGGEST SHRINKS -->
+  <section class="block">
+    <div class="section-head">
+      <h2>Recent biggest shrinks</h2>
+      <div class="meta">Top 6 of recent events, sorted by % drop</div>
+    </div>
+    <div class="recent-grid">
+      <a class="rb-card" href="#">
+        <div class="rb-img"><img src="https://ntyhbapphnzlariakgrw.supabase.co/storage/v1/object/public/claim-images/76874a0e-713d-4578-b31b-43118db6729b.webp" alt=""></div>
+        <div class="rb-body">
+          <span class="rb-brand">Lemi Shine · household</span>
+          <span class="rb-name">Dishwasher detergent pods</span>
+          <div class="rb-stat"><span class="rb-delta">-50.0%</span><span class="rb-sizes">26ct → 13ct</span></div>
+        </div>
+      </a>
+      <a class="rb-card" href="#">
+        <div class="rb-img"><img src="https://ntyhbapphnzlariakgrw.supabase.co/storage/v1/object/public/claim-images/0f15bb3b-9253-44a8-9956-0bbe722bb4e3.webp" alt=""></div>
+        <div class="rb-body">
+          <span class="rb-brand">Schweppes · beverages</span>
+          <span class="rb-name">Lemonade</span>
+          <div class="rb-stat"><span class="rb-delta">-50.0%</span><span class="rb-sizes">2L → 1L</span></div>
+        </div>
+      </a>
+      <a class="rb-card" href="#">
+        <div class="rb-img"><img src="https://ntyhbapphnzlariakgrw.supabase.co/storage/v1/object/public/claim-images/95735d4d-ccaa-4168-a2c9-0ec38161095e.webp" alt=""></div>
+        <div class="rb-body">
+          <span class="rb-brand">V05 · personal care</span>
+          <span class="rb-name">Hair Products</span>
+          <div class="rb-stat"><span class="rb-delta">-50.0%</span><span class="rb-sizes">12oz → 6oz</span></div>
+        </div>
+      </a>
+      <a class="rb-card" href="#">
+        <div class="rb-img"><img src="https://ntyhbapphnzlariakgrw.supabase.co/storage/v1/object/public/claim-images/39e81bc1-6377-4032-8efd-3a9f705f7b63.webp" alt=""></div>
+        <div class="rb-body">
+          <span class="rb-brand">Dollar Tree · condiments</span>
+          <span class="rb-name">Pink Sweetener</span>
+          <div class="rb-stat"><span class="rb-delta">-50.0%</span><span class="rb-sizes">100ct → 50ct</span></div>
+        </div>
+      </a>
+      <a class="rb-card" href="#">
+        <div class="rb-img"><img src="https://ntyhbapphnzlariakgrw.supabase.co/storage/v1/object/public/claim-images/bdfe7c05-84e8-4e10-bdda-95049dd73516.webp" alt=""></div>
+        <div class="rb-body">
+          <span class="rb-brand">Olay · personal care</span>
+          <span class="rb-name">Sunscreen</span>
+          <div class="rb-stat"><span class="rb-delta">-50.0%</span><span class="rb-sizes">100ml → 50ml</span></div>
+        </div>
+      </a>
+      <a class="rb-card" href="#">
+        <div class="rb-img"><img src="https://ntyhbapphnzlariakgrw.supabase.co/storage/v1/object/public/claim-images/2e1bb65f-fb59-4cb2-bb92-ea01c8cb7038.webp" alt=""></div>
+        <div class="rb-body">
+          <span class="rb-brand">Publix · other</span>
+          <span class="rb-name">Strawberry Cheesecake</span>
+          <div class="rb-stat"><span class="rb-delta">-50.0%</span><span class="rb-sizes">2 tiers → 1 tier</span></div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- BEYOND SIZE — tag-driven evidence channels -->
+  <section class="block">
+    <div class="section-head">
+      <h2>Beyond size shrinks</h2>
+      <div class="meta">Shrinkflation is one signal · here&rsquo;s the rest of what we tag</div>
+    </div>
+    <div class="tag-grid">
+      <a class="tag-card" href="/evidence/so-smol">
+        <div class="tag-card-head">
+          <span class="tag-card-name">So Smol</span>
+          <span class="tag-card-count">188</span>
+        </div>
+        <div class="tag-card-desc">Comically small versions of things you remember being big.</div>
+        <span class="tag-card-cta">Browse claims →</span>
+      </a>
+      <a class="tag-card" href="/evidence/slack-fill">
+        <div class="tag-card-head">
+          <span class="tag-card-name">Slack Fill</span>
+          <span class="tag-card-count">180</span>
+        </div>
+        <div class="tag-card-desc">Same package, visible empty space, less product than the box implies.</div>
+        <span class="tag-card-cta">Browse claims →</span>
+      </a>
+      <a class="tag-card" href="/evidence/spot-the-difference">
+        <div class="tag-card-head">
+          <span class="tag-card-name">Spot the Difference</span>
+          <span class="tag-card-count">141</span>
+        </div>
+        <div class="tag-card-desc">Side-by-side visual proof — old packaging next to new.</div>
+        <span class="tag-card-cta">Browse claims →</span>
+      </a>
+      <a class="tag-card" href="/evidence/skimpflation">
+        <div class="tag-card-head">
+          <span class="tag-card-name">Skimpflation</span>
+          <span class="tag-card-count">110</span>
+        </div>
+        <div class="tag-card-desc">Same package, worse ingredients — less protein, more sugar, more sodium.</div>
+        <span class="tag-card-cta">Browse claims →</span>
+      </a>
+      <a class="tag-card" href="/evidence/paper-thin">
+        <div class="tag-card-head">
+          <span class="tag-card-name">Paper Thin</span>
+          <span class="tag-card-count">46</span>
+        </div>
+        <div class="tag-card-desc">Quality drops — thinner toilet paper, weaker bags, cheaper materials.</div>
+        <span class="tag-card-cta">Browse claims →</span>
+      </a>
+      <a class="tag-card" href="/evidence/not-as-advertised">
+        <div class="tag-card-head">
+          <span class="tag-card-name">Not as Advertised</span>
+          <span class="tag-card-count">12</span>
+        </div>
+        <div class="tag-card-desc">Weight or count on the label doesn&rsquo;t match what&rsquo;s inside.</div>
+        <span class="tag-card-cta">Browse claims →</span>
+      </a>
+      <a class="tag-card" href="/evidence/stretchflation">
+        <div class="tag-card-head">
+          <span class="tag-card-name">Stretchflation</span>
+          <span class="tag-card-count">11</span>
+        </div>
+        <div class="tag-card-desc">Package looks bigger, but the product stays the same — or shrinks.</div>
+        <span class="tag-card-cta">Browse claims →</span>
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="foot-col">
+      <a href="/" class="logo">Full<span>Carts</span></a>
+      <p style="font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); margin-top: 12px; line-height: 1.6;">
+        A public database of shrinkflation events, sourced and verified.
+      </p>
+    </div>
+    <div class="foot-col">
+      <h4>Browse</h4>
+      <ul>
+        <li><a href="/brands">All brands</a></li>
+        <li><a href="/products">Products</a></li>
+        <li><a href="/insights">Insights</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h4>About</h4>
+      <ul>
+        <li><a href="/about">Methodology</a></li>
+        <li><a href="/about#sources">Sources</a></li>
+        <li><a href="/about#contact">Submit a tip</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h4>Follow</h4>
+      <ul>
+        <li><a href="#">Newsletter</a></li>
+        <li><a href="#">RSS</a></li>
+        <li><a href="#">X / Twitter</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-credit">
+    <a href="/" class="logo-mini">Full<span>Carts</span></a>
+    <span>Updated daily · Last refresh: 2026-05-16</span>
+  </div>
+</footer>
+
+<div class="mockup-banner">
+  <strong>Mockup snapshot.</strong> All numbers and images derive from
+  live Supabase data as of 2026-05-16. The real page will pull fresh
+  data via ISR.
+</div>
+</body>
+</html>

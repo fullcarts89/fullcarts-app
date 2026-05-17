@@ -89,12 +89,12 @@ export default async function BrandPage({ params }: PageProps) {
             Full<span>Carts</span>
           </a>
           <div className={styles["nav-links"]}>
-            <a href="#" className="active">
+            <a href="/brands" className="active">
               Brands
             </a>
-            <a href="#">Products</a>
-            <a href="#">Insights</a>
-            <a href="#">About</a>
+            <a href="/products">Products</a>
+            <a href="/insights">Insights</a>
+            <a href="/about">About</a>
           </div>
         </div>
       </nav>
