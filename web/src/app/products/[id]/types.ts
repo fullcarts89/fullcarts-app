@@ -65,6 +65,18 @@ export interface RelatedProduct {
   worst_delta_pct: number;
 }
 
+/** One row from consumer_reports_findings — a CR article that called
+ *  out this product by name. */
+export interface ConsumerReportRef {
+  id: string;
+  source_url: string;
+  title: string;
+  published_at: string | null;
+  excerpt: string | null;
+  brand: string | null;
+  product_name: string | null;
+}
+
 /** One per-UPC pair of usda_product_history rows (earliest + latest
  *  releases that carry nutrition data). All numeric columns come
  *  through as `string | number | null` because Supabase serializes

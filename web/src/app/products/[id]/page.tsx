@@ -7,6 +7,7 @@ import ChangeHistory from "./_components/ChangeHistory";
 import RetailersGrid from "./_components/RetailersGrid";
 import RelatedProducts from "./_components/RelatedProducts";
 import SkimpflationOverlay from "./_components/SkimpflationOverlay";
+import PressCoverage from "./_components/PressCoverage";
 import {
   buildTrajectory,
   computeSkimpData,
@@ -16,6 +17,7 @@ import {
   totalEvidenceCount,
 } from "./lib";
 import type {
+  ConsumerReportRef,
   EventRow,
   PackVariant,
   ProductEntity,
@@ -55,6 +57,7 @@ async function loadProduct(id: string): Promise<{
   observations: VariantObservation[];
   related: RelatedProduct[];
   skimp: SkimpData | null;
+  press: ConsumerReportRef[];
 } | null> {
   const sb = createAdminClient();
 
@@ -115,6 +118,20 @@ async function loadProduct(id: string): Promise<{
     skimp = computeSkimpData((data ?? []) as UsdaNutritionRow[]);
   }
 
+  // Consumer Reports coverage — silent no-op if the table or the
+  // matched_at index isn't there yet (migration 058 may not have been
+  // applied locally during development).
+  let press: ConsumerReportRef[] = [];
+  const pressRes = await sb
+    .from("consumer_reports_findings")
+    .select("id, source_url, title, published_at, excerpt, brand, product_name")
+    .eq("entity_id", entity.id)
+    .order("published_at", { ascending: false, nullsFirst: false })
+    .limit(8);
+  if (!pressRes.error) {
+    press = (pressRes.data ?? []) as ConsumerReportRef[];
+  }
+
   const related: RelatedProduct[] = ((relatedRes.data ?? []) as Array<{
     entity_id: string;
     name: string;
@@ -136,6 +153,7 @@ async function loadProduct(id: string): Promise<{
     observations,
     related,
     skimp,
+    press,
   };
 }
 
@@ -158,7 +176,7 @@ export default async function ProductPage({ params }: PageProps) {
   const data = await loadProduct(id);
   if (!data) notFound();
 
-  const { entity, events, variants, observations, related, skimp } = data;
+  const { entity, events, variants, observations, related, skimp, press } = data;
   const eventsDesc = eventsByDateDesc(events);
   const trajectory = buildTrajectory(events);
   const evidenceTotal = totalEvidenceCount(events);
@@ -230,6 +248,19 @@ export default async function ProductPage({ params }: PageProps) {
           </div>
           <RetailersGrid variants={variants} observations={observations} />
         </section>
+
+        {press.length > 0 && (
+          <section className={styles.block}>
+            <div className={styles["section-head"]}>
+              <h2>Press coverage</h2>
+              <div className={styles.meta}>
+                {press.length} Consumer Reports finding
+                {press.length === 1 ? "" : "s"}
+              </div>
+            </div>
+            <PressCoverage refs={press} />
+          </section>
+        )}
 
         {related.length > 0 && (
           <section className={styles.block}>

@@ -2,7 +2,7 @@
 
 **Date:** May 12, 2026
 **Last updated:** May 18, 2026
-**Status:** Phase 1 complete and shipped. **Phase 2A + Phase 2B + most of Phase 2C shipped to main (PR #73).** Live routes: `/`, `/brands`, `/brands/[name]`, `/products/[id]`, `/insights`, `/about`. **Phase 2D (Admin Entity Tool) is the next active workstream**, with `/products` index + skimpflation overlay + tip-form wiring as deferred items.
+**Status:** Phase 1 + Phase 2A/2B/2C complete. Live routes: `/`, `/brands`, `/brands/[name]`, `/products`, `/products/[id]`, `/insights`, `/about`. **Phase 2D (Admin Entity Tool) is the next active workstream.**
 
 ---
 
@@ -47,21 +47,21 @@
 | 2.2.3 `/products/[id]` live | ✅ Shipped (PR #73) | Server component with ISR 1h, top-30 products pre-built. 5 sections: ProductHero (4-stat strip), SizeTrajectory (SVG step chart), ChangeHistory (collapsible event accordion), RetailersGrid (Kroger/Walmart/OFF/Open Prices), RelatedProducts (same-brand top-8). Brand-page product cards now link here. |
 | — OFF live-API image fallback | ✅ Shipped (PR #73) | Fifth fallback in `backfill_entity_images.py` — hits OFF API by EAN-13 when all four cached-source lookups miss. UPC normalizer strips synthetic `CLAIM-`/`REDDIT-` keys. Daily cron exercises it. New `--no-off-api` flag opts out. |
 
-#### Phase 2C — Macro Insights + Corporate Tree — 🟡 PARTIAL (PR #73)
+#### Phase 2C — Macro Insights + Corporate Tree — ✅ COMPLETE
 
 | Task | Status | Notes |
 |------|--------|-------|
-| 2.2.4 `/insights` page | ✅ Shipped (PR #73) | 8 sections live: InsightsHero counters, BlsHeadline + filtered news, ThreeLineChart (events + BLS + CPI on source-dates), CategoryBars, RepeatOffenders, SkimpflationLeaderboard, NewsFeed (HTML stripped, broader image fallback), RestorationCorner. |
-| 2.2.5 `/about` page | ✅ Shipped (PR #73) | Mission + methodology + 4-channel source list (community/news/retailer/government) + "submit a tip" stub card. Contact `fullcartsinfo@gmail.com`. Tip-form wiring deferred. |
-| — `/products` index page | Pending | Stub still in place. Sortable grid of all entities with events, severity tiers + category chips. Mirrors `/brands` index shape. |
-| — Skimpflation overlay on `/products/[id]` | Pending | Mockup has it, live page doesn't. Needs `pack_variants.upc → nutrition_skimp_results` join validated against real data. |
-| — `/about` tip form | Pending | Wire the "submit a tip" card to the existing `tips` table. Typeform/Tally/Formspree URL or a real form. |
-| — Google Trends integration | Pending | New ingest pipeline for "shrinkflation" search interest over time. Approved. Adds a 4th line to the macro chart. |
-| — Consumer Reports integration | Pending | Cross-reference our data against their annual shrinkflation reporting. Approved. |
-| — Wikidata manufacturer backfill | Pending | Populates `product_entities.manufacturer` (currently 100% null across 14,154 entities). Unlocks corporate-parent tree. Approved. |
-| — Corporate-parent tree visualisation | Pending | Once manufacturer backfilled: cluster brands by parent (e.g. Mondelez owns Cadbury, Oreo, Wheat Thins, Nabisco, Christie, Mondelez International). Section on `/insights` OR dedicated `/companies/[parent]` route. |
-| — "Shrinking grocery cart" widget | Pending | Interactive: "Your $100 grocery cart in 2020 vs the same brand+size combo today." Approved. Real math from tracked deltas. |
-| 2.4 Skimpflation pipeline | Pending | Connect `nutrition_skimp_results` → `published_changes` so it shows up alongside size-shrinkflation events instead of being a separate dataset. |
+| 2.2.4 `/insights` page | ✅ Shipped (PR #73) | 8 sections live; macro chart upgraded to 4 lines (events + BLS + CPI + Google Trends). |
+| 2.2.5 `/about` page | ✅ Shipped (PR #73) | Mission + methodology + 4-channel source list + working tip-submission form (writes to `tips` table). |
+| `/products` index page | ✅ Shipped | New `product_index` view (migration 054); sortable grid mirroring `/brands` with severity tiers, category chips, brand-or-name search. SiteNav stub flag removed. |
+| Skimpflation overlay on `/products/[id]` | ✅ Shipped | Server-side query of `usda_product_history` for the entity's UPCs (with EAN-13 ↔ UPC-A variants), computes per-nutrient deltas across widest release span. Renders only when aggregate score crosses noise floor. |
+| `/about` tip form | ✅ Shipped | TipForm client component + `/api/tips` route; 60s per-session de-dup, IP hashed for future rate-limit. Falls back gracefully to the email path. |
+| Google Trends integration | ✅ Shipped | New `google_trends_data` table (migration 057). Scraper `google_trends.py` hits the unofficial Trends JSON API, falls back to a manual CSV path. Monthly cron via `pipeline_google_trends.yml`. Fourth line on the macro chart (purple, dashed). |
+| Consumer Reports integration | ✅ Shipped | New `consumer_reports_findings` table (migration 058). Scraper walks CR's evergreen shrinkflation index pages, extracts brand/product callouts. Monthly cron + a matcher script that resolves to `product_entities`. Surfaces as a "Press coverage" section on `/products/[id]`. |
+| Wikidata manufacturer backfill | ✅ Shipped | `wikidata_manufacturer_backfill.py` queries Wikidata SPARQL for brand → parent org (P749/P127/P176). Weekly cron via `pipeline_wikidata.yml`, ~200 brands/run, full catalog converges in ~6 weeks. |
+| Corporate-parent tree visualisation | ✅ Shipped | New `corporate_tree` view (migration 056) rolls brands up to manufacturer with top-3 child brands as JSONB. Renders as "Who actually owns these brands?" section on `/insights`. Empty state until Wikidata backfill begins. |
+| "Shrinking grocery cart" widget | ✅ Shipped | Server pre-builds a 12-product basket (brand-diversified, image-required, 2-60% shrink window); client widget lets user enter their weekly spend and shows real-vs-air dollar split with per-item breakdown. |
+| 2.4 Skimpflation pipeline | ✅ Shipped | Migration 055 relaxes size_* NOT NULL on published_changes, adds skimp_score + nutrient_deltas. New `promote_skimpflation.py` walks USDA cross-release diffs, matches via pack_variants UPC, idempotent. Daily via `pipeline_promote.yml`. New `skimpflation_events` view exposes the slice. |
 
 #### Phase 2D — Admin Entity Tool — ⏳ NEXT (per user direction: build at end after rest of site is "good to go" — now reached)
 

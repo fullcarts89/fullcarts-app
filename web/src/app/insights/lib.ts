@@ -6,6 +6,7 @@ import type {
   ChartPoint,
   EventWithSources,
   FredCpiRow,
+  GoogleTrendsRow,
 } from "./types";
 
 export function num(s: string | number | null | undefined): number {
@@ -163,6 +164,7 @@ export function buildChart(
   events: EventWithSources[],
   bls: BlsRow[],
   fred: FredCpiRow[],
+  trends: GoogleTrendsRow[] = [],
   windowMonths: number = 39,
 ): ChartPoint[] {
   // FullCarts events per month, keyed on the earliest source.date
@@ -214,12 +216,25 @@ export function buildChart(
   // FRED CPI YoY%
   const cpiByMonth = fredYoy(fred);
 
-  // Window: pick the latest month across all three sources, then trim
+  // Google Trends — keep only the canonical 'shrinkflation' keyword
+  // and key on YYYY-MM. Values come back as strings from PostgREST.
+  const trendsByMonth = new Map<string, number>();
+  for (const r of trends) {
+    if (r.keyword !== "shrinkflation") continue;
+    const ym = isoMonth(r.observation_date);
+    if (!ym) continue;
+    const v = num(r.value);
+    if (v <= 0) continue;
+    trendsByMonth.set(ym, v);
+  }
+
+  // Window: pick the latest month across all four sources, then trim
   // the unreliable trailing months from the events series.
   const allMonths = new Set<string>();
   for (const m of eventsByMonth.keys()) allMonths.add(m);
   for (const m of blsByMonth.keys()) allMonths.add(m);
   for (const m of cpiByMonth.keys()) allMonths.add(m);
+  for (const m of trendsByMonth.keys()) allMonths.add(m);
   const sortedMonths = Array.from(allMonths).sort();
   if (sortedMonths.length === 0) return [];
 
@@ -236,6 +251,7 @@ export function buildChart(
       events: eventsByMonth.has(key) ? eventsByMonth.get(key)! : null,
       blsDownsizings: blsByMonth.has(key) ? blsByMonth.get(key)! : null,
       cpiYoyPct: cpiByMonth.has(key) ? cpiByMonth.get(key)! : null,
+      trendsInterest: trendsByMonth.has(key) ? trendsByMonth.get(key)! : null,
     });
     m -= 1;
     if (m === 0) {

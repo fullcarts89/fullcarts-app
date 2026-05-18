@@ -110,13 +110,40 @@ export interface EvidenceWallRow {
   source_url: string | null;
 }
 
-/** One x/y point for the three-line chart. y is null when the series
- *  has no observation for that month. */
+/** One x/y point for the macro chart. y is null when the series has
+ *  no observation for that month. Originally a three-line chart;
+ *  trendsInterest (Google Trends, 0-100) was added in 057. */
 export interface ChartPoint {
   month: string;
   events: number | null;
   blsDownsizings: number | null;
   cpiYoyPct: number | null;
+  /** Google Trends search interest, 0-100, normalised across the window. */
+  trendsInterest: number | null;
+}
+
+/** A single row from google_trends_data. value comes back as
+ *  string | number depending on Postgres → JSON serialization. */
+export interface GoogleTrendsRow {
+  keyword: string;
+  observation_date: string;
+  value: string | number | null;
+}
+
+/** One manufacturer entry from the corporate_tree view (migration 056).
+ *  top_brands is a JSONB array of up to three brand entries with their
+ *  thumbnails, biggest single-shrink %, and event count. */
+export interface CorporateNode {
+  manufacturer: string;
+  distinct_brands: number;
+  total_shrinkflation_events: number | null;
+  worst_delta_pct: number | string | null;
+  top_brands: Array<{
+    brand: string;
+    events: number | null;
+    worst: number | string | null;
+    thumbnail: string | null;
+  }> | null;
 }
 
 /** One product line in the grocery-cart widget. Real product, real

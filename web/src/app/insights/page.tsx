@@ -10,6 +10,7 @@ import RestorationCorner from "./_components/RestorationCorner";
 import NewsFeed from "./_components/NewsFeed";
 import EvidenceWall from "./_components/EvidenceWall";
 import ShrinkingCart from "./_components/ShrinkingCart";
+import CorporateTree from "./_components/CorporateTree";
 import {
   buildCartBasket,
   buildChart,
@@ -23,9 +24,11 @@ import type {
   BlsRow,
   CartItem,
   CategoryRow,
+  CorporateNode,
   DashboardStats,
   EventWithSources,
   FredCpiRow,
+  GoogleTrendsRow,
   LeaderboardRow,
   NewsFeedRow,
   RestorationRow,
@@ -63,6 +66,8 @@ async function loadInsights() {
     newsRes,
     skimpClaimsRes,
     spotDiffClaimsRes,
+    corporateRes,
+    trendsRes,
   ] = await Promise.all([
     sb.rpc("dashboard_stats"),
     sb
@@ -136,7 +141,29 @@ async function loadInsights() {
       .contains("evidence_tags", ["Spot the Difference"])
       .order("observed_date", { ascending: false, nullsFirst: false })
       .limit(8),
+    sb
+      .from("corporate_tree")
+      .select(
+        "manufacturer, distinct_brands, total_shrinkflation_events, worst_delta_pct, top_brands",
+      )
+      .order("total_shrinkflation_events", { ascending: false, nullsFirst: false })
+      .limit(8),
+    sb
+      .from("google_trends_data")
+      .select("keyword, observation_date, value")
+      .eq("keyword", "shrinkflation")
+      .order("observation_date", { ascending: false })
+      .limit(120),
   ]);
+  // corporate_tree only exists after migration 056 is applied; treat
+  // a missing-view error as an empty list rather than a page failure.
+  const corporate: CorporateNode[] = corporateRes.error
+    ? []
+    : ((corporateRes.data ?? []) as CorporateNode[]);
+  // google_trends_data only exists after migration 057 + scraper run.
+  const trends: GoogleTrendsRow[] = trendsRes.error
+    ? []
+    : ((trendsRes.data ?? []) as GoogleTrendsRow[]);
 
   // dashboard_stats returns a JSONB blob; defaults protect the page
   // if the function is missing (e.g. fresh DB).
@@ -340,12 +367,14 @@ async function loadInsights() {
     stats,
     bls: (blsRes.data ?? []) as BlsRow[],
     fred: (fredRes.data ?? []) as FredCpiRow[],
+    trends,
     events: (eventsRes.data ?? []) as EventWithSources[],
     categories: (categoriesRes.data ?? []) as CategoryRow[],
     leaderboard,
     restorations: (restorationsRes.data ?? []) as RestorationRow[],
     news,
     basket,
+    corporate,
     skimpClaims: enrichTagged((skimpClaimsRes.data ?? []) as TaggedClaim[]),
     spotDiffClaims: enrichTagged((spotDiffClaimsRes.data ?? []) as TaggedClaim[]),
   };
@@ -353,7 +382,7 @@ async function loadInsights() {
 
 export default async function InsightsPage() {
   const data = await loadInsights();
-  const chart = buildChart(data.events, data.bls, data.fred);
+  const chart = buildChart(data.events, data.bls, data.fred, data.trends);
   const headline = headlineBls(data.bls);
 
   const today = new Date().toISOString();
@@ -436,6 +465,22 @@ export default async function InsightsPage() {
             rather than reformulation for taste.
           </p>
           <SkimpflationLeaderboard rows={data.skimpClaims} />
+        </section>
+
+        <section className={styles.block}>
+          <div className={styles["section-head"]}>
+            <h2>Who actually owns these brands?</h2>
+            <div className={styles.meta}>
+              Top {data.corporate.length || 8} corporate parents
+            </div>
+          </div>
+          <p className={styles["section-lede"]}>
+            Most shrinkflation isn&apos;t a small-brand story — it&apos;s
+            decisions made at the corporate-parent level. We trace each
+            brand back to its manufacturer via Wikidata so you can see the
+            actual portfolio behind the shelf labels.
+          </p>
+          <CorporateTree nodes={data.corporate} />
         </section>
 
         <section className={styles.block}>

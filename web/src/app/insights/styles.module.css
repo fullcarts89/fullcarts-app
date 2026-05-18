@@ -38,6 +38,7 @@
 .legend-swatch.events { background: var(--red-base); }
 .legend-swatch.bls    { background: var(--blue-base); }
 .legend-swatch.fred   { background: var(--amber-base); }
+.legend-swatch.trends { background: var(--purple-base); }
 .chart-wrap { position: relative; height: 280px; padding-left: 56px; padding-right: 56px; }
 .chart-y-left, .chart-y-right { position: absolute; top: 0; bottom: 32px; width: 48px; display: flex; flex-direction: column-reverse; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); }
 .chart-y-left { left: 0; }
@@ -53,6 +54,7 @@
 .chart-line.events { stroke: var(--red-base); }
 .chart-line.bls    { stroke: var(--blue-base); stroke-dasharray: 4 3; }
 .chart-line.fred   { stroke: var(--amber-base); }
+.chart-line.trends { stroke: var(--purple-base); stroke-dasharray: 2 4; }
 .chart-area.events { fill: rgba(220,38,38,.06); }
 .chart-x-axis { display: flex; justify-content: space-between; padding-left: 56px; padding-right: 56px; margin-top: 12px; font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; }
 
@@ -199,3 +201,27 @@
   .cart-result-row { grid-template-columns: 1fr; }
   .cart-basket-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
 }
+
+/* CORPORATE TREE */
+.corp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; }
+.corp-card { background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 24px; display: flex; flex-direction: column; gap: 16px; position: relative; transition: border-color .15s; }
+.corp-card:hover { border-color: var(--border-medium); }
+.corp-rank { position: absolute; top: 12px; right: 12px; font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); padding: 3px 8px; border: 1px solid var(--border-subtle); }
+.corp-head { display: flex; flex-direction: column; gap: 4px; padding-right: 32px; }
+.corp-name { font-family: var(--font-headline); font-weight: 700; font-size: 22px; letter-spacing: -0.015em; color: var(--text-primary); line-height: 1.1; }
+.corp-meta { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
+.corp-stat { display: flex; align-items: baseline; gap: 8px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle); }
+.corp-stat-v { font-family: var(--font-mono); font-weight: 700; font-size: 22px; color: var(--text-primary); }
+.corp-stat-v.red { color: var(--red-base); }
+.corp-stat-l { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
+.corp-children { display: flex; flex-direction: column; gap: 8px; }
+.corp-child { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; padding: 8px 10px; background: var(--bg-primary); border: 1px solid var(--border-subtle); transition: border-color .15s, transform .15s; }
+.corp-child:hover { border-color: var(--red-border); transform: translateX(2px); }
+.corp-child-thumb { width: 44px; height: 44px; flex-shrink: 0; background: var(--bg-tertiary); overflow: hidden; }
+.corp-child-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.corp-child-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-family: var(--font-headline); font-weight: 700; font-size: 18px; color: var(--text-tertiary); background: linear-gradient(135deg, #1a1b1d 0%, #0a0b0d 100%); }
+.corp-child-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.corp-child-brand { font-family: var(--font-headline); font-weight: 700; font-size: 14px; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.corp-child-events { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
+
+.corp-empty { padding: 40px; text-align: center; font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; background: var(--bg-secondary); border: 1px dashed var(--border-subtle); }
