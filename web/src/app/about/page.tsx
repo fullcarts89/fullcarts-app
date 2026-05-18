@@ -1,4 +1,5 @@
 import SiteNav from "@/components/SiteNav";
+import TipForm from "./_components/TipForm";
 import styles from "./styles.module.css";
 
 export const metadata = {
@@ -234,21 +235,17 @@ export default function AboutPage() {
             is the strongest evidence we can review.
           </p>
           <div className={styles["tip-card"]}>
-            <div className={styles["tip-eyebrow"]}>How to send</div>
-            <p className={styles["tip-body"]}>
-              For now, email tips to{" "}
-              <a href="mailto:fullcartsinfo@gmail.com" className={styles["tip-link"]}>
+            <div className={styles["tip-eyebrow"]}>Tip submission</div>
+            <TipForm />
+            <div className={styles["tip-meta"]}>
+              Prefer email? Send tips to{" "}
+              <a
+                href="mailto:fullcartsinfo@gmail.com"
+                className={styles["tip-link"]}
+              >
                 fullcartsinfo@gmail.com
               </a>{" "}
-              with a brief description of what changed and at least one image
-              or source URL. We&apos;re building an in-page submission form
-              next — it&apos;ll write directly into the same review queue our
-              admins use, so your tip is treated identically to the ones our
-              scrapers find.
-            </p>
-            <div className={styles["tip-meta"]}>
-              Tips are reviewed within a week. We&apos;ll credit the source on
-              the published event unless you ask us not to.
+              instead — both paths land in the same queue.
             </div>
           </div>
         </section>

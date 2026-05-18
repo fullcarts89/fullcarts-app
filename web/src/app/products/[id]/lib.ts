@@ -3,7 +3,10 @@
 import type {
   EventRow,
   EventSource,
+  NutrientDelta,
+  SkimpData,
   TrajectoryStep,
+  UsdaNutritionRow,
 } from "./types";
 
 const STORAGE_BUCKET_URL =
@@ -167,6 +170,165 @@ export function dominantSource(sources: EventSource[]): EventSource | null {
   }
   if (!bestTitle) return sources[0];
   return sources.find((s) => s.title === bestTitle) || sources[0];
+}
+
+/** Normalise a UPC to its raw digit form so we can match across
+ *  representations (with/without leading zeros, EAN-13 vs UPC-A).
+ *  Empty string for unusable input. */
+export function normUpc(raw: string | null | undefined): string {
+  if (!raw) return "";
+  return raw.replace(/\D/g, "");
+}
+
+/** UPCs that obviously aren't real consumer codes — Reddit/claim
+ *  synthetic IDs we generated when we didn't have a real UPC. */
+const SYNTHETIC_PREFIXES = ["REDDIT", "CLAIM", "OFF", "GDELT"];
+
+/** Collect every plausible UPC variant for a given list of strings
+ *  so we can broaden the USDA lookup (some rows have leading zeros,
+ *  some don't). Returns deduped raw-digit strings. */
+export function expandUpcVariants(upcs: Array<string | null | undefined>): string[] {
+  const set = new Set<string>();
+  for (const raw of upcs) {
+    if (!raw) continue;
+    if (SYNTHETIC_PREFIXES.some((p) => raw.toUpperCase().startsWith(p))) continue;
+    const digits = normUpc(raw);
+    if (digits.length < 8) continue;
+    set.add(digits);
+    // Try without leading zero (EAN-13 → UPC-A)
+    if (digits.length === 13 && digits.startsWith("0")) {
+      set.add(digits.slice(1));
+    }
+    // Try with a leading zero (UPC-A → EAN-13)
+    if (digits.length === 12) {
+      set.add("0" + digits);
+    }
+  }
+  return [...set];
+}
+
+/** What counts as "the bad direction" for each nutrient: dropping
+ *  is bad for protein / fiber / calcium (less of the good stuff); rising
+ *  is bad for added sugar / sodium / saturated fat (more of the cheap
+ *  stuff). Calories are non-judgmental — we show them for context only. */
+const NUTRIENT_CONFIG: Array<{
+  key: keyof Pick<
+    UsdaNutritionRow,
+    | "protein_g"
+    | "fiber_g"
+    | "sugars_g"
+    | "sodium_mg"
+    | "saturated_fat_g"
+    | "calcium_mg"
+    | "calories_kcal"
+  >;
+  label: string;
+  unit: string;
+  bad: "up" | "down";
+}> = [
+  { key: "protein_g", label: "Protein", unit: "g", bad: "down" },
+  { key: "fiber_g", label: "Fiber", unit: "g", bad: "down" },
+  { key: "sugars_g", label: "Sugar", unit: "g", bad: "up" },
+  { key: "sodium_mg", label: "Sodium", unit: "mg", bad: "up" },
+  { key: "saturated_fat_g", label: "Saturated fat", unit: "g", bad: "up" },
+  { key: "calcium_mg", label: "Calcium", unit: "mg", bad: "down" },
+  { key: "calories_kcal", label: "Calories", unit: "kcal", bad: "up" },
+];
+
+/** Minimum aggregate skimp score before we show the overlay. Stops us
+ *  surfacing routine quarter-to-quarter noise. */
+export const SKIMP_MIN_SCORE = 5;
+/** Minimum per-nutrient delta we show in the table (anything smaller is
+ *  measurement noise). */
+const NUTRIENT_NOISE_FLOOR_PCT = 2;
+
+function numOrNull(v: string | number | null | undefined): number | null {
+  if (v == null) return null;
+  const n = typeof v === "string" ? parseFloat(v) : v;
+  return Number.isFinite(n) ? n : null;
+}
+
+/** Build the skimpflation overlay payload from the raw nutrition rows
+ *  we pulled for the entity's UPCs. Picks the UPC with the widest
+ *  release-date span (most informative comparison), then computes
+ *  per-nutrient deltas. Returns null when there's no usable pair. */
+export function computeSkimpData(rows: UsdaNutritionRow[]): SkimpData | null {
+  if (rows.length === 0) return null;
+
+  // Group rows by UPC, then for each UPC pick earliest + latest
+  // releases with at least protein data (proxy for "row has nutrition").
+  const byUpc = new Map<string, UsdaNutritionRow[]>();
+  for (const r of rows) {
+    if (numOrNull(r.protein_g) == null) continue;
+    const list = byUpc.get(r.gtin_upc) || [];
+    list.push(r);
+    byUpc.set(r.gtin_upc, list);
+  }
+
+  let best: { upc: string; before: UsdaNutritionRow; after: UsdaNutritionRow } | null = null;
+  let bestSpanMs = -1;
+  for (const [upc, list] of byUpc) {
+    if (list.length < 2) continue;
+    const sorted = [...list].sort((a, b) =>
+      a.release_date.localeCompare(b.release_date),
+    );
+    const before = sorted[0];
+    const after = sorted[sorted.length - 1];
+    const span =
+      new Date(after.release_date).getTime() -
+      new Date(before.release_date).getTime();
+    if (span <= 0) continue;
+    if (span > bestSpanMs) {
+      bestSpanMs = span;
+      best = { upc, before, after };
+    }
+  }
+
+  if (!best) return null;
+
+  const nutrients: NutrientDelta[] = [];
+  let score = 0;
+  for (const cfg of NUTRIENT_CONFIG) {
+    const bv = numOrNull(best.before[cfg.key]);
+    const av = numOrNull(best.after[cfg.key]);
+    if (bv == null || av == null) continue;
+    if (bv === 0) continue;
+    const deltaPct = ((av - bv) / bv) * 100;
+    if (Math.abs(deltaPct) < NUTRIENT_NOISE_FLOOR_PCT) continue;
+    nutrients.push({
+      label: cfg.label,
+      unit: cfg.unit,
+      before: bv,
+      after: av,
+      delta_pct: deltaPct,
+      bad_direction: cfg.bad,
+    });
+    // Score only the bad-direction movements
+    if (cfg.bad === "down" && deltaPct < 0) score += Math.abs(deltaPct);
+    if (cfg.bad === "up" && deltaPct > 0) score += deltaPct;
+  }
+
+  if (nutrients.length === 0) return null;
+  if (score < SKIMP_MIN_SCORE) return null;
+
+  // Re-order: worst (largest bad delta) first so the eye lands on it
+  nutrients.sort((a, b) => {
+    const badA = (a.bad_direction === "up" ? 1 : -1) * a.delta_pct;
+    const badB = (b.bad_direction === "up" ? 1 : -1) * b.delta_pct;
+    return badB - badA;
+  });
+
+  const allRows = byUpc.get(best.upc) || [];
+
+  return {
+    upc: best.upc,
+    description: best.after.description || best.before.description,
+    releases_compared: allRows.length,
+    before_date: best.before.release_date,
+    after_date: best.after.release_date,
+    nutrients,
+    skimp_score: Math.round(score * 10) / 10,
+  };
 }
 
 /** Y-axis tick layout. Rounds the size range outward to a nice

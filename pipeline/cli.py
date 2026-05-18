@@ -52,6 +52,8 @@ SCRAPER_MAP = {
     "walmart_discovery": "pipeline.scrapers.walmart:WalmartDiscoveryScraper",
     "upc_backfill": "pipeline.scrapers.upc_backfill:UpcBackfillScraper",
     "wayback": "pipeline.scrapers.wayback:WaybackScraper",
+    "google_trends": "pipeline.scrapers.google_trends:GoogleTrendsScraper",
+    "consumer_reports": "pipeline.scrapers.consumer_reports:ConsumerReportsScraper",
 }
 
 

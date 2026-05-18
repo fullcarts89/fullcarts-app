@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phase 2C preview — FullCarts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0b0d; --bg-secondary: #161719; --bg-tertiary: #2a2b2d; --bg-hover: #1a1b1d;
+  --text-primary: #f5f4f0; --text-secondary: #a0a0a5; --text-tertiary: #656569;
+  --red-base: #dc2626; --red-bg: rgba(220,38,38,.1); --red-border: rgba(220,38,38,.2);
+  --green-base: #10b981; --green-bg: rgba(16,185,129,.1); --green-border: rgba(16,185,129,.2);
+  --blue-base: #3b82f6; --blue-bg: rgba(59,130,246,.1); --blue-border: rgba(59,130,246,.2);
+  --amber-base: #f59e0b; --amber-bg: rgba(245,158,11,.1);
+  --purple-base: #a855f7; --purple-bg: rgba(168,85,247,.1); --purple-border: rgba(168,85,247,.2);
+  --border-subtle: rgba(255,255,255,.1); --border-medium: rgba(255,255,255,.2);
+  --font-headline: 'Space Grotesk', system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-sans); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+.bg-grid { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.03; background-image: linear-gradient(var(--text-tertiary) 1px, transparent 1px), linear-gradient(90deg, var(--text-tertiary) 1px, transparent 1px); background-size: 60px 60px; }
+
+/* TOP BAR */
+.preview-bar { position: sticky; top: 0; z-index: 100; background: rgba(10,11,13,.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-subtle); padding: 14px 32px; }
+.preview-bar-inner { max-width: 1280px; margin: 0 auto; display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+.preview-label { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--red-base); padding: 4px 10px; background: var(--red-bg); border: 1px solid var(--red-border); }
+.preview-title { font-family: var(--font-headline); font-weight: 700; font-size: 18px; letter-spacing: -0.01em; }
+.preview-nav { display: flex; gap: 18px; flex: 1; flex-wrap: wrap; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+.preview-nav a { color: var(--text-secondary); text-decoration: none; transition: color .15s; }
+.preview-nav a:hover { color: var(--red-base); }
+
+.container { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+.deliv { padding: 64px 0; border-top: 1px solid var(--border-subtle); }
+.deliv:first-of-type { border-top: none; padding-top: 48px; }
+.deliv-eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 4px 10px; background: var(--purple-bg); border: 1px solid var(--purple-border); border-radius: 2px; font-family: var(--font-mono); font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; color: var(--purple-base); margin-bottom: 14px; }
+.deliv h2 { font-family: var(--font-headline); font-weight: 700; font-size: 36px; letter-spacing: -0.025em; line-height: 1.05; margin-bottom: 8px; }
+.deliv-lede { font-size: 15px; color: var(--text-secondary); margin-bottom: 32px; max-width: 720px; line-height: 1.55; }
+.deliv-lede code { font-family: var(--font-mono); font-size: 13px; background: var(--bg-secondary); padding: 1px 6px; color: var(--amber-base); }
+.deliv-frame { background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 28px; position: relative; }
+.deliv-frame::before { content: 'preview'; position: absolute; top: 12px; right: 14px; font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-tertiary); }
+
+/* === Section 1: /products index === */
+.idx-header { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+.idx-header h3 { font-family: var(--font-headline); font-weight: 700; font-size: 28px; letter-spacing: -0.02em; }
+.idx-header p { font-family: var(--font-sans); font-size: 14px; color: var(--text-secondary); }
+.cat-strip { display: flex; flex-wrap: wrap; gap: 6px; padding: 14px 0 18px; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); margin-bottom: 18px; }
+.cat-chip { background: transparent; border: 1px solid var(--border-subtle); color: var(--text-secondary); padding: 7px 12px; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; display: inline-flex; gap: 6px; }
+.cat-chip.active { background: var(--red-bg); border-color: var(--red-border); color: var(--red-base); }
+.cat-chip-count { font-size: 9px; opacity: 0.7; }
+.controls { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; font-family: var(--font-mono); font-size: 12px; }
+.search-input { flex: 1; min-width: 200px; max-width: 320px; background: var(--bg-primary); border: 1px solid var(--border-subtle); color: var(--text-primary); font-family: var(--font-mono); font-size: 13px; padding: 10px 14px; }
+.sort-pills { display: flex; gap: 4px; flex-wrap: wrap; }
+.sort-pill { background: var(--bg-primary); border: 1px solid var(--border-subtle); color: var(--text-secondary); padding: 8px 14px; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; }
+.sort-pill.active { background: var(--red-bg); border-color: var(--red-border); color: var(--red-base); }
+.tier { display: flex; align-items: baseline; gap: 14px; margin: 28px 0 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle); flex-wrap: wrap; }
+.tier-label { font-family: var(--font-headline); font-weight: 700; font-size: 18px; }
+.tier-label.tier-1 { color: var(--red-base); }
+.tier-label::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 10px; background: var(--text-tertiary); vertical-align: middle; }
+.tier-label.tier-1::before { background: var(--red-base); }
+.tier-label.tier-2::before { background: var(--amber-base); }
+.tier-meta { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
+.prod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+.prod-card { background: var(--bg-primary); border: 1px solid var(--border-subtle); overflow: hidden; display: flex; flex-direction: column; position: relative; }
+.prod-rank { position: absolute; top: 8px; left: 8px; z-index: 2; font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--red-base); padding: 3px 8px; background: var(--red-bg); border: 1px solid var(--red-border); }
+.prod-img { aspect-ratio: 4/3; background: linear-gradient(135deg, #1a1b1d 0%, #0a0b0d 100%); display: flex; align-items: center; justify-content: center; padding: 16px; position: relative; }
+.prod-img::before { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(45deg, transparent 0, transparent 10px, rgba(255,255,255,.018) 10px, rgba(255,255,255,.018) 11px); }
+.prod-img-name { font-family: var(--font-headline); font-weight: 700; font-size: 14px; line-height: 1.15; letter-spacing: -0.02em; color: var(--text-primary); opacity: 0.85; text-align: center; position: relative; z-index: 2; }
+.prod-body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.prod-brand-tag { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); font-weight: 700; }
+.prod-name { font-family: var(--font-headline); font-weight: 700; font-size: 14px; letter-spacing: -0.01em; line-height: 1.2; color: var(--text-primary); }
+.prod-stats { display: flex; gap: 10px; padding-top: 4px; font-family: var(--font-mono); font-size: 10px; }
+.prod-stat { display: flex; flex-direction: column; gap: 1px; }
+.prod-stat-v { font-weight: 700; font-size: 13px; color: var(--red-base); }
+.prod-stat-l { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
+.prod-foot { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); padding-top: 6px; border-top: 1px solid var(--border-subtle); margin-top: auto; }
+
+/* === Section 2: Tip form === */
+.tip-card { background: linear-gradient(180deg, rgba(220,38,38,.04) 0%, var(--bg-primary) 60%); border: 1px solid var(--red-border); padding: 28px; max-width: 720px; }
+.tip-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--red-base); padding: 4px 10px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 2px; display: inline-block; margin-bottom: 14px; }
+.tip-form { display: flex; flex-direction: column; gap: 14px; }
+.tip-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tip-form-field { display: flex; flex-direction: column; gap: 6px; }
+.tip-form-field label { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.tip-form-field .req { font-size: 9px; color: var(--red-base); }
+.tip-form-field input, .tip-form-field textarea { background: var(--bg-primary); border: 1px solid var(--border-subtle); color: var(--text-primary); font-family: var(--font-sans); font-size: 14px; padding: 10px 12px; outline: none; resize: vertical; }
+.tip-form-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-top: 4px; }
+.tip-form-submit { background: var(--red-base); border: 1px solid var(--red-base); color: #fff; font-family: var(--font-mono); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 12px 22px; }
+.tip-form-note { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); flex: 1; min-width: 240px; line-height: 1.45; }
+
+/* === Section 3: Skimpflation overlay === */
+.skimp-card { background: linear-gradient(180deg, rgba(168,85,247,.05) 0%, var(--bg-primary) 60%); border: 1px solid var(--purple-border); padding: 28px; }
+.skimp-head { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
+.skimp-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--purple-base); padding: 4px 10px; background: var(--purple-bg); border: 1px solid var(--purple-border); border-radius: 2px; }
+.skimp-title { font-family: var(--font-headline); font-weight: 700; font-size: 22px; letter-spacing: -0.015em; }
+.skimp-lead { font-size: 14px; color: var(--text-secondary); line-height: 1.55; margin: 8px 0 24px; max-width: 720px; }
+.skimp-lead strong { color: var(--text-primary); }
+.skimp-table { display: grid; grid-template-columns: 200px repeat(2, 1fr) 140px; gap: 1px; background: var(--border-subtle); border: 1px solid var(--border-subtle); font-family: var(--font-mono); }
+.skimp-cell { background: var(--bg-primary); padding: 14px 16px; font-size: 12px; }
+.skimp-hdr { background: var(--bg-tertiary); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); font-weight: 700; }
+.skimp-nutrient { color: var(--text-primary); font-weight: 500; font-size: 13px; }
+.skimp-before { color: var(--text-secondary); }
+.skimp-after { color: var(--text-primary); font-weight: 700; }
+.skimp-delta { font-weight: 700; }
+.skimp-delta-bad { color: var(--red-base); }
+.skimp-delta-good { color: #22c55e; }
+.skimp-credit { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 20px; }
+
+/* === Section 4: Cart widget === */
+.cart-card { background: linear-gradient(180deg, rgba(220,38,38,.04) 0%, var(--bg-primary) 60%); border: 1px solid var(--red-border); padding: 28px; }
+.cart-head { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
+.cart-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--red-base); padding: 4px 10px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 2px; }
+.cart-title { font-family: var(--font-headline); font-weight: 700; font-size: 24px; letter-spacing: -0.015em; }
+.cart-lead { font-size: 14px; color: var(--text-secondary); line-height: 1.55; margin: 8px 0 24px; max-width: 720px; }
+.cart-lead strong { color: var(--text-primary); }
+.cart-input-row { display: flex; align-items: center; gap: 16px; padding: 16px 0; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); flex-wrap: wrap; }
+.cart-input-label { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); flex: 1; min-width: 200px; }
+.cart-input-wrap { display: inline-flex; align-items: center; background: var(--bg-primary); border: 1px solid var(--border-subtle); padding: 6px 14px; }
+.cart-input-prefix { font-family: var(--font-mono); font-size: 18px; color: var(--text-tertiary); padding-right: 4px; }
+.cart-input { background: transparent; border: none; outline: none; color: var(--text-primary); font-family: var(--font-mono); font-size: 22px; font-weight: 700; width: 90px; padding: 4px 0; }
+.cart-result-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border-subtle); margin: 16px 0 28px; border: 1px solid var(--border-subtle); }
+.cart-result-block { background: var(--bg-primary); padding: 22px 18px; display: flex; flex-direction: column; gap: 6px; }
+.cart-result-bad { background: var(--bg-tertiary); }
+.cart-result-label { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
+.cart-result-value { font-family: var(--font-mono); font-size: 42px; font-weight: 700; line-height: 1; }
+.cart-result-bad .cart-result-value { color: var(--red-base); }
+.cart-result-meta { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); }
+.cart-basket-head { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); padding-bottom: 14px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 14px; }
+.cart-basket-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+.cart-item { display: flex; flex-direction: column; background: var(--bg-primary); border: 1px solid var(--border-subtle); }
+.cart-item-img { aspect-ratio: 1; background: linear-gradient(135deg, #1a1b1d 0%, #0a0b0d 100%); display: flex; align-items: center; justify-content: center; padding: 12px; position: relative; }
+.cart-item-img::before { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(45deg, transparent 0, transparent 8px, rgba(255,255,255,.02) 8px, rgba(255,255,255,.02) 9px); }
+.cart-item-img span { font-family: var(--font-headline); font-weight: 700; font-size: 13px; letter-spacing: -0.01em; color: var(--text-primary); opacity: 0.7; text-align: center; position: relative; z-index: 2; }
+.cart-item-body { padding: 9px 11px; display: flex; flex-direction: column; gap: 3px; }
+.cart-item-brand { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); font-weight: 700; }
+.cart-item-name { font-family: var(--font-headline); font-size: 12px; font-weight: 700; line-height: 1.2; color: var(--text-primary); }
+.cart-item-size { display: flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 10px; padding-top: 4px; }
+.cart-item-before { color: var(--text-tertiary); text-decoration: line-through; }
+.cart-item-arrow { color: var(--text-tertiary); }
+.cart-item-after { color: var(--text-primary); font-weight: 700; }
+.cart-item-delta { font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: var(--red-base); }
+
+/* === Section 5: 4-line macro chart === */
+.chart-card { background: var(--bg-primary); border: 1px solid var(--border-subtle); padding: 32px; }
+.chart-legend { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 18px; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+.legend-item { display: inline-flex; align-items: center; gap: 8px; color: var(--text-secondary); }
+.legend-swatch { width: 16px; height: 3px; }
+.legend-swatch.events { background: var(--red-base); }
+.legend-swatch.bls    { background: var(--blue-base); }
+.legend-swatch.fred   { background: var(--amber-base); }
+.legend-swatch.trends { background: var(--purple-base); }
+.chart-wrap { position: relative; height: 260px; padding-left: 56px; padding-right: 56px; }
+.chart-svg { width: 100%; height: 100%; overflow: visible; display: block; }
+.chart-grid-line { stroke: var(--border-subtle); stroke-width: 1; stroke-dasharray: 2 4; }
+.chart-line { fill: none; stroke-width: 2; }
+.chart-line.events { stroke: var(--red-base); }
+.chart-line.bls    { stroke: var(--blue-base); stroke-dasharray: 4 3; }
+.chart-line.fred   { stroke: var(--amber-base); }
+.chart-line.trends { stroke: var(--purple-base); stroke-dasharray: 2 4; }
+.chart-area.events { fill: rgba(220,38,38,.06); }
+.chart-x { display: flex; justify-content: space-between; padding-left: 56px; padding-right: 56px; margin-top: 12px; font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; }
+.chart-y-left, .chart-y-right { position: absolute; top: 0; bottom: 32px; width: 48px; display: flex; flex-direction: column-reverse; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); }
+.chart-y-left { left: 0; padding-right: 8px; text-align: right; }
+.chart-y-right { right: 0; padding-left: 8px; }
+
+/* === Section 6: Corporate tree === */
+.corp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.corp-card { background: var(--bg-primary); border: 1px solid var(--border-subtle); padding: 22px; display: flex; flex-direction: column; gap: 14px; position: relative; }
+.corp-rank { position: absolute; top: 12px; right: 12px; font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); padding: 3px 8px; border: 1px solid var(--border-subtle); }
+.corp-name { font-family: var(--font-headline); font-weight: 700; font-size: 20px; letter-spacing: -0.015em; }
+.corp-meta { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
+.corp-stat { display: flex; align-items: baseline; gap: 8px; padding-bottom: 10px; border-bottom: 1px solid var(--border-subtle); }
+.corp-stat-v { font-family: var(--font-mono); font-weight: 700; font-size: 22px; color: var(--red-base); }
+.corp-stat-l { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
+.corp-children { display: flex; flex-direction: column; gap: 6px; }
+.corp-child { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); }
+.corp-child-thumb { width: 40px; height: 40px; background: linear-gradient(135deg, #1a1b1d 0%, #0a0b0d 100%); display: flex; align-items: center; justify-content: center; font-family: var(--font-headline); font-weight: 700; font-size: 16px; color: var(--text-tertiary); }
+.corp-child-brand { font-family: var(--font-headline); font-weight: 700; font-size: 13px; }
+.corp-child-events { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
+
+/* === Section 7: Press coverage === */
+.press-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.press-card { background: var(--bg-primary); border: 1px solid var(--border-subtle); padding: 22px; display: flex; flex-direction: column; gap: 12px; }
+.press-pill { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-primary); padding: 4px 10px; background: var(--bg-tertiary); border: 1px solid var(--border-subtle); border-radius: 2px; align-self: flex-start; }
+.press-title { font-family: var(--font-headline); font-weight: 700; font-size: 17px; letter-spacing: -0.015em; line-height: 1.25; }
+.press-excerpt { font-size: 13px; color: var(--text-secondary); line-height: 1.5; font-style: italic; }
+.press-foot { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); display: flex; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--border-subtle); margin-top: auto; }
+.press-link { color: var(--red-base); }
+
+/* === Section 8: Skimpflation pipeline + 9: notes === */
+.note-box { background: var(--bg-primary); border: 1px solid var(--border-subtle); border-left: 3px solid var(--amber-base); padding: 20px 24px; font-family: var(--font-mono); font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.note-box strong { color: var(--text-primary); }
+.note-box code { background: var(--bg-secondary); padding: 1px 6px; color: var(--amber-base); }
+
+footer { padding: 48px 0 96px; text-align: center; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); border-top: 1px solid var(--border-subtle); margin-top: 48px; }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+
+<div class="preview-bar">
+  <div class="preview-bar-inner">
+    <span class="preview-label">Preview</span>
+    <span class="preview-title">Phase 2C — what was just built</span>
+    <div class="preview-nav">
+      <a href="#products-index">1. /products</a>
+      <a href="#tip-form">2. Tip form</a>
+      <a href="#skimp-overlay">3. Skimp overlay</a>
+      <a href="#cart">4. Cart widget</a>
+      <a href="#chart">5. 4-line chart</a>
+      <a href="#corporate">6. Corporate tree</a>
+      <a href="#press">7. Press coverage</a>
+      <a href="#pipeline">8. Skimp pipeline</a>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- =================== 1. /products INDEX =================== -->
+  <section class="deliv" id="products-index">
+    <span class="deliv-eyebrow">Item 1 · ✅ shipped</span>
+    <h2>/products index page</h2>
+    <p class="deliv-lede">
+      Sortable grid of every product with at least one shrink event. Mirrors
+      <code>/brands</code>: tier-grouped, category chips, search by brand or
+      product name, four sort pills. Backed by <code>product_index</code>
+      view (migration <code>054</code>).
+    </p>
+    <div class="deliv-frame">
+      <div class="idx-header">
+        <h3>Every product we're tracking.</h3>
+        <p><strong>2,420</strong> products with <strong>2,800</strong> documented shrinkflation events across <strong>1,167</strong> brands.</p>
+      </div>
+      <div class="cat-strip">
+        <button class="cat-chip active">All <span class="cat-chip-count">2420</span></button>
+        <button class="cat-chip">Snacks <span class="cat-chip-count">412</span></button>
+        <button class="cat-chip">Cereal <span class="cat-chip-count">288</span></button>
+        <button class="cat-chip">Beverages <span class="cat-chip-count">203</span></button>
+        <button class="cat-chip">Frozen <span class="cat-chip-count">178</span></button>
+        <button class="cat-chip">Dairy <span class="cat-chip-count">156</span></button>
+        <button class="cat-chip">Confectionery <span class="cat-chip-count">134</span></button>
+      </div>
+      <div class="controls">
+        <input class="search-input" placeholder="Filter by brand or product name…">
+        <div class="sort-pills">
+          <button class="sort-pill active">Most events</button>
+          <button class="sort-pill">Worst single shrink</button>
+          <button class="sort-pill">Worst avg shrink</button>
+          <button class="sort-pill">A–Z</button>
+        </div>
+      </div>
+
+      <div class="tier"><span class="tier-label tier-1">Chronic Offenders</span><span class="tier-meta">6+ events · 38 products</span></div>
+      <div class="prod-grid">
+        <div class="prod-card"><span class="prod-rank">#1</span><div class="prod-img"><span class="prod-img-name">Cadbury Dairy Milk Mini Eggs</span></div><div class="prod-body"><span class="prod-brand-tag">Cadbury</span><span class="prod-name">Dairy Milk Mini Eggs</span><div class="prod-stats"><div class="prod-stat"><span class="prod-stat-v">14</span><span class="prod-stat-l">events</span></div><div class="prod-stat"><span class="prod-stat-v">-17%</span><span class="prod-stat-l">worst</span></div><div class="prod-stat"><span class="prod-stat-v">-9.2%</span><span class="prod-stat-l">avg</span></div></div><div class="prod-foot">Last seen 2026-04-22</div></div></div>
+        <div class="prod-card"><span class="prod-rank">#2</span><div class="prod-img"><span class="prod-img-name">Doritos Cool Ranch</span></div><div class="prod-body"><span class="prod-brand-tag">Doritos</span><span class="prod-name">Cool Ranch Tortilla Chips</span><div class="prod-stats"><div class="prod-stat"><span class="prod-stat-v">11</span><span class="prod-stat-l">events</span></div><div class="prod-stat"><span class="prod-stat-v">-21%</span><span class="prod-stat-l">worst</span></div><div class="prod-stat"><span class="prod-stat-v">-7.4%</span><span class="prod-stat-l">avg</span></div></div><div class="prod-foot">Last seen 2026-05-02</div></div></div>
+        <div class="prod-card"><span class="prod-rank">#3</span><div class="prod-img"><span class="prod-img-name">Oreo Original</span></div><div class="prod-body"><span class="prod-brand-tag">Oreo</span><span class="prod-name">Original Sandwich Cookies</span><div class="prod-stats"><div class="prod-stat"><span class="prod-stat-v">9</span><span class="prod-stat-l">events</span></div><div class="prod-stat"><span class="prod-stat-v">-13%</span><span class="prod-stat-l">worst</span></div><div class="prod-stat"><span class="prod-stat-v">-6.8%</span><span class="prod-stat-l">avg</span></div></div><div class="prod-foot">Last seen 2026-03-18</div></div></div>
+        <div class="prod-card"><span class="prod-rank">#4</span><div class="prod-img"><span class="prod-img-name">Lay's Classic</span></div><div class="prod-body"><span class="prod-brand-tag">Lay's</span><span class="prod-name">Classic Potato Chips</span><div class="prod-stats"><div class="prod-stat"><span class="prod-stat-v">8</span><span class="prod-stat-l">events</span></div><div class="prod-stat"><span class="prod-stat-v">-15%</span><span class="prod-stat-l">worst</span></div><div class="prod-stat"><span class="prod-stat-v">-7.1%</span><span class="prod-stat-l">avg</span></div></div><div class="prod-foot">Last seen 2026-04-11</div></div></div>
+      </div>
+
+      <div class="tier"><span class="tier-label tier-2">Repeat Offenders</span><span class="tier-meta">3–5 events · 142 products</span></div>
+      <div class="prod-grid">
+        <div class="prod-card"><span class="prod-rank">#39</span><div class="prod-img"><span class="prod-img-name">Wheat Thins Original</span></div><div class="prod-body"><span class="prod-brand-tag">Nabisco</span><span class="prod-name">Wheat Thins Original</span><div class="prod-stats"><div class="prod-stat"><span class="prod-stat-v">5</span><span class="prod-stat-l">events</span></div><div class="prod-stat"><span class="prod-stat-v">-11%</span><span class="prod-stat-l">worst</span></div><div class="prod-stat"><span class="prod-stat-v">-5.4%</span><span class="prod-stat-l">avg</span></div></div><div class="prod-foot">Last seen 2026-02-09</div></div></div>
+        <div class="prod-card"><span class="prod-rank">#40</span><div class="prod-img"><span class="prod-img-name">Pringles Original</span></div><div class="prod-body"><span class="prod-brand-tag">Pringles</span><span class="prod-name">Original</span><div class="prod-stats"><div class="prod-stat"><span class="prod-stat-v">4</span><span class="prod-stat-l">events</span></div><div class="prod-stat"><span class="prod-stat-v">-9%</span><span class="prod-stat-l">worst</span></div><div class="prod-stat"><span class="prod-stat-v">-4.8%</span><span class="prod-stat-l">avg</span></div></div><div class="prod-foot">Last seen 2026-04-30</div></div></div>
+        <div class="prod-card"><span class="prod-rank">#41</span><div class="prod-img"><span class="prod-img-name">Kraft Mac & Cheese</span></div><div class="prod-body"><span class="prod-brand-tag">Kraft</span><span class="prod-name">Macaroni &amp; Cheese</span><div class="prod-stats"><div class="prod-stat"><span class="prod-stat-v">4</span><span class="prod-stat-l">events</span></div><div class="prod-stat"><span class="prod-stat-v">-14%</span><span class="prod-stat-l">worst</span></div><div class="prod-stat"><span class="prod-stat-v">-6.0%</span><span class="prod-stat-l">avg</span></div></div><div class="prod-foot">Last seen 2026-01-25</div></div></div>
+        <div class="prod-card"><span class="prod-rank">#42</span><div class="prod-img"><span class="prod-img-name">Cheerios Honey Nut</span></div><div class="prod-body"><span class="prod-brand-tag">General Mills</span><span class="prod-name">Honey Nut Cheerios</span><div class="prod-stats"><div class="prod-stat"><span class="prod-stat-v">3</span><span class="prod-stat-l">events</span></div><div class="prod-stat"><span class="prod-stat-v">-10%</span><span class="prod-stat-l">worst</span></div><div class="prod-stat"><span class="prod-stat-v">-5.2%</span><span class="prod-stat-l">avg</span></div></div><div class="prod-foot">Last seen 2026-03-04</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 2. TIP FORM =================== -->
+  <section class="deliv" id="tip-form">
+    <span class="deliv-eyebrow">Item 2 · ✅ shipped</span>
+    <h2>/about tip submission form</h2>
+    <p class="deliv-lede">
+      Wires the existing <code>tips</code> table to a public POST endpoint
+      at <code>/api/tips</code>. Lightweight de-dup (60s per session), URL
+      validation, IP hashing. Email path still surfaced as fallback.
+    </p>
+    <div class="deliv-frame">
+      <div class="tip-card">
+        <span class="tip-eyebrow">Tip submission</span>
+        <form class="tip-form">
+          <div class="tip-form-row">
+            <div class="tip-form-field">
+              <label>Brand</label>
+              <input placeholder="e.g. Cadbury" disabled>
+            </div>
+            <div class="tip-form-field">
+              <label>Product</label>
+              <input placeholder="e.g. Dairy Milk Mini Eggs" disabled>
+            </div>
+          </div>
+          <div class="tip-form-field">
+            <label>What changed? <span class="req">required</span></label>
+            <textarea rows="4" placeholder="e.g. The bag went from 96g to 80g but the price stayed the same. I have the old bag at home for comparison." disabled></textarea>
+          </div>
+          <div class="tip-form-field">
+            <label>Link to evidence (optional)</label>
+            <input placeholder="https://… Reddit post, news article, retailer page, photo" disabled>
+          </div>
+          <div class="tip-form-actions">
+            <button class="tip-form-submit" type="button">Submit tip</button>
+            <div class="tip-form-note">Tips go straight into the same review queue our scrapers feed. We'll credit you on the event unless you ask us not to.</div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 3. SKIMP OVERLAY =================== -->
+  <section class="deliv" id="skimp-overlay">
+    <span class="deliv-eyebrow">Item 3 · ✅ shipped</span>
+    <h2>Skimpflation overlay on /products/[id]</h2>
+    <p class="deliv-lede">
+      Server-fetches USDA nutrition snapshots for the entity's UPCs, computes
+      per-nutrient deltas across the widest release span, renders only when
+      aggregate score crosses the noise floor. Title: "What changed inside?"
+    </p>
+    <div class="deliv-frame">
+      <div class="skimp-card">
+        <div class="skimp-head">
+          <span class="skimp-eyebrow">Skimpflation</span>
+          <div class="skimp-title">The bag shrank — and the recipe got cheaper, too.</div>
+        </div>
+        <p class="skimp-lead">
+          Between USDA's <strong>2022</strong> release and <strong>2025</strong>, the per-100g nutrition label for this product shifted in 4 measurable ways. Aggregate skimp score: <strong>22.3</strong>.
+        </p>
+        <div class="skimp-table">
+          <div class="skimp-cell skimp-hdr">Nutrient (per 100g)</div>
+          <div class="skimp-cell skimp-hdr">Before · 2022-10</div>
+          <div class="skimp-cell skimp-hdr">After · 2025-12</div>
+          <div class="skimp-cell skimp-hdr">Delta</div>
+
+          <div class="skimp-cell skimp-nutrient">Protein</div>
+          <div class="skimp-cell skimp-before">7.6g</div>
+          <div class="skimp-cell skimp-after">6.9g</div>
+          <div class="skimp-cell skimp-delta skimp-delta-bad">−9.2%</div>
+
+          <div class="skimp-cell skimp-nutrient">Sugar</div>
+          <div class="skimp-cell skimp-before">63.5g</div>
+          <div class="skimp-cell skimp-after">67.2g</div>
+          <div class="skimp-cell skimp-delta skimp-delta-bad">+5.8%</div>
+
+          <div class="skimp-cell skimp-nutrient">Sodium</div>
+          <div class="skimp-cell skimp-before">320mg</div>
+          <div class="skimp-cell skimp-after">340mg</div>
+          <div class="skimp-cell skimp-delta skimp-delta-bad">+6.3%</div>
+
+          <div class="skimp-cell skimp-nutrient">Saturated fat</div>
+          <div class="skimp-cell skimp-before">17.0g</div>
+          <div class="skimp-cell skimp-after">17.4g</div>
+          <div class="skimp-cell skimp-delta skimp-delta-bad">+2.4%</div>
+        </div>
+        <div class="skimp-credit">Source: USDA FoodData Central · gtin 050000000017 · 7 releases compared</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 4. CART WIDGET =================== -->
+  <section class="deliv" id="cart">
+    <span class="deliv-eyebrow">Item 4 · ✅ shipped</span>
+    <h2>Shrinking grocery cart widget</h2>
+    <p class="deliv-lede">
+      Interactive calculator on <code>/insights</code>. Server pre-builds a
+      12-product basket (brand-diversified, image-required, 2-60% shrink
+      window); client widget lets the user enter their weekly spend and
+      shows real-vs-air dollar split, with a per-item breakdown.
+    </p>
+    <div class="deliv-frame">
+      <div class="cart-card">
+        <div class="cart-head">
+          <span class="cart-eyebrow">The math, on your basket</span>
+          <div class="cart-title">What does 2020's grocery cart cost in 2026?</div>
+        </div>
+        <p class="cart-lead">
+          Built from <strong>12</strong> real products we've tracked across 2020–2026. Each item's package shrank by an average of <strong>−9.4%</strong> with no price drop — so a fraction of every grocery dollar buys nothing but air.
+        </p>
+        <div class="cart-input-row">
+          <label class="cart-input-label">Your weekly grocery spend</label>
+          <div class="cart-input-wrap">
+            <span class="cart-input-prefix">$</span>
+            <input class="cart-input" type="text" value="150" disabled>
+          </div>
+        </div>
+        <div class="cart-result-row">
+          <div class="cart-result-block">
+            <div class="cart-result-label">Real food in the bag</div>
+            <div class="cart-result-value">$135.42</div>
+            <div class="cart-result-meta">of your $150.00 buys actual product</div>
+          </div>
+          <div class="cart-result-block cart-result-bad">
+            <div class="cart-result-label">Just air</div>
+            <div class="cart-result-value">$14.58</div>
+            <div class="cart-result-meta">9.7% of every dollar buys nothing</div>
+          </div>
+        </div>
+        <div class="cart-basket-head">The basket · 12 products</div>
+        <div class="cart-basket-grid">
+          <div class="cart-item"><div class="cart-item-img"><span>Cadbury Mini Eggs</span></div><div class="cart-item-body"><span class="cart-item-brand">Cadbury</span><span class="cart-item-name">Dairy Milk Mini Eggs</span><div class="cart-item-size"><span class="cart-item-before">96g</span><span class="cart-item-arrow">→</span><span class="cart-item-after">80g</span></div><div class="cart-item-delta">−16.7%</div></div></div>
+          <div class="cart-item"><div class="cart-item-img"><span>Doritos Cool Ranch</span></div><div class="cart-item-body"><span class="cart-item-brand">Doritos</span><span class="cart-item-name">Cool Ranch</span><div class="cart-item-size"><span class="cart-item-before">11oz</span><span class="cart-item-arrow">→</span><span class="cart-item-after">9.25oz</span></div><div class="cart-item-delta">−15.9%</div></div></div>
+          <div class="cart-item"><div class="cart-item-img"><span>Oreo Original</span></div><div class="cart-item-body"><span class="cart-item-brand">Oreo</span><span class="cart-item-name">Original</span><div class="cart-item-size"><span class="cart-item-before">14.3oz</span><span class="cart-item-arrow">→</span><span class="cart-item-after">12.3oz</span></div><div class="cart-item-delta">−14.0%</div></div></div>
+          <div class="cart-item"><div class="cart-item-img"><span>Cheerios HN</span></div><div class="cart-item-body"><span class="cart-item-brand">General Mills</span><span class="cart-item-name">Honey Nut Cheerios</span><div class="cart-item-size"><span class="cart-item-before">12oz</span><span class="cart-item-arrow">→</span><span class="cart-item-after">10.8oz</span></div><div class="cart-item-delta">−10.0%</div></div></div>
+          <div class="cart-item"><div class="cart-item-img"><span>Wheat Thins</span></div><div class="cart-item-body"><span class="cart-item-brand">Nabisco</span><span class="cart-item-name">Wheat Thins</span><div class="cart-item-size"><span class="cart-item-before">9.1oz</span><span class="cart-item-arrow">→</span><span class="cart-item-after">8.5oz</span></div><div class="cart-item-delta">−6.6%</div></div></div>
+          <div class="cart-item"><div class="cart-item-img"><span>Pringles</span></div><div class="cart-item-body"><span class="cart-item-brand">Pringles</span><span class="cart-item-name">Original</span><div class="cart-item-size"><span class="cart-item-before">5.5oz</span><span class="cart-item-arrow">→</span><span class="cart-item-after">5.2oz</span></div><div class="cart-item-delta">−5.5%</div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 5. CHART =================== -->
+  <section class="deliv" id="chart">
+    <span class="deliv-eyebrow">Item 5 · ✅ shipped (Google Trends)</span>
+    <h2>Macro chart, now 4 lines</h2>
+    <p class="deliv-lede">
+      Added <code>google_trends_data</code> (migration 057) and the
+      GoogleTrendsScraper. Right axis combines CPI and Trends since both
+      are dimensionless. The purple line below traces search interest for
+      "shrinkflation" — the 2022 awareness spike is the dramatic peak.
+    </p>
+    <div class="deliv-frame">
+      <div class="chart-card">
+        <div class="chart-legend">
+          <span class="legend-item"><span class="legend-swatch events"></span> FullCarts events (left axis)</span>
+          <span class="legend-item"><span class="legend-swatch bls"></span> BLS downsizings (left axis, dashed)</span>
+          <span class="legend-item"><span class="legend-swatch fred"></span> FRED food CPI YoY% (right axis)</span>
+          <span class="legend-item"><span class="legend-swatch trends"></span> Google Trends "shrinkflation" (right axis, dashed)</span>
+        </div>
+        <div class="chart-wrap">
+          <div class="chart-y-left"><div>0</div><div>30</div><div>60</div><div>90</div><div>120</div></div>
+          <div class="chart-y-right"><div>0</div><div>25</div><div>50</div><div>75</div><div>100</div></div>
+          <svg class="chart-svg" viewBox="0 0 1000 240" preserveAspectRatio="none">
+            <line class="chart-grid-line" x1="0" y1="0" x2="1000" y2="0"/>
+            <line class="chart-grid-line" x1="0" y1="60" x2="1000" y2="60"/>
+            <line class="chart-grid-line" x1="0" y1="120" x2="1000" y2="120"/>
+            <line class="chart-grid-line" x1="0" y1="180" x2="1000" y2="180"/>
+            <line class="chart-grid-line" x1="0" y1="240" x2="1000" y2="240"/>
+            <!-- events area + line, simulated 30 monthly bars -->
+            <path class="chart-area events" d="M0,240 L0,220 L40,210 L80,180 L120,160 L160,140 L200,130 L240,110 L280,100 L320,90 L360,85 L400,80 L440,90 L480,95 L520,75 L560,70 L600,65 L640,60 L680,55 L720,50 L760,55 L800,60 L840,55 L880,50 L920,45 L960,40 L1000,38 L1000,240 Z"/>
+            <path class="chart-line events" d="M0,220 L40,210 L80,180 L120,160 L160,140 L200,130 L240,110 L280,100 L320,90 L360,85 L400,80 L440,90 L480,95 L520,75 L560,70 L600,65 L640,60 L680,55 L720,50 L760,55 L800,60 L840,55 L880,50 L920,45 L960,40 L1000,38"/>
+            <!-- BLS dashed -->
+            <path class="chart-line bls" d="M0,180 L100,175 L200,170 L300,165 L400,150 L500,135 L600,130 L700,125 L800,120 L900,115 L1000,110"/>
+            <!-- FRED CPI YoY -->
+            <path class="chart-line fred" d="M0,180 L100,170 L200,150 L300,120 L400,80 L500,70 L600,75 L700,90 L800,110 L900,130 L1000,150"/>
+            <!-- Google Trends — 2022 spike -->
+            <path class="chart-line trends" d="M0,210 L100,200 L200,195 L300,50 L400,80 L500,110 L600,130 L700,140 L800,135 L900,130 L1000,125"/>
+          </svg>
+        </div>
+        <div class="chart-x">
+          <span>Feb '23</span><span>Jun '23</span><span>Oct '23</span><span>Feb '24</span><span>Jun '24</span><span>Oct '24</span><span>May '26</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 6. CORPORATE TREE =================== -->
+  <section class="deliv" id="corporate">
+    <span class="deliv-eyebrow">Items 6 + 7 · ✅ shipped (Wikidata + tree)</span>
+    <h2>Who actually owns these brands?</h2>
+    <p class="deliv-lede">
+      <code>wikidata_manufacturer_backfill.py</code> populates
+      <code>product_entities.manufacturer</code> from Wikidata SPARQL
+      (P749 / P127 / P176), weekly via cron. <code>corporate_tree</code>
+      view (migration 056) rolls each manufacturer up with its top-3 child
+      brands. Renders as a new section on <code>/insights</code>.
+    </p>
+    <div class="deliv-frame">
+      <div class="corp-grid">
+        <div class="corp-card">
+          <span class="corp-rank">#1</span>
+          <div><div class="corp-name">Mondelez International</div><div class="corp-meta">14 brands · 89 events</div></div>
+          <div class="corp-stat"><span class="corp-stat-v">−21.4%</span><span class="corp-stat-l">worst single shrink</span></div>
+          <div class="corp-children">
+            <div class="corp-child"><div class="corp-child-thumb">C</div><div><div class="corp-child-brand">Cadbury</div><div class="corp-child-events">28 events</div></div></div>
+            <div class="corp-child"><div class="corp-child-thumb">O</div><div><div class="corp-child-brand">Oreo</div><div class="corp-child-events">19 events</div></div></div>
+            <div class="corp-child"><div class="corp-child-thumb">W</div><div><div class="corp-child-brand">Wheat Thins</div><div class="corp-child-events">12 events</div></div></div>
+          </div>
+        </div>
+        <div class="corp-card">
+          <span class="corp-rank">#2</span>
+          <div><div class="corp-name">PepsiCo</div><div class="corp-meta">11 brands · 72 events</div></div>
+          <div class="corp-stat"><span class="corp-stat-v">−18.2%</span><span class="corp-stat-l">worst single shrink</span></div>
+          <div class="corp-children">
+            <div class="corp-child"><div class="corp-child-thumb">D</div><div><div class="corp-child-brand">Doritos</div><div class="corp-child-events">22 events</div></div></div>
+            <div class="corp-child"><div class="corp-child-thumb">L</div><div><div class="corp-child-brand">Lay's</div><div class="corp-child-events">18 events</div></div></div>
+            <div class="corp-child"><div class="corp-child-thumb">C</div><div><div class="corp-child-brand">Cheetos</div><div class="corp-child-events">9 events</div></div></div>
+          </div>
+        </div>
+        <div class="corp-card">
+          <span class="corp-rank">#3</span>
+          <div><div class="corp-name">General Mills</div><div class="corp-meta">9 brands · 51 events</div></div>
+          <div class="corp-stat"><span class="corp-stat-v">−15.0%</span><span class="corp-stat-l">worst single shrink</span></div>
+          <div class="corp-children">
+            <div class="corp-child"><div class="corp-child-thumb">C</div><div><div class="corp-child-brand">Cheerios</div><div class="corp-child-events">14 events</div></div></div>
+            <div class="corp-child"><div class="corp-child-thumb">P</div><div><div class="corp-child-brand">Pillsbury</div><div class="corp-child-events">11 events</div></div></div>
+            <div class="corp-child"><div class="corp-child-thumb">B</div><div><div class="corp-child-brand">Betty Crocker</div><div class="corp-child-events">8 events</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 7. PRESS COVERAGE =================== -->
+  <section class="deliv" id="press">
+    <span class="deliv-eyebrow">Item 8 · ✅ shipped (Consumer Reports)</span>
+    <h2>Press coverage on /products/[id]</h2>
+    <p class="deliv-lede">
+      ConsumerReportsScraper walks CR's evergreen shrinkflation index pages,
+      extracts brand/product callouts, monthly via cron.
+      <code>match_consumer_reports.py</code> resolves each finding to an
+      <code>entity_id</code>. Surfaces as a "Press coverage" section on
+      every product page that has matched CR coverage.
+    </p>
+    <div class="deliv-frame">
+      <div class="press-grid">
+        <div class="press-card">
+          <div class="press-pill">Consumer Reports</div>
+          <div class="press-title">17 Products That Have Shrunk in Size</div>
+          <div class="press-excerpt">"Cadbury cut the package size of its Mini Eggs from 8.9 ounces to 7.9 ounces — an 11 percent reduction — without changing the price, our investigators found."</div>
+          <div class="press-foot"><span>2024-01-15</span><span class="press-link">Read on CR ↗</span></div>
+        </div>
+        <div class="press-card">
+          <div class="press-pill">Consumer Reports</div>
+          <div class="press-title">Shrinkflation: Getting Less for Your Money</div>
+          <div class="press-excerpt">"Among the products we found shrinking: Doritos went from 11oz to 9.25oz; Lay's cut their 'family size' from 15.25oz to 13oz; both retained their pre-shrink prices."</div>
+          <div class="press-foot"><span>2023-08-04</span><span class="press-link">Read on CR ↗</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== 8. SKIMP PIPELINE =================== -->
+  <section class="deliv" id="pipeline">
+    <span class="deliv-eyebrow">Item 9 · ✅ shipped</span>
+    <h2>Skimpflation pipeline → published_changes</h2>
+    <p class="deliv-lede">
+      Migration <code>055</code> relaxes <code>size_*</code> / <code>candidate_id</code>
+      NOT NULL constraints and adds <code>skimp_score</code> +
+      <code>nutrient_deltas</code> columns to <code>published_changes</code>.
+      New <code>promote_skimpflation.py</code> walks USDA cross-release
+      diffs, matches each UPC to a <code>pack_variant</code>, and inserts
+      one skimpflation row per qualifying entity. Idempotent — re-runs skip
+      entities that already have one. Wired into the daily promote workflow.
+    </p>
+    <div class="deliv-frame">
+      <div class="note-box">
+<strong>What changes operationally:</strong><br>
+• <code>published_changes.change_type</code> picks up a new value: <code>'skimpflation'</code><br>
+• New view <code>skimpflation_events</code> exposes only the skimpflation slice<br>
+• Existing <code>event_evidence_summary</code> view is rewritten to EXCLUDE skimpflation rows, so size-focused pages don't have to change<br>
+• Daily cron: nutrition_skimpflation findings are now first-class events alongside size shrinks<br>
+• Brand / product / dashboard counts include skimpflation in their <strong>"events" total</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="deliv">
+    <span class="deliv-eyebrow">to deploy</span>
+    <h2>Migration checklist</h2>
+    <p class="deliv-lede">
+      Run these once in the Supabase SQL Editor. Order matters — 055 must
+      land before <code>promote_skimpflation.py</code> runs.
+    </p>
+    <div class="deliv-frame">
+      <div class="note-box">
+1. <code>054_product_index_view.sql</code> — lights up <code>/products</code><br>
+2. <code>055_published_changes_skimpflation.sql</code> — relaxes NOT NULLs + adds skimp columns/view<br>
+3. <code>056_corporate_tree.sql</code> — view; empty until Wikidata backfill runs<br>
+4. <code>057_google_trends_data.sql</code> — table; empty until scraper runs<br>
+5. <code>058_consumer_reports_findings.sql</code> — table; empty until scraper runs<br><br>
+The new scrapers (<code>google_trends</code>, <code>consumer_reports</code>, <code>wikidata_manufacturer_backfill</code>) are scheduled via GitHub Actions and will start populating on their cron without manual intervention.
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>preview · all 9 Phase 2C deliverables · committed to claude/continue-fullcarts-g7sPQ</footer>
+</body>
+</html>

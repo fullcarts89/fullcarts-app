@@ -1,7 +1,9 @@
-// Server component. Three-line time-series chart: FullCarts events
-// (red, filled area below), BLS downsizings (blue dashed), and FRED
-// food-at-home CPI YoY% (amber). Events + BLS share the left axis;
-// CPI YoY% lives on the right axis (different unit).
+// Server component. Macro time-series chart: FullCarts events
+// (red, filled area below), BLS downsizings (blue dashed), FRED
+// food-at-home CPI YoY% (amber), and Google Trends interest for
+// "shrinkflation" (purple, dashed). Events + BLS share the left
+// axis (both counts); CPI and Trends each ride the right axis
+// because their scales are dimensionless.
 //
 // Pure SVG, no client JS. Skips a series entirely when it has no
 // usable points. Empty state if all three series are empty.
@@ -76,8 +78,9 @@ export default function ThreeLineChart({ points }: Props) {
   const hasEvents = points.some((p) => p.events != null);
   const hasBls = points.some((p) => p.blsDownsizings != null);
   const hasCpi = points.some((p) => p.cpiYoyPct != null);
+  const hasTrends = points.some((p) => p.trendsInterest != null);
 
-  if (!hasEvents && !hasBls && !hasCpi) {
+  if (!hasEvents && !hasBls && !hasCpi && !hasTrends) {
     return (
       <div className={styles.empty}>
         Not enough data to plot the chart yet
@@ -93,10 +96,14 @@ export default function ThreeLineChart({ points }: Props) {
   }
   const leftAxis = niceAxis(leftValues);
 
-  // Right axis: CPI YoY%. Always include 0 so the line shows direction.
-  const rightValues = points
-    .map((p) => p.cpiYoyPct)
-    .filter((v): v is number => v != null);
+  // Right axis: combined CPI YoY% and Trends interest. Both are
+  // dimensionless and roughly share a 0-100 range, so they can share
+  // the right-axis ticks without misleading the eye.
+  const rightValues: number[] = [];
+  for (const p of points) {
+    if (p.cpiYoyPct != null) rightValues.push(p.cpiYoyPct);
+    if (p.trendsInterest != null) rightValues.push(p.trendsInterest);
+  }
   const rightAxis = niceAxis(rightValues);
 
   // x position: evenly spaced across the window.
@@ -121,6 +128,7 @@ export default function ThreeLineChart({ points }: Props) {
   const eventsLine = buildPath(points, (p) => p.events, x, yLeft);
   const blsLine = buildPath(points, (p) => p.blsDownsizings, x, yLeft);
   const cpiLine = buildPath(points, (p) => p.cpiYoyPct, x, yRight);
+  const trendsLine = buildPath(points, (p) => p.trendsInterest, x, yRight);
 
   // X-axis labels: spread X_TICK_COUNT ticks across the points list.
   const xTicks: { month: string; label: string }[] = [];
@@ -145,6 +153,12 @@ export default function ThreeLineChart({ points }: Props) {
           <span className={`${styles["legend-swatch"]} ${styles.fred}`} /> FRED
           food CPI YoY% (right axis)
         </span>
+        {hasTrends && (
+          <span className={styles["legend-item"]}>
+            <span className={`${styles["legend-swatch"]} ${styles.trends}`} />{" "}
+            Google Trends &ldquo;shrinkflation&rdquo; (right axis, dashed)
+          </span>
+        )}
       </div>
 
       <div className={styles["chart-wrap"]}>
@@ -196,6 +210,9 @@ export default function ThreeLineChart({ points }: Props) {
           )}
           {hasCpi && cpiLine && (
             <path className={`${styles["chart-line"]} ${styles.fred}`} d={cpiLine} />
+          )}
+          {hasTrends && trendsLine && (
+            <path className={`${styles["chart-line"]} ${styles.trends}`} d={trendsLine} />
           )}
         </svg>
       </div>

@@ -6,17 +6,24 @@ import SizeTrajectory from "./_components/SizeTrajectory";
 import ChangeHistory from "./_components/ChangeHistory";
 import RetailersGrid from "./_components/RetailersGrid";
 import RelatedProducts from "./_components/RelatedProducts";
+import SkimpflationOverlay from "./_components/SkimpflationOverlay";
+import PressCoverage from "./_components/PressCoverage";
 import {
   buildTrajectory,
+  computeSkimpData,
   eventsByDateDesc,
+  expandUpcVariants,
   num,
   totalEvidenceCount,
 } from "./lib";
 import type {
+  ConsumerReportRef,
   EventRow,
   PackVariant,
   ProductEntity,
   RelatedProduct,
+  SkimpData,
+  UsdaNutritionRow,
   VariantObservation,
 } from "./types";
 import styles from "./styles.module.css";
@@ -49,6 +56,8 @@ async function loadProduct(id: string): Promise<{
   variants: PackVariant[];
   observations: VariantObservation[];
   related: RelatedProduct[];
+  skimp: SkimpData | null;
+  press: ConsumerReportRef[];
 } | null> {
   const sb = createAdminClient();
 
@@ -94,6 +103,35 @@ async function loadProduct(id: string): Promise<{
     observations = (data ?? []) as VariantObservation[];
   }
 
+  // Skimpflation overlay — pull USDA nutrition snapshots for any of
+  // the entity's UPCs. We hand the raw rows to computeSkimpData()
+  // which picks the best UPC + release pair and computes deltas.
+  let skimp: SkimpData | null = null;
+  const upcCandidates = expandUpcVariants(variants.map((v) => v.upc));
+  if (upcCandidates.length > 0) {
+    const { data } = await sb
+      .from("usda_product_history")
+      .select(
+        "gtin_upc, release_date, description, brand_name, calories_kcal, protein_g, total_fat_g, saturated_fat_g, carbs_g, fiber_g, sugars_g, calcium_mg, sodium_mg, cholesterol_mg",
+      )
+      .in("gtin_upc", upcCandidates);
+    skimp = computeSkimpData((data ?? []) as UsdaNutritionRow[]);
+  }
+
+  // Consumer Reports coverage — silent no-op if the table or the
+  // matched_at index isn't there yet (migration 058 may not have been
+  // applied locally during development).
+  let press: ConsumerReportRef[] = [];
+  const pressRes = await sb
+    .from("consumer_reports_findings")
+    .select("id, source_url, title, published_at, excerpt, brand, product_name")
+    .eq("entity_id", entity.id)
+    .order("published_at", { ascending: false, nullsFirst: false })
+    .limit(8);
+  if (!pressRes.error) {
+    press = (pressRes.data ?? []) as ConsumerReportRef[];
+  }
+
   const related: RelatedProduct[] = ((relatedRes.data ?? []) as Array<{
     entity_id: string;
     name: string;
@@ -114,6 +152,8 @@ async function loadProduct(id: string): Promise<{
     variants,
     observations,
     related,
+    skimp,
+    press,
   };
 }
 
@@ -136,7 +176,7 @@ export default async function ProductPage({ params }: PageProps) {
   const data = await loadProduct(id);
   if (!data) notFound();
 
-  const { entity, events, variants, observations, related } = data;
+  const { entity, events, variants, observations, related, skimp, press } = data;
   const eventsDesc = eventsByDateDesc(events);
   const trajectory = buildTrajectory(events);
   const evidenceTotal = totalEvidenceCount(events);
@@ -185,6 +225,19 @@ export default async function ProductPage({ params }: PageProps) {
           <ChangeHistory events={eventsDesc} />
         </section>
 
+        {skimp && (
+          <section className={styles.block}>
+            <div className={styles["section-head"]}>
+              <h2>What changed inside?</h2>
+              <div className={styles.meta}>
+                USDA FoodData Central · gtin {skimp.upc} ·{" "}
+                {skimp.releases_compared} releases compared
+              </div>
+            </div>
+            <SkimpflationOverlay data={skimp} />
+          </section>
+        )}
+
         <section className={styles.block}>
           <div className={styles["section-head"]}>
             <h2>Where it&apos;s sold</h2>
@@ -195,6 +248,19 @@ export default async function ProductPage({ params }: PageProps) {
           </div>
           <RetailersGrid variants={variants} observations={observations} />
         </section>
+
+        {press.length > 0 && (
+          <section className={styles.block}>
+            <div className={styles["section-head"]}>
+              <h2>Press coverage</h2>
+              <div className={styles.meta}>
+                {press.length} Consumer Reports finding
+                {press.length === 1 ? "" : "s"}
+              </div>
+            </div>
+            <PressCoverage refs={press} />
+          </section>
+        )}
 
         {related.length > 0 && (
           <section className={styles.block}>

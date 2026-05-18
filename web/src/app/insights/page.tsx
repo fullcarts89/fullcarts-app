@@ -9,7 +9,10 @@ import RepeatOffenders from "./_components/RepeatOffenders";
 import RestorationCorner from "./_components/RestorationCorner";
 import NewsFeed from "./_components/NewsFeed";
 import EvidenceWall from "./_components/EvidenceWall";
+import ShrinkingCart from "./_components/ShrinkingCart";
+import CorporateTree from "./_components/CorporateTree";
 import {
+  buildCartBasket,
   buildChart,
   headlineBls,
   imageFromRawPayload,
@@ -19,10 +22,13 @@ import {
 } from "./lib";
 import type {
   BlsRow,
+  CartItem,
   CategoryRow,
+  CorporateNode,
   DashboardStats,
   EventWithSources,
   FredCpiRow,
+  GoogleTrendsRow,
   LeaderboardRow,
   NewsFeedRow,
   RestorationRow,
@@ -60,6 +66,8 @@ async function loadInsights() {
     newsRes,
     skimpClaimsRes,
     spotDiffClaimsRes,
+    corporateRes,
+    trendsRes,
   ] = await Promise.all([
     sb.rpc("dashboard_stats"),
     sb
@@ -94,7 +102,9 @@ async function loadInsights() {
     // event count — ~2.8k rows today, well within payload limits.
     sb
       .from("published_changes")
-      .select("entity_id, size_delta_pct, brand, product_name")
+      .select(
+        "entity_id, size_delta_pct, brand, product_name, size_before, size_after, size_unit, observed_date",
+      )
       .eq("change_type", "shrinkflation")
       .eq("is_retracted", false)
       .not("entity_id", "is", null)
@@ -131,7 +141,29 @@ async function loadInsights() {
       .contains("evidence_tags", ["Spot the Difference"])
       .order("observed_date", { ascending: false, nullsFirst: false })
       .limit(8),
+    sb
+      .from("corporate_tree")
+      .select(
+        "manufacturer, distinct_brands, total_shrinkflation_events, worst_delta_pct, top_brands",
+      )
+      .order("total_shrinkflation_events", { ascending: false, nullsFirst: false })
+      .limit(8),
+    sb
+      .from("google_trends_data")
+      .select("keyword, observation_date, value")
+      .eq("keyword", "shrinkflation")
+      .order("observation_date", { ascending: false })
+      .limit(120),
   ]);
+  // corporate_tree only exists after migration 056 is applied; treat
+  // a missing-view error as an empty list rather than a page failure.
+  const corporate: CorporateNode[] = corporateRes.error
+    ? []
+    : ((corporateRes.data ?? []) as CorporateNode[]);
+  // google_trends_data only exists after migration 057 + scraper run.
+  const trends: GoogleTrendsRow[] = trendsRes.error
+    ? []
+    : ((trendsRes.data ?? []) as GoogleTrendsRow[]);
 
   // dashboard_stats returns a JSONB blob; defaults protect the page
   // if the function is missing (e.g. fresh DB).
@@ -194,6 +226,10 @@ async function loadInsights() {
     size_delta_pct: string | number | null;
     brand: string | null;
     product_name: string | null;
+    size_before: string | number | null;
+    size_after: string | number | null;
+    size_unit: string | null;
+    observed_date: string | null;
   };
   type EntityAgg = {
     entity_id: string;
@@ -227,14 +263,25 @@ async function loadInsights() {
     .sort((a, b) => b.shrink_count - a.shrink_count || a.worst_drop_pct - b.worst_drop_pct)
     .slice(0, 8);
 
-  // Hydrate canonical name + image_url for the top entities in one
-  // follow-up query against product_entities.
-  const topEntityIds = topEntities.map((e) => e.entity_id);
-  const entitiesRes = topEntityIds.length
+  // Candidate basket entities: any entity with at least 1 shrink event
+  // that appears in pcRows. We rely on image_url filtering to keep the
+  // basket visual. Top biggest shrinks first (lowest worst_drop_pct) so
+  // if the query hits its row cap we keep the worst-offenders.
+  const basketCandidateIds = Array.from(byEntity.values())
+    .sort((a, b) => a.worst_drop_pct - b.worst_drop_pct)
+    .slice(0, 200)
+    .map((e) => e.entity_id);
+
+  // Hydrate canonical name + image_url. Union of leaderboard top-8 and
+  // basket-candidate IDs so we do one query instead of two.
+  const hydrateIds = Array.from(
+    new Set([...topEntities.map((e) => e.entity_id), ...basketCandidateIds]),
+  );
+  const entitiesRes = hydrateIds.length
     ? await sb
         .from("product_entities")
         .select("id, canonical_name, brand, category, image_url")
-        .in("id", topEntityIds)
+        .in("id", hydrateIds)
     : { data: [] };
   const entityById = new Map<string, {
     canonical_name: string;
@@ -256,6 +303,15 @@ async function loadInsights() {
       image_url: row.image_url,
     });
   }
+  // Build the shrinking-cart basket from the same pcRows + entity map.
+  // buildCartBasket filters to entities-with-images and 2-60% shrinks,
+  // then dedups by brand for visual variety.
+  const basket: CartItem[] = buildCartBasket(
+    (pcLeaderRes.data ?? []) as PcRow[],
+    entityById,
+    12,
+  );
+
   const leaderboard: LeaderboardRow[] = topEntities.map((e) => {
     const ent = entityById.get(e.entity_id);
     return {
@@ -311,11 +367,14 @@ async function loadInsights() {
     stats,
     bls: (blsRes.data ?? []) as BlsRow[],
     fred: (fredRes.data ?? []) as FredCpiRow[],
+    trends,
     events: (eventsRes.data ?? []) as EventWithSources[],
     categories: (categoriesRes.data ?? []) as CategoryRow[],
     leaderboard,
     restorations: (restorationsRes.data ?? []) as RestorationRow[],
     news,
+    basket,
+    corporate,
     skimpClaims: enrichTagged((skimpClaimsRes.data ?? []) as TaggedClaim[]),
     spotDiffClaims: enrichTagged((spotDiffClaimsRes.data ?? []) as TaggedClaim[]),
   };
@@ -323,7 +382,7 @@ async function loadInsights() {
 
 export default async function InsightsPage() {
   const data = await loadInsights();
-  const chart = buildChart(data.events, data.bls, data.fred);
+  const chart = buildChart(data.events, data.bls, data.fred, data.trends);
   const headline = headlineBls(data.bls);
 
   const today = new Date().toISOString();
@@ -363,6 +422,22 @@ export default async function InsightsPage() {
 
         <section className={styles.block}>
           <div className={styles["section-head"]}>
+            <h2>The dollars-to-air conversion</h2>
+            <div className={styles.meta}>
+              Live calculator · real basket data
+            </div>
+          </div>
+          <p className={styles["section-lede"]}>
+            Drop in your weekly grocery spend and see how much of every
+            dollar is now just air in the bag — the dollar value of the
+            food that&apos;s been removed from packages without the price
+            changing. Built from actual size deltas, not estimates.
+          </p>
+          <ShrinkingCart basket={data.basket} />
+        </section>
+
+        <section className={styles.block}>
+          <div className={styles["section-head"]}>
             <h2>Which categories are getting hit hardest?</h2>
             <div className={styles.meta}>
               Top {data.categories.length} · by event count
@@ -390,6 +465,22 @@ export default async function InsightsPage() {
             rather than reformulation for taste.
           </p>
           <SkimpflationLeaderboard rows={data.skimpClaims} />
+        </section>
+
+        <section className={styles.block}>
+          <div className={styles["section-head"]}>
+            <h2>Who actually owns these brands?</h2>
+            <div className={styles.meta}>
+              Top {data.corporate.length || 8} corporate parents
+            </div>
+          </div>
+          <p className={styles["section-lede"]}>
+            Most shrinkflation isn&apos;t a small-brand story — it&apos;s
+            decisions made at the corporate-parent level. We trace each
+            brand back to its manufacturer via Wikidata so you can see the
+            actual portfolio behind the shelf labels.
+          </p>
+          <CorporateTree nodes={data.corporate} />
         </section>
 
         <section className={styles.block}>

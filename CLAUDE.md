@@ -30,7 +30,8 @@ python -m pipeline <command> [--dry-run]
 
 # Common commands: reddit_recent, news_rss, gdelt, off_daily, off_discovery,
 # kroger, kroger_discovery, walmart, walmart_discovery, usda_quarterly,
-# bls_shrinkflation, fred_cpi, open_prices, upc_backfill, wayback
+# bls_shrinkflation, fred_cpi, open_prices, upc_backfill, wayback,
+# google_trends, consumer_reports
 
 # Wayback has extra flags
 python -m pipeline wayback --url URL --brand BRAND --product NAME [--upc UPC]
@@ -41,6 +42,9 @@ python3 -m pipeline.scripts.dedup_entities [--auto] [--dry-run]
 python3 -m pipeline.scripts.auto_approve_claims [--threshold 80] [--dry-run]
 python3 -m pipeline.scripts.backfill_entity_images [--limit N] [--dry-run] [--no-off-api]
 python3 -m pipeline.scripts.activate_variants [--dry-run]
+python3 -m pipeline.scripts.promote_skimpflation [--dry-run] [--min-score 5]
+python3 -m pipeline.scripts.wikidata_manufacturer_backfill [--limit N] [--dry-run]
+python3 -m pipeline.scripts.match_consumer_reports [--dry-run]
 ```
 
 ### Pipeline tests
@@ -108,11 +112,16 @@ Cursor state persists in `scraper_state` table. Config lives in `pipeline/config
 
 ### Database migrations
 
-SQL migrations in `db/migrations/` numbered `001_` through `053_`. Deploy manually via Supabase SQL Editor or via the Management API with a PAT (`POST /v1/projects/{ref}/database/query`; **set a `User-Agent` header** or Cloudflare returns 1010). Views in `043_rewrite_views_new_schema.sql` and `049_insight_views.sql` plus newer per-page views power the frontend. Notable recent additions:
+SQL migrations in `db/migrations/` numbered `001_` through `058_`. Deploy manually via Supabase SQL Editor or via the Management API with a PAT (`POST /v1/projects/{ref}/database/query`; **set a `User-Agent` header** or Cloudflare returns 1010). Views in `043_rewrite_views_new_schema.sql` and `049_insight_views.sql` plus newer per-page views power the frontend. Notable recent additions:
 
 - `050_event_dedup.sql` — `published_changes.evidence_count` + dedup index on `(entity_id, size_before, size_after)`
 - `051_event_evidence_summary_view.sql` — `event_evidence_summary` view, used by `/brands/[name]` evidence trail
 - `052_brand_index_view.sql` + `053_brand_index_primary_category.sql` — `brand_index` view (1,167 rows), used by `/brands` index page; includes per-brand thumbnail, worst delta, primary category
+- `054_product_index_view.sql` — `product_index` view (per-entity rollup), used by `/products` index page
+- `055_published_changes_skimpflation.sql` — relaxes size_* / candidate_id NOT NULL, adds `skimp_score` + `nutrient_deltas` columns + `skimpflation_events` view; rewrites `event_evidence_summary` to exclude skimpflation rows so size-focused views stay clean
+- `056_corporate_tree.sql` — `corporate_tree` view (per-manufacturer rollup with top-3 child brands as a JSONB array), used by /insights "Who actually owns these brands" section. Empty until Wikidata backfill runs
+- `057_google_trends_data.sql` — `google_trends_data` table, drives the fourth line on the /insights macro chart. Refreshed monthly via `pipeline_google_trends.yml`
+- `058_consumer_reports_findings.sql` — `consumer_reports_findings` table for structured CR citations. Refreshed monthly via `pipeline_consumer_reports.yml`. Powers the "Press coverage" section on `/products/[id]`
 
 ### Web routes (Next.js App Router)
 
@@ -124,7 +133,7 @@ SQL migrations in `db/migrations/` numbered `001_` through `053_`. Deploy manual
 | `/products/[id]` | SSG + ISR 1h | Per-product scorecard. Top 30 by event count pre-built; rest lazy. Hero, SVG step-chart trajectory, change-history accordion, retailers grid (Kroger/Walmart/OFF/Open Prices), related-products rail. |
 | `/insights` | Static + ISR 1h | Macro insights. 8 sections: hero counters, BLS headline + news, three-line trend chart (events + BLS + CPI), category bars, repeat offenders, skimpflation leaderboard, news feed, restoration corner. |
 | `/about` | Static | Mission, methodology, full source list, "submit a tip" stub card. Contact `fullcartsinfo@gmail.com`. |
-| `/products` | Stub | Index page not yet built (Phase 2C item). |
+| `/products` | Static + ISR 1h | All entities with at least one shrink event. Severity tiers + category chips + brand-or-name search, mirroring `/brands`. |
 | `/admin/*` | SSR | Internal admin tool (claim review). Has its own nav, not the public SiteNav. |
 
 Shared nav lives at `web/src/components/SiteNav.tsx` (client component, uses `usePathname` for active detection). All public routes render `<SiteNav />` once at the top of their JSX.
@@ -141,7 +150,7 @@ All use the `FULLCARTS_DESIGN_EXPORT.md` system (dark graphite + Space Grotesk +
 
 ### GitHub Actions
 
-17 workflows in `.github/workflows/` run scrapers on schedule (daily/weekly/monthly/quarterly). Key ones:
+20 workflows in `.github/workflows/` run scrapers on schedule (daily/weekly/monthly/quarterly). Key ones:
 - `pipeline_promote.yml` — Daily 12:00 UTC: auto-decline junk → auto-approve high-confidence claims (threshold 90 + hard filters) → promote → backfill entity images. Markdown summaries in job output.
 - `pipeline_extraction.yml` — Daily 10:00 UTC: AI claim extraction from `raw_items` (Claude Haiku) + nightly vision enrichment
 - `pipeline_reddit.yml` / `pipeline_news.yml` — Daily/12h: ingest new data
