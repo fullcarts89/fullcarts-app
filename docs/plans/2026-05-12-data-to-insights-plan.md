@@ -1,8 +1,8 @@
 # FullCarts: Data → Insights → Content Plan
 
 **Date:** May 12, 2026
-**Last updated:** May 17, 2026
-**Status:** Phase 1 complete and shipped. **Phase 2A (Public Site Navigation) complete in feature branches** — homepage, `/brands` index, `/brands/[name]`, stub pages, shared SiteNav. Phase 2B (`/products/[id]`) is the next active workstream.
+**Last updated:** May 18, 2026
+**Status:** Phase 1 complete and shipped. **Phase 2A + Phase 2B + most of Phase 2C shipped to main (PR #73).** Live routes: `/`, `/brands`, `/brands/[name]`, `/products/[id]`, `/insights`, `/about`. **Phase 2D (Admin Entity Tool) is the next active workstream**, with `/products` index + skimpflation overlay + tip-form wiring as deferred items.
 
 ---
 
@@ -25,7 +25,7 @@
 
 ### Phase 2: Build the Insight Layer
 
-#### Phase 2A — Public Site Navigation — ✅ COMPLETE (in feature branches; awaiting merge to main)
+#### Phase 2A — Public Site Navigation — ✅ COMPLETE (merged to main)
 
 | Task | Status | Notes |
 |------|--------|-------|
@@ -39,27 +39,31 @@
 | — Homepage replacing Coming Soon | ✅ Shipped (claude/homepage-live) | Hero with mission + search + 4-counter strip (events / brands / products / BLS-confirmed downsizings); "Just documented" sidecar; methodology trust strip (9 source pills including Consumer Reports + Wikidata); Brand of the week (rotates by most-cited event in last 14 days); Most active this month (top 6 by recent events); Recent biggest shrinks (top 6 with images); 7-tag evidence-channel grid (So Smol / Slack Fill / Spot the Difference / Skimpflation / Paper Thin / Not as Advertised / Stretchflation); 4-column footer. All real data, no hardcoded numbers. |
 | — Phase 2A polish | ✅ Shipped (claude/homepage-live) | Shared `SiteNav` component (replaces 4 duplicated inline navs); stub pages for `/products`, `/insights`, `/about` with "Coming in Phase X" treatment; brand-page Product Grid now filters entities with 0 events (Mondelez 36 → 8). |
 
-#### Phase 2B — Product Depth — ⏳ NEXT
+#### Phase 2B — Product Depth — ✅ COMPLETE (PR #73)
 
 | Task | Status | Notes |
 |------|--------|-------|
-| 2.2.2 `/products/[id]` mockup | Pending | Hero + size-over-time timeline + change history + retailers + skimpflation overlay (if `nutrition_skimp_results` row exists for that entity). Design pass first, then port to Next.js. |
-| 2.2.3 `/products/[id]` live | Pending | Server component, ISR, generateStaticParams pre-builds top 30 products by event count. Brand-page product cards already route there via toast. |
+| 2.2.2 `/products/[id]` mockup | ✅ Shipped | `web/public/mockups/products-cadbury-dairy-milk-mini-eggs.html` — locked visual reference. |
+| 2.2.3 `/products/[id]` live | ✅ Shipped (PR #73) | Server component with ISR 1h, top-30 products pre-built. 5 sections: ProductHero (4-stat strip), SizeTrajectory (SVG step chart), ChangeHistory (collapsible event accordion), RetailersGrid (Kroger/Walmart/OFF/Open Prices), RelatedProducts (same-brand top-8). Brand-page product cards now link here. |
+| — OFF live-API image fallback | ✅ Shipped (PR #73) | Fifth fallback in `backfill_entity_images.py` — hits OFF API by EAN-13 when all four cached-source lookups miss. UPC normalizer strips synthetic `CLAIM-`/`REDDIT-` keys. Daily cron exercises it. New `--no-off-api` flag opts out. |
 
-#### Phase 2C — Macro Insights + Corporate Tree — ⏳ AFTER 2B
+#### Phase 2C — Macro Insights + Corporate Tree — 🟡 PARTIAL (PR #73)
 
 | Task | Status | Notes |
 |------|--------|-------|
-| 2.2.4 `/insights` page | Pending | 8 sections approved: hero counter, three-line chart (our events + BLS + FRED CPI), worst categories (`category_stats`), skimpflation leaderboard (`nutrition_skimp_results`, top 10 by skimp_score), repeat-offender products (`shrinkflation_leaderboard`), restoration corner (`restorations` + upsizing — needs cleanup of 75 corrupted upsizing events first), in the news (`news_feed`), spot-the-difference wall (`evidence_wall`, currently 4 rows — manually curated, can grow). |
+| 2.2.4 `/insights` page | ✅ Shipped (PR #73) | 8 sections live: InsightsHero counters, BlsHeadline + filtered news, ThreeLineChart (events + BLS + CPI on source-dates), CategoryBars, RepeatOffenders, SkimpflationLeaderboard, NewsFeed (HTML stripped, broader image fallback), RestorationCorner. |
+| 2.2.5 `/about` page | ✅ Shipped (PR #73) | Mission + methodology + 4-channel source list (community/news/retailer/government) + "submit a tip" stub card. Contact `fullcartsinfo@gmail.com`. Tip-form wiring deferred. |
+| — `/products` index page | Pending | Stub still in place. Sortable grid of all entities with events, severity tiers + category chips. Mirrors `/brands` index shape. |
+| — Skimpflation overlay on `/products/[id]` | Pending | Mockup has it, live page doesn't. Needs `pack_variants.upc → nutrition_skimp_results` join validated against real data. |
+| — `/about` tip form | Pending | Wire the "submit a tip" card to the existing `tips` table. Typeform/Tally/Formspree URL or a real form. |
 | — Google Trends integration | Pending | New ingest pipeline for "shrinkflation" search interest over time. Approved. Adds a 4th line to the macro chart. |
 | — Consumer Reports integration | Pending | Cross-reference our data against their annual shrinkflation reporting. Approved. |
 | — Wikidata manufacturer backfill | Pending | Populates `product_entities.manufacturer` (currently 100% null across 14,154 entities). Unlocks corporate-parent tree. Approved. |
 | — Corporate-parent tree visualisation | Pending | Once manufacturer backfilled: cluster brands by parent (e.g. Mondelez owns Cadbury, Oreo, Wheat Thins, Nabisco, Christie, Mondelez International). Section on `/insights` OR dedicated `/companies/[parent]` route. |
 | — "Shrinking grocery cart" widget | Pending | Interactive: "Your $100 grocery cart in 2020 vs the same brand+size combo today." Approved. Real math from tracked deltas. |
-| 2.2.5 `/about` page | Pending | Mission + methodology + sources + submit-a-tip form. |
 | 2.4 Skimpflation pipeline | Pending | Connect `nutrition_skimp_results` → `published_changes` so it shows up alongside size-shrinkflation events instead of being a separate dataset. |
 
-#### Phase 2D — Admin Entity Tool — ⏳ LAST (per user direction: build at end after rest of site is "good to go")
+#### Phase 2D — Admin Entity Tool — ⏳ NEXT (per user direction: build at end after rest of site is "good to go" — now reached)
 
 | Task | Status | Notes |
 |------|--------|-------|

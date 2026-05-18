@@ -121,7 +121,10 @@ SQL migrations in `db/migrations/` numbered `001_` through `053_`. Deploy manual
 | `/` | Static + ISR 1h | Live homepage. Hero, counters, "Just documented" sidecar, methodology, Brand of the Week, Most Active, Recent Shrinks, 7-tag evidence grid. |
 | `/brands` | Static + ISR 1h | All 1,167 brands. Severity tiers + category chips + search. Pre-builds at deploy. |
 | `/brands/[name]` | SSG + ISR 1h | Per-brand scorecard. 20 brands pre-built; rest lazy. Includes TimelineExplorer (clickable year chart + cap-to-5-per-year events). |
-| `/products`, `/insights`, `/about` | Stubs | "Coming soon" content pages — see Phase 2B/C/D in `docs/plans/2026-05-12-data-to-insights-plan.md`. |
+| `/products/[id]` | SSG + ISR 1h | Per-product scorecard. Top 30 by event count pre-built; rest lazy. Hero, SVG step-chart trajectory, change-history accordion, retailers grid (Kroger/Walmart/OFF/Open Prices), related-products rail. |
+| `/insights` | Static + ISR 1h | Macro insights. 8 sections: hero counters, BLS headline + news, three-line trend chart (events + BLS + CPI), category bars, repeat offenders, skimpflation leaderboard, news feed, restoration corner. |
+| `/about` | Static | Mission, methodology, full source list, "submit a tip" stub card. Contact `fullcartsinfo@gmail.com`. |
+| `/products` | Stub | Index page not yet built (Phase 2C item). |
 | `/admin/*` | SSR | Internal admin tool (claim review). Has its own nav, not the public SiteNav. |
 
 Shared nav lives at `web/src/components/SiteNav.tsx` (client component, uses `usePathname` for active detection). All public routes render `<SiteNav />` once at the top of their JSX.
@@ -131,8 +134,10 @@ Shared nav lives at `web/src/components/SiteNav.tsx` (client component, uses `us
 Visual targets are committed alongside the routes that realised them:
 - `web/public/mockups/brands-cadbury.html` → `/brands/[name]`
 - `web/public/mockups/homepage.html` → `/`
+- `web/public/mockups/products-cadbury-dairy-milk-mini-eggs.html` → `/products/[id]`
+- `web/public/mockups/insights.html` → `/insights`
 
-Both use the `FULLCARTS_DESIGN_EXPORT.md` system (dark graphite + Space Grotesk + JetBrains Mono + alert red). New pages should match this aesthetic. Mockups stay in `web/public/mockups/` as historical references — useful when diffing the real page against the originally-approved design.
+All use the `FULLCARTS_DESIGN_EXPORT.md` system (dark graphite + Space Grotesk + JetBrains Mono + alert red). New pages should match this aesthetic. Mockups stay in `web/public/mockups/` as historical references — useful when diffing the real page against the originally-approved design.
 
 ### GitHub Actions
 
