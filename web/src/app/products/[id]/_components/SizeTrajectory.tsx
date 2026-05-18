@@ -119,6 +119,13 @@ export default function SizeTrajectory({ steps, unit }: Props) {
               const isLast = i === steps.length - 1;
               const labelAnchor = isLast ? "end" : "start";
               const labelX = isLast ? cx - 6 : cx + 6;
+              // The synthesized "starting" step (deltaPct === null)
+              // shares its date with the first real event, so the dot
+              // sits at the same x as step 1 and any labels would
+              // collide. Show only the dot — the "Started at" summary
+              // card carries the size.
+              const showDate = s.deltaPct !== null;
+              const showSize = s.deltaPct !== null;
               return (
                 <g key={i}>
                   <circle
@@ -129,23 +136,27 @@ export default function SizeTrajectory({ steps, unit }: Props) {
                     cy={cy}
                     r="5"
                   />
-                  <text
-                    className={styles["traj-label"]}
-                    x={labelX}
-                    y={cy - 8}
-                    textAnchor={labelAnchor}
-                  >
-                    {s.size}
-                    {unit}
-                  </text>
-                  <text
-                    className={styles["traj-label-date"]}
-                    x={labelX}
-                    y={cy + 8}
-                    textAnchor={labelAnchor}
-                  >
-                    {monthShort(s.date)}
-                  </text>
+                  {showSize && (
+                    <text
+                      className={styles["traj-label"]}
+                      x={labelX}
+                      y={cy - 8}
+                      textAnchor={labelAnchor}
+                    >
+                      {s.size}
+                      {unit}
+                    </text>
+                  )}
+                  {showDate && (
+                    <text
+                      className={styles["traj-label-date"]}
+                      x={labelX}
+                      y={cy + 8}
+                      textAnchor={labelAnchor}
+                    >
+                      {monthShort(s.date)}
+                    </text>
+                  )}
                   {s.deltaPct !== null && s.deltaPct < 0 && (
                     <text
                       className={styles["traj-delta"]}
