@@ -14,12 +14,11 @@ import type {
   BlsRow,
   CategoryRow,
   DashboardStats,
-  EvidenceWallRow,
   FredCpiRow,
   LeaderboardRow,
   NewsFeedRow,
   RestorationRow,
-  SkimpRow,
+  TaggedClaim,
   TimelineRow,
 } from "./types";
 import styles from "./styles.module.css";
@@ -38,6 +37,8 @@ async function loadInsights() {
 
   // Most queries return ≤ 50 rows so the round-trip is dominated by
   // network latency, not payload size — parallelize all of them.
+  // Tagged-claim queries (skimpflation, spot-the-difference) pull from
+  // the same claims table — PostgREST array-contains uses `cs.{val}`.
   const [
     statsRes,
     blsRes,
@@ -47,7 +48,8 @@ async function loadInsights() {
     leaderRes,
     restorationsRes,
     newsRes,
-    evidenceRes,
+    skimpClaimsRes,
+    spotDiffClaimsRes,
   ] = await Promise.all([
     sb.rpc("dashboard_stats"),
     sb
@@ -87,17 +89,22 @@ async function loadInsights() {
       .order("published_at", { ascending: false })
       .limit(5),
     sb
-      .from("evidence_wall")
-      .select("id, brand, product_name, category, signal_type, severity, date_spotted, size_delta_pct, image_url, tag, source_url")
-      .eq("status", "approved")
-      .order("date_spotted", { ascending: false })
+      .from("claims")
+      .select(
+        "id, brand, product_name, category, old_size, old_size_unit, new_size, new_size_unit, change_description, observed_date, image_storage_path, evidence_tags, raw_item_id",
+      )
+      .contains("evidence_tags", ["Skimpflation"])
+      .order("observed_date", { ascending: false, nullsFirst: false })
+      .limit(8),
+    sb
+      .from("claims")
+      .select(
+        "id, brand, product_name, category, old_size, old_size_unit, new_size, new_size_unit, change_description, observed_date, image_storage_path, evidence_tags, raw_item_id",
+      )
+      .contains("evidence_tags", ["Spot the Difference"])
+      .order("observed_date", { ascending: false, nullsFirst: false })
       .limit(8),
   ]);
-
-  // Skimpflation RPC is sequenced separately — the function scans
-  // USDA history and can be slow on a cold cache. min_score caps row
-  // count to manageable size.
-  const skimpRes = await sb.rpc("nutrition_skimpflation", { min_score: 10 });
 
   // dashboard_stats returns a JSONB blob; defaults protect the page
   // if the function is missing (e.g. fresh DB).
@@ -112,16 +119,40 @@ async function loadInsights() {
     pending_review: statsRaw.pending_review ?? 0,
   };
 
-  const skimpAll = (skimpRes.data ?? []) as SkimpRow[];
-  skimpAll.sort((a, b) => {
-    const sa = typeof a.skimp_score === "string"
-      ? parseFloat(a.skimp_score)
-      : (a.skimp_score ?? 0);
-    const sb2 = typeof b.skimp_score === "string"
-      ? parseFloat(b.skimp_score)
-      : (b.skimp_score ?? 0);
-    return (sb2 || 0) - (sa || 0);
-  });
+  // For each tagged-claim batch we fetch the underlying raw_items in
+  // one extra round-trip to surface the original source URL on the
+  // card. Cheap: at most 16 rows total.
+  const taggedIds = [
+    ...((skimpClaimsRes.data ?? []) as TaggedClaim[]).map((c) => c.raw_item_id),
+    ...((spotDiffClaimsRes.data ?? []) as TaggedClaim[]).map((c) => c.raw_item_id),
+  ].filter((id): id is string => Boolean(id));
+  const rawItemsRes = taggedIds.length
+    ? await sb
+        .from("raw_items")
+        .select("id, source_url, raw_payload")
+        .in("id", taggedIds)
+    : { data: [] };
+  const rawById = new Map<string, { source_url: string | null; image: string | null }>();
+  for (const row of (rawItemsRes.data ?? []) as Array<{
+    id: string;
+    source_url: string | null;
+    raw_payload: Record<string, unknown> | null;
+  }>) {
+    rawById.set(row.id, {
+      source_url: row.source_url ?? null,
+      image: (row.raw_payload?.["socialimage"] as string) || null,
+    });
+  }
+
+  const enrichTagged = (rows: TaggedClaim[]): TaggedClaim[] =>
+    rows.map((c) => {
+      const r = c.raw_item_id ? rawById.get(c.raw_item_id) : undefined;
+      return {
+        ...c,
+        source_url: r?.source_url ?? null,
+        source_image: r?.image ?? null,
+      };
+    });
 
   return {
     stats,
@@ -132,9 +163,8 @@ async function loadInsights() {
     leaderboard: (leaderRes.data ?? []) as LeaderboardRow[],
     restorations: (restorationsRes.data ?? []) as RestorationRow[],
     news: (newsRes.data ?? []) as NewsFeedRow[],
-    evidence: (evidenceRes.data ?? []) as EvidenceWallRow[],
-    skimpTop: skimpAll.slice(0, 8),
-    skimpTotal: skimpAll.length,
+    skimpClaims: enrichTagged((skimpClaimsRes.data ?? []) as TaggedClaim[]),
+    spotDiffClaims: enrichTagged((spotDiffClaimsRes.data ?? []) as TaggedClaim[]),
   };
 }
 
@@ -206,7 +236,7 @@ export default async function InsightsPage() {
             to flag nutrition changes that look like ingredient substitution
             rather than reformulation for taste.
           </p>
-          <SkimpflationLeaderboard rows={data.skimpTop} totalCount={data.skimpTotal} />
+          <SkimpflationLeaderboard rows={data.skimpClaims} />
         </section>
 
         <section className={styles.block}>
@@ -257,7 +287,7 @@ export default async function InsightsPage() {
             visually verifiable from a single photo or shelf observation.
             The full evidence trail lives on each product&apos;s page.
           </p>
-          <EvidenceWall rows={data.evidence} />
+          <EvidenceWall rows={data.spotDiffClaims} />
         </section>
       </div>
     </>

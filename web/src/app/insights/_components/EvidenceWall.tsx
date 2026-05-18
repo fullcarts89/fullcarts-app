@@ -1,54 +1,75 @@
-// Server component. Curated side-by-side evidence cards. Each card
-// shows before/after sizes if we have them, falls back to a single-
-// pane visual when only one is known. Signal type renders as an
-// amber tag (stretchflation, paper_thin, etc.).
+// Server component. Renders claims that admins have manually tagged
+// "Spot the Difference" via /admin/claims. The image comes from the
+// claim's image_storage_path (Reddit-archived front photo, usually a
+// side-by-side comparison). before/after sizes come straight off the
+// claim row.
 import styles from "../styles.module.css";
-import { humanSignal, num } from "../lib";
-import type { EvidenceWallRow } from "../types";
+import { num } from "../lib";
+import type { TaggedClaim } from "../types";
 
 interface Props {
-  rows: EvidenceWallRow[];
+  rows: TaggedClaim[];
 }
 
-/** Try to derive a "before" size if size_delta_pct + a current size
- *  hint is in the tag field. For now we leave sizes blank when
- *  size_delta_pct alone is present — the dataset rarely has paired
- *  observations. The visual still shows the signal type. */
+const STORAGE_BUCKET_URL =
+  (process.env.NEXT_PUBLIC_SUPABASE_URL || "") +
+  "/storage/v1/object/public/claim-images/";
+
+function claimImageUrl(path: string | null | undefined): string | null {
+  if (!path) return null;
+  return STORAGE_BUCKET_URL + path;
+}
+
 export default function EvidenceWall({ rows }: Props) {
   if (rows.length === 0) {
-    return <div className={styles.empty}>Evidence wall is empty</div>;
+    return (
+      <div className={styles.empty}>
+        No claims tagged &ldquo;Spot the Difference&rdquo; yet
+      </div>
+    );
   }
   return (
     <div className={styles["wall-grid"]}>
       {rows.map((r) => {
-        const delta = num(r.size_delta_pct);
-        const href = r.source_url || "#";
+        const img = claimImageUrl(r.image_storage_path) || r.source_image || null;
+        const oldSize = num(r.old_size);
+        const newSize = num(r.new_size);
+        const unit = r.new_size_unit || r.old_size_unit || "";
+        const hasSizes = oldSize > 0 && newSize > 0;
+        const deltaPct = hasSizes ? ((newSize - oldSize) / oldSize) * 100 : 0;
         return (
           <a
             key={r.id}
             className={styles["wall-card"]}
-            href={href}
+            href={r.source_url || "#"}
             target={r.source_url ? "_blank" : undefined}
             rel={r.source_url ? "noopener noreferrer" : undefined}
           >
             <div className={styles["wall-img"]}>
-              {r.image_url && (
-                <img src={r.image_url} alt={r.product_name || "Evidence"} loading="lazy" />
+              {img && (
+                <img src={img} alt={r.product_name || "Spot the difference"} loading="lazy" />
               )}
-              {delta !== 0 && (
-                <span className={styles["ps-label"]}>
-                  {delta < 0 ? "" : "+"}
-                  {delta.toFixed(0)}%
-                </span>
+              {hasSizes && deltaPct < 0 && (
+                <span className={styles["ps-label"]}>{deltaPct.toFixed(0)}%</span>
               )}
-              <div className={styles["ps-side"]}>
-                <div className={styles["ps-tag"]}>Before</div>
-                <div className={styles["ps-size"]}>?</div>
-              </div>
-              <div className={`${styles["ps-side"]} ${styles.after}`}>
-                <div className={styles["ps-tag"]}>After</div>
-                <div className={styles["ps-size"]}>?</div>
-              </div>
+              {hasSizes && (
+                <>
+                  <div className={styles["ps-side"]}>
+                    <div className={styles["ps-tag"]}>Before</div>
+                    <div className={styles["ps-size"]}>
+                      {oldSize}
+                      {r.old_size_unit || unit}
+                    </div>
+                  </div>
+                  <div className={`${styles["ps-side"]} ${styles.after}`}>
+                    <div className={styles["ps-tag"]}>After</div>
+                    <div className={styles["ps-size"]}>
+                      {newSize}
+                      {r.new_size_unit || unit}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
             <div className={styles["wall-body"]}>
               <div className={styles["wall-product"]}>
@@ -57,11 +78,7 @@ export default function EvidenceWall({ rows }: Props) {
               {r.brand && (
                 <div className={styles["wall-brand"]}>{r.brand}</div>
               )}
-              {r.signal_type && (
-                <div className={styles["wall-signal"]}>
-                  {humanSignal(r.signal_type)}
-                </div>
-              )}
+              <div className={styles["wall-signal"]}>Spot the difference</div>
             </div>
           </a>
         );

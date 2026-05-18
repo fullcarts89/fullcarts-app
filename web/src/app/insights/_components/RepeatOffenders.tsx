@@ -26,8 +26,8 @@ export default function RepeatOffenders({ rows }: Props) {
             <div className={styles["repeat-thumb"]}>
               {r.image_url && <img src={r.image_url} alt={r.name} loading="lazy" />}
               <div className={styles["rt-rank"]}>{idx + 1}</div>
-              <div className={styles["rt-brand"]}>{r.brand}</div>
             </div>
+            <div className={styles["repeat-brand"]}>{r.brand}</div>
             <div className={styles["repeat-name"]}>{r.name}</div>
             <div className={styles["repeat-stats"]}>
               <span className={styles.events}>

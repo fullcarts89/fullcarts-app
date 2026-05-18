@@ -30,15 +30,25 @@ export interface CategoryRow {
   avg_shrink_pct: string | number | null;
 }
 
-export interface SkimpRow {
-  gtin_upc: string;
-  brand_name: string | null;
-  description: string | null;
-  skimp_score: string | number | null;
-  protein_drop_pct: string | number | null;
-  fiber_drop_pct: string | number | null;
-  sugar_rise_pct: string | number | null;
-  sodium_rise_pct: string | number | null;
+/** Claim row tagged for the evidence wall / themed sections.
+ *  Pulled from `claims` filtered by status='evidence' and a specific
+ *  evidence_tag (Skimpflation, Spot the Difference, etc.). */
+export interface TaggedClaim {
+  id: string;
+  brand: string | null;
+  product_name: string | null;
+  category: string | null;
+  old_size: string | number | null;
+  old_size_unit: string | null;
+  new_size: string | number | null;
+  new_size_unit: string | null;
+  change_description: string | null;
+  observed_date: string | null;
+  image_storage_path: string | null;
+  evidence_tags: string[] | null;
+  raw_item_id: string | null;
+  source_url?: string | null;
+  source_image?: string | null;
 }
 
 export interface LeaderboardRow {
