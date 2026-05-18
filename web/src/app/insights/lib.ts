@@ -347,3 +347,83 @@ export function isFreeOutlet(outlet: string | null | undefined): boolean {
   if (PAYWALLED_OUTLETS.some((p) => normalized.includes(p))) return false;
   return FREE_OUTLETS.some((f) => normalized.includes(f));
 }
+
+/** Strip HTML tags and entities from a string. Google News RSS's
+ *  <description> field is HTML, not plain text — typically a single
+ *  <a href="..."> wrapping the article URL. We only want plain text
+ *  for the news card summary, so drop tags entirely and decode the
+ *  handful of entities Google News emits. */
+export function stripHtml(s: string | null | undefined): string {
+  if (!s) return "";
+  return s
+    .replace(/<[^>]+>/g, "")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** Extract a usable image URL from a raw_items.raw_payload. Mirrors
+ *  the pipeline's extraction logic (see extract_claims_vision.py).
+ *  Returns null if no field has a usable image URL. */
+export function imageFromRawPayload(
+  payload: Record<string, unknown> | null | undefined,
+): string | null {
+  if (!payload) return null;
+
+  // GDELT articles ship a single social-card image.
+  const socialimage = payload["socialimage"];
+  if (typeof socialimage === "string" && socialimage.startsWith("http")) {
+    return socialimage;
+  }
+
+  // Reddit link posts: the URL field points directly at the image
+  // when post_hint is "image".
+  const url = payload["url"];
+  if (typeof url === "string" && /\.(jpe?g|png|webp|gif)(\?|$)/i.test(url)) {
+    return url;
+  }
+
+  // Reddit image-preview field — Reddit's CDN-resized version of the
+  // post image. More reliable than `url` for legacy posts.
+  const preview = payload["preview"] as Record<string, unknown> | undefined;
+  if (preview && typeof preview === "object") {
+    const images = preview["images"];
+    if (Array.isArray(images) && images.length > 0) {
+      const first = images[0] as Record<string, unknown>;
+      const source = first?.["source"] as Record<string, unknown> | undefined;
+      const srcUrl = source?.["url"];
+      if (typeof srcUrl === "string") {
+        // Reddit encodes ampersands as &amp; in the JSON.
+        return srcUrl.replace(/&amp;/g, "&");
+      }
+    }
+  }
+
+  // Reddit gallery posts: first media_metadata entry.
+  const mediaMetadata = payload["media_metadata"];
+  if (mediaMetadata && typeof mediaMetadata === "object") {
+    for (const value of Object.values(mediaMetadata as Record<string, unknown>)) {
+      const meta = value as Record<string, unknown>;
+      const s = meta?.["s"] as Record<string, unknown> | undefined;
+      const u = s?.["u"];
+      if (typeof u === "string") return u.replace(/&amp;/g, "&");
+    }
+  }
+
+  // Thumbnail (last resort — small but better than nothing).
+  const thumb = payload["thumbnail"];
+  if (
+    typeof thumb === "string" &&
+    thumb.startsWith("http") &&
+    /\.(jpe?g|png|webp|gif)/i.test(thumb)
+  ) {
+    return thumb;
+  }
+
+  return null;
+}

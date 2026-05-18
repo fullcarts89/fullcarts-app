@@ -9,7 +9,14 @@ import RepeatOffenders from "./_components/RepeatOffenders";
 import RestorationCorner from "./_components/RestorationCorner";
 import NewsFeed from "./_components/NewsFeed";
 import EvidenceWall from "./_components/EvidenceWall";
-import { buildChart, headlineBls, isFreeOutlet, isoDay } from "./lib";
+import {
+  buildChart,
+  headlineBls,
+  imageFromRawPayload,
+  isFreeOutlet,
+  isoDay,
+  stripHtml,
+} from "./lib";
 import type {
   BlsRow,
   CategoryRow,
@@ -160,7 +167,10 @@ async function loadInsights() {
   }>) {
     rawById.set(row.id, {
       source_url: row.source_url ?? null,
-      image: (row.raw_payload?.["socialimage"] as string) || null,
+      // Mirror the pipeline's image extraction so we can fall back to
+      // the original Reddit/news image when image_storage_path is null
+      // (image backfill misses or hasn't run on that claim yet).
+      image: imageFromRawPayload(row.raw_payload),
     });
   }
 
@@ -274,10 +284,14 @@ async function loadInsights() {
     const outlet = (p["source_name"] as string)
       || (p["domain"] as string)
       || "";
-    const title = (p["title"] as string) || "";
-    const summary = (p["description"] as string)
-      || (p["summary"] as string)
-      || null;
+    const title = stripHtml((p["title"] as string) || "");
+    // Google News RSS ships <description> as HTML — strip tags so the
+    // card doesn't render raw <a href=...> markup. If the cleaned
+    // summary is empty or duplicates the title, drop it.
+    const rawSummary = stripHtml(
+      ((p["description"] as string) || (p["summary"] as string) || "") as string,
+    );
+    const summary = rawSummary && rawSummary !== title ? rawSummary : null;
     return {
       id: r.id,
       url: r.source_url || "",
