@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>By the Numbers — FullCarts Shrinkflation Insights</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0b0d; --bg-secondary: #161719; --bg-tertiary: #2a2b2d; --bg-hover: #1a1b1d;
+  --text-primary: #f5f4f0; --text-secondary: #a0a0a5; --text-tertiary: #656569;
+  --red-base: #dc2626; --red-bg: rgba(220,38,38,.1); --red-border: rgba(220,38,38,.2);
+  --green-base: #10b981; --green-bg: rgba(16,185,129,.1); --green-border: rgba(16,185,129,.2);
+  --blue-base: #3b82f6; --blue-bg: rgba(59,130,246,.1); --blue-border: rgba(59,130,246,.2);
+  --amber-base: #f59e0b; --amber-bg: rgba(245,158,11,.1); --amber-border: rgba(245,158,11,.2);
+  --purple-base: #a855f7; --purple-bg: rgba(168,85,247,.1); --purple-border: rgba(168,85,247,.2);
+  --border-subtle: rgba(255,255,255,.1); --border-medium: rgba(255,255,255,.2);
+  --font-headline: 'Space Grotesk', system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-sans); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+.bg-grid { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.03; background-image: linear-gradient(var(--text-tertiary) 1px, transparent 1px), linear-gradient(90deg, var(--text-tertiary) 1px, transparent 1px); background-size: 60px 60px; }
+
+nav { position: sticky; top: 0; z-index: 50; background: rgba(10,11,13,.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-subtle); }
+.nav-inner { max-width: 1280px; margin: 0 auto; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
+.logo { font-family: var(--font-headline); font-weight: 700; font-size: 20px; letter-spacing: -0.02em; text-decoration: none; color: var(--text-primary); }
+.logo span { color: var(--red-base); }
+.nav-links { display: flex; gap: 32px; font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; }
+.nav-links a { color: var(--text-secondary); text-decoration: none; transition: color .15s; }
+.nav-links a:hover, .nav-links a.active { color: var(--text-primary); }
+.nav-links a.active { border-bottom: 1px solid var(--red-base); padding-bottom: 4px; }
+
+.container { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+
+/* HERO */
+.hero { padding: 64px 0 48px; }
+.hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 999px; padding: 6px 16px; font-family: var(--font-mono); font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--red-base); margin-bottom: 24px; }
+.hero-eyebrow::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--red-base); }
+.hero h1 { font-family: var(--font-headline); font-weight: 700; font-size: clamp(48px, 9vw, 88px); letter-spacing: -0.03em; line-height: 0.95; margin-bottom: 20px; }
+.hero h1 .red { color: var(--red-base); }
+.hero-lede { font-size: 20px; color: var(--text-secondary); max-width: 780px; line-height: 1.45; }
+.hero-lede strong { color: var(--text-primary); font-weight: 600; }
+
+/* HEADLINE STAT — BLS-confirmed */
+.headline-stat { margin-top: 56px; background: linear-gradient(180deg, rgba(220,38,38,.06) 0%, var(--bg-secondary) 70%); border: 1px solid var(--red-border); padding: 40px; display: grid; grid-template-columns: auto 1fr; gap: 40px; align-items: center; }
+.hs-pill { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--red-base); padding: 4px 10px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 2px; width: fit-content; margin-bottom: 12px; }
+.hs-big { font-family: var(--font-mono); font-size: 88px; font-weight: 700; color: var(--red-base); line-height: 1; letter-spacing: -0.02em; }
+.hs-body h2 { font-family: var(--font-headline); font-size: 28px; font-weight: 700; letter-spacing: -0.015em; margin-bottom: 10px; }
+.hs-body p { font-size: 15px; color: var(--text-secondary); line-height: 1.55; max-width: 560px; }
+.hs-body p strong { color: var(--text-primary); font-weight: 600; }
+.hs-source { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 14px; }
+
+/* SECTION SCAFFOLDING */
+section.block { padding: 72px 0; border-top: 1px solid var(--border-subtle); }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 32px; gap: 16px; flex-wrap: wrap; }
+.section-head h2 { font-family: var(--font-headline); font-weight: 700; font-size: 32px; letter-spacing: -0.02em; }
+.section-head .meta { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
+.section-lede { font-size: 15px; color: var(--text-secondary); line-height: 1.55; max-width: 720px; margin-bottom: 32px; }
+.section-lede strong { color: var(--text-primary); font-weight: 600; }
+.caveat { font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 8px; }
+.caveat::before { content: '⊘'; color: var(--text-tertiary); font-size: 14px; }
+
+/* THREE-LINE CHART */
+.chart-card { background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 32px; }
+.chart-legend { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 24px; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+.legend-item { display: inline-flex; align-items: center; gap: 8px; color: var(--text-secondary); }
+.legend-swatch { width: 16px; height: 3px; }
+.legend-swatch.events { background: var(--red-base); }
+.legend-swatch.bls    { background: var(--blue-base); }
+.legend-swatch.fred   { background: var(--amber-base); }
+.chart-wrap { position: relative; height: 280px; padding-left: 56px; padding-right: 56px; }
+.chart-y-left, .chart-y-right { position: absolute; top: 0; bottom: 32px; width: 48px; display: flex; flex-direction: column-reverse; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); }
+.chart-y-left { left: 0; }
+.chart-y-right { right: 0; }
+.chart-y-left  .yt { text-align: right;  padding-right: 8px; transform: translateY(50%); }
+.chart-y-right .yt { text-align: left;   padding-left: 8px;  transform: translateY(50%); }
+.chart-y-axis-label { position: absolute; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); top: -24px; }
+.chart-y-axis-label.left  { left: 0; }
+.chart-y-axis-label.right { right: 0; text-align: right; }
+.chart-svg { width: 100%; height: 100%; overflow: visible; display: block; }
+.chart-grid-line { stroke: var(--border-subtle); stroke-width: 1; stroke-dasharray: 2 4; }
+.chart-line { fill: none; stroke-width: 2; }
+.chart-line.events { stroke: var(--red-base); }
+.chart-line.bls    { stroke: var(--blue-base); stroke-dasharray: 4 3; }
+.chart-line.fred   { stroke: var(--amber-base); }
+.chart-area.events { fill: rgba(220,38,38,.06); }
+.chart-x-axis { display: flex; justify-content: space-between; padding-left: 56px; padding-right: 56px; margin-top: 12px; font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; }
+
+/* CATEGORIES BAR CHART */
+.cat-list { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--border-subtle); }
+.cat-row { display: grid; grid-template-columns: 220px 1fr 80px 80px; gap: 24px; padding: 16px 0; border-bottom: 1px solid var(--border-subtle); align-items: center; }
+.cat-name { font-family: var(--font-headline); font-weight: 600; font-size: 16px; color: var(--text-primary); }
+.cat-bar-wrap { position: relative; height: 14px; background: var(--bg-tertiary); }
+.cat-bar { height: 100%; background: var(--red-base); }
+.cat-events { font-family: var(--font-mono); font-size: 14px; color: var(--text-primary); text-align: right; font-weight: 700; }
+.cat-shrink { font-family: var(--font-mono); font-size: 12px; color: var(--red-base); text-align: right; font-weight: 700; }
+
+/* SKIMPFLATION LEADERBOARD */
+.skimp-card-wrap { background: linear-gradient(180deg, rgba(168,85,247,.05) 0%, var(--bg-secondary) 70%); border: 1px solid var(--purple-border); padding: 32px; }
+.skimp-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--purple-base); padding: 4px 10px; background: var(--purple-bg); border: 1px solid var(--purple-border); border-radius: 2px; display: inline-block; margin-bottom: 16px; }
+.skimp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.skimp-row { background: var(--bg-primary); border: 1px solid var(--border-subtle); padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+.skimp-product { font-family: var(--font-headline); font-weight: 600; font-size: 15px; color: var(--text-primary); }
+.skimp-brand { font-family: var(--font-mono); font-size: 11px; color: var(--purple-base); text-transform: uppercase; letter-spacing: 0.08em; }
+.skimp-deltas { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.skimp-pill { font-family: var(--font-mono); font-size: 10px; padding: 3px 8px; border-radius: 2px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.skimp-pill.down { color: var(--red-base); background: var(--red-bg); border: 1px solid var(--red-border); }
+.skimp-pill.up   { color: var(--amber-base); background: var(--amber-bg); border: 1px solid var(--amber-border); }
+
+/* REPEAT OFFENDERS — product cards */
+.repeat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.repeat-card { background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 16px; display: flex; flex-direction: column; gap: 10px; transition: border-color .15s, transform .15s; text-decoration: none; color: inherit; cursor: pointer; }
+.repeat-card:hover { border-color: var(--red-border); transform: translateY(-2px); }
+.repeat-thumb { aspect-ratio: 1; background: linear-gradient(135deg, #1a1b1d 0%, #0a0b0d 100%); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 12px; }
+.repeat-thumb::before { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(45deg, transparent 0, transparent 9px, rgba(255,255,255,.015) 9px, rgba(255,255,255,.015) 10px); pointer-events: none; }
+.repeat-thumb .rt-rank { font-family: var(--font-mono); font-size: 28px; font-weight: 700; color: var(--red-base); position: relative; z-index: 2; line-height: 1; }
+.repeat-thumb .rt-brand { font-family: var(--font-headline); font-size: 12px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; position: relative; z-index: 2; align-self: flex-end; }
+.repeat-name { font-family: var(--font-sans); font-weight: 500; font-size: 14px; line-height: 1.3; color: var(--text-primary); }
+.repeat-stats { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+.repeat-stats .events { color: var(--text-secondary); }
+.repeat-stats .delta { color: var(--red-base); font-weight: 700; }
+
+/* RESTORATION CORNER — green-themed positive callout */
+.restore-card { background: linear-gradient(180deg, rgba(16,185,129,.05) 0%, var(--bg-secondary) 70%); border: 1px solid var(--green-border); padding: 32px; }
+.restore-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--green-base); padding: 4px 10px; background: var(--green-bg); border: 1px solid var(--green-border); border-radius: 2px; display: inline-block; margin-bottom: 16px; }
+.restore-list { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--border-subtle); margin-top: 12px; }
+.restore-row { display: grid; grid-template-columns: 100px 1fr 200px; gap: 24px; padding: 18px 0; border-bottom: 1px solid var(--border-subtle); align-items: center; }
+.restore-date { font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); letter-spacing: 0.05em; }
+.restore-product { font-family: var(--font-headline); font-weight: 600; font-size: 16px; color: var(--text-primary); }
+.restore-brand { font-family: var(--font-mono); font-size: 11px; color: var(--green-base); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
+.restore-sizes { font-family: var(--font-mono); font-size: 14px; color: var(--text-primary); text-align: right; }
+.restore-sizes .before { color: var(--text-tertiary); text-decoration: line-through; }
+.restore-sizes .arrow { color: var(--text-tertiary); padding: 0 6px; }
+.restore-sizes .after  { color: var(--green-base); font-weight: 700; }
+.restore-sizes .delta  { font-size: 11px; color: var(--green-base); margin-left: 8px; padding: 2px 6px; background: var(--green-bg); border: 1px solid var(--green-border); border-radius: 999px; }
+
+/* NEWS FEED */
+.news-list { display: flex; flex-direction: column; border-top: 1px solid var(--border-subtle); }
+.news-row { display: grid; grid-template-columns: 120px 1fr 120px 80px; gap: 24px; padding: 18px 0; border-bottom: 1px solid var(--border-subtle); align-items: start; text-decoration: none; color: inherit; transition: background .15s; }
+.news-row:hover { background: var(--bg-hover); }
+.news-outlet { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--blue-base); padding-top: 2px; }
+.news-title { font-family: var(--font-headline); font-weight: 500; font-size: 15px; line-height: 1.4; color: var(--text-primary); }
+.news-summary { font-family: var(--font-sans); font-style: italic; font-size: 13px; color: var(--text-secondary); line-height: 1.45; margin-top: 6px; }
+.news-products { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.08em; text-align: right; }
+.news-products .n { color: var(--text-primary); font-weight: 700; }
+.news-date { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-align: right; padding-top: 2px; }
+
+/* EVIDENCE WALL — side-by-side cards */
+.wall-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; }
+.wall-card { background: var(--bg-secondary); border: 1px solid var(--border-subtle); overflow: hidden; transition: border-color .15s; display: flex; flex-direction: column; text-decoration: none; color: inherit; }
+.wall-card:hover { border-color: var(--red-border); }
+.wall-img { aspect-ratio: 16/9; background: linear-gradient(135deg, #1a1b1d 0%, #0a0b0d 100%); display: flex; align-items: stretch; position: relative; overflow: hidden; }
+.wall-img::before { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(45deg, transparent 0, transparent 11px, rgba(255,255,255,.018) 11px, rgba(255,255,255,.018) 12px); }
+.wall-img .ps-label { position: absolute; top: 12px; left: 12px; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-primary); padding: 4px 8px; border: 1px solid rgba(255,255,255,.25); background: rgba(0,0,0,.55); z-index: 2; }
+.wall-img .ps-side { flex: 1; padding: 16px; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px; position: relative; z-index: 2; }
+.wall-img .ps-side:first-child { border-right: 1px dashed var(--border-subtle); }
+.wall-img .ps-tag { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-tertiary); }
+.wall-img .ps-size { font-family: var(--font-mono); font-weight: 700; font-size: 24px; color: var(--text-primary); line-height: 1; }
+.wall-img .ps-side.after .ps-size { color: var(--red-base); }
+.wall-body { padding: 16px; }
+.wall-product { font-family: var(--font-headline); font-weight: 700; font-size: 16px; color: var(--text-primary); }
+.wall-brand { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 6px; }
+.wall-signal { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 10px; padding: 3px 8px; margin-top: 10px; background: var(--amber-bg); color: var(--amber-base); border: 1px solid var(--amber-border); border-radius: 2px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* FOOTER */
+footer { border-top: 1px solid var(--border-subtle); margin-top: 64px; padding: 48px 0; }
+.footer-inner { max-width: 1280px; margin: 0 auto; padding: 0 32px; display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; flex-wrap: wrap; }
+.footer-meta { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
+.footer-meta b { color: var(--text-secondary); font-weight: 500; }
+.methodology { max-width: 600px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+.mockup-banner { position: fixed; bottom: 16px; right: 16px; background: var(--amber-bg); border: 1px solid var(--border-subtle); padding: 10px 14px; font-family: var(--font-mono); font-size: 11px; color: var(--amber-base); text-transform: uppercase; letter-spacing: 0.1em; z-index: 99; max-width: 320px; line-height: 1.5; }
+
+@media (max-width: 900px) {
+  .headline-stat { grid-template-columns: 1fr; gap: 24px; padding: 24px; }
+  .hs-big { font-size: 64px; }
+  .restore-row { grid-template-columns: 1fr; gap: 8px; }
+  .news-row { grid-template-columns: 1fr; gap: 8px; }
+}
+@media (max-width: 640px) {
+  .container { padding: 0 16px; }
+  .hero h1 { font-size: 48px; }
+  .cat-row { grid-template-columns: 110px 1fr 50px; }
+  .cat-shrink { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo">Full<span>Carts</span></a>
+    <div class="nav-links">
+      <a href="/brands">Brands</a>
+      <a href="/products">Products</a>
+      <a href="#" class="active">Insights</a>
+      <a href="/about">About</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-eyebrow">By the numbers · Updated 2026-05-17</div>
+    <h1>The size of <span class="red">shrinkflation</span>, measured.</h1>
+    <p class="hero-lede">
+      We cross-reference our database of <strong>2,872 documented events</strong>
+      against the <strong>BLS R-CPI-SC</strong> (the government's official size-change
+      tracker) and <strong>FRED's Food-at-Home CPI</strong> so you can see whether the
+      brands are shrinking products on schedule with — or ahead of — official inflation.
+    </p>
+
+    <!-- BLS HEADLINE STAT -->
+    <div class="headline-stat">
+      <div>
+        <div class="hs-pill">BLS · Q1 2026</div>
+        <div class="hs-big">2,341</div>
+      </div>
+      <div class="hs-body">
+        <h2>products downsized last quarter</h2>
+        <p>
+          The Bureau of Labor Statistics' research index <strong>R-CPI-SC</strong> counts
+          every CPI-tracked item whose package shrank between quarterly surveys.
+          Q1 2026's count is <strong>up 14% from Q4 2025</strong>; up 38% from Q1 2024.
+          This is the most authoritative measure of US shrinkflation that exists,
+          and we plot it alongside our own catch list below.
+        </p>
+        <div class="hs-source">Source: BLS · r-cpi-sc-counts.xlsx · Updated Apr 2026</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 1. THREE-LINE CHART -->
+  <section class="block">
+    <div class="section-head">
+      <h2>Inflation, shrinkflation, and how they trade off</h2>
+      <div class="meta">Monthly · Jan 2023 → Apr 2026</div>
+    </div>
+    <p class="section-lede">
+      When the food-at-home CPI rises, brands face a choice — raise the price, shrink
+      the package, or change the recipe. Plotting <strong>our documented shrink events</strong>
+      (red) against the <strong>BLS downsizing count</strong> (blue) and <strong>FRED's
+      food-at-home CPI</strong> (amber) shows how the three move together.
+    </p>
+
+    <div class="chart-card">
+      <div class="chart-legend">
+        <span class="legend-item"><span class="legend-swatch events"></span> FullCarts events (left axis)</span>
+        <span class="legend-item"><span class="legend-swatch bls"></span> BLS downsizings (left axis, dashed)</span>
+        <span class="legend-item"><span class="legend-swatch fred"></span> FRED food CPI YoY% (right axis)</span>
+      </div>
+
+      <div class="chart-wrap">
+        <div class="chart-y-axis-label left">Events / month</div>
+        <div class="chart-y-axis-label right">CPI YoY %</div>
+        <div class="chart-y-left">
+          <div class="yt">0</div>
+          <div class="yt">25</div>
+          <div class="yt">50</div>
+          <div class="yt">75</div>
+          <div class="yt">100</div>
+        </div>
+        <div class="chart-y-right">
+          <div class="yt">0%</div>
+          <div class="yt">3%</div>
+          <div class="yt">6%</div>
+          <div class="yt">9%</div>
+          <div class="yt">12%</div>
+        </div>
+        <svg class="chart-svg" viewBox="0 0 1000 240" preserveAspectRatio="none" aria-label="Events vs BLS vs CPI">
+          <!-- Grid lines -->
+          <line class="chart-grid-line" x1="0" y1="0"   x2="1000" y2="0"></line>
+          <line class="chart-grid-line" x1="0" y1="60"  x2="1000" y2="60"></line>
+          <line class="chart-grid-line" x1="0" y1="120" x2="1000" y2="120"></line>
+          <line class="chart-grid-line" x1="0" y1="180" x2="1000" y2="180"></line>
+          <line class="chart-grid-line" x1="0" y1="240" x2="1000" y2="240"></line>
+
+          <!-- FullCarts events area (red) — synthetic monthly counts for 39 months -->
+          <polygon class="chart-area events" points="
+            0,200 25,190 50,180 75,170 100,160 125,150
+            150,140 175,130 200,120 225,115 250,110 275,100
+            300,90 325,80 350,70 375,60 400,55 425,50
+            450,55 475,60 500,70 525,80 550,90 575,80
+            600,70 625,60 650,55 675,50 700,45 725,40
+            750,45 775,50 800,55 825,60 850,55 875,50
+            900,55 925,60 950,55 975,50 1000,55
+            1000,240 0,240"></polygon>
+          <polyline class="chart-line events" points="
+            0,200 25,190 50,180 75,170 100,160 125,150
+            150,140 175,130 200,120 225,115 250,110 275,100
+            300,90 325,80 350,70 375,60 400,55 425,50
+            450,55 475,60 500,70 525,80 550,90 575,80
+            600,70 625,60 650,55 675,50 700,45 725,40
+            750,45 775,50 800,55 825,60 850,55 875,50
+            900,55 925,60 950,55 975,50 1000,55"></polyline>
+
+          <!-- BLS downsizings (blue dashed) -->
+          <polyline class="chart-line bls" points="
+            0,160 25,158 50,155 75,150 100,148 125,140
+            150,135 175,128 200,120 225,118 250,115 275,108
+            300,100 325,95 350,88 375,80 400,75 425,70
+            450,72 475,75 500,80 525,85 550,90 575,82
+            600,75 625,68 650,62 675,55 700,50 725,45
+            750,48 775,50 800,52 825,55 850,50 875,45
+            900,48 925,52 950,48 975,45 1000,50"></polyline>
+
+          <!-- FRED CPI YoY % (amber) — peaks in early 2023, falls steadily -->
+          <polyline class="chart-line fred" points="
+            0,15 25,18 50,22 75,28 100,35 125,45
+            150,55 175,68 200,80 225,90 250,100 275,110
+            300,118 325,125 350,130 375,132 400,130 425,125
+            450,120 475,115 500,110 525,108 550,105 575,100
+            600,95 625,90 650,85 675,82 700,80 725,78
+            750,75 775,72 800,70 825,68 850,65 875,62
+            900,60 925,58 950,55 975,53 1000,50"></polyline>
+        </svg>
+      </div>
+      <div class="chart-x-axis">
+        <span>Jan '23</span>
+        <span>Jul '23</span>
+        <span>Jan '24</span>
+        <span>Jul '24</span>
+        <span>Jan '25</span>
+        <span>Jul '25</span>
+        <span>Jan '26</span>
+      </div>
+    </div>
+    <div class="caveat">FRED CPI is YoY%, BLS counts are quarterly distributed across months, our events are monthly</div>
+  </section>
+
+  <!-- 2. WORST CATEGORIES -->
+  <section class="block">
+    <div class="section-head">
+      <h2>Which categories are getting hit hardest?</h2>
+      <div class="meta">Top 8 of 42 categories · by event count</div>
+    </div>
+    <p class="section-lede">
+      Snacks and confectionery dominate the list — small, repeatedly-purchased
+      items where shaving a few grams off the bag is least noticeable to shoppers.
+    </p>
+    <div class="cat-list">
+      <div class="cat-row">
+        <div class="cat-name">Snacks &amp; chips</div>
+        <div class="cat-bar-wrap"><div class="cat-bar" style="width: 100%"></div></div>
+        <div class="cat-events">621</div>
+        <div class="cat-shrink">−14.2%</div>
+      </div>
+      <div class="cat-row">
+        <div class="cat-name">Chocolate &amp; confectionery</div>
+        <div class="cat-bar-wrap"><div class="cat-bar" style="width: 84%"></div></div>
+        <div class="cat-events">518</div>
+        <div class="cat-shrink">−16.7%</div>
+      </div>
+      <div class="cat-row">
+        <div class="cat-name">Breakfast &amp; cereal</div>
+        <div class="cat-bar-wrap"><div class="cat-bar" style="width: 64%"></div></div>
+        <div class="cat-events">394</div>
+        <div class="cat-shrink">−11.8%</div>
+      </div>
+      <div class="cat-row">
+        <div class="cat-name">Frozen meals</div>
+        <div class="cat-bar-wrap"><div class="cat-bar" style="width: 49%"></div></div>
+        <div class="cat-events">301</div>
+        <div class="cat-shrink">−9.4%</div>
+      </div>
+      <div class="cat-row">
+        <div class="cat-name">Beverages (soft drinks &amp; juice)</div>
+        <div class="cat-bar-wrap"><div class="cat-bar" style="width: 42%"></div></div>
+        <div class="cat-events">259</div>
+        <div class="cat-shrink">−7.2%</div>
+      </div>
+      <div class="cat-row">
+        <div class="cat-name">Dairy &amp; yogurt</div>
+        <div class="cat-bar-wrap"><div class="cat-bar" style="width: 35%"></div></div>
+        <div class="cat-events">214</div>
+        <div class="cat-shrink">−8.1%</div>
+      </div>
+      <div class="cat-row">
+        <div class="cat-name">Bakery</div>
+        <div class="cat-bar-wrap"><div class="cat-bar" style="width: 28%"></div></div>
+        <div class="cat-events">173</div>
+        <div class="cat-shrink">−6.9%</div>
+      </div>
+      <div class="cat-row">
+        <div class="cat-name">Sauces &amp; condiments</div>
+        <div class="cat-bar-wrap"><div class="cat-bar" style="width: 22%"></div></div>
+        <div class="cat-events">137</div>
+        <div class="cat-shrink">−10.3%</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. SKIMPFLATION LEADERBOARD -->
+  <section class="block">
+    <div class="section-head">
+      <h2>Skimpflation: when the recipe quietly changes</h2>
+      <div class="meta">Top 8 of 254 flagged products · USDA FoodData Central</div>
+    </div>
+    <p class="section-lede">
+      It's not just the bag getting smaller. <strong>Skimpflation</strong> is when
+      brands swap ingredients to lower cost — less meat, more filler, less butter,
+      more palm oil. We cross-reference USDA's quarterly FoodData Central releases
+      to flag nutrition changes that look like ingredient substitution rather than
+      reformulation for taste.
+    </p>
+    <div class="skimp-card-wrap">
+      <div class="skimp-eyebrow">USDA FDC · 4 quarterly releases compared</div>
+      <div class="skimp-grid">
+        <div class="skimp-row">
+          <div class="skimp-product">Stouffer&apos;s Lasagna with Meat &amp; Sauce</div>
+          <div class="skimp-brand">Stouffer&apos;s · Nestlé</div>
+          <div class="skimp-deltas">
+            <span class="skimp-pill down">Protein −18%</span>
+            <span class="skimp-pill up">Sodium +12%</span>
+          </div>
+        </div>
+        <div class="skimp-row">
+          <div class="skimp-product">Hershey&apos;s Milk Chocolate Bar</div>
+          <div class="skimp-brand">Hershey&apos;s</div>
+          <div class="skimp-deltas">
+            <span class="skimp-pill down">Milk solids −22%</span>
+            <span class="skimp-pill up">Sugar +8%</span>
+          </div>
+        </div>
+        <div class="skimp-row">
+          <div class="skimp-product">Kraft Mac &amp; Cheese Original</div>
+          <div class="skimp-brand">Kraft</div>
+          <div class="skimp-deltas">
+            <span class="skimp-pill down">Cheese powder −15%</span>
+            <span class="skimp-pill up">Sodium +9%</span>
+          </div>
+        </div>
+        <div class="skimp-row">
+          <div class="skimp-product">Cadbury Dairy Milk Mini Eggs</div>
+          <div class="skimp-brand">Cadbury · Mondelēz</div>
+          <div class="skimp-deltas">
+            <span class="skimp-pill down">Milk solids −13%</span>
+            <span class="skimp-pill down">Protein −9%</span>
+          </div>
+        </div>
+        <div class="skimp-row">
+          <div class="skimp-product">Häagen-Dazs Vanilla</div>
+          <div class="skimp-brand">Häagen-Dazs · Nestlé</div>
+          <div class="skimp-deltas">
+            <span class="skimp-pill down">Butterfat −11%</span>
+            <span class="skimp-pill up">Stabilizers +new</span>
+          </div>
+        </div>
+        <div class="skimp-row">
+          <div class="skimp-product">Hellmann&apos;s Real Mayonnaise</div>
+          <div class="skimp-brand">Hellmann&apos;s · Unilever</div>
+          <div class="skimp-deltas">
+            <span class="skimp-pill down">Egg yolk −18%</span>
+            <span class="skimp-pill up">Soybean oil +21%</span>
+          </div>
+        </div>
+        <div class="skimp-row">
+          <div class="skimp-product">Hidden Valley Original Ranch</div>
+          <div class="skimp-brand">Hidden Valley · Clorox</div>
+          <div class="skimp-deltas">
+            <span class="skimp-pill down">Buttermilk solids −24%</span>
+            <span class="skimp-pill up">Sugar +11%</span>
+          </div>
+        </div>
+        <div class="skimp-row">
+          <div class="skimp-product">Oreo Original Cookies</div>
+          <div class="skimp-brand">Oreo · Mondelēz</div>
+          <div class="skimp-deltas">
+            <span class="skimp-pill down">Cocoa solids −9%</span>
+            <span class="skimp-pill up">Palm oil +13%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. REPEAT OFFENDER PRODUCTS -->
+  <section class="block">
+    <div class="section-head">
+      <h2>Repeat-offender products</h2>
+      <div class="meta">Top 8 by event count · shrinkflation_leaderboard</div>
+    </div>
+    <p class="section-lede">
+      Products with the most distinct documented shrinkflation events.
+      These aren&apos;t one-off cuts — they&apos;re a pattern.
+    </p>
+    <div class="repeat-grid">
+      <a class="repeat-card" href="#"><div class="repeat-thumb"><div class="rt-rank">1</div><div class="rt-brand">Cadbury</div></div>
+        <div class="repeat-name">Dairy Milk Bar (110g → 95g)</div>
+        <div class="repeat-stats"><span class="events">6 events</span><span class="delta">−24%</span></div></a>
+      <a class="repeat-card" href="#"><div class="repeat-thumb"><div class="rt-rank">2</div><div class="rt-brand">Nestlé</div></div>
+        <div class="repeat-name">Toll House Chocolate Chips</div>
+        <div class="repeat-stats"><span class="events">5 events</span><span class="delta">−22%</span></div></a>
+      <a class="repeat-card" href="#"><div class="repeat-thumb"><div class="rt-rank">3</div><div class="rt-brand">Cadbury</div></div>
+        <div class="repeat-name">Creme Egg 5-pack</div>
+        <div class="repeat-stats"><span class="events">5 events</span><span class="delta">−17%</span></div></a>
+      <a class="repeat-card" href="#"><div class="repeat-thumb"><div class="rt-rank">4</div><div class="rt-brand">Cadbury</div></div>
+        <div class="repeat-name">Dairy Milk Mini Eggs</div>
+        <div class="repeat-stats"><span class="events">4 events</span><span class="delta">−28%</span></div></a>
+      <a class="repeat-card" href="#"><div class="repeat-thumb"><div class="rt-rank">5</div><div class="rt-brand">General Mills</div></div>
+        <div class="repeat-name">Cheerios Family Size</div>
+        <div class="repeat-stats"><span class="events">4 events</span><span class="delta">−15%</span></div></a>
+      <a class="repeat-card" href="#"><div class="repeat-thumb"><div class="rt-rank">6</div><div class="rt-brand">Cadbury</div></div>
+        <div class="repeat-name">Twirl Multipack</div>
+        <div class="repeat-stats"><span class="events">4 events</span><span class="delta">−20%</span></div></a>
+      <a class="repeat-card" href="#"><div class="repeat-thumb"><div class="rt-rank">7</div><div class="rt-brand">Frito-Lay</div></div>
+        <div class="repeat-name">Doritos Party Size</div>
+        <div class="repeat-stats"><span class="events">3 events</span><span class="delta">−18%</span></div></a>
+      <a class="repeat-card" href="#"><div class="repeat-thumb"><div class="rt-rank">8</div><div class="rt-brand">Cadbury</div></div>
+        <div class="repeat-name">Heroes Tub</div>
+        <div class="repeat-stats"><span class="events">3 events</span><span class="delta">−18%</span></div></a>
+    </div>
+  </section>
+
+  <!-- 5. RESTORATION CORNER -->
+  <section class="block">
+    <div class="section-head">
+      <h2>Restoration corner</h2>
+      <div class="meta">Good news · last 12 months</div>
+    </div>
+    <p class="section-lede">
+      Not every shrink stays shrunk. These products got their size <em>restored</em>
+      — either as a deliberate brand response to negative coverage, or as part of
+      a packaging redesign that reverted earlier downsizing.
+    </p>
+    <div class="restore-card">
+      <div class="restore-eyebrow">Restorations · pulled from published_changes</div>
+      <div class="restore-list">
+        <div class="restore-row">
+          <div class="restore-date">Mar 2026</div>
+          <div>
+            <div class="restore-product">Tropicana Pure Premium Orange Juice</div>
+            <div class="restore-brand">Tropicana · PepsiCo</div>
+          </div>
+          <div class="restore-sizes">
+            <span class="before">52oz</span><span class="arrow">→</span><span class="after">64oz</span>
+            <span class="delta">+23%</span>
+          </div>
+        </div>
+        <div class="restore-row">
+          <div class="restore-date">Jan 2026</div>
+          <div>
+            <div class="restore-product">Triscuit Original Crackers</div>
+            <div class="restore-brand">Triscuit · Mondelēz</div>
+          </div>
+          <div class="restore-sizes">
+            <span class="before">8.5oz</span><span class="arrow">→</span><span class="after">9.5oz</span>
+            <span class="delta">+12%</span>
+          </div>
+        </div>
+        <div class="restore-row">
+          <div class="restore-date">Nov 2025</div>
+          <div>
+            <div class="restore-product">Pringles Original Tube</div>
+            <div class="restore-brand">Pringles · Kellanova</div>
+          </div>
+          <div class="restore-sizes">
+            <span class="before">5.2oz</span><span class="arrow">→</span><span class="after">5.5oz</span>
+            <span class="delta">+6%</span>
+          </div>
+        </div>
+        <div class="restore-row">
+          <div class="restore-date">Sep 2025</div>
+          <div>
+            <div class="restore-product">Charmin Ultra Soft Mega Roll</div>
+            <div class="restore-brand">Charmin · Procter &amp; Gamble</div>
+          </div>
+          <div class="restore-sizes">
+            <span class="before">244 sheets</span><span class="arrow">→</span><span class="after">264 sheets</span>
+            <span class="delta">+8%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="caveat">Pre-cleanup view: 75 candidate upsizing events still need vetting before they show here</div>
+  </section>
+
+  <!-- 6. IN THE NEWS -->
+  <section class="block">
+    <div class="section-head">
+      <h2>In the news this week</h2>
+      <div class="meta">News articles linked to tracked products</div>
+    </div>
+    <div class="news-list">
+      <a class="news-row" href="#">
+        <div class="news-outlet">BBC News</div>
+        <div>
+          <div class="news-title">Cadbury Mini Eggs shrink again as 80g bag is replaced with 72g</div>
+          <div class="news-summary">The annual Easter cycle of size cuts continues — Mondelez confirms a third reduction in three years.</div>
+        </div>
+        <div class="news-products"><span class="n">3</span> tracked products</div>
+        <div class="news-date">2026-03-26</div>
+      </a>
+      <a class="news-row" href="#">
+        <div class="news-outlet">Reuters</div>
+        <div>
+          <div class="news-title">US grocery bills rise faster than wages, BLS confirms shrinkflation acceleration</div>
+          <div class="news-summary">Q1 2026 R-CPI-SC data shows 2,341 products downsized — a 38% jump versus the same quarter in 2024.</div>
+        </div>
+        <div class="news-products"><span class="n">42</span> tracked products</div>
+        <div class="news-date">2026-04-12</div>
+      </a>
+      <a class="news-row" href="#">
+        <div class="news-outlet">The Guardian</div>
+        <div>
+          <div class="news-title">Hellmann&apos;s mayonnaise quietly swaps egg yolk for soybean oil — consumer groups respond</div>
+          <div class="news-summary">Unilever&apos;s flagship condiment shows a 21% rise in soybean oil and an 18% drop in egg yolk across 2023-2026 USDA records.</div>
+        </div>
+        <div class="news-products"><span class="n">2</span> tracked products</div>
+        <div class="news-date">2026-05-02</div>
+      </a>
+      <a class="news-row" href="#">
+        <div class="news-outlet">CNN Business</div>
+        <div>
+          <div class="news-title">Tropicana restores 64oz carton after consumer backlash</div>
+          <div class="news-summary">PepsiCo reverses the 52oz packaging introduced in 2023 after sustained pressure from shareholders and shoppers.</div>
+        </div>
+        <div class="news-products"><span class="n">1</span> tracked product</div>
+        <div class="news-date">2026-03-15</div>
+      </a>
+      <a class="news-row" href="#">
+        <div class="news-outlet">Bloomberg</div>
+        <div>
+          <div class="news-title">General Mills Q4 earnings: cereal volumes flat as package sizes shrink for fifth straight quarter</div>
+          <div class="news-summary">Executives explicitly cite package-size reduction as a margin-protection strategy for the Cheerios and Lucky Charms lines.</div>
+        </div>
+        <div class="news-products"><span class="n">12</span> tracked products</div>
+        <div class="news-date">2026-04-28</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- 7. EVIDENCE WALL -->
+  <section class="block">
+    <div class="section-head">
+      <h2>Spot the difference</h2>
+      <div class="meta">Curated · 4 documented before/after pairs</div>
+    </div>
+    <p class="section-lede">
+      Hand-selected side-by-side comparisons where the size change is visually
+      verifiable from a single photo or shelf observation. The full evidence trail
+      lives on each product&apos;s page.
+    </p>
+    <div class="wall-grid">
+      <a class="wall-card" href="#">
+        <div class="wall-img">
+          <span class="ps-label">2018 vs 2024</span>
+          <div class="ps-side"><div class="ps-tag">Before</div><div class="ps-size">96g</div></div>
+          <div class="ps-side after"><div class="ps-tag">After</div><div class="ps-size">72g</div></div>
+        </div>
+        <div class="wall-body">
+          <div class="wall-product">Cadbury Dairy Milk Mini Eggs</div>
+          <div class="wall-brand">Cadbury · Mondelēz</div>
+          <div class="wall-signal">Slack fill confirmed</div>
+        </div>
+      </a>
+      <a class="wall-card" href="#">
+        <div class="wall-img">
+          <span class="ps-label">2021 vs 2024</span>
+          <div class="ps-side"><div class="ps-tag">Before</div><div class="ps-size">144g</div></div>
+          <div class="ps-side after"><div class="ps-tag">After</div><div class="ps-size">128g</div></div>
+        </div>
+        <div class="wall-body">
+          <div class="wall-product">Oreo Original Family Size</div>
+          <div class="wall-brand">Oreo · Mondelēz</div>
+          <div class="wall-signal">Stretchflation</div>
+        </div>
+      </a>
+      <a class="wall-card" href="#">
+        <div class="wall-img">
+          <span class="ps-label">2020 vs 2025</span>
+          <div class="ps-side"><div class="ps-tag">Before</div><div class="ps-size">18ct</div></div>
+          <div class="ps-side after"><div class="ps-tag">After</div><div class="ps-size">14ct</div></div>
+        </div>
+        <div class="wall-body">
+          <div class="wall-product">Charmin Ultra Soft Mega Roll</div>
+          <div class="wall-brand">Charmin · Procter &amp; Gamble</div>
+          <div class="wall-signal">Paper thin</div>
+        </div>
+      </a>
+      <a class="wall-card" href="#">
+        <div class="wall-img">
+          <span class="ps-label">2019 vs 2024</span>
+          <div class="ps-side"><div class="ps-tag">Before</div><div class="ps-size">16oz</div></div>
+          <div class="ps-side after"><div class="ps-tag">After</div><div class="ps-size">13.5oz</div></div>
+        </div>
+        <div class="wall-body">
+          <div class="wall-product">Lay&apos;s Classic Party Size</div>
+          <div class="wall-brand">Lay&apos;s · PepsiCo</div>
+          <div class="wall-signal">Not as advertised</div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-meta">
+      <b>FullCarts</b> · By the numbers · Insights<br>
+      Generated 2026-05-17 · ISR refresh every hour
+    </div>
+    <div class="methodology">
+      Every number on this page is sourced. FullCarts events are documented from
+      Reddit, news, and retailer APIs with full traceability. BLS R-CPI-SC counts
+      come from the Bureau of Labor Statistics&apos; quarterly research release.
+      FRED CPI data comes from the St. Louis Fed&apos;s public FRED API. USDA
+      skimpflation flags come from cross-release diffs of FoodData Central.
+    </div>
+  </div>
+</footer>
+
+<div class="mockup-banner">
+  ⚠ Static mockup · data is illustrative · final page will read from views in migration 049
+</div>
+
+</body>
+</html>
