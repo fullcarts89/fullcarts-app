@@ -39,7 +39,7 @@ python -m pipeline wayback --url URL --brand BRAND --product NAME [--upc UPC]
 python3 pipeline/scripts/promote_claims.py [--limit N] [--dry-run]
 python3 -m pipeline.scripts.dedup_entities [--auto] [--dry-run]
 python3 -m pipeline.scripts.auto_approve_claims [--threshold 80] [--dry-run]
-python3 -m pipeline.scripts.backfill_entity_images [--limit N] [--dry-run]
+python3 -m pipeline.scripts.backfill_entity_images [--limit N] [--dry-run] [--no-off-api]
 python3 -m pipeline.scripts.activate_variants [--dry-run]
 ```
 
