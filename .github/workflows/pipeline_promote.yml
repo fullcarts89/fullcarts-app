@@ -55,3 +55,13 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: python3 -m pipeline.scripts.backfill_entity_images --limit 500
+      - name: Promote skimpflation events
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        # Cross-references USDA nutrition snapshots across releases per
+        # UPC, and publishes any meaningful skimpflation finding into
+        # published_changes (change_type='skimpflation'). Idempotent —
+        # skips entities that already have a non-retracted skimpflation
+        # row. Requires migration 055.
+        run: python3 -m pipeline.scripts.promote_skimpflation

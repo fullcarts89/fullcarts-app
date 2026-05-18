@@ -119,6 +119,27 @@ export interface ChartPoint {
   cpiYoyPct: number | null;
 }
 
+/** One product line in the grocery-cart widget. Real product, real
+ *  measured shrink across the date span we're showing. */
+export interface CartItem {
+  entity_id: string;
+  brand: string;
+  product_name: string;
+  category: string | null;
+  image_url: string | null;
+  /** Earliest observed size (numeric). */
+  size_before: number;
+  /** Latest observed size (numeric). */
+  size_after: number;
+  size_unit: string;
+  /** Negative — the % the product shrank from earliest to latest. */
+  shrink_pct: number;
+  /** ISO date of the earliest event (== "year you started buying it"). */
+  date_before: string;
+  /** ISO date of the latest event. */
+  date_after: string;
+}
+
 export interface DashboardStats {
   total_products: number;
   total_changes: number;

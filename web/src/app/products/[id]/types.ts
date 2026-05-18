@@ -65,6 +65,61 @@ export interface RelatedProduct {
   worst_delta_pct: number;
 }
 
+/** One per-UPC pair of usda_product_history rows (earliest + latest
+ *  releases that carry nutrition data). All numeric columns come
+ *  through as `string | number | null` because Supabase serializes
+ *  Postgres NUMERIC as strings. */
+export interface UsdaNutritionRow {
+  gtin_upc: string;
+  release_date: string;
+  description: string | null;
+  brand_name: string | null;
+  calories_kcal: string | number | null;
+  protein_g: string | number | null;
+  total_fat_g: string | number | null;
+  saturated_fat_g: string | number | null;
+  carbs_g: string | number | null;
+  fiber_g: string | number | null;
+  sugars_g: string | number | null;
+  calcium_mg: string | number | null;
+  sodium_mg: string | number | null;
+  cholesterol_mg: string | number | null;
+}
+
+/** Distilled before/after for one nutrient. Built client-server-side
+ *  from two UsdaNutritionRow snapshots (earliest + latest release). */
+export interface NutrientDelta {
+  /** Display label (e.g. "Protein", "Added sugar"). */
+  label: string;
+  /** Short label for tight cells. */
+  sublabel?: string;
+  /** Unit string (g, mg, kcal). */
+  unit: string;
+  /** Numeric value at the earlier release. */
+  before: number;
+  /** Numeric value at the later release. */
+  after: number;
+  /** Per-100g delta % (after - before) / before * 100. Positive = up, negative = down. */
+  delta_pct: number;
+  /** Direction we expect for "this is bad / skimpflation". */
+  bad_direction: "down" | "up";
+}
+
+/** Full skimpflation data shown in the overlay. Null if we have no
+ *  nutrition history for any UPC linked to the entity. */
+export interface SkimpData {
+  upc: string;
+  description: string | null;
+  releases_compared: number;
+  before_date: string;
+  after_date: string;
+  nutrients: NutrientDelta[];
+  /** Aggregate skimp score — the sum of "bad direction" deltas.
+   *  We hide the overlay entirely when this is below MIN_SCORE so we
+   *  don't surface noise. */
+  skimp_score: number;
+}
+
 /** One step on the size-over-time chart. Built from chronologically
  *  sorted shrinkflation events. */
 export interface TrajectoryStep {

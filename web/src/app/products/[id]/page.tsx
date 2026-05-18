@@ -6,9 +6,12 @@ import SizeTrajectory from "./_components/SizeTrajectory";
 import ChangeHistory from "./_components/ChangeHistory";
 import RetailersGrid from "./_components/RetailersGrid";
 import RelatedProducts from "./_components/RelatedProducts";
+import SkimpflationOverlay from "./_components/SkimpflationOverlay";
 import {
   buildTrajectory,
+  computeSkimpData,
   eventsByDateDesc,
+  expandUpcVariants,
   num,
   totalEvidenceCount,
 } from "./lib";
@@ -17,6 +20,8 @@ import type {
   PackVariant,
   ProductEntity,
   RelatedProduct,
+  SkimpData,
+  UsdaNutritionRow,
   VariantObservation,
 } from "./types";
 import styles from "./styles.module.css";
@@ -49,6 +54,7 @@ async function loadProduct(id: string): Promise<{
   variants: PackVariant[];
   observations: VariantObservation[];
   related: RelatedProduct[];
+  skimp: SkimpData | null;
 } | null> {
   const sb = createAdminClient();
 
@@ -94,6 +100,21 @@ async function loadProduct(id: string): Promise<{
     observations = (data ?? []) as VariantObservation[];
   }
 
+  // Skimpflation overlay — pull USDA nutrition snapshots for any of
+  // the entity's UPCs. We hand the raw rows to computeSkimpData()
+  // which picks the best UPC + release pair and computes deltas.
+  let skimp: SkimpData | null = null;
+  const upcCandidates = expandUpcVariants(variants.map((v) => v.upc));
+  if (upcCandidates.length > 0) {
+    const { data } = await sb
+      .from("usda_product_history")
+      .select(
+        "gtin_upc, release_date, description, brand_name, calories_kcal, protein_g, total_fat_g, saturated_fat_g, carbs_g, fiber_g, sugars_g, calcium_mg, sodium_mg, cholesterol_mg",
+      )
+      .in("gtin_upc", upcCandidates);
+    skimp = computeSkimpData((data ?? []) as UsdaNutritionRow[]);
+  }
+
   const related: RelatedProduct[] = ((relatedRes.data ?? []) as Array<{
     entity_id: string;
     name: string;
@@ -114,6 +135,7 @@ async function loadProduct(id: string): Promise<{
     variants,
     observations,
     related,
+    skimp,
   };
 }
 
@@ -136,7 +158,7 @@ export default async function ProductPage({ params }: PageProps) {
   const data = await loadProduct(id);
   if (!data) notFound();
 
-  const { entity, events, variants, observations, related } = data;
+  const { entity, events, variants, observations, related, skimp } = data;
   const eventsDesc = eventsByDateDesc(events);
   const trajectory = buildTrajectory(events);
   const evidenceTotal = totalEvidenceCount(events);
@@ -184,6 +206,19 @@ export default async function ProductPage({ params }: PageProps) {
           </div>
           <ChangeHistory events={eventsDesc} />
         </section>
+
+        {skimp && (
+          <section className={styles.block}>
+            <div className={styles["section-head"]}>
+              <h2>What changed inside?</h2>
+              <div className={styles.meta}>
+                USDA FoodData Central · gtin {skimp.upc} ·{" "}
+                {skimp.releases_compared} releases compared
+              </div>
+            </div>
+            <SkimpflationOverlay data={skimp} />
+          </section>
+        )}
 
         <section className={styles.block}>
           <div className={styles["section-head"]}>

@@ -3,9 +3,9 @@
 // homepage, /brands, and /brands/[name]. Also bundles the background
 // grid so callers only render one component.
 //
-// Active link is auto-detected from the current path. Products /
-// Insights / About are stubs until Phase B/C/D ships — the small amber
-// dot after each label flags them as work-in-progress.
+// Active link is auto-detected from the current path. All four
+// public sections are live; the `stub` flag is kept for the future
+// admin-tool tab.
 //
 // Hidden admin affordance: long-press the FullCarts logo for ~800ms to
 // land on /admin/login. The single tap behaves normally (goes to "/").
@@ -25,12 +25,7 @@ interface NavLink {
 
 const LINKS: NavLink[] = [
   { href: "/brands", label: "Brands" },
-  {
-    href: "/products",
-    label: "Products",
-    stub: true,
-    tooltip: "Per-product detail pages coming in Phase B",
-  },
+  { href: "/products", label: "Products" },
   { href: "/insights", label: "Insights" },
   { href: "/about", label: "About" },
 ];

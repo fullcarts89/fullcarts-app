@@ -9,7 +9,9 @@ import RepeatOffenders from "./_components/RepeatOffenders";
 import RestorationCorner from "./_components/RestorationCorner";
 import NewsFeed from "./_components/NewsFeed";
 import EvidenceWall from "./_components/EvidenceWall";
+import ShrinkingCart from "./_components/ShrinkingCart";
 import {
+  buildCartBasket,
   buildChart,
   headlineBls,
   imageFromRawPayload,
@@ -19,6 +21,7 @@ import {
 } from "./lib";
 import type {
   BlsRow,
+  CartItem,
   CategoryRow,
   DashboardStats,
   EventWithSources,
@@ -94,7 +97,9 @@ async function loadInsights() {
     // event count — ~2.8k rows today, well within payload limits.
     sb
       .from("published_changes")
-      .select("entity_id, size_delta_pct, brand, product_name")
+      .select(
+        "entity_id, size_delta_pct, brand, product_name, size_before, size_after, size_unit, observed_date",
+      )
       .eq("change_type", "shrinkflation")
       .eq("is_retracted", false)
       .not("entity_id", "is", null)
@@ -194,6 +199,10 @@ async function loadInsights() {
     size_delta_pct: string | number | null;
     brand: string | null;
     product_name: string | null;
+    size_before: string | number | null;
+    size_after: string | number | null;
+    size_unit: string | null;
+    observed_date: string | null;
   };
   type EntityAgg = {
     entity_id: string;
@@ -227,14 +236,25 @@ async function loadInsights() {
     .sort((a, b) => b.shrink_count - a.shrink_count || a.worst_drop_pct - b.worst_drop_pct)
     .slice(0, 8);
 
-  // Hydrate canonical name + image_url for the top entities in one
-  // follow-up query against product_entities.
-  const topEntityIds = topEntities.map((e) => e.entity_id);
-  const entitiesRes = topEntityIds.length
+  // Candidate basket entities: any entity with at least 1 shrink event
+  // that appears in pcRows. We rely on image_url filtering to keep the
+  // basket visual. Top biggest shrinks first (lowest worst_drop_pct) so
+  // if the query hits its row cap we keep the worst-offenders.
+  const basketCandidateIds = Array.from(byEntity.values())
+    .sort((a, b) => a.worst_drop_pct - b.worst_drop_pct)
+    .slice(0, 200)
+    .map((e) => e.entity_id);
+
+  // Hydrate canonical name + image_url. Union of leaderboard top-8 and
+  // basket-candidate IDs so we do one query instead of two.
+  const hydrateIds = Array.from(
+    new Set([...topEntities.map((e) => e.entity_id), ...basketCandidateIds]),
+  );
+  const entitiesRes = hydrateIds.length
     ? await sb
         .from("product_entities")
         .select("id, canonical_name, brand, category, image_url")
-        .in("id", topEntityIds)
+        .in("id", hydrateIds)
     : { data: [] };
   const entityById = new Map<string, {
     canonical_name: string;
@@ -256,6 +276,15 @@ async function loadInsights() {
       image_url: row.image_url,
     });
   }
+  // Build the shrinking-cart basket from the same pcRows + entity map.
+  // buildCartBasket filters to entities-with-images and 2-60% shrinks,
+  // then dedups by brand for visual variety.
+  const basket: CartItem[] = buildCartBasket(
+    (pcLeaderRes.data ?? []) as PcRow[],
+    entityById,
+    12,
+  );
+
   const leaderboard: LeaderboardRow[] = topEntities.map((e) => {
     const ent = entityById.get(e.entity_id);
     return {
@@ -316,6 +345,7 @@ async function loadInsights() {
     leaderboard,
     restorations: (restorationsRes.data ?? []) as RestorationRow[],
     news,
+    basket,
     skimpClaims: enrichTagged((skimpClaimsRes.data ?? []) as TaggedClaim[]),
     spotDiffClaims: enrichTagged((spotDiffClaimsRes.data ?? []) as TaggedClaim[]),
   };
@@ -359,6 +389,22 @@ export default async function InsightsPage() {
             FRED CPI is YoY%, BLS counts are quarterly spread evenly across
             months, our events are monthly raw counts
           </div>
+        </section>
+
+        <section className={styles.block}>
+          <div className={styles["section-head"]}>
+            <h2>The dollars-to-air conversion</h2>
+            <div className={styles.meta}>
+              Live calculator · real basket data
+            </div>
+          </div>
+          <p className={styles["section-lede"]}>
+            Drop in your weekly grocery spend and see how much of every
+            dollar is now just air in the bag — the dollar value of the
+            food that&apos;s been removed from packages without the price
+            changing. Built from actual size deltas, not estimates.
+          </p>
+          <ShrinkingCart basket={data.basket} />
         </section>
 
         <section className={styles.block}>

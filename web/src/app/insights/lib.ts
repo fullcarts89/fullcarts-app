@@ -2,6 +2,7 @@
  *  routes: input → derived shape, no side effects. */
 import type {
   BlsRow,
+  CartItem,
   ChartPoint,
   EventWithSources,
   FredCpiRow,
@@ -426,4 +427,120 @@ export function imageFromRawPayload(
   }
 
   return null;
+}
+
+/** Build the grocery-cart basket: one row per entity, picking the
+ *  earliest measured "before" size and the latest measured "after"
+ *  size across all the entity's shrinkflation events. Keeps only
+ *  entities that have an image (the widget is visual) and a clean
+ *  shrink in the 2-50% range (filters out corrupt 99%+ outliers).
+ *
+ *  Inputs are raw rows from a single published_changes pull. Caller
+ *  is responsible for fetching entity image_url separately and
+ *  joining by entity_id.
+ */
+export function buildCartBasket(
+  rows: Array<{
+    entity_id: string | null;
+    brand: string | null;
+    product_name: string | null;
+    size_before: string | number | null;
+    size_after: string | number | null;
+    size_unit: string | null;
+    observed_date: string | null;
+  }>,
+  entityById: Map<
+    string,
+    { canonical_name: string; brand: string; category: string | null; image_url: string | null }
+  >,
+  basketSize: number = 12,
+): CartItem[] {
+  const byEntity = new Map<
+    string,
+    {
+      entity_id: string;
+      brand: string;
+      product_name: string;
+      size_before: number;
+      size_after: number;
+      size_unit: string;
+      date_before: string;
+      date_after: string;
+    }
+  >();
+
+  for (const r of rows) {
+    if (!r.entity_id) continue;
+    const before = num(r.size_before);
+    const after = num(r.size_after);
+    if (before <= 0 || after <= 0 || after >= before) continue;
+    const unit = (r.size_unit || "").trim();
+    if (!unit) continue;
+    const date = isoDay(r.observed_date);
+    if (!date) continue;
+
+    const cur = byEntity.get(r.entity_id);
+    if (!cur) {
+      byEntity.set(r.entity_id, {
+        entity_id: r.entity_id,
+        brand: r.brand || "",
+        product_name: r.product_name || "",
+        size_before: before,
+        size_after: after,
+        size_unit: unit,
+        date_before: date,
+        date_after: date,
+      });
+      continue;
+    }
+    // Earliest known "before" size for this entity (oldest event's before)
+    if (date < cur.date_before) {
+      cur.date_before = date;
+      cur.size_before = before;
+    }
+    // Latest known "after" size for this entity
+    if (date > cur.date_after) {
+      cur.date_after = date;
+      cur.size_after = after;
+    }
+  }
+
+  const items: CartItem[] = [];
+  for (const agg of byEntity.values()) {
+    if (agg.size_before <= 0 || agg.size_after <= 0) continue;
+    if (agg.size_after >= agg.size_before) continue;
+    const shrink_pct = ((agg.size_after - agg.size_before) / agg.size_before) * 100;
+    // Filter the absurd ones — almost certainly data quality issues.
+    // Threshold: 1.5% (real but small) to 60% (extreme but plausible).
+    if (shrink_pct > -1.5 || shrink_pct < -60) continue;
+    const ent = entityById.get(agg.entity_id);
+    if (!ent || !ent.image_url) continue;
+    items.push({
+      entity_id: agg.entity_id,
+      brand: ent.brand || agg.brand,
+      product_name: ent.canonical_name || agg.product_name,
+      category: ent.category,
+      image_url: ent.image_url,
+      size_before: agg.size_before,
+      size_after: agg.size_after,
+      size_unit: agg.size_unit,
+      shrink_pct,
+      date_before: agg.date_before,
+      date_after: agg.date_after,
+    });
+  }
+
+  // Sort by biggest shrink first, then take a diverse top N.
+  items.sort((a, b) => a.shrink_pct - b.shrink_pct);
+  // De-dup by brand so the basket reads as a "cart" not "Cadbury x12".
+  const seenBrands = new Set<string>();
+  const diverse: CartItem[] = [];
+  for (const it of items) {
+    const brandKey = it.brand.toLowerCase();
+    if (seenBrands.has(brandKey)) continue;
+    seenBrands.add(brandKey);
+    diverse.push(it);
+    if (diverse.length >= basketSize) break;
+  }
+  return diverse;
 }
