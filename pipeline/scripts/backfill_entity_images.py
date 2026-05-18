@@ -6,12 +6,15 @@ Priority order:
   2. Kroger API product images (from raw_items.raw_payload)
   3. Walmart API product images (from raw_items.raw_payload)
   4. Open Food Facts product images (from raw_items.raw_payload)
-  5. GDELT article hero image (raw_payload.socialimage via matched claims)
+  5. Open Food Facts live API lookup by UPC/EAN — catches products not
+     yet seen by off_discovery
+  6. GDELT article hero image (raw_payload.socialimage via matched claims)
 
 Usage:
     python -m pipeline.scripts.backfill_entity_images
     python -m pipeline.scripts.backfill_entity_images --dry-run
     python -m pipeline.scripts.backfill_entity_images --limit 500
+    python -m pipeline.scripts.backfill_entity_images --no-off-api
 """
 import argparse
 import logging
@@ -29,6 +32,108 @@ SUPABASE_URL = os.getenv("SUPABASE_URL", "https://ntyhbapphnzlariakgrw.supabase.
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 STORAGE_BUCKET = "claim-images"
 PAGE_SIZE = 200
+
+# OFF live-lookup fallback. Kept module-level so a single
+# RateLimitedSession is reused across all entities in a run.
+_OFF_SESSION = None  # type: Optional[Any]
+
+
+def _get_off_session():
+    # type: () -> Any
+    """Lazily build the OFF API session. Imports are local so the
+    script still imports cleanly if pipeline.* deps aren't available
+    (e.g. in a barebones CI image)."""
+    global _OFF_SESSION
+    if _OFF_SESSION is not None:
+        return _OFF_SESSION
+    from pipeline.config import OFF_DELAY, USER_AGENT
+    from pipeline.lib.http_client import RateLimitedSession
+    _OFF_SESSION = RateLimitedSession(
+        requests_per_second=1.0 / OFF_DELAY,
+        user_agent=USER_AGENT,
+    )
+    return _OFF_SESSION
+
+
+def _normalize_to_ean13(upc):
+    # type: (Optional[str]) -> Optional[str]
+    """Normalize a barcode to the 13-digit EAN form OFF expects.
+
+    OFF stores all products by 13-digit EAN. US-issued UPC-A codes
+    are 12 digits; the convention is to prepend a leading "0" to get
+    the EAN-13. Codes already 13 digits pass through. Anything else
+    (synthetic CLAIM-/REDDIT- keys, non-numeric, wrong length) is
+    rejected so we don't fire off useless OFF API calls.
+    """
+    if not upc:
+        return None
+    s = str(upc).strip()
+    if not s.isdigit():
+        return None
+    if len(s) == 13:
+        return s
+    if len(s) == 12:
+        return "0" + s
+    # 8-digit EAN-8 codes exist but OFF rarely indexes US products
+    # under them, and short numeric strings are often noise. Skip.
+    return None
+
+
+def _try_off_api_live(sb, entity_id):
+    # type: (Any, str) -> Optional[str]
+    """Live-fetch a product photo from the OFF API by UPC/EAN.
+
+    Picks up products that `off_discovery` hasn't scraped yet — OFF has
+    a far longer tail than our category-anchored crawl ever reaches.
+    Tries each variant UPC in turn, returns the first image found.
+
+    Costs at most `len(upcs) * (1 / OFF_DELAY)` seconds per entity, but
+    only fires after all the cached-image lookups missed, so it's
+    bounded by the ~15% imageless tail.
+    """
+    variants = (
+        sb.table("pack_variants")
+        .select("upc")
+        .eq("entity_id", entity_id)
+        .not_.is_("upc", "null")
+        .execute()
+    )
+    upcs = [v["upc"] for v in (variants.data or []) if v.get("upc")]
+    if not upcs:
+        return None
+
+    from pipeline.config import OFF_API_BASE
+    session = _get_off_session()
+    fields = "image_url,image_front_url,image_front_small_url"
+
+    # Try at most 3 UPCs; if the first variant doesn't resolve, the
+    # later ones (often size variants of the same product) usually
+    # don't either, but it's cheap insurance for split entities.
+    for upc in upcs[:3]:
+        ean = _normalize_to_ean13(upc)
+        if not ean:
+            continue
+        url = "{}/product/{}.json?fields={}".format(OFF_API_BASE, ean, fields)
+        resp = session.get(url, raise_for_status=False)
+        if resp is None or resp.status_code != 200:
+            continue
+        try:
+            data = resp.json()
+        except ValueError:
+            continue
+        # OFF returns {"status": 0} for unknown products.
+        if data.get("status") != 1:
+            continue
+        product = data.get("product") or {}
+        img = (
+            product.get("image_front_url")
+            or product.get("image_url")
+            or product.get("image_front_small_url")
+        )
+        if img:
+            return img.strip()
+
+    return None
 
 
 def _get_client():
@@ -191,6 +296,11 @@ def main():
     parser = argparse.ArgumentParser(description="Backfill entity images")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--limit", type=int, default=0)
+    parser.add_argument(
+        "--no-off-api",
+        action="store_true",
+        help="Skip the live OFF API fallback (faster; loses ~5-10pct of catches)",
+    )
     args = parser.parse_args()
 
     sb = _get_client()
@@ -205,15 +315,25 @@ def main():
 
     stats = {"updated": 0, "still_missing": 0, "errors": 0}
     by_source = {"claim": 0, "kroger_api": 0, "walmart": 0,
-                 "openfoodfacts": 0, "gdelt_socialimage": 0}
+                 "openfoodfacts": 0, "off_api_live": 0,
+                 "gdelt_socialimage": 0}
     sources_tried = [
         ("claim", lambda sb, eid: _try_claim_image(sb, eid)),
         ("kroger_api", lambda sb, eid: _try_api_image(sb, eid, "kroger_api")),
         ("walmart", lambda sb, eid: _try_api_image(sb, eid, "walmart")),
         ("openfoodfacts",
          lambda sb, eid: _try_api_image(sb, eid, "openfoodfacts")),
-        ("gdelt_socialimage", lambda sb, eid: _try_news_socialimage(sb, eid)),
     ]
+    # OFF live fallback fires after the cached-image lookups, before
+    # the GDELT social-image fallback. Article hero shots are a worse
+    # product photo than a real OFF catalog image.
+    if not args.no_off_api:
+        sources_tried.append(
+            ("off_api_live", lambda sb, eid: _try_off_api_live(sb, eid))
+        )
+    sources_tried.append(
+        ("gdelt_socialimage", lambda sb, eid: _try_news_socialimage(sb, eid))
+    )
 
     for i, entity in enumerate(entities):
         eid = entity["id"]

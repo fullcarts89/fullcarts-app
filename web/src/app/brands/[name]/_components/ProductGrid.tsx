@@ -1,8 +1,8 @@
 "use client";
 // Client component. Receives `products` as props (all data prefetched
 // server-side from product_entities + event aggregates). Adds interactive
-// sort pills, name search, top-25 + show-all toggle, and a click-routing
-// toast — no extra DB queries from the browser.
+// sort pills, name search, and a top-25 + show-all toggle. Cards link
+// to the per-product detail page at /products/[entity_id].
 import { useMemo, useState } from "react";
 import styles from "../styles.module.css";
 import type { ProductRollup } from "../types";
@@ -38,7 +38,6 @@ export default function ProductGrid({ products, brand }: Props) {
   const [sort, setSort] = useState<SortKey>("image");
   const [query, setQuery] = useState("");
   const [expanded, setExpanded] = useState(false);
-  const [routeToast, setRouteToast] = useState(false);
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -53,11 +52,6 @@ export default function ProductGrid({ products, brand }: Props) {
   const showAll = expanded || visible.length <= INITIAL_LIMIT;
   const shown = showAll ? visible : visible.slice(0, INITIAL_LIMIT);
 
-  const handleCardClick = () => {
-    setRouteToast(true);
-    window.setTimeout(() => setRouteToast(false), 1800);
-  };
-
   return (
     <section className={styles.block}>
       <div className={styles["section-head"]}>
@@ -65,11 +59,6 @@ export default function ProductGrid({ products, brand }: Props) {
         <div className={styles.meta}>
           {products.length} distinct products with documented changes
         </div>
-      </div>
-      <div className={styles["grid-note"]}>
-        Cards will route to <code>/products/[id]</code> — individual product
-        detail pages with full size timeline and per-product evidence trail.
-        Not yet built.
       </div>
       <div className={styles.controls}>
         <input
@@ -105,10 +94,10 @@ export default function ProductGrid({ products, brand }: Props) {
       ) : (
         <div className={styles["products-grid"]}>
           {shown.map((p) => (
-            <div
+            <a
               key={p.entity_id}
               className={styles["product-card"]}
-              onClick={handleCardClick}
+              href={`/products/${p.entity_id}`}
             >
               {p.image_url ? (
                 <div className={styles["product-thumb"]}>
@@ -137,7 +126,7 @@ export default function ProductGrid({ products, brand }: Props) {
                     : `${p.worst_delta_pct.toFixed(1)}%`}
                 </span>
               </div>
-            </div>
+            </a>
           ))}
         </div>
       )}
@@ -155,12 +144,6 @@ export default function ProductGrid({ products, brand }: Props) {
             {expanded ? "Show fewer" : "Show all"}{" "}
             <span className={styles.arrow}>↓</span>
           </button>
-        </div>
-      )}
-
-      {routeToast && (
-        <div className={`${styles.toast} ${styles.show}`}>
-          <span className={styles.dot} /> Product page coming soon
         </div>
       )}
     </section>

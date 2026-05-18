@@ -31,18 +31,8 @@ const LINKS: NavLink[] = [
     stub: true,
     tooltip: "Per-product detail pages coming in Phase B",
   },
-  {
-    href: "/insights",
-    label: "Insights",
-    stub: true,
-    tooltip: "Platform-wide trends coming in Phase C",
-  },
-  {
-    href: "/about",
-    label: "About",
-    stub: true,
-    tooltip: "Methodology + contact coming in Phase C",
-  },
+  { href: "/insights", label: "Insights" },
+  { href: "/about", label: "About" },
 ];
 
 function isActive(pathname: string, href: string): boolean {

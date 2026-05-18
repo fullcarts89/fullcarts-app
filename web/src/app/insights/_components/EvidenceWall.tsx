@@ -1,0 +1,66 @@
+// Server component. Renders claims that admins have manually tagged
+// "Spot the Difference" via /admin/claims. Card shows the archived
+// claim photo (or, for news-sourced claims, the article's social
+// image as fallback). Metrics are intentionally absent here — the
+// section's job is the visual side-by-side, not the numeric delta.
+import styles from "../styles.module.css";
+import type { TaggedClaim } from "../types";
+
+interface Props {
+  rows: TaggedClaim[];
+}
+
+const STORAGE_BUCKET_URL =
+  (process.env.NEXT_PUBLIC_SUPABASE_URL || "") +
+  "/storage/v1/object/public/claim-images/";
+
+function claimImageUrl(path: string | null | undefined): string | null {
+  if (!path) return null;
+  return STORAGE_BUCKET_URL + path;
+}
+
+export default function EvidenceWall({ rows }: Props) {
+  // Drop cards that have no image — the section is the visual wall,
+  // empty placeholders defeat the purpose. Sources are usually
+  // Reddit posts with archived front-photo evidence so most rows
+  // have image_storage_path populated; gdelt socialimage covers the
+  // rest. A row with neither still earns a card-less mention by
+  // virtue of being tagged, but we don't render it.
+  const cards = rows
+    .map((r) => ({
+      row: r,
+      img: claimImageUrl(r.image_storage_path) || r.source_image || null,
+    }))
+    .filter((c) => c.img);
+
+  if (cards.length === 0) {
+    return (
+      <div className={styles.empty}>
+        No images yet for claims tagged &ldquo;Spot the Difference&rdquo;
+      </div>
+    );
+  }
+  return (
+    <div className={styles["wall-grid"]}>
+      {cards.map(({ row: r, img }) => (
+        <a
+          key={r.id}
+          className={styles["wall-card"]}
+          href={r.source_url || "#"}
+          target={r.source_url ? "_blank" : undefined}
+          rel={r.source_url ? "noopener noreferrer" : undefined}
+        >
+          <div className={styles["wall-img"]}>
+            <img src={img!} alt={r.product_name || "Spot the difference"} loading="lazy" />
+          </div>
+          <div className={styles["wall-body"]}>
+            <div className={styles["wall-product"]}>
+              {r.product_name || "Documented case"}
+            </div>
+            {r.brand && <div className={styles["wall-brand"]}>{r.brand}</div>}
+          </div>
+        </a>
+      ))}
+    </div>
+  );
+}
