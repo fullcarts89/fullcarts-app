@@ -162,6 +162,33 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
     # Cache for entity dedup
     entity_cache = {}  # type: Dict[str, str]  # entity_key -> entity_id
 
+    # Preload raw_items.source_date so we can fall back to the originating
+    # post/article date instead of date.today() when the AI extractor
+    # didn't pick an observed_date. Falling back to today distorts the
+    # /insights monthly chart by piling every dateless claim into the
+    # current month. Costs one batched query for the whole run.
+    raw_item_dates = {}  # type: Dict[str, str]
+    raw_item_ids = list({
+        c["raw_item_id"] for c in claims
+        if c.get("raw_item_id") and not c.get("observed_date")
+    })
+    # PostgREST's `in.()` filter has a URL length limit; chunk to be safe.
+    for i in range(0, len(raw_item_ids), 500):
+        chunk = raw_item_ids[i : i + 500]
+        try:
+            resp = (sb.table("raw_items")
+                    .select("id, source_date")
+                    .in_("id", chunk)
+                    .execute())
+            for row in (resp.data or []):
+                sd = row.get("source_date")
+                if sd:
+                    raw_item_dates[row["id"]] = sd[:10]
+        except Exception:
+            # Don't fail the whole promote run if the preload errors —
+            # we'll just fall back to date.today() for those claims.
+            pass
+
     for i, claim in enumerate(claims):
         try:
             brand = normalize_brand(claim.get("brand"))
@@ -258,7 +285,18 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
                 stats["variants_created"] += 1
 
             # 3. Create variant_observations (before and after)
-            obs_date = claim.get("observed_date") or date.today().isoformat()
+            # Fallback order: AI-extracted observed_date → originating
+            # raw_item's source_date → today. The middle step keeps the
+            # /insights timeline honest — without it, every dateless
+            # claim collapses onto today() and the chart shows a
+            # spurious spike in the current month.
+            obs_date = claim.get("observed_date")
+            if not obs_date:
+                rid = claim.get("raw_item_id")
+                if rid and rid in raw_item_dates:
+                    obs_date = raw_item_dates[rid]
+            if not obs_date:
+                obs_date = date.today().isoformat()
             obs_before_id = None
             obs_after_id = None
 

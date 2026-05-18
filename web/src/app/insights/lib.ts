@@ -53,12 +53,10 @@ export function quarterLabel(qk: string): string {
   return `Q${parts[1]} '${parts[0].slice(2)}`;
 }
 
-/** Latest non-zero quarter-total downsizing count from bls_shrinkflation.
- *  We sum across all series rows for the latest period — the dataset
- *  contains per-category subtotals plus an "All food" series; summing
- *  every row would double-count, so we filter to a single series first.
- *  Default is the "All food" series; falls back to summing distinct
- *  rows if that series is missing. */
+/** Latest quarter-total downsizing count from bls_shrinkflation.
+ *  Filters to the "All food" parent series so we never mix apples-to-
+ *  pears against a subcategory subtotal. Falls back to the max count
+ *  per period if no row matches "All food" (e.g. partial release). */
 export function headlineBls(rows: BlsRow[]): {
   count: number;
   quarter: string;
@@ -67,15 +65,20 @@ export function headlineBls(rows: BlsRow[]): {
   yearAgoCount: number;
   yearAgoDeltaPct: number;
 } {
-  // Group by period and pick the highest count per period (one series).
-  // Filtering by series name is brittle — the "All food" label varies
-  // ("All food", "all food", etc.). Take the max count per period
-  // (which is "All food" by construction since subtotals are smaller).
+  // Filter to "All food" rows only. Case-insensitive prefix match
+  // tolerates capitalization drift ("All food", "all food", "All Food").
+  const allFood = rows.filter((r) =>
+    typeof r.series === "string" && r.series.toLowerCase().startsWith("all food"),
+  );
+  const source = allFood.length > 0 ? allFood : rows;
+
   const byPeriod = new Map<string, number>();
-  for (const r of rows) {
+  for (const r of source) {
     const period = isoDay(r.period);
     const c = r.downsizing_count;
     if (period && c != null) {
+      // If our filtered set has multiple rows per period (shouldn't,
+      // but defensively), prefer the larger count.
       const prev = byPeriod.get(period) || 0;
       if (c > prev) byPeriod.set(period, c);
     }
@@ -150,13 +153,18 @@ function fredYoy(rows: FredCpiRow[]): Map<string, number> {
  *  - BLS quarterly downsizings spread evenly across the 3 months
  *  - FRED CPI YoY% per month
  *
- *  Window: last `windowMonths` months ending at the latest month
- *  present in any series. */
+ *  Window: `windowMonths` months ending at the latest *trustworthy*
+ *  month. We trim the trailing `trimTrailing` months because
+ *  promote_claims.py currently falls back to date.today() when the AI
+ *  can't extract a real observed_date, which artificially piles
+ *  unrelated events into the most recent 1-2 months. Once the pipeline
+ *  fallback is fixed, `trimTrailing` can drop to 0. */
 export function buildChart(
   timeline: TimelineRow[],
   bls: BlsRow[],
   fred: FredCpiRow[],
   windowMonths: number = 39,
+  trimTrailing: number = 2,
 ): ChartPoint[] {
   // FullCarts events per month
   const eventsByMonth = new Map<string, number>();
@@ -165,10 +173,15 @@ export function buildChart(
     if (ym) eventsByMonth.set(ym, r.shrink_events || 0);
   }
 
-  // BLS — pick the largest count per period (the "All food" series),
-  // then spread the quarterly count across the 3 months in that quarter.
+  // BLS — filter to the "All food" parent series, then spread the
+  // quarterly count across the 3 months in that quarter. Mirrors the
+  // headline-stat picker so the two stay consistent.
+  const blsAllFood = bls.filter((r) =>
+    typeof r.series === "string" && r.series.toLowerCase().startsWith("all food"),
+  );
+  const blsSource = blsAllFood.length > 0 ? blsAllFood : bls;
   const blsByPeriod = new Map<string, number>();
-  for (const r of bls) {
+  for (const r of blsSource) {
     const period = isoDay(r.period);
     const c = r.downsizing_count;
     if (period && c != null) {
@@ -191,7 +204,8 @@ export function buildChart(
   // FRED CPI YoY%
   const cpiByMonth = fredYoy(fred);
 
-  // Window: pick the latest month across all three sources.
+  // Window: pick the latest month across all three sources, then trim
+  // the unreliable trailing months from the events series.
   const allMonths = new Set<string>();
   for (const m of eventsByMonth.keys()) allMonths.add(m);
   for (const m of blsByMonth.keys()) allMonths.add(m);
@@ -199,7 +213,11 @@ export function buildChart(
   const sortedMonths = Array.from(allMonths).sort();
   if (sortedMonths.length === 0) return [];
 
-  const latest = sortedMonths[sortedMonths.length - 1];
+  let latest = sortedMonths[sortedMonths.length - 1];
+  if (trimTrailing > 0) {
+    const trimIdx = sortedMonths.length - 1 - trimTrailing;
+    if (trimIdx >= 0) latest = sortedMonths[trimIdx];
+  }
   // Build chronological list of windowMonths ending at `latest`.
   const points: ChartPoint[] = [];
   const [yEnd, mEnd] = latest.split("-").map((s) => parseInt(s, 10));
@@ -255,4 +273,72 @@ export function humanSignal(s: string | null | undefined): string {
   return words
     .map((w, i) => (i === 0 ? w.charAt(0).toUpperCase() + w.slice(1) : w))
     .join(" ");
+}
+
+/** Outlets that publish shrinkflation coverage without a hard paywall
+ *  (or with a generous free-article quota). Matched case-insensitively
+ *  against news_feed.outlet. Tracked here rather than in the DB so
+ *  the list can iterate without a migration. */
+const FREE_OUTLETS = [
+  "bbc",
+  "bbc news",
+  "reuters",
+  "ap",
+  "associated press",
+  "apnews",
+  "npr",
+  "the guardian",
+  "guardian",
+  "cnn",
+  "cnn business",
+  "usa today",
+  "yahoo finance",
+  "yahoo",
+  "nbc news",
+  "nbc",
+  "cbs news",
+  "cbs",
+  "abc news",
+  "abc",
+  "fox business",
+  "the conversation",
+  "marketwatch",
+  "axios",
+  "the verge",
+  "ars technica",
+  "vox",
+  "consumer reports",
+  "the grocer",
+  "today",
+  "good morning america",
+  "money.com",
+  "investopedia",
+  "the hill",
+  "business insider",
+];
+
+/** Outlets we explicitly want to drop (hard paywall or unreliable
+ *  free quota). Anything not in FREE_OUTLETS and not in this set is
+ *  dropped too — the allowlist is the source of truth, but this
+ *  documents the active exclusions for future readers. */
+const PAYWALLED_OUTLETS = [
+  "wsj",
+  "the wall street journal",
+  "wall street journal",
+  "the new york times",
+  "nyt",
+  "ft",
+  "financial times",
+  "bloomberg",
+  "the washington post",
+  "washington post",
+  "the economist",
+  "economist",
+];
+
+export function isFreeOutlet(outlet: string | null | undefined): boolean {
+  if (!outlet) return false;
+  const normalized = outlet.toLowerCase().trim();
+  if (PAYWALLED_OUTLETS.some((p) => normalized.includes(p))) return false;
+  return FREE_OUTLETS.some((f) => normalized.includes(f));
 }

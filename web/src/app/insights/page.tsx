@@ -9,7 +9,7 @@ import RepeatOffenders from "./_components/RepeatOffenders";
 import RestorationCorner from "./_components/RestorationCorner";
 import NewsFeed from "./_components/NewsFeed";
 import EvidenceWall from "./_components/EvidenceWall";
-import { buildChart, headlineBls, isoDay } from "./lib";
+import { buildChart, headlineBls, isFreeOutlet, isoDay } from "./lib";
 import type {
   BlsRow,
   CategoryRow,
@@ -87,7 +87,10 @@ async function loadInsights() {
       .from("news_feed")
       .select("id, url, title, outlet, published_at, summary, linked_products_count")
       .order("published_at", { ascending: false })
-      .limit(5),
+      // Pull a larger pool so the non-paywall filter has something to
+      // pick from — the trailing edge of the news_feed is dense with
+      // syndicated paywalled coverage.
+      .limit(60),
     sb
       .from("claims")
       .select(
@@ -162,7 +165,11 @@ async function loadInsights() {
     categories: (categoriesRes.data ?? []) as CategoryRow[],
     leaderboard: (leaderRes.data ?? []) as LeaderboardRow[],
     restorations: (restorationsRes.data ?? []) as RestorationRow[],
-    news: (newsRes.data ?? []) as NewsFeedRow[],
+    // Drop paywalled outlets at the page boundary. Source-of-truth
+    // allowlist lives in lib.ts so we can iterate without a migration.
+    news: ((newsRes.data ?? []) as NewsFeedRow[])
+      .filter((n) => isFreeOutlet(n.outlet))
+      .slice(0, 5),
     skimpClaims: enrichTagged((skimpClaimsRes.data ?? []) as TaggedClaim[]),
     spotDiffClaims: enrichTagged((spotDiffClaimsRes.data ?? []) as TaggedClaim[]),
   };
