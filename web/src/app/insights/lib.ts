@@ -3,8 +3,8 @@
 import type {
   BlsRow,
   ChartPoint,
+  EventWithSources,
   FredCpiRow,
-  TimelineRow,
 } from "./types";
 
 export function num(s: string | number | null | undefined): number {
@@ -149,28 +149,37 @@ function fredYoy(rows: FredCpiRow[]): Map<string, number> {
 }
 
 /** Build a monthly time series merging all three chart inputs:
- *  - FullCarts events per month from shrinkflation_timeline
+ *  - FullCarts events per month, keyed on the earliest source date
+ *    among contributing claims (when the shrink was first publicly
+ *    noticed — far more reliable than published_changes.observed_date,
+ *    which falls back to date.today() when the AI can't extract one)
  *  - BLS quarterly downsizings spread evenly across the 3 months
  *  - FRED CPI YoY% per month
  *
- *  Window: `windowMonths` months ending at the latest *trustworthy*
- *  month. We trim the trailing `trimTrailing` months because
- *  promote_claims.py currently falls back to date.today() when the AI
- *  can't extract a real observed_date, which artificially piles
- *  unrelated events into the most recent 1-2 months. Once the pipeline
- *  fallback is fixed, `trimTrailing` can drop to 0. */
+ *  Window: trailing `windowMonths` ending at the latest observation
+ *  across all three series. No trimming — source dates are reliable. */
 export function buildChart(
-  timeline: TimelineRow[],
+  events: EventWithSources[],
   bls: BlsRow[],
   fred: FredCpiRow[],
   windowMonths: number = 39,
-  trimTrailing: number = 2,
 ): ChartPoint[] {
-  // FullCarts events per month
+  // FullCarts events per month, keyed on the earliest source.date
+  // among each event's contributing claims. Skip events with no
+  // sources (rare; shouldn't happen with current promote flow).
   const eventsByMonth = new Map<string, number>();
-  for (const r of timeline) {
-    const ym = isoMonth(r.month);
-    if (ym) eventsByMonth.set(ym, r.shrink_events || 0);
+  for (const e of events) {
+    let earliest: string | null = null;
+    for (const s of e.sources) {
+      if (!s.date) continue;
+      if (!earliest || s.date < earliest) earliest = s.date;
+    }
+    // Fall back to observed_date only if no source dates exist.
+    const dayIso = earliest || e.observed_date;
+    if (!dayIso) continue;
+    const ym = isoMonth(dayIso);
+    if (!ym) continue;
+    eventsByMonth.set(ym, (eventsByMonth.get(ym) || 0) + 1);
   }
 
   // BLS — filter to the "All food" parent series, then spread the
@@ -213,11 +222,7 @@ export function buildChart(
   const sortedMonths = Array.from(allMonths).sort();
   if (sortedMonths.length === 0) return [];
 
-  let latest = sortedMonths[sortedMonths.length - 1];
-  if (trimTrailing > 0) {
-    const trimIdx = sortedMonths.length - 1 - trimTrailing;
-    if (trimIdx >= 0) latest = sortedMonths[trimIdx];
-  }
+  const latest = sortedMonths[sortedMonths.length - 1];
   // Build chronological list of windowMonths ending at `latest`.
   const points: ChartPoint[] = [];
   const [yEnd, mEnd] = latest.split("-").map((s) => parseInt(s, 10));

@@ -1,10 +1,9 @@
 // Server component. Renders claims that admins have manually tagged
-// "Spot the Difference" via /admin/claims. The image comes from the
-// claim's image_storage_path (Reddit-archived front photo, usually a
-// side-by-side comparison). before/after sizes come straight off the
-// claim row.
+// "Spot the Difference" via /admin/claims. Card shows the archived
+// claim photo (or, for news-sourced claims, the article's social
+// image as fallback). Metrics are intentionally absent here — the
+// section's job is the visual side-by-side, not the numeric delta.
 import styles from "../styles.module.css";
-import { num } from "../lib";
 import type { TaggedClaim } from "../types";
 
 interface Props {
@@ -21,68 +20,47 @@ function claimImageUrl(path: string | null | undefined): string | null {
 }
 
 export default function EvidenceWall({ rows }: Props) {
-  if (rows.length === 0) {
+  // Drop cards that have no image — the section is the visual wall,
+  // empty placeholders defeat the purpose. Sources are usually
+  // Reddit posts with archived front-photo evidence so most rows
+  // have image_storage_path populated; gdelt socialimage covers the
+  // rest. A row with neither still earns a card-less mention by
+  // virtue of being tagged, but we don't render it.
+  const cards = rows
+    .map((r) => ({
+      row: r,
+      img: claimImageUrl(r.image_storage_path) || r.source_image || null,
+    }))
+    .filter((c) => c.img);
+
+  if (cards.length === 0) {
     return (
       <div className={styles.empty}>
-        No claims tagged &ldquo;Spot the Difference&rdquo; yet
+        No images yet for claims tagged &ldquo;Spot the Difference&rdquo;
       </div>
     );
   }
   return (
     <div className={styles["wall-grid"]}>
-      {rows.map((r) => {
-        const img = claimImageUrl(r.image_storage_path) || r.source_image || null;
-        const oldSize = num(r.old_size);
-        const newSize = num(r.new_size);
-        const unit = r.new_size_unit || r.old_size_unit || "";
-        const hasSizes = oldSize > 0 && newSize > 0;
-        const deltaPct = hasSizes ? ((newSize - oldSize) / oldSize) * 100 : 0;
-        return (
-          <a
-            key={r.id}
-            className={styles["wall-card"]}
-            href={r.source_url || "#"}
-            target={r.source_url ? "_blank" : undefined}
-            rel={r.source_url ? "noopener noreferrer" : undefined}
-          >
-            <div className={styles["wall-img"]}>
-              {img && (
-                <img src={img} alt={r.product_name || "Spot the difference"} loading="lazy" />
-              )}
-              {hasSizes && deltaPct < 0 && (
-                <span className={styles["ps-label"]}>{deltaPct.toFixed(0)}%</span>
-              )}
-              {hasSizes && (
-                <>
-                  <div className={styles["ps-side"]}>
-                    <div className={styles["ps-tag"]}>Before</div>
-                    <div className={styles["ps-size"]}>
-                      {oldSize}
-                      {r.old_size_unit || unit}
-                    </div>
-                  </div>
-                  <div className={`${styles["ps-side"]} ${styles.after}`}>
-                    <div className={styles["ps-tag"]}>After</div>
-                    <div className={styles["ps-size"]}>
-                      {newSize}
-                      {r.new_size_unit || unit}
-                    </div>
-                  </div>
-                </>
-              )}
+      {cards.map(({ row: r, img }) => (
+        <a
+          key={r.id}
+          className={styles["wall-card"]}
+          href={r.source_url || "#"}
+          target={r.source_url ? "_blank" : undefined}
+          rel={r.source_url ? "noopener noreferrer" : undefined}
+        >
+          <div className={styles["wall-img"]}>
+            <img src={img!} alt={r.product_name || "Spot the difference"} loading="lazy" />
+          </div>
+          <div className={styles["wall-body"]}>
+            <div className={styles["wall-product"]}>
+              {r.product_name || "Documented case"}
             </div>
-            <div className={styles["wall-body"]}>
-              <div className={styles["wall-product"]}>
-                {r.product_name || "Documented case"}
-              </div>
-              {r.brand && (
-                <div className={styles["wall-brand"]}>{r.brand}</div>
-              )}
-              <div className={styles["wall-signal"]}>Spot the difference</div>
-            </div>
-          </a>
-        );
-      })}
+            {r.brand && <div className={styles["wall-brand"]}>{r.brand}</div>}
+          </div>
+        </a>
+      ))}
     </div>
   );
 }

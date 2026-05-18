@@ -22,6 +22,16 @@ export interface TimelineRow {
   avg_shrink_pct: string | number | null;
 }
 
+/** A published_change row with its earliest known source date —
+ *  used to build the chart's events line keyed on "when the shrink
+ *  was first publicly noticed" rather than the AI-extracted
+ *  observed_date (which has a known fallback-to-today bug). */
+export interface EventWithSources {
+  event_id: string;
+  observed_date: string | null;
+  sources: Array<{ date: string | null }>;
+}
+
 export interface CategoryRow {
   category: string;
   product_count: number;
@@ -51,6 +61,10 @@ export interface TaggedClaim {
   source_image?: string | null;
 }
 
+/** Repeat-offender card: per-entity rollup of shrinkflation events.
+ *  worst_drop_pct is the most-negative single delta we've documented
+ *  for the product (not the sum of all deltas — chained percentage
+ *  changes don't add linearly and produce nonsensical "240%" values). */
 export interface LeaderboardRow {
   entity_id: string;
   name: string;
@@ -58,7 +72,7 @@ export interface LeaderboardRow {
   category: string | null;
   image_url: string | null;
   shrink_count: number;
-  cumulative_shrink_pct: string | number | null;
+  worst_drop_pct: number;
 }
 
 export interface RestorationRow {

@@ -14,12 +14,12 @@ import type {
   BlsRow,
   CategoryRow,
   DashboardStats,
+  EventWithSources,
   FredCpiRow,
   LeaderboardRow,
   NewsFeedRow,
   RestorationRow,
   TaggedClaim,
-  TimelineRow,
 } from "./types";
 import styles from "./styles.module.css";
 
@@ -35,17 +35,20 @@ export const metadata = {
 async function loadInsights() {
   const sb = createAdminClient();
 
-  // Most queries return ≤ 50 rows so the round-trip is dominated by
-  // network latency, not payload size — parallelize all of them.
-  // Tagged-claim queries (skimpflation, spot-the-difference) pull from
-  // the same claims table — PostgREST array-contains uses `cs.{val}`.
+  // Date bookends. The chart uses ~4 years of events; the news section
+  // uses last 90 days.
+  const fourYearsAgo = new Date();
+  fourYearsAgo.setMonth(fourYearsAgo.getMonth() - 48);
+  const ninetyDaysAgo = new Date();
+  ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+
   const [
     statsRes,
     blsRes,
     fredRes,
-    timelineRes,
+    eventsRes,
     categoriesRes,
-    leaderRes,
+    pcLeaderRes,
     restorationsRes,
     newsRes,
     skimpClaimsRes,
@@ -63,34 +66,48 @@ async function loadInsights() {
       .eq("series_id", "CPIUFDNS")
       .order("observation_date", { ascending: false })
       .limit(60),
+    // Chart events: pull every shrinkflation event with its source
+    // dates so we can key the chart on "when the shrink was first
+    // publicly noticed" rather than the AI-extracted observed_date
+    // (which has a known fallback-to-today bug). Bounded to 4 years.
     sb
-      .from("shrinkflation_timeline")
-      .select("month, events, shrink_events, restoration_events, avg_shrink_pct")
-      .order("month", { ascending: false })
-      .limit(48),
+      .from("event_evidence_summary")
+      .select("event_id, observed_date, sources")
+      .gte("observed_date", isoDay(fourYearsAgo.toISOString()))
+      .limit(5000),
     sb
       .from("category_stats")
       .select("category, product_count, total_events, shrink_events, avg_shrink_pct")
       .order("shrink_events", { ascending: false })
       .limit(8),
+    // Repeat offenders: pull every shrinkflation row so we can compute
+    // per-entity count + worst single drop in JS. The previous query
+    // (shrinkflation_leaderboard) summed per-event deltas, which
+    // produced nonsensical >100% "cumulative" values. Bounded by
+    // event count — ~2.8k rows today, well within payload limits.
     sb
-      .from("shrinkflation_leaderboard")
-      .select("entity_id, name, brand, category, image_url, shrink_count, cumulative_shrink_pct")
-      .order("shrink_count", { ascending: false })
-      .limit(8),
+      .from("published_changes")
+      .select("entity_id, size_delta_pct, brand, product_name")
+      .eq("change_type", "shrinkflation")
+      .eq("is_retracted", false)
+      .not("entity_id", "is", null)
+      .lt("size_delta_pct", 0)
+      .limit(5000),
     sb
       .from("restorations")
       .select("id, brand, product_name, size_before, size_after, size_unit, observed_date, published_at")
       .order("observed_date", { ascending: false })
       .limit(8),
+    // News: pull raw_items in the last 90 days (news_articles is empty
+    // legacy; actual news lives in raw_items). Filter to non-paywalled
+    // outlets at the page boundary.
     sb
-      .from("news_feed")
-      .select("id, url, title, outlet, published_at, summary, linked_products_count")
-      .order("published_at", { ascending: false })
-      // Pull a larger pool so the non-paywall filter has something to
-      // pick from — the trailing edge of the news_feed is dense with
-      // syndicated paywalled coverage.
-      .limit(60),
+      .from("raw_items")
+      .select("id, source_type, source_url, source_date, raw_payload")
+      .in("source_type", ["news", "gdelt"])
+      .gte("source_date", ninetyDaysAgo.toISOString())
+      .order("source_date", { ascending: false })
+      .limit(200),
     sb
       .from("claims")
       .select(
@@ -122,21 +139,21 @@ async function loadInsights() {
     pending_review: statsRaw.pending_review ?? 0,
   };
 
-  // For each tagged-claim batch we fetch the underlying raw_items in
-  // one extra round-trip to surface the original source URL on the
-  // card. Cheap: at most 16 rows total.
+  // For each tagged-claim batch we fetch the underlying raw_items
+  // (one extra round-trip) to surface the original source URL + image
+  // on the card. Cheap: at most 16 rows total.
   const taggedIds = [
     ...((skimpClaimsRes.data ?? []) as TaggedClaim[]).map((c) => c.raw_item_id),
     ...((spotDiffClaimsRes.data ?? []) as TaggedClaim[]).map((c) => c.raw_item_id),
   ].filter((id): id is string => Boolean(id));
-  const rawItemsRes = taggedIds.length
+  const taggedRawItemsRes = taggedIds.length
     ? await sb
         .from("raw_items")
         .select("id, source_url, raw_payload")
         .in("id", taggedIds)
     : { data: [] };
   const rawById = new Map<string, { source_url: string | null; image: string | null }>();
-  for (const row of (rawItemsRes.data ?? []) as Array<{
+  for (const row of (taggedRawItemsRes.data ?? []) as Array<{
     id: string;
     source_url: string | null;
     raw_payload: Record<string, unknown> | null;
@@ -157,19 +174,134 @@ async function loadInsights() {
       };
     });
 
+  // Repeat offenders: aggregate published_changes rows by entity_id,
+  // count + take MIN(size_delta_pct) per entity, sort by count desc,
+  // take top 8. This replaces the previous shrinkflation_leaderboard
+  // query whose cumulative_shrink_pct (SUM of per-event %) produced
+  // mathematically meaningless >100% values.
+  type PcRow = {
+    entity_id: string | null;
+    size_delta_pct: string | number | null;
+    brand: string | null;
+    product_name: string | null;
+  };
+  type EntityAgg = {
+    entity_id: string;
+    shrink_count: number;
+    worst_drop_pct: number;
+    brand: string;
+    product_name: string;
+  };
+  const byEntity = new Map<string, EntityAgg>();
+  for (const r of (pcLeaderRes.data ?? []) as PcRow[]) {
+    if (!r.entity_id) continue;
+    const delta = typeof r.size_delta_pct === "string"
+      ? parseFloat(r.size_delta_pct)
+      : (r.size_delta_pct ?? 0);
+    if (!Number.isFinite(delta) || delta >= 0) continue;
+    const cur = byEntity.get(r.entity_id);
+    if (!cur) {
+      byEntity.set(r.entity_id, {
+        entity_id: r.entity_id,
+        shrink_count: 1,
+        worst_drop_pct: delta,
+        brand: r.brand || "",
+        product_name: r.product_name || "",
+      });
+    } else {
+      cur.shrink_count += 1;
+      if (delta < cur.worst_drop_pct) cur.worst_drop_pct = delta;
+    }
+  }
+  const topEntities = Array.from(byEntity.values())
+    .sort((a, b) => b.shrink_count - a.shrink_count || a.worst_drop_pct - b.worst_drop_pct)
+    .slice(0, 8);
+
+  // Hydrate canonical name + image_url for the top entities in one
+  // follow-up query against product_entities.
+  const topEntityIds = topEntities.map((e) => e.entity_id);
+  const entitiesRes = topEntityIds.length
+    ? await sb
+        .from("product_entities")
+        .select("id, canonical_name, brand, category, image_url")
+        .in("id", topEntityIds)
+    : { data: [] };
+  const entityById = new Map<string, {
+    canonical_name: string;
+    brand: string;
+    category: string | null;
+    image_url: string | null;
+  }>();
+  for (const row of (entitiesRes.data ?? []) as Array<{
+    id: string;
+    canonical_name: string;
+    brand: string;
+    category: string | null;
+    image_url: string | null;
+  }>) {
+    entityById.set(row.id, {
+      canonical_name: row.canonical_name,
+      brand: row.brand,
+      category: row.category,
+      image_url: row.image_url,
+    });
+  }
+  const leaderboard: LeaderboardRow[] = topEntities.map((e) => {
+    const ent = entityById.get(e.entity_id);
+    return {
+      entity_id: e.entity_id,
+      name: ent?.canonical_name || e.product_name || "Unknown product",
+      brand: ent?.brand || e.brand || "—",
+      category: ent?.category ?? null,
+      image_url: ent?.image_url ?? null,
+      shrink_count: e.shrink_count,
+      worst_drop_pct: e.worst_drop_pct,
+    };
+  });
+
+  // News: shape raw_items rows into NewsFeedRow, extracting outlet
+  // from the source-type-specific payload field (news → source_name,
+  // gdelt → domain), then filter to non-paywalled outlets.
+  type RawItem = {
+    id: string;
+    source_type: string;
+    source_url: string | null;
+    source_date: string | null;
+    raw_payload: Record<string, unknown> | null;
+  };
+  const rawNews = ((newsRes.data ?? []) as RawItem[]).map((r) => {
+    const p = (r.raw_payload || {}) as Record<string, unknown>;
+    const outlet = (p["source_name"] as string)
+      || (p["domain"] as string)
+      || "";
+    const title = (p["title"] as string) || "";
+    const summary = (p["description"] as string)
+      || (p["summary"] as string)
+      || null;
+    return {
+      id: r.id,
+      url: r.source_url || "",
+      title,
+      outlet,
+      published_at: r.source_date,
+      summary,
+      linked_products_count: 0,
+    } as NewsFeedRow;
+  });
+  const news = rawNews
+    .filter((n) => n.title && n.url)
+    .filter((n) => isFreeOutlet(n.outlet))
+    .slice(0, 5);
+
   return {
     stats,
     bls: (blsRes.data ?? []) as BlsRow[],
     fred: (fredRes.data ?? []) as FredCpiRow[],
-    timeline: (timelineRes.data ?? []) as TimelineRow[],
+    events: (eventsRes.data ?? []) as EventWithSources[],
     categories: (categoriesRes.data ?? []) as CategoryRow[],
-    leaderboard: (leaderRes.data ?? []) as LeaderboardRow[],
+    leaderboard,
     restorations: (restorationsRes.data ?? []) as RestorationRow[],
-    // Drop paywalled outlets at the page boundary. Source-of-truth
-    // allowlist lives in lib.ts so we can iterate without a migration.
-    news: ((newsRes.data ?? []) as NewsFeedRow[])
-      .filter((n) => isFreeOutlet(n.outlet))
-      .slice(0, 5),
+    news,
     skimpClaims: enrichTagged((skimpClaimsRes.data ?? []) as TaggedClaim[]),
     spotDiffClaims: enrichTagged((spotDiffClaimsRes.data ?? []) as TaggedClaim[]),
   };
@@ -177,7 +309,7 @@ async function loadInsights() {
 
 export default async function InsightsPage() {
   const data = await loadInsights();
-  const chart = buildChart(data.timeline, data.bls, data.fred);
+  const chart = buildChart(data.events, data.bls, data.fred);
   const headline = headlineBls(data.bls);
 
   const today = new Date().toISOString();
@@ -278,7 +410,7 @@ export default async function InsightsPage() {
           <div className={styles["section-head"]}>
             <h2>In the news</h2>
             <div className={styles.meta}>
-              {data.news.length} articles linked to tracked products
+              Last 90 days · non-paywalled outlets
             </div>
           </div>
           <NewsFeed rows={data.news} />
