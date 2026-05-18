@@ -1,0 +1,72 @@
+/* About page CSS — same dark-graphite system as /brands, /products,
+   /insights. Mostly text-heavy with section cards. */
+
+.container { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+
+/* HERO */
+.hero { padding: 64px 0 48px; max-width: 880px; }
+.hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 999px; padding: 6px 16px; font-family: var(--font-mono); font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--red-base); margin-bottom: 24px; }
+.hero-eyebrow::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--red-base); }
+.hero h1 { font-family: var(--font-headline); font-weight: 700; font-size: clamp(48px, 8vw, 80px); letter-spacing: -0.03em; line-height: 0.98; margin-bottom: 24px; }
+.hero h1 .red { color: var(--red-base); }
+.hero-lede { font-size: 20px; color: var(--text-secondary); max-width: 720px; line-height: 1.5; }
+.hero-lede strong { color: var(--text-primary); font-weight: 600; }
+
+/* SECTION SCAFFOLDING */
+.block { padding: 64px 0; border-top: 1px solid var(--border-subtle); }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 24px; gap: 16px; flex-wrap: wrap; }
+.section-head h2 { font-family: var(--font-headline); font-weight: 700; font-size: 32px; letter-spacing: -0.02em; }
+.section-head .meta { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
+.section-lede { font-size: 16px; color: var(--text-secondary); line-height: 1.6; max-width: 760px; margin-bottom: 32px; }
+.section-lede strong { color: var(--text-primary); font-weight: 600; }
+
+/* WHAT WE COUNT — two-card grid */
+.count-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+.count-card { background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 24px; }
+.count-card .count-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--red-base); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle); }
+.count-card:last-of-type .count-eyebrow { color: var(--text-tertiary); }
+.count-card ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.count-card li { font-family: var(--font-sans); font-size: 14px; color: var(--text-primary); padding-left: 22px; position: relative; line-height: 1.5; }
+.count-card li::before { content: '·'; position: absolute; left: 4px; top: -2px; color: var(--red-base); font-size: 24px; line-height: 1; font-weight: 700; }
+.count-card:last-of-type li::before { color: var(--text-tertiary); }
+
+/* METHODOLOGY — numbered step list */
+.steps-list { display: flex; flex-direction: column; border-top: 1px solid var(--border-subtle); }
+.step-row { display: grid; grid-template-columns: 80px 1fr; gap: 24px; padding: 22px 0; border-bottom: 1px solid var(--border-subtle); align-items: start; }
+.step-num { font-family: var(--font-mono); font-size: 28px; font-weight: 700; color: var(--red-base); line-height: 1; padding-top: 2px; }
+.step-title { font-family: var(--font-headline); font-weight: 700; font-size: 18px; color: var(--text-primary); letter-spacing: -0.01em; margin-bottom: 6px; }
+.step-body { font-family: var(--font-sans); font-size: 14px; color: var(--text-secondary); line-height: 1.6; max-width: 720px; }
+
+/* SOURCES */
+.sources-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.source-card { background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 24px; display: flex; flex-direction: column; gap: 10px; transition: border-color .15s, transform .15s; text-decoration: none; color: inherit; }
+.source-card:hover { border-color: var(--red-border); transform: translateY(-2px); }
+.source-tag { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-tertiary); align-self: flex-start; }
+.source-name { font-family: var(--font-headline); font-weight: 700; font-size: 22px; letter-spacing: -0.015em; color: var(--text-primary); }
+.source-desc { font-family: var(--font-sans); font-size: 13px; color: var(--text-secondary); line-height: 1.55; }
+.source-link { margin-top: auto; padding-top: 14px; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); border-top: 1px solid var(--border-subtle); transition: color .15s; }
+.source-card:hover .source-link { color: var(--red-base); }
+
+/* SUBMIT A TIP */
+.tip-card { background: linear-gradient(180deg, rgba(220,38,38,.04) 0%, var(--bg-secondary) 60%); border: 1px solid var(--red-border); padding: 32px; max-width: 760px; }
+.tip-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--red-base); padding: 4px 10px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 2px; display: inline-block; margin-bottom: 16px; }
+.tip-body { font-family: var(--font-sans); font-size: 15px; color: var(--text-secondary); line-height: 1.6; }
+.tip-link { color: var(--text-primary); text-decoration: none; border-bottom: 1px solid var(--red-base); padding-bottom: 1px; font-weight: 500; transition: color .15s; }
+.tip-link:hover { color: var(--red-base); }
+.tip-meta { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
+
+/* PRESS / CORRECTIONS */
+.contact-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+.contact-card { background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 24px; display: flex; flex-direction: column; gap: 10px; transition: border-color .15s, transform .15s; text-decoration: none; color: inherit; }
+.contact-card:hover { border-color: var(--red-border); transform: translateY(-2px); }
+.contact-eyebrow { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--red-base); }
+.contact-email { font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--text-primary); }
+.contact-card:hover .contact-email { color: var(--red-base); }
+.contact-body { font-family: var(--font-sans); font-size: 13px; color: var(--text-secondary); line-height: 1.55; }
+
+@media (max-width: 640px) {
+  .container { padding: 0 16px; }
+  .hero h1 { font-size: 44px; }
+  .step-row { grid-template-columns: 60px 1fr; gap: 16px; }
+  .step-num { font-size: 22px; }
+}
