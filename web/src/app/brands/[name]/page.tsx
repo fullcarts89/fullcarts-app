@@ -63,7 +63,8 @@ async function loadBrand(slug: string) {
     sb
       .from("product_entities")
       .select("id, brand, canonical_name, image_url, manufacturer")
-      .eq("brand", canonicalBrand),
+      .eq("brand", canonicalBrand)
+      .eq("is_retracted", false),
   ]);
 
   return {
