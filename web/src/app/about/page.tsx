@@ -237,8 +237,8 @@ export default function AboutPage() {
             <div className={styles["tip-eyebrow"]}>How to send</div>
             <p className={styles["tip-body"]}>
               For now, email tips to{" "}
-              <a href="mailto:fullcarts89@gmail.com" className={styles["tip-link"]}>
-                fullcarts89@gmail.com
+              <a href="mailto:fullcartsinfo@gmail.com" className={styles["tip-link"]}>
+                fullcartsinfo@gmail.com
               </a>{" "}
               with a brief description of what changed and at least one image
               or source URL. We&apos;re building an in-page submission form
@@ -264,17 +264,17 @@ export default function AboutPage() {
             preserved for transparency.
           </p>
           <div className={styles["contact-row"]}>
-            <a className={styles["contact-card"]} href="mailto:fullcarts89@gmail.com">
+            <a className={styles["contact-card"]} href="mailto:fullcartsinfo@gmail.com">
               <div className={styles["contact-eyebrow"]}>Press</div>
-              <div className={styles["contact-email"]}>fullcarts89@gmail.com</div>
+              <div className={styles["contact-email"]}>fullcartsinfo@gmail.com</div>
               <div className={styles["contact-body"]}>
                 Story ideas, data licensing, embargoed releases, interview
                 requests.
               </div>
             </a>
-            <a className={styles["contact-card"]} href="mailto:fullcarts89@gmail.com">
+            <a className={styles["contact-card"]} href="mailto:fullcartsinfo@gmail.com">
               <div className={styles["contact-eyebrow"]}>Corrections</div>
-              <div className={styles["contact-email"]}>fullcarts89@gmail.com</div>
+              <div className={styles["contact-email"]}>fullcartsinfo@gmail.com</div>
               <div className={styles["contact-body"]}>
                 Dispute an event, request a retraction, flag missing context.
                 Brand reps welcome.
