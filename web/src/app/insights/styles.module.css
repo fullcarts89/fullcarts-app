@@ -158,8 +158,19 @@ a.restore-row:hover { background: var(--bg-hover); }
   .hero h1 { font-size: 48px; }
   .cat-row { grid-template-columns: 110px 1fr 50px; }
   .cat-shrink { display: none; }
-  .chart-wrap { height: 220px; padding-left: 40px; padding-right: 40px; }
-  .chart-y-left, .chart-y-right { width: 32px; }
+  /* Chart card: reclaim outer padding so the SVG keeps usable inner
+     width on a 360px viewport, and shrink the y-axis labels. */
+  .chart-card { padding: 16px; }
+  .chart-wrap { height: 200px; padding-left: 32px; padding-right: 32px; }
+  .chart-y-left, .chart-y-right { width: 28px; font-size: 9px; }
+  .chart-x-axis { padding-left: 32px; padding-right: 32px; font-size: 9px; gap: 4px; }
+  /* Legend stacks instead of trying to fit 4 chips across. */
+  .chart-legend { gap: 8px 16px; font-size: 10px; }
+  /* Sticky in-page nav: full-bleed on mobile so a thumb scroll feels
+     natural, and link pills bump up to meet WCAG 2.5.5 touch target
+     guidance (~40px high). */
+  .sectionNav { padding-left: 16px; padding-right: 16px; margin-left: -16px; margin-right: -16px; }
+  .sectionNavLink { padding: 12px 14px; font-size: 11px; }
 }
 
 /* SHRINKING GROCERY CART */

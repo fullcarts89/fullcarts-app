@@ -317,7 +317,7 @@ export default async function Home() {
                 >
                   <div className={styles["tag-card-head"]}>
                     <span className={styles["tag-card-name"]}>{t.tag}</span>
-                    <span className={styles["tag-card-count"]}>{t.count}</span>
+                    <span className={styles["tag-card-count"]}>{t.count.toLocaleString()}</span>
                   </div>
                   <div className={styles["tag-card-desc"]}>{channel.desc}</div>
                   <span className={styles["tag-card-cta"]}>Browse claims →</span>

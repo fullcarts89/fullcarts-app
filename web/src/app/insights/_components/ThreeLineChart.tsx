@@ -171,7 +171,7 @@ export default function ThreeLineChart({ points }: Props) {
         <div className={styles["chart-y-left"]}>
           {leftAxis.ticks.map((t) => (
             <div key={t} className={styles.yt}>
-              {Math.round(t)}
+              {Math.round(t).toLocaleString()}
             </div>
           ))}
         </div>
