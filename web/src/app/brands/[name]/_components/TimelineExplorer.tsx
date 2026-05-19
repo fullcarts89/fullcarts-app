@@ -291,7 +291,8 @@ export default function TimelineExplorer({ ranking, events }: Props) {
                             className={styles["src-row"]}
                             href={s.url}
                             target="_blank"
-                            rel="noopener"
+                            rel="noopener noreferrer"
+                            aria-label={`${s.title || "Source"} on ${publisherLabel(s)} (opens in new tab)`}
                           >
                             {inner}
                           </a>

@@ -81,6 +81,7 @@ export default function ProductGrid({ products, brand }: Props) {
               key={k}
               type="button"
               className={`${styles["sort-pill"]} ${sort === k ? styles.active : ""}`}
+              aria-pressed={sort === k}
               onClick={() => setSort(k)}
             >
               {label}

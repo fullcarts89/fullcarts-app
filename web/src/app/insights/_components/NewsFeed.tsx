@@ -22,6 +22,7 @@ export default function NewsFeed({ rows }: Props) {
           href={r.url}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label={`${r.title} — ${r.outlet || "external article"} (opens in new tab)`}
         >
           <div className={styles["news-outlet"]}>
             {r.outlet || "Unknown outlet"}

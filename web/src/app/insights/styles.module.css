@@ -167,8 +167,10 @@ a.restore-row:hover { background: var(--bg-hover); }
 .cart-head { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
 .cart-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--red-base); padding: 4px 10px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 2px; }
 .cart-title { font-family: var(--font-headline); font-weight: 700; font-size: 24px; letter-spacing: -0.015em; color: var(--text-primary); }
-.cart-lead { font-size: 15px; color: var(--text-secondary); line-height: 1.55; margin: 8px 0 24px; max-width: 720px; }
+.cart-lead { font-size: 15px; color: var(--text-secondary); line-height: 1.55; margin: 8px 0 12px; max-width: 720px; }
 .cart-lead strong { color: var(--text-primary); font-weight: 600; }
+.cart-assumption { font-size: 13px; color: var(--text-tertiary); line-height: 1.5; margin: 0 0 24px; max-width: 720px; padding: 12px 14px; background: var(--bg-secondary); border-left: 1px solid var(--border-medium); }
+.cart-assumption strong { color: var(--text-secondary); font-weight: 600; }
 
 .cart-input-row { display: flex; align-items: center; gap: 16px; padding: 18px 0; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); flex-wrap: wrap; }
 .cart-input-label { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); flex: 1; min-width: 200px; }

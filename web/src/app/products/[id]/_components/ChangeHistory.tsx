@@ -154,6 +154,7 @@ export default function ChangeHistory({ events }: Props) {
                     href={s.url || "#"}
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label={`${s.title || "Source"} on ${publisherLabel(s)} (opens in new tab)`}
                   >
                     <div
                       className={`${styles["src-pub"]} ${publisherClass(s)}`}

@@ -130,6 +130,7 @@ export default function ProductIndex({ products }: Props) {
         <button
           type="button"
           className={`${styles["cat-chip"]} ${category === null ? styles.active : ""}`}
+          aria-pressed={category === null}
           onClick={() => setCategory(null)}
         >
           All{" "}
@@ -140,6 +141,7 @@ export default function ProductIndex({ products }: Props) {
             key={c.name}
             type="button"
             className={`${styles["cat-chip"]} ${category === c.name ? styles.active : ""}`}
+            aria-pressed={category === c.name}
             onClick={() =>
               setCategory(category === c.name ? null : c.name)
             }
@@ -171,6 +173,7 @@ export default function ProductIndex({ products }: Props) {
               key={k}
               type="button"
               className={`${styles["sort-pill"]} ${sort === k ? styles.active : ""}`}
+              aria-pressed={sort === k}
               onClick={() => setSort(k)}
             >
               {label}
