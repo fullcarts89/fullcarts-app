@@ -37,8 +37,14 @@ async function loadAllBrands(): Promise<RankedBrand[]> {
   return all.map((b, i) => ({ ...b, rank: i + 1 }));
 }
 
-export default async function BrandsPage() {
+export default async function BrandsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
   const brands = await loadAllBrands();
+  const { q } = await searchParams;
+  const initialQuery = (q ?? "").trim();
 
   // Hero counters
   const totalEvents = brands.reduce(
@@ -67,7 +73,7 @@ export default async function BrandsPage() {
           </p>
         </header>
 
-        <BrandIndex brands={brands} />
+        <BrandIndex brands={brands} initialQuery={initialQuery} />
       </div>
     </>
   );
