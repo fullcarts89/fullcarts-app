@@ -95,7 +95,8 @@ def _find_existing_event(sb, entity_id: str, old_size, new_size) -> Optional[Dic
     if old_size is None or new_size is None:
         return None
     resp = (sb.table("published_changes")
-            .select("id, evidence_count, evidence_summary, variant_id, is_retracted")
+            .select("id, candidate_id, evidence_count, evidence_summary, "
+                    "variant_id, is_retracted")
             .eq("entity_id", entity_id)
             .eq("size_before", old_size)
             .eq("size_after", new_size)
@@ -104,6 +105,30 @@ def _find_existing_event(sb, entity_id: str, old_size, new_size) -> Optional[Dic
             .limit(1)
             .execute())
     return resp.data[0] if resp.data else None
+
+
+def _is_event_originator(sb, candidate_id: Optional[str], claim_id: str) -> bool:
+    """A claim is the originator of an event when its id is listed in the
+    event's change_candidate.supporting_claims[] array. promote_claims.py
+    writes the originator there at candidate-create time; folded-in claims
+    go into published_changes.evidence_summary, never into supporting_claims.
+    So this is a clean "is this the claim that built this event?" check.
+
+    The pre-fix cleanup folded originators back into their own event as
+    evidence on every daily run — the matched bucket drained to ~zero. This
+    guard keeps a legitimate originator in 'matched' where it belongs.
+    """
+    if not candidate_id:
+        return False
+    resp = (sb.table("change_candidates")
+            .select("supporting_claims")
+            .eq("id", candidate_id)
+            .limit(1)
+            .execute())
+    if not resp.data:
+        return False
+    supporting = resp.data[0].get("supporting_claims") or []
+    return str(claim_id) in [str(s) for s in supporting]
 
 
 def _claim_already_in_summary(summary: Any, claim_id: str) -> bool:
@@ -119,6 +144,7 @@ def cleanup(sb, dry_run: bool = False) -> Dict[str, int]:
     stats = {
         "legacy_approved_migrated": 0, # status='approved' stragglers post-refactor
         "scanned": 0,
+        "originator_skipped": 0,       # claim is the event's originator — leave matched
         "folded_into_event": 0,
         "already_in_evidence": 0,      # idempotent re-run case
         "entity_cleared_for_retry": 0,
@@ -153,6 +179,22 @@ def cleanup(sb, dry_run: bool = False) -> Dict[str, int]:
                 continue
 
             event = _find_existing_event(sb, c["matched_entity_id"], old_size, new_size)
+
+            # Originator guard. Before May 2026 this script folded EVERY
+            # matched-with-entity claim into the event it found at the
+            # claim's (entity, sizes) tuple — including the originator, which
+            # of course finds its own event. That drained the matched bucket
+            # to ~zero on the very first daily run. Skip when the claim is
+            # listed in the event's change_candidates.supporting_claims, since
+            # promote_claims only writes the originator there.
+            if event is not None and _is_event_originator(
+                sb, event.get("candidate_id"), c["id"],
+            ):
+                if dry_run:
+                    LOG.info("[DRY] claim %s is originator of event %s — would skip",
+                             c["id"], event["id"])
+                stats["originator_skipped"] += 1
+                continue
 
             if event is None:
                 # Clear matched_entity_id so the regular promote_claims daily run
