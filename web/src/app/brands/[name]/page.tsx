@@ -86,7 +86,7 @@ export default async function BrandPage({ params }: PageProps) {
       <SiteNav />
       <div className={styles.container}>
         <div className={styles.breadcrumb}>
-          <a href="/">Brands</a>
+          <a href="/brands">Brands</a>
           <span className={styles.sep}>/</span>
           <span className={styles.current}>{ranking.brand}</span>
         </div>

@@ -33,10 +33,10 @@ export default function RestorationCorner({ rows }: Props) {
     return (
       <div className={styles["restore-card"]}>
         <div className={styles["restore-eyebrow"]}>
-          Restorations · pulled from published_changes
+          Restorations · the wins
         </div>
         <div className={styles["restore-empty"]}>
-          No restoration events documented yet — when one lands, it shows up here
+          No restorations on record yet. When a brand puts product back in the package, it shows up here.
         </div>
       </div>
     );
@@ -44,7 +44,7 @@ export default function RestorationCorner({ rows }: Props) {
   return (
     <div className={styles["restore-card"]}>
       <div className={styles["restore-eyebrow"]}>
-        Restorations · pulled from published_changes
+        Restorations · the wins
       </div>
       <div className={styles["restore-list"]}>
         {rows.map((r) => {
