@@ -137,6 +137,7 @@ export default function TipForm() {
           name="description"
           rows={4}
           required
+          aria-required="true"
           minLength={10}
           maxLength={4000}
           placeholder="e.g. The bag went from 96g to 80g but the price stayed the same. I have the old bag at home for comparison."

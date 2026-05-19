@@ -182,7 +182,7 @@ export default function ProductIndex({ products }: Props) {
         </div>
       </div>
 
-      <div className={styles["results-meta"]}>
+      <div className={styles["results-meta"]} aria-live="polite">
         {query.trim() || category ? (
           <>
             <strong>{filtered.length}</strong> of {products.length} products

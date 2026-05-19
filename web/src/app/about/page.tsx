@@ -1,5 +1,6 @@
 import SiteNav from "@/components/SiteNav";
 import TipForm from "./_components/TipForm";
+import Term, { GLOSSARY } from "../_components/Term";
 import styles from "./styles.module.css";
 
 export const metadata = {
@@ -72,7 +73,7 @@ const SOURCES: Array<{
     name: "BLS R-CPI-SC",
     tag: "Government-grade",
     desc:
-      "The Bureau of Labor Statistics' Research CPI excluding product Size Changes (R-CPI-SC) is the only official US measure of shrinkflation. BLS counts how many CPI-tracked items shrank between quarterly surveys — we plot it alongside our own count so you can see whether our catch list moves with the government's.",
+      "The Bureau of Labor Statistics' Research CPI excluding product Size Changes is the only official US measure of shrinkflation. BLS counts how many CPI-tracked items shrank between quarterly surveys — we plot it alongside our own count so you can see whether our catch list moves with the government's.",
     href: "https://www.bls.gov/cpi/research-series/r-cpi-sc.htm",
   },
   {
@@ -162,10 +163,11 @@ export default function AboutPage() {
             corresponding price drop. We also track <strong>restorations</strong>
             {" "}
             (when a product&apos;s size is increased back) and{" "}
-            <strong>skimpflation</strong> (when the recipe quietly gets cheaper —
-            less protein, more filler, swapped fats). Every event has at
-            minimum a brand, product name, before/after size with units, an
-            observed date, and at least one source URL.
+            <Term label="skimpflation" define={GLOSSARY["Skimpflation"]} />{" "}
+            (when the recipe quietly gets cheaper — less protein, more filler,
+            swapped fats). Every event has at minimum a brand, product name,
+            before/after size with units, an observed date, and at least one
+            source URL.
           </p>
           <div className={styles["count-grid"]}>
             <div className={styles["count-card"]}>

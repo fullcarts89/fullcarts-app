@@ -11,6 +11,7 @@ import NewsFeed from "./_components/NewsFeed";
 import EvidenceWall from "./_components/EvidenceWall";
 import ShrinkingCart from "./_components/ShrinkingCart";
 import CorporateTree from "./_components/CorporateTree";
+import Term, { GLOSSARY } from "../_components/Term";
 import {
   buildCartBasket,
   buildChart,
@@ -505,11 +506,12 @@ export default async function InsightsPage() {
           </div>
           <p className={styles["section-lede"]}>
             It&apos;s not just the bag getting smaller.{" "}
-            <strong>Skimpflation</strong> is when brands swap ingredients to
-            lower cost — less meat, more filler, less butter, more palm oil.
-            We cross-reference USDA&apos;s quarterly FoodData Central releases
-            to flag nutrition changes that look like ingredient substitution
-            rather than reformulation for taste.
+            <Term label="Skimpflation" define={GLOSSARY["Skimpflation"]} /> is
+            when brands swap ingredients to lower cost — less meat, more
+            filler, less butter, more palm oil. We cross-reference USDA&apos;s
+            quarterly FoodData Central releases to flag nutrition changes
+            that look like ingredient substitution rather than reformulation
+            for taste.
           </p>
           <SkimpflationLeaderboard rows={data.skimpClaims} />
         </section>

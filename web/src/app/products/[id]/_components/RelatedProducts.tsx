@@ -26,7 +26,11 @@ export default function RelatedProducts({ brand, products }: Props) {
         >
           {p.image_url ? (
             <div className={styles["related-thumb"]}>
-              <img src={p.image_url} alt={p.canonical_name} loading="lazy" />
+              <img
+                src={p.image_url}
+                alt={`${brand} ${p.canonical_name} package photo`}
+                loading="lazy"
+              />
             </div>
           ) : (
             <div

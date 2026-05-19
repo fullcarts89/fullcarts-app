@@ -332,7 +332,7 @@ export default async function Home() {
             </p>
           </div>
           <div className={styles["foot-col"]}>
-            <h4>Browse</h4>
+            <h2 className={styles["foot-h"]}>Browse</h2>
             <ul>
               <li><a href="/brands">All brands</a></li>
               <li><a href="/products">Products</a></li>
@@ -340,7 +340,7 @@ export default async function Home() {
             </ul>
           </div>
           <div className={styles["foot-col"]}>
-            <h4>About</h4>
+            <h2 className={styles["foot-h"]}>About</h2>
             <ul>
               <li><a href="/about">Methodology</a></li>
               <li><a href="/about#sources">Sources</a></li>
@@ -348,7 +348,7 @@ export default async function Home() {
             </ul>
           </div>
           <div className={styles["foot-col"]}>
-            <h4>Follow</h4>
+            <h2 className={styles["foot-h"]}>Follow</h2>
             <ul>
               <li>
                 <a href="/rss.xml">

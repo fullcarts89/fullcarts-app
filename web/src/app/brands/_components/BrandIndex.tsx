@@ -193,7 +193,7 @@ export default function BrandIndex({ brands, initialQuery = "" }: Props) {
         </div>
       </div>
 
-      <div className={styles["results-meta"]}>
+      <div className={styles["results-meta"]} aria-live="polite">
         {query.trim() || category ? (
           <>
             <strong>{filtered.length}</strong> of {brands.length} brands

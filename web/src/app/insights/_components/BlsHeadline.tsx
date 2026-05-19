@@ -3,6 +3,7 @@
 // is missing for the latest quarter.
 import styles from "../styles.module.css";
 import { fmtPct, quarterLabel } from "../lib";
+import Term, { GLOSSARY } from "../../_components/Term";
 
 interface Props {
   count: number;
@@ -48,8 +49,9 @@ export default function BlsHeadline({
         <h2>products downsized last quarter</h2>
         <p>
           The Bureau of Labor Statistics&apos; research index (called{" "}
-          <strong>R-CPI-SC</strong>) counts every product the government
-          tracks whose package quietly shrank between quarterly surveys.{" "}
+          <Term label="R-CPI-SC" define={GLOSSARY["R-CPI-SC"]} />) counts
+          every product the government tracks whose package quietly shrank
+          between quarterly surveys.{" "}
           {prevQuarterDeltaPct !== 0 && (
             <>
               {quarterLabel(quarter)}&apos;s count is{" "}

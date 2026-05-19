@@ -57,7 +57,13 @@ export default function ProductHero({ entity, events, variants }: Props) {
       <div className={styles["hero-image"]}>
         {entity.image_url ? (
           <>
-            <img src={entity.image_url} alt={entity.canonical_name} loading="eager" />
+            <img
+              src={entity.image_url}
+              alt={`${entity.brand} ${entity.canonical_name}${
+                lastStep ? ` · current size ${lastStep.size}${unit}` : ""
+              } package photo`}
+              loading="eager"
+            />
             <span className={styles["img-tag"]}>Tracked</span>
           </>
         ) : (
