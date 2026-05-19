@@ -160,7 +160,7 @@ export default function WallOfShame({ events, entities }: Props) {
               className={styles["shame-card"]}
               href={cardHref}
               target={isExternal ? "_blank" : undefined}
-              rel={isExternal ? "noopener" : undefined}
+              rel={isExternal ? "noopener noreferrer" : undefined}
               aria-label={
                 e.entity_id
                   ? `${e.brand} ${productName} — product scorecard`
