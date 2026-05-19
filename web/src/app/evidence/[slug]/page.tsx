@@ -120,10 +120,29 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   const channel = findChannelBySlug(slug);
-  if (!channel) return { title: "Evidence channel · FullCarts" };
+  if (!channel) {
+    return {
+      title: "Evidence channel",
+      robots: { index: false, follow: true },
+    };
+  }
+  const title = `${channel.title} — Evidence channel`;
   return {
-    title: `${channel.title} — Evidence channel · FullCarts`,
+    title,
     description: channel.intro,
+    alternates: { canonical: `/evidence/${channel.slug}` },
+    openGraph: {
+      title: `${title} · FullCarts`,
+      description: channel.intro,
+      type: "article",
+      url: `/evidence/${channel.slug}`,
+      siteName: "FullCarts",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} · FullCarts`,
+      description: channel.intro,
+    },
   };
 }
 
@@ -157,12 +176,12 @@ export default async function EvidenceChannelPage({
     return (
       <>
         <SiteNav />
-        <div className={styles.container}>
+        <main id="main-content" className={styles.container}>
           <div className={styles.error}>
             We couldn&rsquo;t load evidence for this channel right now. Please
             try again in a moment.
           </div>
-        </div>
+        </main>
       </>
     );
   }
@@ -185,7 +204,7 @@ export default async function EvidenceChannelPage({
   return (
     <>
       <SiteNav />
-      <div className={styles.container}>
+      <main id="main-content" className={styles.container}>
         <div className={styles.breadcrumb}>
           <Link href="/">Home</Link>
           <span className={styles.sep}>/</span>
@@ -298,7 +317,7 @@ export default async function EvidenceChannelPage({
             ))}
           </div>
         </nav>
-      </div>
+      </main>
     </>
   );
 }

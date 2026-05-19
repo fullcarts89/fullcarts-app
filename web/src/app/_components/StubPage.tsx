@@ -18,7 +18,7 @@ export default function StubPage({ title, phase, lede, planned }: StubPageProps)
   return (
     <>
       <SiteNav />
-      <div className={styles.container}>
+      <main id="main-content" className={styles.container}>
         <div className={styles.breadcrumb}>
           <span className={styles.current}>{title}</span>
         </div>
@@ -44,7 +44,7 @@ export default function StubPage({ title, phase, lede, planned }: StubPageProps)
             ← Back home
           </a>
         </div>
-      </div>
+      </main>
     </>
   );
 }

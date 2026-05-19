@@ -10,9 +10,24 @@ export const revalidate = 3600;
 const PAGE_SIZE = 1000;
 
 export const metadata = {
-  title: "Products · FullCarts",
+  title: "Products",
   description:
     "Every product we're tracking with at least one documented shrinkflation event. Sortable by event count, worst single shrink, average shrink, or A–Z. Filter by category.",
+  alternates: { canonical: "/products" },
+  openGraph: {
+    title: "All products · FullCarts",
+    description:
+      "Every product we're tracking with at least one documented shrinkflation event.",
+    type: "website",
+    url: "/products",
+    siteName: "FullCarts",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "All products · FullCarts",
+    description:
+      "Every product we're tracking with at least one documented shrinkflation event.",
+  },
 };
 
 async function loadAllProducts(): Promise<RankedProduct[]> {
@@ -54,7 +69,7 @@ export default async function ProductsPage() {
   return (
     <>
       <SiteNav />
-      <div className={styles.container}>
+      <main id="main-content" className={styles.container}>
         <div className={styles.breadcrumb}>
           <span className={styles.current}>All products</span>
         </div>
@@ -72,7 +87,7 @@ export default async function ProductsPage() {
         </header>
 
         <ProductIndex products={products} />
-      </div>
+      </main>
     </>
   );
 }

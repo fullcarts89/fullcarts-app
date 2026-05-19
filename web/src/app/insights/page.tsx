@@ -40,9 +40,24 @@ import styles from "./styles.module.css";
 export const revalidate = 3600;
 
 export const metadata = {
-  title: "By the numbers · Shrinkflation insights · FullCarts",
+  title: "Insights · By the numbers",
   description:
     "Macro shrinkflation data: BLS R-CPI-SC counts, FRED food CPI, USDA skimpflation findings, worst categories, and the products that keep shrinking. Cross-referenced across every source we track.",
+  alternates: { canonical: "/insights" },
+  openGraph: {
+    title: "Shrinkflation insights · FullCarts",
+    description:
+      "Macro shrinkflation data, cross-referenced from BLS, FRED, USDA, and our own documented events.",
+    type: "website",
+    url: "/insights",
+    siteName: "FullCarts",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Shrinkflation insights · FullCarts",
+    description:
+      "Macro shrinkflation data, cross-referenced from BLS, FRED, USDA, and our own documented events.",
+  },
 };
 
 async function loadInsights() {
@@ -413,7 +428,7 @@ export default async function InsightsPage() {
   return (
     <>
       <SiteNav />
-      <div className={styles.container}>
+      <main id="main-content" className={styles.container}>
         <InsightsHero stats={data.stats} lastUpdated={lastUpdated} />
         <BlsHeadline
           count={headline.count}
@@ -565,7 +580,7 @@ export default async function InsightsPage() {
           </p>
           <EvidenceWall rows={data.spotDiffClaims} />
         </section>
-      </div>
+      </main>
     </>
   );
 }

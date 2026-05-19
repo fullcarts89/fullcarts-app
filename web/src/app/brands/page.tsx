@@ -7,6 +7,27 @@ import styles from "./styles.module.css";
 // ISR: regenerate at most once per hour.
 export const revalidate = 3600;
 
+export const metadata = {
+  title: "Brands",
+  description:
+    "Every brand we're tracking. Severity-tiered, category-filterable, and searchable across 1,000+ brands with documented shrinkflation events.",
+  alternates: { canonical: "/brands" },
+  openGraph: {
+    title: "All brands · FullCarts",
+    description:
+      "Every brand we're tracking. Severity-tiered, category-filterable, and searchable.",
+    type: "website",
+    url: "/brands",
+    siteName: "FullCarts",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "All brands · FullCarts",
+    description:
+      "Every brand we're tracking. Severity-tiered, category-filterable, and searchable.",
+  },
+};
+
 const PAGE_SIZE = 1000;
 
 async function loadAllBrands(): Promise<RankedBrand[]> {
@@ -56,7 +77,7 @@ export default async function BrandsPage({
   return (
     <>
       <SiteNav />
-      <div className={styles.container}>
+      <main id="main-content" className={styles.container}>
         <div className={styles.breadcrumb}>
           <span className={styles.current}>All brands</span>
         </div>
@@ -74,7 +95,7 @@ export default async function BrandsPage({
         </header>
 
         <BrandIndex brands={brands} initialQuery={initialQuery} />
-      </div>
+      </main>
     </>
   );
 }

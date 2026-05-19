@@ -7,7 +7,7 @@ export default function EvidenceNotFound() {
   return (
     <>
       <SiteNav />
-      <div className={styles.container}>
+      <main id="main-content" className={styles.container}>
         <div className={styles.breadcrumb}>
           <Link href="/">Home</Link>
           <span className={styles.sep}>/</span>
@@ -32,7 +32,7 @@ export default function EvidenceNotFound() {
             ))}
           </div>
         </div>
-      </div>
+      </main>
     </>
   );
 }

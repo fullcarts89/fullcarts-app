@@ -20,16 +20,64 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["400", "500", "700"],
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://fullcarts.org";
+const SITE_NAME = "FullCarts";
+const DEFAULT_TITLE = "FullCarts — Making Shrinkflation Impossible to Hide";
+const DEFAULT_DESC =
+  "Track shrinkflation with verified evidence. See which brands are shrinking products while raising prices.";
+
 export const metadata: Metadata = {
-  title: "FullCarts — Making Shrinkflation Impossible to Hide",
-  description:
-    "Track shrinkflation with verified evidence. See which brands are shrinking products while raising prices.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: DEFAULT_TITLE,
+    template: "%s · FullCarts",
+  },
+  description: DEFAULT_DESC,
+  applicationName: SITE_NAME,
+  alternates: {
+    canonical: "/",
+    types: {
+      "application/rss+xml": [{ url: "/rss.xml", title: "FullCarts shrinkflation feed" }],
+    },
+  },
   openGraph: {
-    title: "FullCarts — Making Shrinkflation Impossible to Hide",
-    description:
-      "Track shrinkflation with verified evidence. See which brands are shrinking products while raising prices.",
-    siteName: "FullCarts",
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESC,
+    siteName: SITE_NAME,
     type: "website",
+    url: SITE_URL,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESC,
+  },
+  robots: { index: true, follow: true },
+};
+
+// JSON-LD identity payloads. Rendered once at the document root so every
+// page inherits Organization + WebSite without per-route plumbing. The
+// SearchAction points crawlers at /brands?q= so search engines can wire
+// up a sitelinks search box.
+const ORG_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: SITE_NAME,
+  url: SITE_URL,
+  logo: `${SITE_URL}/favicon.ico`,
+  sameAs: [`${SITE_URL}/rss.xml`],
+};
+
+const SITE_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: SITE_NAME,
+  url: SITE_URL,
+  potentialAction: {
+    "@type": "SearchAction",
+    target: `${SITE_URL}/brands?q={search_term_string}`,
+    "query-input": "required name=search_term_string",
   },
 };
 
@@ -43,7 +91,16 @@ export default function RootLayout({
       <body
         className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} antialiased`}
       >
+        <a href="#main-content" className="skip-to-main">
+          Skip to main content
+        </a>
         {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify([ORG_JSONLD, SITE_JSONLD]),
+          }}
+        />
       </body>
     </html>
   );

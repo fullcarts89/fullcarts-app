@@ -160,14 +160,36 @@ async function loadProduct(id: string): Promise<{
 export async function generateMetadata({ params }: PageProps) {
   const { id } = await params;
   const data = await loadProduct(id);
-  if (!data) return { title: "Product not found · FullCarts" };
+  if (!data) {
+    return { title: "Product not found", robots: { index: false, follow: true } };
+  }
   const { entity, events } = data;
   const ev = events.length;
+  const title = `${entity.brand} ${entity.canonical_name} — ${ev} documented shrink${
+    ev === 1 ? "" : "s"
+  }`;
+  const description = `Size-over-time history, every documented event, and full evidence trail for ${entity.brand} ${entity.canonical_name}.`;
+  const image = entity.image_url ?? undefined;
   return {
-    title: `${entity.brand} ${entity.canonical_name} — ${ev} documented shrink${
-      ev === 1 ? "" : "s"
-    } · FullCarts`,
-    description: `Size-over-time history, every documented event, and full evidence trail for ${entity.brand} ${entity.canonical_name}.`,
+    title,
+    description,
+    alternates: { canonical: `/products/${entity.id}` },
+    openGraph: {
+      title: `${title} · FullCarts`,
+      description,
+      type: "article",
+      url: `/products/${entity.id}`,
+      siteName: "FullCarts",
+      images: image
+        ? [{ url: image, alt: `${entity.brand} ${entity.canonical_name} package` }]
+        : undefined,
+    },
+    twitter: {
+      card: image ? "summary_large_image" : "summary",
+      title: `${title} · FullCarts`,
+      description,
+      images: image ? [image] : undefined,
+    },
   };
 }
 
@@ -182,10 +204,57 @@ export default async function ProductPage({ params }: PageProps) {
   const evidenceTotal = totalEvidenceCount(events);
   const unit = events[0]?.size_unit || "";
 
+  // Structured data — Product + BreadcrumbList. Crawlers use the Product
+  // schema for rich result eligibility; BreadcrumbList renders the
+  // brand → product hierarchy in SERPs. UPCs (when present) hand search
+  // engines a hard identifier so they can dedupe across our pages.
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://fullcarts.org";
+  const brandSlug = encodeURIComponent(entity.brand.toLowerCase());
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: `${entity.brand} ${entity.canonical_name}`,
+    brand: { "@type": "Brand", name: entity.brand },
+    category: entity.category ?? undefined,
+    image: entity.image_url ?? undefined,
+    description: `${entity.brand} ${entity.canonical_name} — ${events.length} documented shrinkflation event${
+      events.length === 1 ? "" : "s"
+    } tracked by FullCarts.`,
+    url: `${siteUrl}/products/${entity.id}`,
+    manufacturer: entity.manufacturer ?? undefined,
+    gtin: variants.find((v) => v.upc)?.upc ?? undefined,
+  };
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Brands", item: `${siteUrl}/brands` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: entity.brand,
+        item: `${siteUrl}/brands/${brandSlug}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: entity.canonical_name,
+        item: `${siteUrl}/products/${entity.id}`,
+      },
+    ],
+  };
+
   return (
     <>
       <SiteNav />
-      <div className={styles.container}>
+      <main id="main-content" className={styles.container}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify([productJsonLd, breadcrumbJsonLd]),
+          }}
+        />
         <div className={styles.breadcrumb}>
           <a href="/brands">Brands</a>
           <span className={styles.sep}>/</span>
@@ -273,7 +342,7 @@ export default async function ProductPage({ params }: PageProps) {
             <RelatedProducts brand={entity.brand} products={related} />
           </section>
         )}
-      </div>
+      </main>
     </>
   );
 }

@@ -3,9 +3,24 @@ import TipForm from "./_components/TipForm";
 import styles from "./styles.module.css";
 
 export const metadata = {
-  title: "About · FullCarts",
+  title: "About",
   description:
     "FullCarts is a public database of shrinkflation events. Our mission is to name the shrinkers, cite the evidence, and make consumer-product downsizing impossible to hide. Methodology, sources, and how to submit a tip.",
+  alternates: { canonical: "/about" },
+  openGraph: {
+    title: "About FullCarts",
+    description:
+      "Methodology, sources, and how to submit a tip. FullCarts is a public, evidence-based record of consumer-product shrinkflation.",
+    type: "website",
+    url: "/about",
+    siteName: "FullCarts",
+  },
+  twitter: {
+    card: "summary",
+    title: "About FullCarts",
+    description:
+      "A public, evidence-based record of consumer-product shrinkflation.",
+  },
 };
 
 // All public data sources we pull from, in source-type order. Each
@@ -121,7 +136,7 @@ export default function AboutPage() {
   return (
     <>
       <SiteNav />
-      <div className={styles.container}>
+      <main id="main-content" className={styles.container}>
         <header className={styles.hero}>
           <div className={styles["hero-eyebrow"]}>About FullCarts</div>
           <h1>
@@ -279,7 +294,7 @@ export default function AboutPage() {
             </a>
           </div>
         </section>
-      </div>
+      </main>
     </>
   );
 }

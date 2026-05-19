@@ -20,7 +20,7 @@ export default async function Home() {
   return (
     <>
       <SiteNav />
-      <div className={styles.container}>
+      <main id="main-content" className={styles.container}>
         {/* HERO */}
         <header className={styles.hero}>
           <div>
@@ -319,7 +319,7 @@ export default async function Home() {
             })}
           </div>
         </section>
-      </div>
+      </main>
 
       <footer className={styles.footer}>
         <div className={styles["footer-inner"]}>

@@ -5,7 +5,7 @@ export default function ProductNotFound() {
   return (
     <>
       <SiteNav />
-      <div className={styles.container}>
+      <main id="main-content" className={styles.container}>
         <div style={{ padding: "120px 0 80px", textAlign: "center" }}>
           <h1
             style={{
@@ -25,7 +25,7 @@ export default function ProductNotFound() {
             </a>
           </p>
         </div>
-      </div>
+      </main>
     </>
   );
 }
