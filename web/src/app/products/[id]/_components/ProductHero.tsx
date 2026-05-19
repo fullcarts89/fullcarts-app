@@ -89,7 +89,7 @@ export default function ProductHero({ entity, events, variants }: Props) {
               {entity.manufacturer}
             </span>
           )}
-          {primaryUpc && <span>UPC {primaryUpc}</span>}
+          {primaryUpc && <span>Barcode {primaryUpc}</span>}
         </div>
 
         {firstStep && lastStep && firstStep !== lastStep ? (

@@ -28,9 +28,10 @@ export default function SkimpflationLeaderboard({ rows }: Props) {
   if (rows.length === 0) {
     return (
       <div className={styles["skimp-card-wrap"]}>
-        <div className={styles["skimp-eyebrow"]}>Tagged claims · admin-curated</div>
+        <div className={styles["skimp-eyebrow"]}>Spotted in the wild</div>
         <div className={styles.empty} style={{ marginTop: 16 }}>
-          No claims tagged &ldquo;Skimpflation&rdquo; yet
+          No skimpflation reports yet — we&rsquo;ll surface them here as
+          reviewers confirm the photo evidence.
         </div>
       </div>
     );
@@ -38,7 +39,7 @@ export default function SkimpflationLeaderboard({ rows }: Props) {
   return (
     <div className={styles["skimp-card-wrap"]}>
       <div className={styles["skimp-eyebrow"]}>
-        Tagged claims · admin-curated · {rows.length} surfaced
+        Spotted in the wild · {rows.length} confirmed
       </div>
       <div className={styles["skimp-grid"]}>
         {rows.map((r) => {

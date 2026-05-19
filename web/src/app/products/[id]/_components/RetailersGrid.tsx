@@ -86,8 +86,9 @@ export default function RetailersGrid({ variants, observations }: Props) {
   if (cards.length === 0) {
     return (
       <div className={styles["retailer-empty"]}>
-        No retailer monitoring data for this product yet — once Kroger and OFF
-        observations land, prices and per-unit cost will appear here.
+        We&rsquo;re not actively watching this product at retailers yet. Once
+        it shows up in our weekly Kroger or Open Food Facts sweeps, prices
+        and per-unit cost will appear here.
       </div>
     );
   }

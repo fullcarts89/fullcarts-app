@@ -85,7 +85,7 @@ export default function SkimpflationOverlay({ data }: Props) {
       </div>
 
       <div className={styles["skimp-credit"]}>
-        Source: USDA FoodData Central · gtin {data.upc} · {data.releases_compared}{" "}
+        Source: USDA FoodData Central · barcode {data.upc} · {data.releases_compared}{" "}
         releases compared
       </div>
     </div>

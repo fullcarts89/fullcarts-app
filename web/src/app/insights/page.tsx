@@ -436,17 +436,19 @@ export default async function InsightsPage() {
             <div className={styles.meta}>Monthly · trailing window</div>
           </div>
           <p className={styles["section-lede"]}>
-            When the food-at-home CPI rises, brands face a choice — raise the
-            price, shrink the package, or change the recipe. Plotting{" "}
+            When grocery prices rise, brands face a choice — raise the price,
+            shrink the package, or change the recipe. Plotting{" "}
             <strong>our documented shrink events</strong> (red) against the{" "}
-            <strong>BLS downsizing count</strong> (blue dashed) and{" "}
-            <strong>FRED&apos;s food-at-home CPI</strong> (amber) shows how
+            <strong>government&apos;s shrinkage count</strong> (blue dashed)
+            and the{" "}
+            <strong>Fed&apos;s grocery price index</strong> (amber) shows how
             the three move together.
           </p>
           <ThreeLineChart points={chart} />
           <div className={styles.caveat}>
-            FRED CPI is YoY%, BLS counts are quarterly spread evenly across
-            months, our events are monthly raw counts
+            Price index is year-over-year %, government shrinkage counts are
+            quarterly spread evenly across months, our events are monthly raw
+            counts
           </div>
         </section>
 

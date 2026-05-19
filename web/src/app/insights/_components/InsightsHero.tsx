@@ -24,11 +24,11 @@ export default function InsightsHero({ stats, lastUpdated }: Props) {
         <strong>
           {stats.total_changes.toLocaleString()} documented events
         </strong>{" "}
-        against the <strong>BLS R-CPI-SC</strong> (the government&apos;s
-        official size-change tracker) and{" "}
-        <strong>FRED&apos;s Food-at-Home CPI</strong> so you can see whether
-        the brands are shrinking products on schedule with — or ahead of —
-        official inflation.
+        against the government&apos;s official size-change tracker (the{" "}
+        <strong>Bureau of Labor Statistics</strong>&apos; R-CPI-SC index) and
+        the <strong>Federal Reserve&apos;s</strong> Food-at-Home price index,
+        so you can see whether brands are shrinking products on schedule
+        with — or ahead of — official inflation.
       </p>
     </header>
   );

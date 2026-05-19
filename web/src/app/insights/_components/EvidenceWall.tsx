@@ -36,7 +36,8 @@ export default function EvidenceWall({ rows }: Props) {
   if (cards.length === 0) {
     return (
       <div className={styles.empty}>
-        No images yet for claims tagged &ldquo;Spot the Difference&rdquo;
+        No side-by-side photos confirmed yet. As reviewers tag visual
+        evidence, the wall fills here.
       </div>
     );
   }

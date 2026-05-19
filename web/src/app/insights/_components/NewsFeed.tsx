@@ -11,7 +11,12 @@ interface Props {
 
 export default function NewsFeed({ rows }: Props) {
   if (rows.length === 0) {
-    return <div className={styles.empty}>No news articles indexed yet</div>;
+    return (
+      <div className={styles.empty}>
+        No news coverage in the last 90 days. We&rsquo;ll surface articles as
+        they appear.
+      </div>
+    );
   }
   return (
     <div className={styles["news-list"]}>

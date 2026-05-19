@@ -55,7 +55,7 @@ export default function ChangeHistory({ events }: Props) {
   if (events.length === 0) {
     return (
       <div className={styles["traj-empty"]}>
-        No documented events for this product yet
+        We haven&rsquo;t logged a shrink for this product yet — but we&rsquo;re watching.
       </div>
     );
   }
