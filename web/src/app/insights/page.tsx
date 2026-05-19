@@ -146,6 +146,10 @@ async function loadInsights() {
       .select(
         "manufacturer, distinct_brands, total_shrinkflation_events, worst_delta_pct, top_brands",
       )
+      // Hide single-event rollups so Wikidata noise (countries, holding
+      // cos, natural persons) can't surface even before migration 059
+      // raises the floor at the view level.
+      .gte("total_shrinkflation_events", 5)
       .order("total_shrinkflation_events", { ascending: false, nullsFirst: false })
       .limit(8),
     sb

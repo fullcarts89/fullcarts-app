@@ -1,0 +1,355 @@
+# Hand-curated brand → manufacturer (corporate parent) seed.
+#
+# Loaded by pipeline/scripts/seed_manufacturers.py, which idempotently
+# UPDATEs product_entities.manufacturer for every row whose brand matches
+# (case-insensitive). The corporate_tree view (migration 056) rolls up
+# from there onto /insights.
+#
+# Matching rules:
+#   - brand: required. Case-insensitive equality against product_entities.brand.
+#     Multiple rows can share the same canonical brand (different spellings,
+#     punctuation, or accent variants).
+#   - category: optional. When present, the row only matches entities whose
+#     `category` column is a case-insensitive substring match. Used to
+#     disambiguate (e.g. Dove personal care = Unilever, Dove candy = Mars).
+#   - When two rows could both match an entity, the one with a category
+#     filter wins over the generic row.
+#
+# When you add a brand here, please cite the parent in a comment if it's
+# not obvious (spin-offs and brand swaps are frequent in CPG).
+
+mappings:
+  # ── Mondelez International ─────────────────────────────────────────
+  - { brand: "Cadbury",           manufacturer: "Mondelez International" }
+  - { brand: "Oreo",              manufacturer: "Mondelez International" }
+  - { brand: "Ritz",              manufacturer: "Mondelez International" }
+  - { brand: "Nabisco",           manufacturer: "Mondelez International" }
+  - { brand: "Toblerone",         manufacturer: "Mondelez International" }
+  - { brand: "Milka",             manufacturer: "Mondelez International" }
+  - { brand: "Wheat Thins",       manufacturer: "Mondelez International" }
+  - { brand: "Triscuit",          manufacturer: "Mondelez International" }
+  - { brand: "Chips Ahoy!",       manufacturer: "Mondelez International" }
+  - { brand: "Chips Ahoy",        manufacturer: "Mondelez International" }
+  - { brand: "Trident",           manufacturer: "Mondelez International" }
+  - { brand: "Sour Patch Kids",   manufacturer: "Mondelez International" }
+  - { brand: "belVita",           manufacturer: "Mondelez International" }
+  - { brand: "belVita Breakfast", manufacturer: "Mondelez International" }
+  - { brand: "Philadelphia",      manufacturer: "Mondelez International" }   # cream cheese, ex-Kraft, traded to Mondelez 2012
+  - { brand: "Halls",             manufacturer: "Mondelez International" }
+  - { brand: "Honey Maid",        manufacturer: "Mondelez International" }
+  - { brand: "Christie",          manufacturer: "Mondelez International" }   # Canadian arm
+  - { brand: "Cote d'Or",         manufacturer: "Mondelez International" }
+  - { brand: "Côte d'Or",         manufacturer: "Mondelez International" }
+  - { brand: "Daim",              manufacturer: "Mondelez International" }
+  - { brand: "Marabou",           manufacturer: "Mondelez International" }
+  - { brand: "LU",                manufacturer: "Mondelez International" }
+  - { brand: "Prince",            manufacturer: "Mondelez International" }   # LU biscuit sub-brand
+
+  # ── Procter & Gamble ───────────────────────────────────────────────
+  - { brand: "Tide",              manufacturer: "Procter & Gamble" }
+  - { brand: "Charmin",           manufacturer: "Procter & Gamble" }
+  - { brand: "Crest",             manufacturer: "Procter & Gamble" }
+  - { brand: "Cascade",           manufacturer: "Procter & Gamble" }
+  - { brand: "Dawn",              manufacturer: "Procter & Gamble" }
+  - { brand: "Gain",              manufacturer: "Procter & Gamble" }
+  - { brand: "Bounty",            manufacturer: "Procter & Gamble" }         # paper towels — chocolate is Mars (none in our DB)
+  - { brand: "Febreze",           manufacturer: "Procter & Gamble" }
+  - { brand: "Pantene",           manufacturer: "Procter & Gamble" }
+  - { brand: "Head and Shoulders", manufacturer: "Procter & Gamble" }
+  - { brand: "Head & Shoulders",  manufacturer: "Procter & Gamble" }
+  - { brand: "Old Spice",         manufacturer: "Procter & Gamble" }
+  - { brand: "Fairy",             manufacturer: "Procter & Gamble" }
+  - { brand: "Ariel",             manufacturer: "Procter & Gamble" }
+  - { brand: "Downy",             manufacturer: "Procter & Gamble" }
+  - { brand: "Pampers",           manufacturer: "Procter & Gamble" }
+  - { brand: "Gillette",          manufacturer: "Procter & Gamble" }
+  - { brand: "Oral-B",            manufacturer: "Procter & Gamble" }
+  - { brand: "Olay",              manufacturer: "Procter & Gamble" }
+  - { brand: "Bounce",            manufacturer: "Procter & Gamble" }
+  - { brand: "Procter & Gamble",  manufacturer: "Procter & Gamble" }         # house/parent-name entries from extractor errors
+  - { brand: "Mr. Clean",         manufacturer: "Procter & Gamble" }
+  - { brand: "Swiffer",           manufacturer: "Procter & Gamble" }
+  - { brand: "Vicks",             manufacturer: "Procter & Gamble" }
+  - { brand: "Always",            manufacturer: "Procter & Gamble" }
+  - { brand: "Tampax",            manufacturer: "Procter & Gamble" }
+
+  # ── Unilever ───────────────────────────────────────────────────────
+  - { brand: "Dove",  category: "personal care", manufacturer: "Unilever" }
+  - { brand: "Dove",  category: "household",     manufacturer: "Unilever" }
+  - { brand: "Dove",  category: "candy",         manufacturer: "Mars" }       # Dove chocolate
+  - { brand: "Magnum",            manufacturer: "Unilever" }
+  - { brand: "Hellmann's",        manufacturer: "Unilever" }
+  - { brand: "Lipton",            manufacturer: "Unilever" }                   # global tea split: PepsiCo iced US, Lipton brand otherwise Unilever→Ekaterra→Lipton Teas
+  - { brand: "Knorr",             manufacturer: "Unilever" }
+  - { brand: "Axe",               manufacturer: "Unilever" }
+  - { brand: "TRESemmé",          manufacturer: "Unilever" }
+  - { brand: "Tresemme",          manufacturer: "Unilever" }
+  - { brand: "Vaseline",          manufacturer: "Unilever" }
+  - { brand: "Suave",             manufacturer: "Unilever" }                   # US still Unilever via Yellow Wood Partners' spin-out for personal care 2023 — kept Unilever for hair brand
+  - { brand: "Ben & Jerry's",     manufacturer: "Unilever" }
+  - { brand: "Hellmanns",         manufacturer: "Unilever" }
+  - { brand: "Comfort",           manufacturer: "Unilever" }
+  - { brand: "Persil",  category: "household",      manufacturer: "Henkel" }   # global Persil is Henkel except US laundry which is Henkel-US
+  - { brand: "Persil",                              manufacturer: "Henkel" }
+  - { brand: "Walls",  category: "ice cream",       manufacturer: "Unilever" }
+  - { brand: "Surf",               manufacturer: "Unilever" }
+
+  # ── Mars, Incorporated ─────────────────────────────────────────────
+  - { brand: "Mars",              manufacturer: "Mars" }                       # parent-name-as-brand catches AI extractor errors
+  - { brand: "Snickers",          manufacturer: "Mars" }
+  - { brand: "Twix",              manufacturer: "Mars" }
+  - { brand: "M&M's",             manufacturer: "Mars" }
+  - { brand: "M&Ms",              manufacturer: "Mars" }
+  - { brand: "Skittles",          manufacturer: "Mars" }
+  - { brand: "Milky Way",         manufacturer: "Mars" }
+  - { brand: "Galaxy",            manufacturer: "Mars" }                       # UK Galaxy chocolate
+  - { brand: "Celebrations",      manufacturer: "Mars" }
+  - { brand: "Maltesers",         manufacturer: "Mars" }
+  - { brand: "Wrigley",           manufacturer: "Mars" }
+  - { brand: "Wrigley's",         manufacturer: "Mars" }
+  - { brand: "Orbit",             manufacturer: "Mars" }
+  - { brand: "Extra",             manufacturer: "Mars" }
+  - { brand: "5 Gum",             manufacturer: "Mars" }
+  - { brand: "Hubba Bubba",       manufacturer: "Mars" }
+  - { brand: "Pedigree",          manufacturer: "Mars" }
+  - { brand: "Whiskas",           manufacturer: "Mars" }
+  - { brand: "Royal Canin",       manufacturer: "Mars" }
+  - { brand: "Sheba",             manufacturer: "Mars" }
+  - { brand: "Uncle Ben's",       manufacturer: "Mars" }
+  - { brand: "Ben's Original",    manufacturer: "Mars" }
+  - { brand: "Dolmio",            manufacturer: "Mars" }
+
+  # ── Nestlé ─────────────────────────────────────────────────────────
+  - { brand: "Nestlé",            manufacturer: "Nestlé" }
+  - { brand: "Nestle",            manufacturer: "Nestlé" }
+  - { brand: "Nescafé",           manufacturer: "Nestlé" }
+  - { brand: "Nescafe",           manufacturer: "Nestlé" }
+  - { brand: "Maggi",             manufacturer: "Nestlé" }
+  - { brand: "KitKat",            manufacturer: "Nestlé" }                     # global, except US which is Hershey-licensed
+  - { brand: "Kit Kat",           manufacturer: "Nestlé" }
+  - { brand: "Smarties",  category: "candy",  manufacturer: "Nestlé" }         # UK/EU candy (US Smarties = Smarties Candy Co.)
+  - { brand: "Quality Street",    manufacturer: "Nestlé" }
+  - { brand: "Häagen-Dazs",  category: "ice cream",  manufacturer: "Nestlé" }  # US is Nestlé; Intl is General Mills
+  - { brand: "Haagen-Dazs",                          manufacturer: "Nestlé" }
+  - { brand: "Purina",            manufacturer: "Nestlé" }
+  - { brand: "Aero",              manufacturer: "Nestlé" }
+  - { brand: "Lion",              manufacturer: "Nestlé" }                     # candy bar
+  - { brand: "Coffee mate",       manufacturer: "Nestlé" }
+  - { brand: "Coffee-mate",       manufacturer: "Nestlé" }
+  - { brand: "Toll House",        manufacturer: "Nestlé" }
+  - { brand: "Stouffer's",        manufacturer: "Nestlé" }
+  - { brand: "DiGiorno",          manufacturer: "Nestlé" }
+  - { brand: "Lean Cuisine",      manufacturer: "Nestlé" }
+  - { brand: "Gerber",            manufacturer: "Nestlé" }
+  - { brand: "Cailler",           manufacturer: "Nestlé" }
+
+  # ── PepsiCo ────────────────────────────────────────────────────────
+  - { brand: "Pepsi",             manufacturer: "PepsiCo" }
+  - { brand: "Lay's",             manufacturer: "PepsiCo" }
+  - { brand: "Lays",              manufacturer: "PepsiCo" }
+  - { brand: "Doritos",           manufacturer: "PepsiCo" }
+  - { brand: "Cheetos",           manufacturer: "PepsiCo" }
+  - { brand: "Tostitos",          manufacturer: "PepsiCo" }
+  - { brand: "Fritos",            manufacturer: "PepsiCo" }
+  - { brand: "Frito-Lay",         manufacturer: "PepsiCo" }
+  - { brand: "Quaker",            manufacturer: "PepsiCo" }
+  - { brand: "Gatorade",          manufacturer: "PepsiCo" }
+  - { brand: "Tropicana",         manufacturer: "PAI Partners" }               # divested by PepsiCo 2022; majority now PAI Partners
+  - { brand: "Mountain Dew",      manufacturer: "PepsiCo" }
+  - { brand: "Sun Chips",         manufacturer: "PepsiCo" }
+  - { brand: "SunChips",          manufacturer: "PepsiCo" }
+  - { brand: "Smartfood",         manufacturer: "PepsiCo" }
+  - { brand: "Rold Gold",         manufacturer: "PepsiCo" }
+  - { brand: "Stacy's",           manufacturer: "PepsiCo" }
+  - { brand: "Walkers",           manufacturer: "PepsiCo" }                    # UK crisps
+  - { brand: "Sabra",             manufacturer: "PepsiCo" }                    # acquired 100% from Strauss 2023
+
+  # ── Coca-Cola ──────────────────────────────────────────────────────
+  - { brand: "Coca-Cola",         manufacturer: "The Coca-Cola Company" }
+  - { brand: "Coca Cola",         manufacturer: "The Coca-Cola Company" }
+  - { brand: "Coke",              manufacturer: "The Coca-Cola Company" }
+  - { brand: "Sprite",            manufacturer: "The Coca-Cola Company" }
+  - { brand: "Fanta",             manufacturer: "The Coca-Cola Company" }
+  - { brand: "Powerade",          manufacturer: "The Coca-Cola Company" }
+  - { brand: "Minute Maid",       manufacturer: "The Coca-Cola Company" }
+  - { brand: "Dasani",            manufacturer: "The Coca-Cola Company" }
+  - { brand: "Smartwater",        manufacturer: "The Coca-Cola Company" }
+  - { brand: "Vitaminwater",      manufacturer: "The Coca-Cola Company" }
+  - { brand: "Topo Chico",        manufacturer: "The Coca-Cola Company" }
+  - { brand: "Innocent",          manufacturer: "The Coca-Cola Company" }
+
+  # ── Kraft Heinz ────────────────────────────────────────────────────
+  - { brand: "Kraft",             manufacturer: "Kraft Heinz" }
+  - { brand: "Heinz",             manufacturer: "Kraft Heinz" }
+  - { brand: "Oscar Mayer",       manufacturer: "Kraft Heinz" }
+  - { brand: "Kool-Aid",          manufacturer: "Kraft Heinz" }
+  - { brand: "Jell-O",            manufacturer: "Kraft Heinz" }
+  - { brand: "JELL-O",            manufacturer: "Kraft Heinz" }
+  - { brand: "Maxwell House",     manufacturer: "Kraft Heinz" }
+  - { brand: "Velveeta",          manufacturer: "Kraft Heinz" }
+  - { brand: "Ore-Ida",           manufacturer: "Kraft Heinz" }
+  - { brand: "Lunchables",        manufacturer: "Kraft Heinz" }
+  - { brand: "Classico",          manufacturer: "Kraft Heinz" }
+  - { brand: "Capri Sun",         manufacturer: "Kraft Heinz" }                # licensed in US; brand-owner is Capri Sonne GmbH globally
+  - { brand: "Smucker's",  category: "spreads",  manufacturer: "The J.M. Smucker Company" }
+
+  # ── General Mills ──────────────────────────────────────────────────
+  - { brand: "General Mills",     manufacturer: "General Mills" }
+  - { brand: "Cheerios",          manufacturer: "General Mills" }
+  - { brand: "Betty Crocker",     manufacturer: "General Mills" }
+  - { brand: "Pillsbury",         manufacturer: "General Mills" }
+  - { brand: "Nature Valley",     manufacturer: "General Mills" }
+  - { brand: "Cinnamon Toast Crunch", manufacturer: "General Mills" }
+  - { brand: "Lucky Charms",      manufacturer: "General Mills" }
+  - { brand: "Old El Paso",       manufacturer: "General Mills" }
+  - { brand: "Annie's",           manufacturer: "General Mills" }
+  - { brand: "Annie's Homegrown", manufacturer: "General Mills" }
+  - { brand: "Yoplait",  category: "yogurt",  manufacturer: "Lactalis" }       # Yoplait was sold to Lactalis Sept 2024
+  - { brand: "Yoplait",                       manufacturer: "Lactalis" }
+  - { brand: "Cocoa Puffs",       manufacturer: "General Mills" }
+  - { brand: "Trix",              manufacturer: "General Mills" }
+  - { brand: "Wheaties",          manufacturer: "General Mills" }
+  - { brand: "Chex",              manufacturer: "General Mills" }
+  - { brand: "Fiber One",         manufacturer: "General Mills" }
+  - { brand: "Cascadian Farm",    manufacturer: "General Mills" }
+  - { brand: "Bisquick",          manufacturer: "General Mills" }
+  - { brand: "Hamburger Helper",  manufacturer: "General Mills" }
+  - { brand: "Häagen-Dazs",  category: "frozen dessert", manufacturer: "General Mills" }   # international ice cream rights are GM via JV
+
+  # ── Kellanova (former Kellogg's snacks) ────────────────────────────
+  - { brand: "Pringles",          manufacturer: "Kellanova" }
+  - { brand: "Cheez-It",          manufacturer: "Kellanova" }
+  - { brand: "Cheez Its",         manufacturer: "Kellanova" }
+  - { brand: "Pop-Tarts",         manufacturer: "Kellanova" }
+  - { brand: "Pop Tarts",         manufacturer: "Kellanova" }
+  - { brand: "Eggo",              manufacturer: "Kellanova" }
+  - { brand: "Rice Krispies Treats", manufacturer: "Kellanova" }
+  - { brand: "Special K",         manufacturer: "Kellanova" }
+  - { brand: "Nutri-Grain",       manufacturer: "Kellanova" }
+  - { brand: "MorningStar Farms", manufacturer: "Kellanova" }
+  - { brand: "Keebler",           manufacturer: "Ferrero Group" }              # acquired from Kellogg's 2019
+  - { brand: "Famous Amos",       manufacturer: "Ferrero Group" }              # part of the 2019 cookies-and-fruit-snacks transfer
+
+  # ── WK Kellogg Co (US cereal) ──────────────────────────────────────
+  - { brand: "Kellogg's",         manufacturer: "WK Kellogg Co" }
+  - { brand: "Kellogg'S",         manufacturer: "WK Kellogg Co" }
+  - { brand: "Kelloggs",          manufacturer: "WK Kellogg Co" }
+  - { brand: "Kellogg",           manufacturer: "WK Kellogg Co" }
+  - { brand: "Frosted Flakes",    manufacturer: "WK Kellogg Co" }
+  - { brand: "Frosted Mini-Wheats", manufacturer: "WK Kellogg Co" }
+  - { brand: "Rice Krispies",     manufacturer: "WK Kellogg Co" }
+  - { brand: "Raisin Bran",       manufacturer: "WK Kellogg Co" }
+  - { brand: "Froot Loops",       manufacturer: "WK Kellogg Co" }
+  - { brand: "Corn Pops",         manufacturer: "WK Kellogg Co" }
+  - { brand: "Apple Jacks",       manufacturer: "WK Kellogg Co" }
+  - { brand: "Cocoa Krispies",    manufacturer: "WK Kellogg Co" }
+
+  # ── The Hershey Company ────────────────────────────────────────────
+  - { brand: "Hershey's",         manufacturer: "The Hershey Company" }
+  - { brand: "Hershey",           manufacturer: "The Hershey Company" }
+  - { brand: "Reese's",           manufacturer: "The Hershey Company" }
+  - { brand: "Reeses",            manufacturer: "The Hershey Company" }
+  - { brand: "Kit Kat",  category: "candy",  manufacturer: "The Hershey Company" }   # US-only licensed manufacture
+  - { brand: "Kisses",            manufacturer: "The Hershey Company" }
+  - { brand: "Twizzlers",         manufacturer: "The Hershey Company" }
+  - { brand: "Jolly Rancher",     manufacturer: "The Hershey Company" }
+  - { brand: "Ice Breakers",      manufacturer: "The Hershey Company" }
+  - { brand: "SkinnyPop",         manufacturer: "The Hershey Company" }
+
+  # ── Ferrero Group ──────────────────────────────────────────────────
+  - { brand: "Ferrero",           manufacturer: "Ferrero Group" }
+  - { brand: "Ferrero Rocher",    manufacturer: "Ferrero Group" }
+  - { brand: "Nutella",           manufacturer: "Ferrero Group" }
+  - { brand: "Kinder",            manufacturer: "Ferrero Group" }
+  - { brand: "Tic Tac",           manufacturer: "Ferrero Group" }
+  - { brand: "Raffaello",         manufacturer: "Ferrero Group" }
+
+  # ── Church & Dwight ────────────────────────────────────────────────
+  - { brand: "Arm & Hammer",      manufacturer: "Church & Dwight" }
+  - { brand: "Arm and Hammer",    manufacturer: "Church & Dwight" }
+  - { brand: "OxiClean",          manufacturer: "Church & Dwight" }
+  - { brand: "Trojan",            manufacturer: "Church & Dwight" }
+
+  # ── Colgate-Palmolive ──────────────────────────────────────────────
+  - { brand: "Colgate",           manufacturer: "Colgate-Palmolive" }
+  - { brand: "Palmolive",         manufacturer: "Colgate-Palmolive" }
+  - { brand: "Speed Stick",       manufacturer: "Colgate-Palmolive" }
+  - { brand: "Hill's",            manufacturer: "Colgate-Palmolive" }
+  - { brand: "Ajax",              manufacturer: "Colgate-Palmolive" }
+
+  # ── Kimberly-Clark ─────────────────────────────────────────────────
+  - { brand: "Kleenex",           manufacturer: "Kimberly-Clark" }
+  - { brand: "Huggies",           manufacturer: "Kimberly-Clark" }
+  - { brand: "Cottonelle",        manufacturer: "Kimberly-Clark" }
+  - { brand: "Scott",  category: "household",  manufacturer: "Kimberly-Clark" }
+  - { brand: "Scott",  category: "personal care", manufacturer: "Kimberly-Clark" }
+  - { brand: "Viva",              manufacturer: "Kimberly-Clark" }
+  - { brand: "Andrex",            manufacturer: "Kimberly-Clark" }
+
+  # ── Other CPG conglomerates ────────────────────────────────────────
+  - { brand: "Tyson",             manufacturer: "Tyson Foods" }
+  - { brand: "Chobani",           manufacturer: "Chobani" }
+  - { brand: "Haribo",            manufacturer: "Haribo" }
+  - { brand: "Lindt",             manufacturer: "Lindt & Sprüngli" }
+  - { brand: "Pepperidge Farm",   manufacturer: "Campbell Soup Company" }
+  - { brand: "Goldfish",          manufacturer: "Campbell Soup Company" }
+  - { brand: "Campbell's",        manufacturer: "Campbell Soup Company" }
+  - { brand: "Prego",             manufacturer: "Campbell Soup Company" }
+  - { brand: "V8",                manufacturer: "Campbell Soup Company" }
+  - { brand: "Mondelez",          manufacturer: "Mondelez International" }     # extractor-error rows where brand=parent
+  - { brand: "Lurpak",            manufacturer: "Arla Foods" }
+  - { brand: "Arizona",           manufacturer: "Arizona Beverage Company" }
+  - { brand: "Clif",              manufacturer: "Mondelez International" }     # acquired Aug 2022
+  - { brand: "Clif Bar",          manufacturer: "Mondelez International" }
+  - { brand: "Ziploc",            manufacturer: "S. C. Johnson & Son" }
+  - { brand: "Glad",              manufacturer: "The Clorox Company" }
+  - { brand: "Clorox",            manufacturer: "The Clorox Company" }
+  - { brand: "Hidden Valley",     manufacturer: "The Clorox Company" }
+  - { brand: "Kingsford",         manufacturer: "The Clorox Company" }
+  - { brand: "Brita",             manufacturer: "The Clorox Company" }
+  - { brand: "Burt's Bees",       manufacturer: "The Clorox Company" }
+  - { brand: "Finish",            manufacturer: "Reckitt" }
+  - { brand: "Lysol",             manufacturer: "Reckitt" }
+  - { brand: "Air Wick",          manufacturer: "Reckitt" }
+  - { brand: "Mucinex",           manufacturer: "Reckitt" }
+  - { brand: "Folgers",           manufacturer: "The J.M. Smucker Company" }
+  - { brand: "Smucker's",         manufacturer: "The J.M. Smucker Company" }
+  - { brand: "Jif",               manufacturer: "The J.M. Smucker Company" }
+  - { brand: "Milk-Bone",         manufacturer: "The J.M. Smucker Company" }
+  - { brand: "Milk Bone",         manufacturer: "The J.M. Smucker Company" }
+  - { brand: "Meow Mix",          manufacturer: "Post Holdings" }
+  - { brand: "Honey Bunches of Oats", manufacturer: "Post Holdings" }
+  - { brand: "Post",              manufacturer: "Post Holdings" }
+  - { brand: "Welch's",           manufacturer: "Welch Foods Inc." }
+  - { brand: "Hostess",           manufacturer: "The J.M. Smucker Company" }   # acquired Nov 2023
+  - { brand: "Twinkies",          manufacturer: "The J.M. Smucker Company" }
+  - { brand: "Ding Dongs",        manufacturer: "The J.M. Smucker Company" }
+  - { brand: "Pillsbury",         manufacturer: "General Mills" }
+  - { brand: "Beiersdorf",        manufacturer: "Beiersdorf" }
+  - { brand: "Nivea",             manufacturer: "Beiersdorf" }
+  - { brand: "Eucerin",           manufacturer: "Beiersdorf" }
+
+  # ── Retailer house brands (the retailer IS the manufacturer-of-record) ──
+  - { brand: "Great Value",       manufacturer: "Walmart" }
+  - { brand: "Kirkland Signature", manufacturer: "Costco" }
+  - { brand: "Kirkland",          manufacturer: "Costco" }
+  - { brand: "Up&Up",             manufacturer: "Target" }
+  - { brand: "Up & Up",           manufacturer: "Target" }
+  - { brand: "Market Pantry",     manufacturer: "Target" }
+  - { brand: "Good & Gather",     manufacturer: "Target" }
+  - { brand: "Trader Joe's",      manufacturer: "Trader Joe's" }
+  - { brand: "Whole Foods",       manufacturer: "Amazon" }
+  - { brand: "365",               manufacturer: "Amazon" }
+  - { brand: "365 by Whole Foods Market", manufacturer: "Amazon" }
+  - { brand: "Tesco",             manufacturer: "Tesco" }
+  - { brand: "Sainsbury's",       manufacturer: "Sainsbury's" }
+  - { brand: "Asda",              manufacturer: "Asda" }
+  - { brand: "Morrisons",         manufacturer: "Morrisons" }
+  - { brand: "Aldi",              manufacturer: "Aldi" }
+  - { brand: "Lidl",              manufacturer: "Lidl" }
+  - { brand: "Woolworths",        manufacturer: "Woolworths Group" }
+  - { brand: "Coles",             manufacturer: "Coles Group" }
+  - { brand: "Kroger",            manufacturer: "Kroger" }
+  - { brand: "Private Selection", manufacturer: "Kroger" }
+  - { brand: "Simple Truth",      manufacturer: "Kroger" }
+  - { brand: "Dollar Tree",       manufacturer: "Dollar Tree" }
