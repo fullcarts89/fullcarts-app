@@ -51,8 +51,8 @@ export default function RestorationCorner({ rows }: Props) {
           const before = parseFloat(r.size_before);
           const after = parseFloat(r.size_after);
           const d = deltaPct(before, after);
-          return (
-            <div key={r.id} className={styles["restore-row"]}>
+          const inner = (
+            <>
               <div className={styles["restore-date"]}>
                 {monthYear(isoDay(r.observed_date))}
               </div>
@@ -74,6 +74,19 @@ export default function RestorationCorner({ rows }: Props) {
                   <span className={styles.delta}>+{d.toFixed(0)}%</span>
                 )}
               </div>
+            </>
+          );
+          return r.entity_id ? (
+            <a
+              key={r.id}
+              className={styles["restore-row"]}
+              href={`/products/${r.entity_id}`}
+            >
+              {inner}
+            </a>
+          ) : (
+            <div key={r.id} className={styles["restore-row"]}>
+              {inner}
             </div>
           );
         })}

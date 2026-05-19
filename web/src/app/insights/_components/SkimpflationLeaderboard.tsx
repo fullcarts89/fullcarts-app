@@ -43,7 +43,13 @@ export default function SkimpflationLeaderboard({ rows }: Props) {
       <div className={styles["skimp-grid"]}>
         {rows.map((r) => {
           const img = claimImageUrl(r.image_storage_path) || r.source_image || null;
-          const href = r.source_url || null;
+          const entityHref = r.matched_entity_id
+            ? `/products/${r.matched_entity_id}`
+            : null;
+          const sourceHref = r.source_url || null;
+          // Primary link: product scorecard when matched; otherwise the
+          // source URL. Cite-friendly destinations rank above raw sources.
+          const primary = entityHref || sourceHref;
           const body = (
             <>
               {img && (
@@ -63,25 +69,35 @@ export default function SkimpflationLeaderboard({ rows }: Props) {
                   {r.observed_date && (
                     <span>Observed {isoDay(r.observed_date)}</span>
                   )}
-                  {href && <span className={styles["skimp-source-link"]}>View source ↗</span>}
+                  {entityHref ? (
+                    <span className={styles["skimp-source-link"]}>View product →</span>
+                  ) : (
+                    sourceHref && (
+                      <span className={styles["skimp-source-link"]}>View source ↗</span>
+                    )
+                  )}
                 </div>
               </div>
             </>
           );
-          return href ? (
+          if (!primary) {
+            return (
+              <div key={r.id} className={styles["skimp-row"]}>
+                {body}
+              </div>
+            );
+          }
+          const isExternal = primary.startsWith("http");
+          return (
             <a
               key={r.id}
               className={styles["skimp-row"]}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={primary}
+              target={isExternal ? "_blank" : undefined}
+              rel={isExternal ? "noopener noreferrer" : undefined}
             >
               {body}
             </a>
-          ) : (
-            <div key={r.id} className={styles["skimp-row"]}>
-              {body}
-            </div>
           );
         })}
       </div>

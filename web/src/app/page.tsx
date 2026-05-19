@@ -78,7 +78,14 @@ export default async function Home() {
 
           {/* JUST DOCUMENTED sidecar */}
           {data.just_doc && (
-            <a href={brandHref(data.just_doc.brand)} className={styles["just-doc"]}>
+            <a
+              href={
+                data.just_doc.entity_id
+                  ? `/products/${data.just_doc.entity_id}`
+                  : brandHref(data.just_doc.brand)
+              }
+              className={styles["just-doc"]}
+            >
               <div className={styles["just-doc-tag"]}>
                 Just documented · {isoDay(data.just_doc.observed_date)}
               </div>
@@ -249,7 +256,9 @@ export default async function Home() {
                 <a
                   key={`${e.brand}-${i}`}
                   className={styles["rb-card"]}
-                  href={brandHref(e.brand)}
+                  href={
+                    e.entity_id ? `/products/${e.entity_id}` : brandHref(e.brand)
+                  }
                 >
                   <div className={styles["rb-img"]}>
                     <img

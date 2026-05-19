@@ -42,25 +42,35 @@ export default function EvidenceWall({ rows }: Props) {
   }
   return (
     <div className={styles["wall-grid"]}>
-      {cards.map(({ row: r, img }) => (
-        <a
-          key={r.id}
-          className={styles["wall-card"]}
-          href={r.source_url || "#"}
-          target={r.source_url ? "_blank" : undefined}
-          rel={r.source_url ? "noopener noreferrer" : undefined}
-        >
-          <div className={styles["wall-img"]}>
-            <img src={img!} alt={r.product_name || "Spot the difference"} loading="lazy" />
-          </div>
-          <div className={styles["wall-body"]}>
-            <div className={styles["wall-product"]}>
-              {r.product_name || "Documented case"}
+      {cards.map(({ row: r, img }) => {
+        // Prefer the product scorecard when matched — gives readers a
+        // FullCarts-internal citation page instead of punting them to
+        // the original source.
+        const entityHref = r.matched_entity_id
+          ? `/products/${r.matched_entity_id}`
+          : null;
+        const primary = entityHref || r.source_url || "#";
+        const isExternal = primary.startsWith("http");
+        return (
+          <a
+            key={r.id}
+            className={styles["wall-card"]}
+            href={primary}
+            target={isExternal ? "_blank" : undefined}
+            rel={isExternal ? "noopener noreferrer" : undefined}
+          >
+            <div className={styles["wall-img"]}>
+              <img src={img!} alt={r.product_name || "Spot the difference"} loading="lazy" />
             </div>
-            {r.brand && <div className={styles["wall-brand"]}>{r.brand}</div>}
-          </div>
-        </a>
-      ))}
+            <div className={styles["wall-body"]}>
+              <div className={styles["wall-product"]}>
+                {r.product_name || "Documented case"}
+              </div>
+              {r.brand && <div className={styles["wall-brand"]}>{r.brand}</div>}
+            </div>
+          </a>
+        );
+      })}
     </div>
   );
 }

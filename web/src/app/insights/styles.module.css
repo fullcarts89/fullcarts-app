@@ -21,7 +21,16 @@
 .hs-source { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 14px; }
 
 /* SECTION SCAFFOLDING */
-.block { padding: 72px 0; border-top: 1px solid var(--border-subtle); }
+.block { padding: 72px 0; border-top: 1px solid var(--border-subtle); scroll-margin-top: 80px; }
+
+/* Sticky section nav. Sits below the BLS headline; jumps the reader to
+   any of the 9 sections without 70 viewports of scroll. Renders as a
+   single horizontally-scrollable row on narrow viewports. */
+.sectionNav { position: sticky; top: 60px; z-index: 10; display: flex; gap: 4px; overflow-x: auto; padding: 12px 0; margin-top: 32px; background: var(--bg-primary); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); scrollbar-width: thin; }
+.sectionNav::-webkit-scrollbar { height: 4px; }
+.sectionNav::-webkit-scrollbar-thumb { background: var(--border-medium); border-radius: 2px; }
+.sectionNavLink { flex: 0 0 auto; padding: 8px 12px; font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-tertiary); text-decoration: none; border: 1px solid transparent; border-radius: 2px; white-space: nowrap; transition: color .15s, border-color .15s, background .15s; }
+.sectionNavLink:hover { color: var(--text-primary); border-color: var(--border-subtle); background: var(--bg-secondary); }
 .section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 32px; gap: 16px; flex-wrap: wrap; }
 .section-head h2 { font-family: var(--font-headline); font-weight: 700; font-size: 32px; letter-spacing: -0.02em; }
 .section-head .meta { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
@@ -101,7 +110,8 @@
 .restore-card { background: linear-gradient(180deg, rgba(16,185,129,.05) 0%, var(--bg-secondary) 70%); border: 1px solid var(--green-border); padding: 32px; }
 .restore-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--green-base); padding: 4px 10px; background: var(--green-bg); border: 1px solid var(--green-border); border-radius: 2px; display: inline-block; margin-bottom: 16px; }
 .restore-list { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--border-subtle); margin-top: 12px; }
-.restore-row { display: grid; grid-template-columns: 100px 1fr 240px; gap: 24px; padding: 18px 0; border-bottom: 1px solid var(--border-subtle); align-items: center; }
+.restore-row { display: grid; grid-template-columns: 100px 1fr 240px; gap: 24px; padding: 18px 0; border-bottom: 1px solid var(--border-subtle); align-items: center; text-decoration: none; color: inherit; transition: background .15s; }
+a.restore-row:hover { background: var(--bg-hover); }
 .restore-date { font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); letter-spacing: 0.05em; }
 .restore-product { font-family: var(--font-headline); font-weight: 600; font-size: 16px; color: var(--text-primary); }
 .restore-brand { font-family: var(--font-mono); font-size: 11px; color: var(--green-base); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }

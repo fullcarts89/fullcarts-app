@@ -261,6 +261,14 @@ export default function TimelineExplorer({ ranking, events }: Props) {
                     </div>
                   </button>
                   <div id={expandedId} className={styles["evt-expanded"]}>
+                    {e.entity_id && (
+                      <a
+                        className={styles["evt-product-link"]}
+                        href={`/products/${e.entity_id}`}
+                      >
+                        View this product&rsquo;s full scorecard →
+                      </a>
+                    )}
                     <div className={styles["src-list"]}>
                       {shownSources.map((s, idx) => {
                         const key = `${s.claim_id}-${idx}`;

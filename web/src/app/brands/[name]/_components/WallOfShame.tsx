@@ -145,13 +145,25 @@ export default function WallOfShame({ events, entities }: Props) {
             </>
           );
 
-          return linkUrl ? (
+          // Prefer the product scorecard (citation page) over the
+          // external source. Source URL is still exposed via the
+          // "View source ↗" pill at the bottom of the card.
+          const cardHref = e.entity_id
+            ? `/products/${e.entity_id}`
+            : linkUrl;
+          const isExternal = !e.entity_id && !!linkUrl;
+          return cardHref ? (
             <a
               key={e.event_id}
               className={styles["shame-card"]}
-              href={linkUrl}
-              target="_blank"
-              rel="noopener"
+              href={cardHref}
+              target={isExternal ? "_blank" : undefined}
+              rel={isExternal ? "noopener" : undefined}
+              aria-label={
+                e.entity_id
+                  ? `${e.brand} ${productName} — product scorecard`
+                  : `${e.brand} ${productName} — view source (opens in new tab)`
+              }
             >
               {cardInner}
             </a>

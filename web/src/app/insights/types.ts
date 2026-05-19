@@ -57,6 +57,7 @@ export interface TaggedClaim {
   image_storage_path: string | null;
   evidence_tags: string[] | null;
   raw_item_id: string | null;
+  matched_entity_id?: string | null;
   source_url?: string | null;
   source_image?: string | null;
 }
@@ -77,6 +78,7 @@ export interface LeaderboardRow {
 
 export interface RestorationRow {
   id: string;
+  entity_id: string | null;
   brand: string;
   product_name: string;
   size_before: string;
