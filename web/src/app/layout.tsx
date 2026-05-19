@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -25,6 +25,17 @@ const SITE_NAME = "FullCarts";
 const DEFAULT_TITLE = "FullCarts — Making Shrinkflation Impossible to Hide";
 const DEFAULT_DESC =
   "Track shrinkflation with verified evidence. See which brands are shrinking products while raising prices.";
+
+// Viewport + theme-color split out per Next 15+ API. Tells iOS/Android
+// browser chrome to use the graphite base so the URL bar matches the
+// page palette; color-scheme: dark suppresses the browser's automatic
+// light-mode form control styling on a dark-only site.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#0a0b0d",
+  colorScheme: "dark",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
