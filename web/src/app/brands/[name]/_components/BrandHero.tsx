@@ -38,7 +38,7 @@ export default function BrandHero({ ranking, manufacturer }: Props) {
       <div className={styles["stat-grid"]}>
         <div className={styles.stat}>
           <div className={styles["stat-label"]}>Total events</div>
-          <div className={`${styles["stat-value"]} ${styles.red}`}>{events}</div>
+          <div className={styles["stat-value"]}>{events}</div>
           <div className={styles["stat-meta"]}>documented shrinkflations</div>
         </div>
         <div className={styles.stat}>

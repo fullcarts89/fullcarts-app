@@ -121,7 +121,7 @@ export default function ProductHero({ entity, events, variants }: Props) {
         <div className={styles["stat-grid"]}>
           <div className={styles.stat}>
             <div className={styles["stat-label"]}>Total events</div>
-            <div className={`${styles["stat-value"]} ${styles.red}`}>
+            <div className={styles["stat-value"]}>
               {eventCount}
             </div>
             <div className={styles["stat-meta"]}>

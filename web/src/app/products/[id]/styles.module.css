@@ -8,7 +8,7 @@
 .breadcrumb a { color: var(--text-secondary); text-decoration: none; }
 .breadcrumb a:hover { color: var(--text-primary); }
 .breadcrumb .sep { padding: 0 8px; color: var(--text-tertiary); }
-.breadcrumb .current { color: var(--red-base); }
+.breadcrumb .current { color: var(--text-primary); }
 
 /* HERO — split layout: product image on left, info on right */
 .product-hero { display: grid; grid-template-columns: 420px 1fr; gap: 48px; padding: 40px 0 64px; align-items: start; }

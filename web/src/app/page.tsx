@@ -187,7 +187,7 @@ export default async function Home() {
                     <span className={styles.l}>products tracked</span>
                   </div>
                   <div className={styles["botw-stat"]}>
-                    <span className={styles.v}>
+                    <span className={`${styles.v} ${styles["v-delta"]}`}>
                       {data.brand_of_week.avg_shrink_per_event.toFixed(1)}%
                     </span>
                     <span className={styles.l}>avg shrinkage</span>

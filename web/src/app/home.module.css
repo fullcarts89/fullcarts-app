@@ -34,7 +34,7 @@
 .search-hint { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); margin-top: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
 .counter-strip { margin-top: 36px; display: flex; gap: 32px; padding-top: 32px; border-top: 1px solid var(--border-subtle); flex-wrap: wrap; }
 .ctr { display: flex; flex-direction: column; gap: 4px; }
-.ctr-val { font-family: var(--font-mono); font-size: 28px; font-weight: 700; color: var(--red-base); line-height: 1; }
+.ctr-val { font-family: var(--font-mono); font-size: 28px; font-weight: 700; color: var(--text-primary); line-height: 1; }
 .ctr-lbl { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); max-width: 200px; }
 
 /* JUST DOCUMENTED side card */
@@ -86,7 +86,8 @@ section.block { padding: 64px 0; border-top: 1px solid var(--border-subtle); }
 .botw-reason { font-size: 15px; color: var(--text-secondary); line-height: 1.5; }
 .botw-stats { display: flex; gap: 24px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
 .botw-stat { display: flex; flex-direction: column; gap: 2px; }
-.botw-stat .v { font-family: var(--font-mono); font-size: 22px; font-weight: 700; color: var(--red-base); }
+.botw-stat .v { font-family: var(--font-mono); font-size: 22px; font-weight: 700; color: var(--text-primary); }
+.botw-stat .v-delta { color: var(--red-base); }
 .botw-stat .l { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
 .botw-cta { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--red-base); text-decoration: none; padding-top: 8px; display: inline-flex; align-items: center; gap: 6px; }
 .botw-cta .arrow { transition: transform .15s; display: inline-block; }
