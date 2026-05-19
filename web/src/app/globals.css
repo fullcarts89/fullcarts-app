@@ -19,6 +19,13 @@
   --red-hover: #ef4444;
   --red-bg: rgba(220, 38, 38, 0.1);
   --red-border: rgba(220, 38, 38, 0.2);
+  /* --red-base hits ~4.1:1 on --bg-primary — fine for large text and
+     decorative borders / fills, but fails WCAG AA (4.5:1) when used
+     for small body text. --red-text is a slightly brighter variant
+     (5.45:1) reserved for sub-18px text usages so the brand colour
+     stays consistent on hero deltas/borders without sacrificing
+     contrast on small labels, CTAs, and meta links. */
+  --red-text: #ef4444;
 
   --green-base: #10b981;
   --green-bg: rgba(16, 185, 129, 0.1);

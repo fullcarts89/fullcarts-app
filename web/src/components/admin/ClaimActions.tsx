@@ -108,7 +108,7 @@ export function ClaimActions({
           <button
             onClick={() => handleAction("discarded")}
             disabled={isPending}
-            className="px-3 py-1 text-xs font-medium rounded border border-[var(--red-border)] bg-[var(--red-bg)] text-[var(--red-base)] hover:brightness-125 transition-all disabled:opacity-50"
+            className="px-3 py-1 text-xs font-medium rounded border border-[var(--red-border)] bg-[var(--red-bg)] text-[var(--red-text)] hover:brightness-125 transition-all disabled:opacity-50"
           >
             {isPending ? "..." : "Discard"}
           </button>

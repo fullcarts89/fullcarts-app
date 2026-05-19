@@ -73,7 +73,7 @@ function ConfidenceBadge({ value, label }: { value: number; label: string }) {
   const color =
     value >= 0.8 ? "bg-[var(--green-bg)] text-[var(--green-base)] border-[var(--green-border)]" :
     value >= 0.5 ? "bg-[var(--amber-bg)] text-[var(--amber-base)] border-amber-500/20" :
-    "bg-[var(--red-bg)] text-[var(--red-base)] border-[var(--red-border)]";
+    "bg-[var(--red-bg)] text-[var(--red-text)] border-[var(--red-border)]";
   return (
     <span className={`inline-block px-2 py-0.5 text-xs font-mono rounded border ${color}`}>
       {label}: {(value * 100).toFixed(0)}%
@@ -93,9 +93,9 @@ function SizeChange({ claim }: { claim: Claim }) {
   return (
     <div className="font-mono text-sm">
       <span className="text-[var(--text-secondary)]">{old}</span>
-      <span className="mx-2 text-[var(--red-base)]">&rarr;</span>
+      <span className="mx-2 text-[var(--red-text)]">&rarr;</span>
       <span className="text-[var(--text-primary)]">{newS}</span>
-      {pct && <span className="text-[var(--red-base)] text-xs ml-1">{pct}</span>}
+      {pct && <span className="text-[var(--red-text)] text-xs ml-1">{pct}</span>}
     </div>
   );
 }

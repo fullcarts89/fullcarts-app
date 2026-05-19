@@ -54,7 +54,7 @@ export function PipelineStats({
               pipelineHealthy ? "bg-[var(--green-base)]" : "bg-[var(--red-base)]"
             }`}
           />
-          <span className={pipelineHealthy ? "text-[var(--green-base)]" : "text-[var(--red-base)]"}>
+          <span className={pipelineHealthy ? "text-[var(--green-base)]" : "text-[var(--red-text)]"}>
             {pipelineHealthy ? "Healthy" : "Stale"} &mdash; last extraction {lastExtractionAgo}
           </span>
         </div>
@@ -80,7 +80,7 @@ export function PipelineStats({
         <StatusCard
           label="Discarded"
           count={statusCounts.discarded}
-          colorClass="bg-[var(--red-bg)] border-[var(--red-border)] text-[var(--red-base)]"
+          colorClass="bg-[var(--red-bg)] border-[var(--red-border)] text-[var(--red-text)]"
         />
       </div>
 

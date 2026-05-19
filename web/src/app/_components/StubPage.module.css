@@ -16,7 +16,7 @@
 .row-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
 
 .cta-row { display: flex; gap: 12px; flex-wrap: wrap; padding-top: 24px; border-top: 1px solid var(--border-subtle); }
-.cta { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--red-base); text-decoration: none; padding: 12px 18px; border: 1px solid var(--red-border); transition: all .15s; }
+.cta { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--red-text); text-decoration: none; padding: 12px 18px; border: 1px solid var(--red-border); transition: all .15s; }
 .cta:hover { background: var(--red-bg); }
 .cta-secondary { color: var(--text-secondary); border-color: var(--border-subtle); }
 .cta-secondary:hover { color: var(--text-primary); border-color: var(--border-medium); background: var(--bg-hover); }

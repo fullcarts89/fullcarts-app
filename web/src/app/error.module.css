@@ -13,7 +13,7 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: var(--red-base);
+  color: var(--red-text);
 }
 
 .heading {
@@ -67,6 +67,6 @@
 }
 
 .secondary:hover {
-  border-color: var(--red-base);
-  color: var(--red-base);
+  border-color: var(--red-text);
+  color: var(--red-text);
 }

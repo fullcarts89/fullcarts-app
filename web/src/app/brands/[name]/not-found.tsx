@@ -21,7 +21,7 @@ export default function BrandNotFound() {
           </h1>
           <p style={{ color: "var(--text-secondary)", fontSize: 18 }}>
             We don&apos;t have a record for that brand yet.{" "}
-            <Link href="/" style={{ color: "var(--red-base)" }}>
+            <Link href="/" style={{ color: "var(--red-text)" }}>
               Back home →
             </Link>
           </p>

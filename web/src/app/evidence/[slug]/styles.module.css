@@ -11,8 +11,8 @@
 .current { color: var(--text-primary); }
 
 .hero { padding: 24px 0 56px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 56px; }
-.eyebrow { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--red-base); padding: 6px 10px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 2px; margin-bottom: 20px; }
-.dot { font-size: 8px; color: var(--red-base); }
+.eyebrow { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--red-text); padding: 6px 10px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 2px; margin-bottom: 20px; }
+.dot { font-size: 8px; color: var(--red-text); }
 .hero h1 { font-family: var(--font-headline); font-size: clamp(40px, 6vw, 72px); font-weight: 700; line-height: 1.02; letter-spacing: -0.02em; margin: 0 0 20px; }
 .intro { font-size: 17px; line-height: 1.55; color: var(--text-secondary); max-width: 720px; margin: 0 0 32px; }
 .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; max-width: 720px; }

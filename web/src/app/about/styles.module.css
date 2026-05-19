@@ -5,10 +5,10 @@
 
 /* HERO */
 .hero { padding: 64px 0 48px; max-width: 880px; }
-.hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 999px; padding: 6px 16px; font-family: var(--font-mono); font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--red-base); margin-bottom: 24px; }
+.hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 999px; padding: 6px 16px; font-family: var(--font-mono); font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--red-text); margin-bottom: 24px; }
 .hero-eyebrow::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--red-base); }
 .hero h1 { font-family: var(--font-headline); font-weight: 700; font-size: clamp(48px, 8vw, 80px); letter-spacing: -0.03em; line-height: 0.98; margin-bottom: 24px; }
-.hero h1 .red { color: var(--red-base); }
+.hero h1 .red { color: var(--red-text); }
 .hero-lede { font-size: 20px; color: var(--text-secondary); max-width: 720px; line-height: 1.5; }
 .hero-lede strong { color: var(--text-primary); font-weight: 600; }
 
@@ -23,17 +23,17 @@
 /* WHAT WE COUNT — two-card grid */
 .count-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
 .count-card { background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 24px; }
-.count-card .count-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--red-base); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle); }
+.count-card .count-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--red-text); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle); }
 .count-card:last-of-type .count-eyebrow { color: var(--text-tertiary); }
 .count-card ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
 .count-card li { font-family: var(--font-sans); font-size: 14px; color: var(--text-primary); padding-left: 22px; position: relative; line-height: 1.5; }
-.count-card li::before { content: '·'; position: absolute; left: 4px; top: -2px; color: var(--red-base); font-size: 24px; line-height: 1; font-weight: 700; }
+.count-card li::before { content: '·'; position: absolute; left: 4px; top: -2px; color: var(--red-text); font-size: 24px; line-height: 1; font-weight: 700; }
 .count-card:last-of-type li::before { color: var(--text-tertiary); }
 
 /* METHODOLOGY — numbered step list */
 .steps-list { display: flex; flex-direction: column; border-top: 1px solid var(--border-subtle); }
 .step-row { display: grid; grid-template-columns: 80px 1fr; gap: 24px; padding: 22px 0; border-bottom: 1px solid var(--border-subtle); align-items: start; }
-.step-num { font-family: var(--font-mono); font-size: 28px; font-weight: 700; color: var(--red-base); line-height: 1; padding-top: 2px; }
+.step-num { font-family: var(--font-mono); font-size: 28px; font-weight: 700; color: var(--red-text); line-height: 1; padding-top: 2px; }
 .step-title { font-family: var(--font-headline); font-weight: 700; font-size: 18px; color: var(--text-primary); letter-spacing: -0.01em; margin-bottom: 6px; }
 .step-body { font-family: var(--font-sans); font-size: 14px; color: var(--text-secondary); line-height: 1.6; max-width: 720px; }
 
@@ -45,14 +45,14 @@
 .source-name { font-family: var(--font-headline); font-weight: 700; font-size: 22px; letter-spacing: -0.015em; color: var(--text-primary); }
 .source-desc { font-family: var(--font-sans); font-size: 13px; color: var(--text-secondary); line-height: 1.55; }
 .source-link { margin-top: auto; padding-top: 14px; font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); border-top: 1px solid var(--border-subtle); transition: color .15s; }
-.source-card:hover .source-link { color: var(--red-base); }
+.source-card:hover .source-link { color: var(--red-text); }
 
 /* SUBMIT A TIP */
 .tip-card { background: linear-gradient(180deg, rgba(220,38,38,.04) 0%, var(--bg-secondary) 60%); border: 1px solid var(--red-border); padding: 32px; max-width: 760px; }
-.tip-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--red-base); padding: 4px 10px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 2px; display: inline-block; margin-bottom: 16px; }
+.tip-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--red-text); padding: 4px 10px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 2px; display: inline-block; margin-bottom: 16px; }
 .tip-body { font-family: var(--font-sans); font-size: 15px; color: var(--text-secondary); line-height: 1.6; }
 .tip-link { color: var(--text-primary); text-decoration: none; border-bottom: 1px solid var(--red-base); padding-bottom: 1px; font-weight: 500; transition: color .15s; }
-.tip-link:hover { color: var(--red-base); }
+.tip-link:hover { color: var(--red-text); }
 .tip-meta { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
 
 /* TIP FORM */
@@ -60,19 +60,19 @@
 .tip-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .tip-form-field { display: flex; flex-direction: column; gap: 6px; }
 .tip-form-field label { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); font-weight: 600; display: flex; align-items: center; gap: 8px; }
-.tip-form-field .req { font-size: 9px; color: var(--red-base); letter-spacing: 0.1em; }
+.tip-form-field .req { font-size: 9px; color: var(--red-text); letter-spacing: 0.1em; }
 .tip-form-field input, .tip-form-field textarea { background: var(--bg-primary); border: 1px solid var(--border-subtle); color: var(--text-primary); font-family: var(--font-sans); font-size: 14px; padding: 10px 12px; outline: none; transition: border-color .15s; line-height: 1.5; resize: vertical; }
 .tip-form-field input::placeholder, .tip-form-field textarea::placeholder { color: var(--text-tertiary); }
-.tip-form-field input:focus, .tip-form-field textarea:focus { border-color: var(--red-base); }
+.tip-form-field input:focus, .tip-form-field textarea:focus { border-color: var(--red-text); }
 .tip-form-field input:disabled, .tip-form-field textarea:disabled { opacity: 0.5; }
-.tip-form-error { font-family: var(--font-mono); font-size: 12px; color: var(--red-base); padding: 10px 12px; background: var(--red-bg); border: 1px solid var(--red-border); }
+.tip-form-error { font-family: var(--font-mono); font-size: 12px; color: var(--red-text); padding: 10px 12px; background: var(--red-bg); border: 1px solid var(--red-border); }
 .tip-form-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-top: 4px; }
 .tip-form-submit { background: var(--red-base); border: 1px solid var(--red-base); color: #fff; font-family: var(--font-mono); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 12px 22px; cursor: pointer; transition: opacity .15s; }
 .tip-form-submit:hover { opacity: 0.9; }
 .tip-form-submit:disabled { opacity: 0.5; cursor: wait; }
 .tip-form-note { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); letter-spacing: 0.06em; flex: 1; min-width: 240px; line-height: 1.45; }
 .tip-form-success { gap: 12px; }
-.tip-form-success .tip-form-status { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--red-base); padding: 4px 10px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 2px; display: inline-block; align-self: flex-start; }
+.tip-form-success .tip-form-status { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--red-text); padding: 4px 10px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 2px; display: inline-block; align-self: flex-start; }
 .tip-form-success p { font-size: 15px; color: var(--text-secondary); line-height: 1.6; }
 .tip-form-success .tip-form-submit { align-self: flex-start; }
 
@@ -84,9 +84,9 @@
 .contact-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
 .contact-card { background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 24px; display: flex; flex-direction: column; gap: 10px; transition: border-color .15s, transform .15s; text-decoration: none; color: inherit; }
 .contact-card:hover { border-color: var(--red-border); transform: translateY(-2px); }
-.contact-eyebrow { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--red-base); }
+.contact-eyebrow { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--red-text); }
 .contact-email { font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--text-primary); }
-.contact-card:hover .contact-email { color: var(--red-base); }
+.contact-card:hover .contact-email { color: var(--red-text); }
 .contact-body { font-family: var(--font-sans); font-size: 13px; color: var(--text-secondary); line-height: 1.55; }
 
 @media (max-width: 640px) {

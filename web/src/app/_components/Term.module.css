@@ -10,6 +10,6 @@
 
 .term:hover,
 .term:focus-visible {
-  border-bottom-color: var(--red-base);
+  border-bottom-color: var(--red-text);
   color: var(--text-primary);
 }
