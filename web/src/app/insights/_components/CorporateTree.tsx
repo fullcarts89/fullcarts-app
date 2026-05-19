@@ -7,6 +7,7 @@
 // product_entities.manufacturer, the view is empty and we render a
 // placeholder explaining the lag.
 import styles from "../styles.module.css";
+import SafeImage from "../../_components/SafeImage";
 import type { CorporateNode } from "../types";
 
 interface Props {
@@ -60,11 +61,11 @@ export default function CorporateTree({ nodes }: Props) {
                 >
                   <div className={styles["corp-child-thumb"]}>
                     {b.thumbnail ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                      <SafeImage
                         src={b.thumbnail}
                         alt={`${b.brand} product photo`}
-                        loading="lazy"
+                        width={44}
+                        height={44}
                       />
                     ) : (
                       <div className={styles["corp-child-placeholder"]}>

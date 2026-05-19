@@ -10,6 +10,7 @@
 //     tier collapsed by default behind a toggle
 //   - flat grid otherwise
 import { Fragment, useMemo, useState } from "react";
+import SafeImage from "../../_components/SafeImage";
 import styles from "../styles.module.css";
 import type { RankedBrand } from "../types";
 
@@ -285,7 +286,12 @@ export default function BrandIndex({ brands, initialQuery = "" }: Props) {
         </span>
         <div className={styles["card-img"]}>
           {b.thumbnail ? (
-            <img src={b.thumbnail} alt={`${b.brand} product photo`} loading="lazy" />
+            <SafeImage
+              src={b.thumbnail}
+              alt={`${b.brand} product photo`}
+              fill
+              sizes="(min-width: 1280px) 200px, (min-width: 640px) 25vw, 50vw"
+            />
           ) : (
             <div className={styles["card-placeholder"]}>
               <span className={styles["card-placeholder-name"]}>{b.brand}</span>

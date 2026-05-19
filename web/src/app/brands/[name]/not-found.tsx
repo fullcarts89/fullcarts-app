@@ -1,3 +1,4 @@
+import Link from "next/link";
 import SiteNav from "@/components/SiteNav";
 import styles from "./styles.module.css";
 
@@ -20,9 +21,9 @@ export default function BrandNotFound() {
           </h1>
           <p style={{ color: "var(--text-secondary)", fontSize: 18 }}>
             We don&apos;t have a record for that brand yet.{" "}
-            <a href="/" style={{ color: "var(--red-base)" }}>
+            <Link href="/" style={{ color: "var(--red-base)" }}>
               Back home →
-            </a>
+            </Link>
           </p>
         </div>
       </main>

@@ -88,7 +88,10 @@ const RETAILER_COLORS: Record<string, string> = {
 export function WaybackLookup({
   productName,
   brand,
-  sourceUrl,
+  // sourceUrl: kept in the public prop API so callers don't break, but
+  // the server-side wayback-extract endpoint now derives source URLs
+  // from retailer patterns instead of the inbound claim URL.
+  sourceUrl: _sourceUrl,
   upc,
   claimOldSize,
   claimOldUnit,
@@ -214,7 +217,7 @@ export function WaybackLookup({
       setLoading(false);
       setExtracting(false);
     }
-  }, [customUrl, sourceUrl, productName, brand]);
+  }, [customUrl, productName, brand, upc, claimOldSize, claimOldUnit]);
 
   if (!isOpen) {
     return (

@@ -5,6 +5,7 @@
 // 100% on heavily-flagged products because chained percentage
 // changes don't add linearly.
 import styles from "../styles.module.css";
+import SafeImage from "../../_components/SafeImage";
 import { fmtPct } from "../lib";
 import type { LeaderboardRow } from "../types";
 
@@ -25,7 +26,14 @@ export default function RepeatOffenders({ rows }: Props) {
           href={`/products/${r.entity_id}`}
         >
           <div className={styles["repeat-thumb"]}>
-            {r.image_url && <img src={r.image_url} alt={r.name} loading="lazy" />}
+            {r.image_url && (
+              <SafeImage
+                src={r.image_url}
+                alt={`${r.brand} ${r.name} package`}
+                fill
+                sizes="(min-width: 1024px) 200px, (min-width: 640px) 25vw, 50vw"
+              />
+            )}
             <div className={styles["rt-rank"]}>{idx + 1}</div>
           </div>
           <div className={styles["repeat-brand"]}>{r.brand}</div>

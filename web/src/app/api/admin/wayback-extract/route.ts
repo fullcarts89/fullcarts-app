@@ -332,9 +332,6 @@ export async function POST(request: NextRequest) {
     brand = "",
     customUrl = "",
     upc = "",
-    claimOldSize = 0,
-    claimOldUnit = "",
-    maxPerRetailer = 5,
   } = body as {
     snapshots?: SnapshotInput[];
     productName?: string;

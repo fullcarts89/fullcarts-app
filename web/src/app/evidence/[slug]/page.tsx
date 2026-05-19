@@ -15,6 +15,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import SiteNav from "@/components/SiteNav";
+import SafeImage from "../../_components/SafeImage";
 import {
   EVIDENCE_CHANNELS,
   findChannelBySlug,
@@ -246,11 +247,11 @@ export default async function EvidenceChannelPage({
                 <>
                   <div className={styles.thumb}>
                     {c.image ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                      <SafeImage
                         src={c.image}
                         alt={`${c.brand} ${c.product}`}
-                        loading="lazy"
+                        fill
+                        sizes="(min-width: 1024px) 300px, (min-width: 640px) 33vw, 50vw"
                       />
                     ) : (
                       <div className={styles.thumbPlaceholder} aria-hidden="true">

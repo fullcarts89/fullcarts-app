@@ -207,9 +207,13 @@ export default async function ClaimsReviewPage({
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([date, counts]) => ({ date, ...counts }));
 
-  // Pipeline health: healthy if extraction ran within 48h
+  // Pipeline health: healthy if extraction ran within 48h. The page is
+  // a server component (async function), so Date.now() runs once per
+  // render on the server — the react-hooks/purity rule doesn't apply
+  // outside client components.
   const latestExtractedAt = latestClaimRes.data?.[0]?.extracted_at;
   const hoursAgo = latestExtractedAt
+    // eslint-disable-next-line react-hooks/purity
     ? Math.floor((Date.now() - new Date(latestExtractedAt as string).getTime()) / 3600000)
     : Infinity;
   const pipelineHealthy = hoursAgo < 48;
@@ -236,6 +240,7 @@ export default async function ClaimsReviewPage({
     .from("claims")
     .select(selectExpr, { count: "exact" })
     .eq("status", statusFilter)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- supabase-js doesn't type JSONB ->path columns
     .order("confidence->overall" as any, { ascending: false });
 
   if (sourceFilter) {
@@ -243,12 +248,15 @@ export default async function ClaimsReviewPage({
     // JOIN filter inflates the type tree past TypeScript's inference depth
     // (TS2589) — without this the entire claims query type goes "excessively
     // deep". Behavior is the standard PostgREST `raw_items.source_type=eq.X`.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     query = (query as any).eq("raw_items.source_type", sourceFilter);
   }
 
   if (confFilter !== "all") {
     query = query
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- JSONB path same as above
       .gte("confidence->overall" as any, tier.min)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .lte("confidence->overall" as any, tier.max);
   }
 

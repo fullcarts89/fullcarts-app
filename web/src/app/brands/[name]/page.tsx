@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import SiteNav from "@/components/SiteNav";
 import BrandHero from "./_components/BrandHero";
@@ -126,12 +127,35 @@ export default async function BrandPage({ params }: PageProps) {
   const manufacturer = dominantManufacturer(entities);
   const products = rollupProducts(entities, events);
 
+  // BreadcrumbList JSON-LD mirrors the visible breadcrumb so search
+  // results can render the brand → product hierarchy. Organization
+  // payloads live in the root layout (Phase F).
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://fullcarts.org";
+  const brandSlug = encodeURIComponent(ranking.brand.toLowerCase());
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Brands", item: `${siteUrl}/brands` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: ranking.brand,
+        item: `${siteUrl}/brands/${brandSlug}`,
+      },
+    ],
+  };
+
   return (
     <>
       <SiteNav />
       <main id="main-content" className={styles.container}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        />
         <div className={styles.breadcrumb}>
-          <a href="/brands">Brands</a>
+          <Link href="/brands">Brands</Link>
           <span className={styles.sep}>/</span>
           <span className={styles.current}>{ranking.brand}</span>
         </div>

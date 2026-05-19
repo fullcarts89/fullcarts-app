@@ -2,6 +2,7 @@
 // left (real image or styled placeholder), info block on the right
 // (name, brand/category/manufacturer chips, tagline, 4-stat strip).
 import styles from "../styles.module.css";
+import SafeImage from "../../../_components/SafeImage";
 import type { EventRow, PackVariant, ProductEntity } from "../types";
 import {
   biggestSingleDrop,
@@ -57,12 +58,14 @@ export default function ProductHero({ entity, events, variants }: Props) {
       <div className={styles["hero-image"]}>
         {entity.image_url ? (
           <>
-            <img
+            <SafeImage
               src={entity.image_url}
               alt={`${entity.brand} ${entity.canonical_name}${
                 lastStep ? ` · current size ${lastStep.size}${unit}` : ""
               } package photo`}
-              loading="eager"
+              fill
+              priority
+              sizes="(min-width: 980px) 400px, 100vw"
             />
             <span className={styles["img-tag"]}>Tracked</span>
           </>

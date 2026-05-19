@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import SiteNav from "@/components/SiteNav";
 import ProductHero from "./_components/ProductHero";
@@ -256,11 +257,11 @@ export default async function ProductPage({ params }: PageProps) {
           }}
         />
         <div className={styles.breadcrumb}>
-          <a href="/brands">Brands</a>
+          <Link href="/brands">Brands</Link>
           <span className={styles.sep}>/</span>
-          <a href={`/brands/${encodeURIComponent(entity.brand.toLowerCase())}`}>
+          <Link href={`/brands/${encodeURIComponent(entity.brand.toLowerCase())}`}>
             {entity.brand}
-          </a>
+          </Link>
           <span className={styles.sep}>/</span>
           <span className={styles.current}>{entity.canonical_name}</span>
         </div>

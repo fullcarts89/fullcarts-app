@@ -1,6 +1,8 @@
+import Link from "next/link";
 import { loadHomeData, brandHref } from "./_lib/home-data";
 import { findChannelByTag } from "./_lib/evidence-tags";
 import SiteNav from "@/components/SiteNav";
+import SafeImage from "./_components/SafeImage";
 import styles from "./home.module.css";
 
 // ISR: regenerate at most once per hour.
@@ -90,10 +92,12 @@ export default async function Home() {
                 Just documented · {isoDay(data.just_doc.observed_date)}
               </div>
               <div className={styles["just-doc-img"]}>
-                <img
+                <SafeImage
                   src={data.just_doc.product_image_url}
                   alt={`${data.just_doc.brand} ${data.just_doc.product_name} package`}
-                  loading="lazy"
+                  fill
+                  priority
+                  sizes="(min-width: 960px) 400px, 100vw"
                 />
               </div>
               <div className={styles["just-doc-body"]}>
@@ -166,9 +170,11 @@ export default async function Home() {
             >
               <div className={styles["botw-img"]}>
                 {data.brand_of_week.thumb && (
-                  <img
+                  <SafeImage
                     src={data.brand_of_week.thumb}
                     alt={`${data.brand_of_week.brand} product photo`}
+                    fill
+                    sizes="(min-width: 1024px) 600px, 100vw"
                   />
                 )}
               </div>
@@ -214,7 +220,7 @@ export default async function Home() {
             <div className={styles["section-head"]}>
               <h2>Most active this month</h2>
               <div className={styles.meta}>
-                <a href="/brands">See all {fmt(data.counters.brands)} brands →</a>
+                <Link href="/brands">See all {fmt(data.counters.brands)} brands →</Link>
               </div>
             </div>
             <div className={styles["active-grid"]}>
@@ -261,10 +267,11 @@ export default async function Home() {
                   }
                 >
                   <div className={styles["rb-img"]}>
-                    <img
+                    <SafeImage
                       src={e.product_image_url}
                       alt={`${e.brand} ${e.product_name} package`}
-                      loading="lazy"
+                      fill
+                      sizes="(min-width: 1280px) 220px, (min-width: 640px) 33vw, 50vw"
                     />
                   </div>
                   <div className={styles["rb-body"]}>
@@ -324,9 +331,9 @@ export default async function Home() {
       <footer className={styles.footer}>
         <div className={styles["footer-inner"]}>
           <div className={styles["foot-col"]}>
-            <a href="/" className={styles.logo}>
+            <Link href="/" className={styles.logo}>
               Full<span>Carts</span>
-            </a>
+            </Link>
             <p className={styles["foot-mission"]}>
               A public database of shrinkflation events, sourced and verified.
             </p>
@@ -334,17 +341,17 @@ export default async function Home() {
           <div className={styles["foot-col"]}>
             <h2 className={styles["foot-h"]}>Browse</h2>
             <ul>
-              <li><a href="/brands">All brands</a></li>
-              <li><a href="/products">Products</a></li>
-              <li><a href="/insights">Insights</a></li>
+              <li><Link href="/brands">All brands</Link></li>
+              <li><Link href="/products">Products</Link></li>
+              <li><Link href="/insights">Insights</Link></li>
             </ul>
           </div>
           <div className={styles["foot-col"]}>
             <h2 className={styles["foot-h"]}>About</h2>
             <ul>
-              <li><a href="/about">Methodology</a></li>
-              <li><a href="/about#sources">Sources</a></li>
-              <li><a href="/about#contact">Submit a tip</a></li>
+              <li><Link href="/about">Methodology</Link></li>
+              <li><Link href="/about#sources">Sources</Link></li>
+              <li><Link href="/about#contact">Submit a tip</Link></li>
             </ul>
           </div>
           <div className={styles["foot-col"]}>
@@ -359,9 +366,9 @@ export default async function Home() {
           </div>
         </div>
         <div className={styles["foot-credit"]}>
-          <a href="/" className={styles["logo-mini"]}>
+          <Link href="/" className={styles["logo-mini"]}>
             Full<span>Carts</span>
-          </a>
+          </Link>
           <span>Updated daily · ISR cache 1h</span>
         </div>
       </footer>

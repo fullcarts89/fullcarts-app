@@ -9,6 +9,7 @@
 //   - tier-grouped grid when sort=events & no filters
 //   - flat grid otherwise
 import { Fragment, useMemo, useState } from "react";
+import SafeImage from "../../_components/SafeImage";
 import styles from "../styles.module.css";
 import type { RankedProduct } from "../types";
 
@@ -278,8 +279,12 @@ export default function ProductIndex({ products }: Props) {
         </span>
         <div className={styles["card-img"]}>
           {p.image_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={p.image_url} alt={`${p.brand} ${p.canonical_name} package`} loading="lazy" />
+            <SafeImage
+              src={p.image_url}
+              alt={`${p.brand} ${p.canonical_name} package`}
+              fill
+              sizes="(min-width: 1280px) 200px, (min-width: 640px) 25vw, 50vw"
+            />
           ) : (
             <div className={styles["card-placeholder"]}>
               <span className={styles["card-placeholder-name"]}>

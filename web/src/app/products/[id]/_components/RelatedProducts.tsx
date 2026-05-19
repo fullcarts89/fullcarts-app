@@ -3,6 +3,7 @@
 // other product has no image_url, falls back to the same placeholder
 // pattern used in the brand-page ProductGrid.
 import styles from "../styles.module.css";
+import SafeImage from "../../../_components/SafeImage";
 import type { RelatedProduct } from "../types";
 
 interface Props {
@@ -26,10 +27,11 @@ export default function RelatedProducts({ brand, products }: Props) {
         >
           {p.image_url ? (
             <div className={styles["related-thumb"]}>
-              <img
+              <SafeImage
                 src={p.image_url}
                 alt={`${brand} ${p.canonical_name} package photo`}
-                loading="lazy"
+                fill
+                sizes="(min-width: 1024px) 160px, 25vw"
               />
             </div>
           ) : (

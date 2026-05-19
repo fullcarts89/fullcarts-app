@@ -410,6 +410,13 @@ export default async function InsightsPage() {
   const today = new Date().toISOString();
   const lastUpdated = isoDay(today);
 
+  // Per-source freshness — surfaced on each macro card so readers can
+  // see how stale the data is. We expose the most-recent observation
+  // date for each upstream feed; the page-level "Updated {lastUpdated}"
+  // remains the build-time stamp.
+  const fredLatest = isoDay(data.fred[0]?.observation_date);
+  const blsLatestPeriod = isoDay(data.bls[0]?.period);
+
   // Sticky in-page nav anchors. Order matches the section order below;
   // each label maps to the matching <h2> via id. Lets a reader jump
   // straight to the chart or to "Who actually owns these brands?"
@@ -449,7 +456,11 @@ export default async function InsightsPage() {
         <section id="trade-off" className={styles.block}>
           <div className={styles["section-head"]}>
             <h2>Inflation, shrinkflation, and how they trade off</h2>
-            <div className={styles.meta}>Monthly · trailing window</div>
+            <div className={styles.meta}>
+              Monthly · trailing window
+              {fredLatest && ` · FRED latest ${fredLatest}`}
+              {blsLatestPeriod && ` · BLS latest ${blsLatestPeriod.slice(0, 7)}`}
+            </div>
           </div>
           <p className={styles["section-lede"]}>
             When grocery prices rise, brands face a choice — raise the price,
