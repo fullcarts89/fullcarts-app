@@ -1,40 +1,10 @@
 import { loadHomeData, brandHref } from "./_lib/home-data";
+import { findChannelByTag } from "./_lib/evidence-tags";
 import SiteNav from "@/components/SiteNav";
 import styles from "./home.module.css";
 
 // ISR: regenerate at most once per hour.
 export const revalidate = 3600;
-
-const TAG_META: Record<string, { slug: string; desc: string }> = {
-  "So Smol": {
-    slug: "so-smol",
-    desc: "Comically small versions of things you remember being big.",
-  },
-  "Slack Fill": {
-    slug: "slack-fill",
-    desc: "Same package, visible empty space, less product than the box implies.",
-  },
-  "Spot the Difference": {
-    slug: "spot-the-difference",
-    desc: "Side-by-side visual proof — old packaging next to new.",
-  },
-  Skimpflation: {
-    slug: "skimpflation",
-    desc: "Same package, worse ingredients — less protein, more sugar, more sodium.",
-  },
-  "Paper Thin": {
-    slug: "paper-thin",
-    desc: "Quality drops — thinner toilet paper, weaker bags, cheaper materials.",
-  },
-  "Not as Advertised": {
-    slug: "not-as-advertised",
-    desc: "Weight or count on the label doesn't match what's inside.",
-  },
-  Stretchflation: {
-    slug: "stretchflation",
-    desc: "Package looks bigger, but the product stays the same — or shrinks.",
-  },
-};
 
 function fmt(n: number): string {
   return n.toLocaleString();
@@ -65,13 +35,18 @@ export default async function Home() {
               shrinkflation event we can verify with a real source.
               We&rsquo;re not guessing — we&rsquo;re citing.
             </p>
-            <form action="/brands" method="get" className={styles["search-wrap"]}>
+            <form action="/brands" method="get" className={styles["search-wrap"]} role="search">
+              <label htmlFor="hero-search" className={styles["sr-only"]}>
+                Search FullCarts brands
+              </label>
               <input
-                type="text"
+                id="hero-search"
+                name="q"
+                type="search"
                 placeholder={`Did your favorite product shrink? Search ${fmt(data.counters.products)}+ products`}
                 autoComplete="off"
               />
-              <span className={styles["search-icon"]}>⌕</span>
+              <span className={styles["search-icon"]} aria-hidden="true">⌕</span>
             </form>
             <div className={styles["search-hint"]}>
               Try &ldquo;Cadbury&rdquo;, &ldquo;Pringles&rdquo;, &ldquo;Charmin&rdquo;
@@ -103,14 +78,21 @@ export default async function Home() {
 
           {/* JUST DOCUMENTED sidecar */}
           {data.just_doc && (
-            <a href={brandHref(data.just_doc.brand)} className={styles["just-doc"]}>
+            <a
+              href={
+                data.just_doc.entity_id
+                  ? `/products/${data.just_doc.entity_id}`
+                  : brandHref(data.just_doc.brand)
+              }
+              className={styles["just-doc"]}
+            >
               <div className={styles["just-doc-tag"]}>
                 Just documented · {isoDay(data.just_doc.observed_date)}
               </div>
               <div className={styles["just-doc-img"]}>
                 <img
                   src={data.just_doc.product_image_url}
-                  alt=""
+                  alt={`${data.just_doc.brand} ${data.just_doc.product_name} package`}
                   loading="lazy"
                 />
               </div>
@@ -184,7 +166,10 @@ export default async function Home() {
             >
               <div className={styles["botw-img"]}>
                 {data.brand_of_week.thumb && (
-                  <img src={data.brand_of_week.thumb} alt="" />
+                  <img
+                    src={data.brand_of_week.thumb}
+                    alt={`${data.brand_of_week.brand} product photo`}
+                  />
                 )}
               </div>
               <div className={styles["botw-body"]}>
@@ -209,7 +194,7 @@ export default async function Home() {
                     <span className={styles.l}>products tracked</span>
                   </div>
                   <div className={styles["botw-stat"]}>
-                    <span className={styles.v}>
+                    <span className={`${styles.v} ${styles["v-delta"]}`}>
                       {data.brand_of_week.avg_shrink_per_event.toFixed(1)}%
                     </span>
                     <span className={styles.l}>avg shrinkage</span>
@@ -271,10 +256,16 @@ export default async function Home() {
                 <a
                   key={`${e.brand}-${i}`}
                   className={styles["rb-card"]}
-                  href={brandHref(e.brand)}
+                  href={
+                    e.entity_id ? `/products/${e.entity_id}` : brandHref(e.brand)
+                  }
                 >
                   <div className={styles["rb-img"]}>
-                    <img src={e.product_image_url} alt="" loading="lazy" />
+                    <img
+                      src={e.product_image_url}
+                      alt={`${e.brand} ${e.product_name} package`}
+                      loading="lazy"
+                    />
                   </div>
                   <div className={styles["rb-body"]}>
                     <span className={styles["rb-brand"]}>
@@ -309,19 +300,19 @@ export default async function Home() {
           </div>
           <div className={styles["tag-grid"]}>
             {data.tags.map((t) => {
-              const meta = TAG_META[t.tag];
-              if (!meta) return null;
+              const channel = findChannelByTag(t.tag);
+              if (!channel) return null;
               return (
                 <a
                   key={t.tag}
                   className={styles["tag-card"]}
-                  href={`/evidence/${meta.slug}`}
+                  href={`/evidence/${channel.slug}`}
                 >
                   <div className={styles["tag-card-head"]}>
                     <span className={styles["tag-card-name"]}>{t.tag}</span>
                     <span className={styles["tag-card-count"]}>{t.count}</span>
                   </div>
-                  <div className={styles["tag-card-desc"]}>{meta.desc}</div>
+                  <div className={styles["tag-card-desc"]}>{channel.desc}</div>
                   <span className={styles["tag-card-cta"]}>Browse claims →</span>
                 </a>
               );
@@ -359,9 +350,11 @@ export default async function Home() {
           <div className={styles["foot-col"]}>
             <h4>Follow</h4>
             <ul>
-              <li><a href="#">Newsletter</a></li>
-              <li><a href="#">RSS</a></li>
-              <li><a href="#">X / Twitter</a></li>
+              <li>
+                <a href="/rss.xml">
+                  RSS feed
+                </a>
+              </li>
             </ul>
           </div>
         </div>

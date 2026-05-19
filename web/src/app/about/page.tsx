@@ -196,7 +196,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className={styles.block}>
+        <section id="sources" className={styles.block}>
           <div className={styles["section-head"]}>
             <h2>Where the data comes from</h2>
             <div className={styles.meta}>{SOURCES.length} active sources</div>
@@ -224,7 +224,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className={styles.block}>
+        <section id="contact" className={styles.block}>
           <div className={styles["section-head"]}>
             <h2>Submit a tip</h2>
           </div>

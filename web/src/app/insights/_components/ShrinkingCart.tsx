@@ -111,6 +111,13 @@ export default function ShrinkingCart({ basket }: Props) {
         <strong>{fmtPct(summary.basketAvgShrink)}</strong> with no price drop
         — so a fraction of every grocery dollar buys nothing but air.
       </p>
+      <p className={styles["cart-assumption"]}>
+        <strong>If your real basket looked like this one</strong>, the math
+        below holds. The numbers assume even spend across the {basket.length}{" "}
+        products and use the size shrinkage as a proxy for the value
+        you&apos;ve lost. Your actual basket will differ — but the direction
+        is the same.
+      </p>
 
       <div className={styles["cart-input-row"]}>
         <label htmlFor="cart-spend" className={styles["cart-input-label"]}>
@@ -165,8 +172,18 @@ export default function ShrinkingCart({ basket }: Props) {
               className={styles["cart-item"]}
             >
               <div className={styles["cart-item-img"]}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={it.image_url ?? ""} alt="" loading="lazy" />
+                {it.image_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={it.image_url}
+                    alt={`${it.brand} ${it.product_name} package`}
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className={styles["cart-item-placeholder"]} aria-hidden="true">
+                    {it.brand.slice(0, 1)}
+                  </div>
+                )}
               </div>
               <div className={styles["cart-item-body"]}>
                 <div className={styles["cart-item-brand"]}>{it.brand}</div>

@@ -24,6 +24,7 @@ export default function PressCoverage({ refs }: Props) {
           target="_blank"
           rel="noopener noreferrer"
           className={styles["press-card"]}
+          aria-label={`${r.title} on Consumer Reports (opens in new tab)`}
         >
           <div className={styles["press-pill"]}>Consumer Reports</div>
           <div className={styles["press-title"]}>{r.title}</div>

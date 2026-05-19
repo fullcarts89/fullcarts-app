@@ -1,13 +1,23 @@
 #!/usr/bin/env python3
 """Fill product_entities.manufacturer from Wikidata.
 
-For every distinct `brand` in product_entities that has at least one
-non-retracted shrinkflation event but no manufacturer, query Wikidata's
-SPARQL endpoint for the parent organization (P749) or, failing that,
-the owner (P127) or operator (P127 again) of the matching brand entity.
+Walks brands in order of impact (event count desc, then alphabetical
+long-tail) and resolves each to a manufacturer label via Wikidata SPARQL.
+
+Property priority (most-specific first):
+   1. P176 — manufacturer (literally what the column is named).
+   2. P127 — owned by.
+   3. P749 — parent organization. *Fallback only* — chains too far up
+             the holding-company ladder if used as the primary.
+
+Each candidate parent is filtered against `PARENT_DENYLIST_CLASSES` —
+Wikidata `instance of` (P31) QIDs we refuse to call a manufacturer
+(humans, countries, PE funds, asset-management firms, etc.). This is
+what keeps "France" / "Karl Albrecht Jr." / "BlackRock" off the
+corporate tree on /insights.
 
 The script is intentionally conservative:
-  - Single brand search per request (no UNION queries) so we can audit.
+  - Single brand search per request so we can audit.
   - 1-second delay between requests (Wikidata's politeness limit).
   - Skips brands we've already tried within the last 30 days
     (cursor stored in scraper_state.last_cursor JSON).
@@ -15,7 +25,9 @@ The script is intentionally conservative:
 
 Once this fills the manufacturer column, migration 056's
 `corporate_tree` view becomes non-empty and the /insights "corporate
-parents" section lights up.
+parents" section lights up. For the headline brands (Cadbury, Tide,
+Nestlé, etc.) we don't wait on this — the seed at
+`pipeline/scripts/seed_manufacturers.py` covers them deterministically.
 
 Usage:
     python -m pipeline.scripts.wikidata_manufacturer_backfill
@@ -109,17 +121,74 @@ def find_brand_entity(client, brand):
     return candidates[0].get("id")
 
 
+# Wikidata `instance of` (P31) classes we refuse to call a "manufacturer".
+# When the chase through P176/P127/P749 lands on one of these, skip it —
+# the label is probably an investor (BlackRock), country (France), natural
+# person (Karl Albrecht Jr.), PE fund (Cerberus), or government body.
+# Adding more is cheap; each row is a Wikidata QID.
+PARENT_DENYLIST_CLASSES = (
+    "Q5",          # human
+    "Q6256",       # country
+    "Q3624078",    # sovereign state
+    "Q484652",     # private equity firm
+    "Q1052300",    # institutional investor
+    "Q15911314",   # asset-management firm
+    "Q1330709",    # mutual fund (commonly bucketed with holding co's)
+    "Q4671277",    # academic institution
+    "Q11691",      # stock exchange
+    "Q161726",     # multinational corporation — too generic, prefer the actual parent
+    "Q210167",     # video game publisher (catches mis-resolved brand→studio)
+    "Q1799794",    # administrative territorial entity
+    "Q34770",      # municipality
+    "Q1063239",    # publicly traded company — too generic
+    "Q15265344",   # investment trust
+    "Q43229",      # organization — too generic; only used when nothing more specific exists
+)
+
+
 def fetch_parent_label(client, qid):
     # type: (httpx.Client, str) -> Optional[str]
-    """Return the English label of the parent org / owner / manufacturer
-    associated with the given QID. Picks the first non-null value
-    across P749 / P127 / P176 in that priority order."""
+    """Return the English label of the manufacturer/owner/parent for a
+    Wikidata entity.
+
+    Property priority (most specific first, parent organization last):
+       1. P176 — manufacturer (literally what the column is named).
+       2. P127 — owned by.
+       3. P749 — parent organization. Fallback only; can chase too far
+                 up the holding-company ladder.
+
+    Each candidate is filtered:
+      - skip if instance-of (P31) matches PARENT_DENYLIST_CLASSES
+        (humans, countries, PE funds, etc. — see constant above);
+      - skip self-references (where the parent label equals the brand
+        label, an artifact of some Wikidata records);
+      - skip URIs or empty strings.
+
+    Returns the first surviving candidate, or None.
+    """
+    # Single SPARQL with a UNION over the three properties + explicit
+    # priority ordering. Pulling all candidates with their instance-of
+    # set in one query is cheaper than three round-trips and lets us
+    # apply the denylist in one pass.
     sparql = """
-SELECT ?parentLabel WHERE {{
-  VALUES ?prop {{ wdt:P749 wdt:P127 wdt:P176 }}
-  wd:{qid} ?prop ?parent .
+SELECT ?prop ?parent ?parentLabel
+       (GROUP_CONCAT(DISTINCT STR(?cls); separator=",") AS ?classes) WHERE {{
+  {{
+    wd:{qid} wdt:P176 ?parent .
+    BIND(1 AS ?prop)
+  }} UNION {{
+    wd:{qid} wdt:P127 ?parent .
+    BIND(2 AS ?prop)
+  }} UNION {{
+    wd:{qid} wdt:P749 ?parent .
+    BIND(3 AS ?prop)
+  }}
+  OPTIONAL {{ ?parent wdt:P31 ?cls . }}
   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
-}} LIMIT 5
+}}
+GROUP BY ?prop ?parent ?parentLabel
+ORDER BY ?prop
+LIMIT 20
 """.format(qid=qid)
     resp = client.get(WIKIDATA_SPARQL, params={
         "query": sparql,
@@ -131,32 +200,95 @@ SELECT ?parentLabel WHERE {{
     bindings = resp.json().get("results", {}).get("bindings", [])
     if not bindings:
         return None
-    # First non-empty label wins. We collapse repeats so the same parent
-    # showing up across multiple props doesn't beat a more specific one.
+    deny = set(PARENT_DENYLIST_CLASSES)
     seen = set()
     for b in bindings:
-        v = b.get("parentLabel", {}).get("value", "").strip()
-        if not v or v in seen:
+        label = b.get("parentLabel", {}).get("value", "").strip()
+        parent_uri = b.get("parent", {}).get("value", "")
+        if not label or label in seen:
             continue
-        seen.add(v)
-        # Filter obvious wikidata-internal artifacts
-        if v.startswith("http"):
+        seen.add(label)
+        if label.startswith("http"):
             continue
-        return v
+        # PARENT_LABEL fallback returns the URI literal when no rdfs:label
+        # exists in en — that surfaces as a bare QID like "Q12345".
+        if label.startswith("Q") and label[1:].isdigit():
+            continue
+        # Instance-of class filter — extract the QIDs from the URI list.
+        class_uris = (b.get("classes", {}).get("value", "") or "").split(",")
+        class_qids = {u.rsplit("/", 1)[-1] for u in class_uris if u}
+        if class_qids & deny:
+            LOG.debug(
+                "  skipping %s — instance-of intersects denylist (%s)",
+                label, ",".join(class_qids & deny),
+            )
+            continue
+        # Self-reference: some Wikidata rows have brand→brand via P176.
+        if parent_uri.rsplit("/", 1)[-1] == qid:
+            continue
+        return label
     return None
 
 
 def fetch_distinct_brands(client, limit):
     # type: (httpx.Client, Optional[int]) -> List[str]
-    """Return distinct product_entities.brand values that have
-    documented shrinkflation events but no manufacturer set."""
-    # PostgREST select with distinct=true via prefer header
-    # PostgREST doesn't truly support DISTINCT, so we paginate full rows
-    # and dedup in Python. Filter to brands appearing in brand_rankings
-    # so we only spend Wikidata budget on brands that matter.
+    """Return brands that need a manufacturer set, ordered by impact.
+
+    Priority order:
+      1. Brands appearing in `brand_rankings` (i.e. they have ≥1
+         non-retracted published_changes event), sorted by event count
+         descending. These are the brands that drive what's actually
+         visible on the public site, so they earn the Wikidata budget
+         first.
+      2. The long tail (brands with 0 events), alphabetical, as a
+         tie-breaker so cron runs are deterministic.
+
+    Brands whose name is empty or "Unknown" are skipped — those are
+    extractor failures, not real brands.
+    """
+    out = []  # type: List[str]
     seen = set()
+
+    # Step 1: brand_rankings, ordered by impact.
+    resp = client.get(
+        "{}/rest/v1/brand_rankings".format(SUPABASE_URL),
+        params={
+            "select": "brand,shrinkflation_events",
+            "order": "shrinkflation_events.desc.nullslast",
+            "limit": str(PAGE_SIZE),
+        },
+    )
+    if resp.status_code == 200:
+        for r in resp.json():
+            b = (r.get("brand") or "").strip()
+            if not b or b.lower() == "unknown":
+                continue
+            if b in seen:
+                continue
+            # Only enqueue if at least one entity for this brand has
+            # NULL manufacturer — otherwise we'd waste Wikidata budget
+            # re-resolving brands the seed already covered.
+            check = client.get(
+                "{}/rest/v1/product_entities".format(SUPABASE_URL),
+                params={
+                    "select": "id",
+                    "brand": "ilike.{}".format(b),
+                    "manufacturer": "is.null",
+                    "limit": "1",
+                },
+            )
+            if check.status_code == 200 and check.json():
+                seen.add(b)
+                out.append(b)
+                if limit and len(out) >= limit:
+                    return out
+    else:
+        LOG.warning("brand_rankings fetch failed: %s — falling back to alphabetical",
+                    resp.status_code)
+
+    # Step 2: long tail, alphabetical. Same is.null filter at the SQL
+    # level so we don't spend cycles re-checking covered brands.
     offset = 0
-    out = []
     while True:
         resp = client.get(
             "{}/rest/v1/product_entities".format(SUPABASE_URL),
@@ -169,14 +301,14 @@ def fetch_distinct_brands(client, limit):
             },
         )
         if resp.status_code != 200:
-            LOG.error("Brand list fetch failed: %s", resp.status_code)
+            LOG.error("long-tail brand fetch failed: %s", resp.status_code)
             break
         rows = resp.json()
         if not rows:
             break
         for r in rows:
             b = (r.get("brand") or "").strip()
-            if not b:
+            if not b or b.lower() == "unknown":
                 continue
             if b in seen:
                 continue

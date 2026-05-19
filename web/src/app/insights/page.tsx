@@ -111,8 +111,10 @@ async function loadInsights() {
       .lt("size_delta_pct", 0)
       .limit(5000),
     sb
-      .from("restorations")
-      .select("id, brand, product_name, size_before, size_after, size_unit, observed_date, published_at")
+      .from("published_changes")
+      .select("id, entity_id, brand, product_name, size_before, size_after, size_unit, observed_date, published_at")
+      .eq("is_retracted", false)
+      .eq("change_type", "restoration")
       .order("observed_date", { ascending: false })
       .limit(8),
     // News: pull raw_items in the last 90 days (news_articles is empty
@@ -128,7 +130,7 @@ async function loadInsights() {
     sb
       .from("claims")
       .select(
-        "id, brand, product_name, category, old_size, old_size_unit, new_size, new_size_unit, change_description, observed_date, image_storage_path, evidence_tags, raw_item_id",
+        "id, brand, product_name, category, old_size, old_size_unit, new_size, new_size_unit, change_description, observed_date, image_storage_path, evidence_tags, raw_item_id, matched_entity_id",
       )
       .contains("evidence_tags", ["Skimpflation"])
       .order("observed_date", { ascending: false, nullsFirst: false })
@@ -136,7 +138,7 @@ async function loadInsights() {
     sb
       .from("claims")
       .select(
-        "id, brand, product_name, category, old_size, old_size_unit, new_size, new_size_unit, change_description, observed_date, image_storage_path, evidence_tags, raw_item_id",
+        "id, brand, product_name, category, old_size, old_size_unit, new_size, new_size_unit, change_description, observed_date, image_storage_path, evidence_tags, raw_item_id, matched_entity_id",
       )
       .contains("evidence_tags", ["Spot the Difference"])
       .order("observed_date", { ascending: false, nullsFirst: false })
@@ -146,6 +148,10 @@ async function loadInsights() {
       .select(
         "manufacturer, distinct_brands, total_shrinkflation_events, worst_delta_pct, top_brands",
       )
+      // Hide single-event rollups so Wikidata noise (countries, holding
+      // cos, natural persons) can't surface even before migration 059
+      // raises the floor at the view level.
+      .gte("total_shrinkflation_events", 5)
       .order("total_shrinkflation_events", { ascending: false, nullsFirst: false })
       .limit(8),
     sb
@@ -388,6 +394,22 @@ export default async function InsightsPage() {
   const today = new Date().toISOString();
   const lastUpdated = isoDay(today);
 
+  // Sticky in-page nav anchors. Order matches the section order below;
+  // each label maps to the matching <h2> via id. Lets a reader jump
+  // straight to the chart or to "Who actually owns these brands?"
+  // without scrolling past 10 full sections.
+  const sectionNav = [
+    { id: "trade-off", label: "Trade-off chart" },
+    { id: "cart", label: "Dollars-to-air" },
+    { id: "categories", label: "Categories" },
+    { id: "skimpflation", label: "Skimpflation" },
+    { id: "corporate", label: "Corporate parents" },
+    { id: "repeat-offenders", label: "Repeat offenders" },
+    { id: "restorations", label: "Restorations" },
+    { id: "news", label: "In the news" },
+    { id: "spot-the-difference", label: "Spot the difference" },
+  ];
+
   return (
     <>
       <SiteNav />
@@ -400,28 +422,38 @@ export default async function InsightsPage() {
           yearAgoDeltaPct={headline.yearAgoDeltaPct}
         />
 
-        <section className={styles.block}>
+        <nav className={styles.sectionNav} aria-label="Insights sections">
+          {sectionNav.map((s) => (
+            <a key={s.id} href={`#${s.id}`} className={styles.sectionNavLink}>
+              {s.label}
+            </a>
+          ))}
+        </nav>
+
+        <section id="trade-off" className={styles.block}>
           <div className={styles["section-head"]}>
             <h2>Inflation, shrinkflation, and how they trade off</h2>
             <div className={styles.meta}>Monthly · trailing window</div>
           </div>
           <p className={styles["section-lede"]}>
-            When the food-at-home CPI rises, brands face a choice — raise the
-            price, shrink the package, or change the recipe. Plotting{" "}
+            When grocery prices rise, brands face a choice — raise the price,
+            shrink the package, or change the recipe. Plotting{" "}
             <strong>our documented shrink events</strong> (red) against the{" "}
-            <strong>BLS downsizing count</strong> (blue dashed) and{" "}
-            <strong>FRED&apos;s food-at-home CPI</strong> (amber) shows how
+            <strong>government&apos;s shrinkage count</strong> (blue dashed)
+            and the{" "}
+            <strong>Fed&apos;s grocery price index</strong> (amber) shows how
             the three move together.
           </p>
           <ThreeLineChart points={chart} />
           <div className={styles.caveat}>
-            FRED CPI is YoY%, BLS counts are quarterly spread evenly across
-            months, our events are monthly raw counts
+            Price index is year-over-year %, government shrinkage counts are
+            quarterly spread evenly across months, our events are monthly raw
+            counts
           </div>
         </section>
 
         <section className={styles.block}>
-          <div className={styles["section-head"]}>
+          <div id="cart" className={styles["section-head"]}>
             <h2>The dollars-to-air conversion</h2>
             <div className={styles.meta}>
               Live calculator · real basket data
@@ -437,7 +469,7 @@ export default async function InsightsPage() {
         </section>
 
         <section className={styles.block}>
-          <div className={styles["section-head"]}>
+          <div id="categories" className={styles["section-head"]}>
             <h2>Which categories are getting hit hardest?</h2>
             <div className={styles.meta}>
               Top {data.categories.length} · by event count
@@ -452,7 +484,7 @@ export default async function InsightsPage() {
         </section>
 
         <section className={styles.block}>
-          <div className={styles["section-head"]}>
+          <div id="skimpflation" className={styles["section-head"]}>
             <h2>Skimpflation: when the recipe quietly changes</h2>
             <div className={styles.meta}>USDA FoodData Central</div>
           </div>
@@ -468,7 +500,7 @@ export default async function InsightsPage() {
         </section>
 
         <section className={styles.block}>
-          <div className={styles["section-head"]}>
+          <div id="corporate" className={styles["section-head"]}>
             <h2>Who actually owns these brands?</h2>
             <div className={styles.meta}>
               Top {data.corporate.length || 8} corporate parents
@@ -484,7 +516,7 @@ export default async function InsightsPage() {
         </section>
 
         <section className={styles.block}>
-          <div className={styles["section-head"]}>
+          <div id="repeat-offenders" className={styles["section-head"]}>
             <h2>Repeat-offender products</h2>
             <div className={styles.meta}>
               Top {data.leaderboard.length} by event count
@@ -498,7 +530,7 @@ export default async function InsightsPage() {
         </section>
 
         <section className={styles.block}>
-          <div className={styles["section-head"]}>
+          <div id="restorations" className={styles["section-head"]}>
             <h2>Restoration corner</h2>
             <div className={styles.meta}>Good news</div>
           </div>
@@ -512,7 +544,7 @@ export default async function InsightsPage() {
         </section>
 
         <section className={styles.block}>
-          <div className={styles["section-head"]}>
+          <div id="news" className={styles["section-head"]}>
             <h2>In the news</h2>
             <div className={styles.meta}>
               Last 90 days · non-paywalled outlets
@@ -522,7 +554,7 @@ export default async function InsightsPage() {
         </section>
 
         <section className={styles.block}>
-          <div className={styles["section-head"]}>
+          <div id="spot-the-difference" className={styles["section-head"]}>
             <h2>Spot the difference</h2>
             <div className={styles.meta}>Curated evidence wall</div>
           </div>

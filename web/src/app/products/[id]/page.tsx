@@ -230,7 +230,7 @@ export default async function ProductPage({ params }: PageProps) {
             <div className={styles["section-head"]}>
               <h2>What changed inside?</h2>
               <div className={styles.meta}>
-                USDA FoodData Central · gtin {skimp.upc} ·{" "}
+                USDA FoodData Central · barcode {skimp.upc} ·{" "}
                 {skimp.releases_compared} releases compared
               </div>
             </div>

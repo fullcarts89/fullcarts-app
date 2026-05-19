@@ -367,8 +367,15 @@ def main():
     LOG.info("Detecting USDA releases with nutrition data...")
     releases = detect_releases(client)
     if len(releases) < 2:
-        LOG.error("Need ≥2 releases with nutrition data; have %d", len(releases))
-        sys.exit(1)
+        # Quarterly USDA ingestion is what populates this; in a fresh DB or
+        # before the second release lands, the cross-release diff has
+        # nothing to compare. Soft-skip so the daily cron stays green.
+        LOG.warning(
+            "Skipping: need ≥2 USDA releases with nutrition data, have %d.",
+            len(releases),
+        )
+        client.close()
+        return
     LOG.info("Releases with nutrition data: %s", releases)
 
     early_rel = args.early or releases[0]

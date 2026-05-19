@@ -61,6 +61,35 @@ _MAX_RETRIES = 4
 _BACKOFF_BASE = 4
 
 
+def aggregate_timeline_to_monthly(timeline):
+    # type: (List[Dict[str, Any]]) -> List[Tuple[date, float]]
+    """Collapse a Google Trends timelineData payload to month-start points.
+
+    Google's bucket size flips between weekly and monthly depending on the
+    requested window — `today 5-y` is right on the boundary. Snapping each
+    row to month-start without aggregating would emit duplicate
+    (keyword, geo, observation_date) keys in one upsert batch and trip the
+    Postgres "ON CONFLICT DO UPDATE … cannot affect row a second time"
+    error. We average weekly values within their month so the chart line
+    matches what monthly bucketing would have produced.
+    """
+    buckets = {}  # type: Dict[date, Tuple[float, int]]
+    for row in timeline:
+        ts = row.get("time")
+        value_list = row.get("value") or [0]
+        if not ts:
+            continue
+        try:
+            d = datetime.fromtimestamp(int(ts), tz=timezone.utc).date()
+        except (ValueError, TypeError):
+            continue
+        v = float(value_list[0]) if value_list else 0.0
+        month_start = d.replace(day=1)
+        s, c = buckets.get(month_start, (0.0, 0))
+        buckets[month_start] = (s + v, c + 1)
+    return [(m, s / c) for m, (s, c) in sorted(buckets.items())]
+
+
 class GoogleTrendsScraper(BaseScraper):
     """Scrapes Google Trends monthly interest for tracked keywords."""
 
@@ -192,21 +221,7 @@ class GoogleTrendsScraper(BaseScraper):
         body = json.loads(self._strip_xssi_prefix(ml.text))
         timeline = body.get("default", {}).get("timelineData", []) or []
 
-        out = []  # type: List[Tuple[date, float]]
-        for row in timeline:
-            ts = row.get("time")
-            value_list = row.get("value") or [0]
-            if not ts:
-                continue
-            try:
-                d = datetime.fromtimestamp(int(ts), tz=timezone.utc).date()
-            except (ValueError, TypeError):
-                continue
-            v = float(value_list[0]) if value_list else 0.0
-            # Snap to month-start so the unique constraint is stable.
-            month_start = d.replace(day=1)
-            out.append((month_start, v))
-        return out
+        return aggregate_timeline_to_monthly(timeline)
 
     def _csv_fallback(self, keyword):
         # type: (str) -> List[Tuple[date, float]]

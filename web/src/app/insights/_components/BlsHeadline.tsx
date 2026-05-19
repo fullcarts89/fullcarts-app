@@ -47,9 +47,9 @@ export default function BlsHeadline({
       <div className={styles["hs-body"]}>
         <h2>products downsized last quarter</h2>
         <p>
-          The Bureau of Labor Statistics&apos; research index{" "}
-          <strong>R-CPI-SC</strong> counts every CPI-tracked item whose
-          package shrank between quarterly surveys.{" "}
+          The Bureau of Labor Statistics&apos; research index (called{" "}
+          <strong>R-CPI-SC</strong>) counts every product the government
+          tracks whose package quietly shrank between quarterly surveys.{" "}
           {prevQuarterDeltaPct !== 0 && (
             <>
               {quarterLabel(quarter)}&apos;s count is{" "}
@@ -59,7 +59,7 @@ export default function BlsHeadline({
               {yearAgoDeltaPct !== 0 && (
                 <>
                   {" "}
-                  ({fmtPct(yearAgoDeltaPct, true)} year-on-year)
+                  ({fmtPct(yearAgoDeltaPct, true)} vs the same quarter last year)
                 </>
               )}
               .{" "}

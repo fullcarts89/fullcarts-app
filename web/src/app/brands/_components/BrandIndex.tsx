@@ -23,6 +23,7 @@ const TIER_PREVIEW = 12;
 
 interface Props {
   brands: RankedBrand[];
+  initialQuery?: string;
 }
 
 function num(s: string | number | null | undefined): number {
@@ -73,9 +74,9 @@ function normCat(raw: string | null): string | null {
   return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
 }
 
-export default function BrandIndex({ brands }: Props) {
+export default function BrandIndex({ brands, initialQuery = "" }: Props) {
   const [sort, setSort] = useState<SortKey>("events");
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const [category, setCategory] = useState<string | null>(null);
   // Track which tiers are expanded. Each tier previews TIER_PREVIEW
   // cards by default; toggle expands to all brands in that tier.
@@ -140,6 +141,7 @@ export default function BrandIndex({ brands }: Props) {
         <button
           type="button"
           className={`${styles["cat-chip"]} ${category === null ? styles.active : ""}`}
+          aria-pressed={category === null}
           onClick={() => setCategory(null)}
         >
           All <span className={styles["cat-chip-count"]}>{brands.length}</span>
@@ -149,6 +151,7 @@ export default function BrandIndex({ brands }: Props) {
             key={c.name}
             type="button"
             className={`${styles["cat-chip"]} ${category === c.name ? styles.active : ""}`}
+            aria-pressed={category === c.name}
             onClick={() =>
               setCategory(category === c.name ? null : c.name)
             }
@@ -181,6 +184,7 @@ export default function BrandIndex({ brands }: Props) {
               key={k}
               type="button"
               className={`${styles["sort-pill"]} ${sort === k ? styles.active : ""}`}
+              aria-pressed={sort === k}
               onClick={() => setSort(k)}
             >
               {label}
@@ -281,7 +285,7 @@ export default function BrandIndex({ brands }: Props) {
         </span>
         <div className={styles["card-img"]}>
           {b.thumbnail ? (
-            <img src={b.thumbnail} alt="" loading="lazy" />
+            <img src={b.thumbnail} alt={`${b.brand} product photo`} loading="lazy" />
           ) : (
             <div className={styles["card-placeholder"]}>
               <span className={styles["card-placeholder-name"]}>{b.brand}</span>

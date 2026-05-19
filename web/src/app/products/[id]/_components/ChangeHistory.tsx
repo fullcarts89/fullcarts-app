@@ -55,7 +55,7 @@ export default function ChangeHistory({ events }: Props) {
   if (events.length === 0) {
     return (
       <div className={styles["traj-empty"]}>
-        No documented events for this product yet
+        We haven&rsquo;t logged a shrink for this product yet — but we&rsquo;re watching.
       </div>
     );
   }
@@ -154,6 +154,7 @@ export default function ChangeHistory({ events }: Props) {
                     href={s.url || "#"}
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label={`${s.title || "Source"} on ${publisherLabel(s)} (opens in new tab)`}
                   >
                     <div
                       className={`${styles["src-pub"]} ${publisherClass(s)}`}

@@ -23,8 +23,8 @@ export default function CorporateTree({ nodes }: Props) {
   if (nodes.length === 0) {
     return (
       <div className={styles["corp-empty"]}>
-        Manufacturer data is still being backfilled from Wikidata. Check
-        back next week — coverage expands ~200 brands/week.
+        We&rsquo;re still mapping which company owns which brand. Most of the
+        catalog will be tagged within a few weeks — check back then.
       </div>
     );
   }
@@ -61,7 +61,11 @@ export default function CorporateTree({ nodes }: Props) {
                   <div className={styles["corp-child-thumb"]}>
                     {b.thumbnail ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={b.thumbnail} alt="" loading="lazy" />
+                      <img
+                        src={b.thumbnail}
+                        alt={`${b.brand} product photo`}
+                        loading="lazy"
+                      />
                     ) : (
                       <div className={styles["corp-child-placeholder"]}>
                         {b.brand.slice(0, 1)}

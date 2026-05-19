@@ -116,39 +116,42 @@ export default function TimelineExplorer({ ranking, events }: Props) {
           ]
             .filter(Boolean)
             .join(" ");
-          return (
-            <div
-              key={b.year}
-              className={wrapClasses}
-              onClick={() => {
-                if (isZero) return;
-                setActiveYear(b.year);
-                setOpenEventId(null);
-                setShowAllInYear(false);
-              }}
-              role={isZero ? undefined : "button"}
-              tabIndex={isZero ? undefined : 0}
-              onKeyDown={(ev) => {
-                if (isZero) return;
-                if (ev.key === "Enter" || ev.key === " ") {
-                  ev.preventDefault();
-                  setActiveYear(b.year);
-                  setOpenEventId(null);
-                }
-              }}
-            >
+          const yearLabel = isZero
+            ? `${b.year}: no documented events`
+            : `${b.year}: ${b.count} ${b.count === 1 ? "event" : "events"}`;
+          return isZero ? (
+            <div key={b.year} className={wrapClasses} aria-label={yearLabel}>
               <div
-                className={`${styles.bar} ${isZero ? styles.zero : ""}`}
+                className={`${styles.bar} ${styles.zero}`}
                 style={{ height: `${heightPx}px` }}
               >
-                <div
-                  className={`${styles["bar-count"]} ${isZero ? styles.zero : ""}`}
-                >
+                <div className={`${styles["bar-count"]} ${styles.zero}`}>
                   {b.count}
                 </div>
               </div>
               <div className={styles["bar-year"]}>{yy}</div>
             </div>
+          ) : (
+            <button
+              key={b.year}
+              type="button"
+              className={wrapClasses}
+              aria-pressed={isActive}
+              aria-label={yearLabel}
+              onClick={() => {
+                setActiveYear(b.year);
+                setOpenEventId(null);
+                setShowAllInYear(false);
+              }}
+            >
+              <div
+                className={styles.bar}
+                style={{ height: `${heightPx}px` }}
+              >
+                <div className={styles["bar-count"]}>{b.count}</div>
+              </div>
+              <div className={styles["bar-year"]}>{yy}</div>
+            </button>
           );
         })}
       </div>
@@ -195,24 +198,20 @@ export default function TimelineExplorer({ ranking, events }: Props) {
               const shownSources = sortedSources.slice(0, SOURCES_PREVIEW);
               const isOpen = openEventId === e.event_id;
 
+              const expandedId = `evt-sources-${e.event_id}`;
               return (
                 <div
                   key={e.event_id}
                   className={`${styles["evt-row"]} ${isOpen ? styles.open : ""}`}
                 >
-                  <div
+                  <button
+                    type="button"
                     className={styles["evt-summary"]}
+                    aria-expanded={isOpen}
+                    aria-controls={expandedId}
                     onClick={() =>
                       setOpenEventId(isOpen ? null : e.event_id)
                     }
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(ev) => {
-                      if (ev.key === "Enter" || ev.key === " ") {
-                        ev.preventDefault();
-                        setOpenEventId(isOpen ? null : e.event_id);
-                      }
-                    }}
                   >
                     <div className={styles["evt-badge-col"]}>
                       <span
@@ -260,8 +259,16 @@ export default function TimelineExplorer({ ranking, events }: Props) {
                     <div className={styles["evt-toggle"]}>
                       <span className={styles["evt-toggle-chev"]}>▾</span>
                     </div>
-                  </div>
-                  <div className={styles["evt-expanded"]}>
+                  </button>
+                  <div id={expandedId} className={styles["evt-expanded"]}>
+                    {e.entity_id && (
+                      <a
+                        className={styles["evt-product-link"]}
+                        href={`/products/${e.entity_id}`}
+                      >
+                        View this product&rsquo;s full scorecard →
+                      </a>
+                    )}
                     <div className={styles["src-list"]}>
                       {shownSources.map((s, idx) => {
                         const key = `${s.claim_id}-${idx}`;
@@ -284,7 +291,8 @@ export default function TimelineExplorer({ ranking, events }: Props) {
                             className={styles["src-row"]}
                             href={s.url}
                             target="_blank"
-                            rel="noopener"
+                            rel="noopener noreferrer"
+                            aria-label={`${s.title || "Source"} on ${publisherLabel(s)} (opens in new tab)`}
                           >
                             {inner}
                           </a>

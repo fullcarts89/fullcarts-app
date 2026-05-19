@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 export interface JustDoc {
   event_id: string;
+  entity_id: string | null;
   brand: string;
   product_name: string;
   product_category: string | null;
@@ -34,6 +35,7 @@ export interface ActiveBrand {
 }
 
 export interface RecentShrink {
+  entity_id: string | null;
   brand: string;
   product_name: string;
   product_category: string | null;
@@ -115,7 +117,7 @@ export async function loadHomeData(): Promise<HomeData> {
   const justDocRes = await sb
     .from("recent_changes")
     .select(
-      "id, brand, product_name, product_category, size_before, size_after, size_unit, size_delta_pct, observed_date, product_image_url",
+      "id, entity_id, brand, product_name, product_category, size_before, size_after, size_unit, size_delta_pct, observed_date, product_image_url",
     )
     .eq("is_retracted", false)
     .eq("change_type", "shrinkflation")
@@ -242,7 +244,7 @@ export async function loadHomeData(): Promise<HomeData> {
   const recentShrinksRes = await sb
     .from("recent_changes")
     .select(
-      "brand, product_name, product_category, size_before, size_after, size_unit, size_delta_pct, observed_date, product_image_url",
+      "entity_id, brand, product_name, product_category, size_before, size_after, size_unit, size_delta_pct, observed_date, product_image_url",
     )
     .eq("is_retracted", false)
     .eq("change_type", "shrinkflation")
@@ -287,6 +289,7 @@ export async function loadHomeData(): Promise<HomeData> {
     just_doc: justDocRes.data
       ? {
           event_id: justDocRes.data.id,
+          entity_id: justDocRes.data.entity_id ?? null,
           brand: justDocRes.data.brand,
           product_name: justDocRes.data.product_name,
           product_category: justDocRes.data.product_category,
@@ -302,6 +305,7 @@ export async function loadHomeData(): Promise<HomeData> {
     most_active: mostActive,
     recent_shrinks: (recentShrinksRes.data ?? []).map(
       (r: {
+        entity_id: string | null;
         brand: string;
         product_name: string;
         product_category: string | null;
@@ -312,6 +316,7 @@ export async function loadHomeData(): Promise<HomeData> {
         observed_date: string;
         product_image_url: string;
       }) => ({
+        entity_id: r.entity_id ?? null,
         brand: r.brand,
         product_name: r.product_name,
         product_category: r.product_category,

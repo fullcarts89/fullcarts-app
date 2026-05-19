@@ -33,10 +33,10 @@ export default function RestorationCorner({ rows }: Props) {
     return (
       <div className={styles["restore-card"]}>
         <div className={styles["restore-eyebrow"]}>
-          Restorations · pulled from published_changes
+          Restorations · the wins
         </div>
         <div className={styles["restore-empty"]}>
-          No restoration events documented yet — when one lands, it shows up here
+          No restorations on record yet. When a brand puts product back in the package, it shows up here.
         </div>
       </div>
     );
@@ -44,15 +44,15 @@ export default function RestorationCorner({ rows }: Props) {
   return (
     <div className={styles["restore-card"]}>
       <div className={styles["restore-eyebrow"]}>
-        Restorations · pulled from published_changes
+        Restorations · the wins
       </div>
       <div className={styles["restore-list"]}>
         {rows.map((r) => {
           const before = parseFloat(r.size_before);
           const after = parseFloat(r.size_after);
           const d = deltaPct(before, after);
-          return (
-            <div key={r.id} className={styles["restore-row"]}>
+          const inner = (
+            <>
               <div className={styles["restore-date"]}>
                 {monthYear(isoDay(r.observed_date))}
               </div>
@@ -74,6 +74,19 @@ export default function RestorationCorner({ rows }: Props) {
                   <span className={styles.delta}>+{d.toFixed(0)}%</span>
                 )}
               </div>
+            </>
+          );
+          return r.entity_id ? (
+            <a
+              key={r.id}
+              className={styles["restore-row"]}
+              href={`/products/${r.entity_id}`}
+            >
+              {inner}
+            </a>
+          ) : (
+            <div key={r.id} className={styles["restore-row"]}>
+              {inner}
             </div>
           );
         })}
