@@ -11,6 +11,7 @@
 // land on /admin/login. The single tap behaves normally (goes to "/").
 import { usePathname } from "next/navigation";
 import { useRef } from "react";
+import Link from "next/link";
 import styles from "./SiteNav.module.css";
 
 const LONG_PRESS_MS = 800;
@@ -69,10 +70,10 @@ export default function SiteNav() {
 
   return (
     <>
-      <div className={styles["bp-grid"]} />
-      <nav className={styles.nav}>
+      <div className={styles["bp-grid"]} aria-hidden="true" />
+      <nav className={styles.nav} aria-label="Main">
         <div className={styles["nav-inner"]}>
-          <a
+          <Link
             href="/"
             className={styles.logo}
             onPointerDown={startPress}
@@ -83,7 +84,7 @@ export default function SiteNav() {
             onContextMenu={handleContextMenu}
           >
             Full<span>Carts</span>
-          </a>
+          </Link>
           <div className={styles["nav-links"]}>
             {LINKS.map((link) => {
               const active = isActive(pathname, link.href);
@@ -95,14 +96,14 @@ export default function SiteNav() {
                 .filter(Boolean)
                 .join(" ");
               return (
-                <a
+                <Link
                   key={link.href}
                   href={link.href}
                   className={cls}
                   title={link.stub ? link.tooltip : undefined}
                 >
                   {link.label}
-                </a>
+                </Link>
               );
             })}
           </div>

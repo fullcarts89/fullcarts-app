@@ -79,7 +79,11 @@ export default function TipForm() {
 
   if (status === "success") {
     return (
-      <div className={`${styles["tip-form"]} ${styles["tip-form-success"]}`}>
+      <div
+        className={`${styles["tip-form"]} ${styles["tip-form-success"]}`}
+        role="status"
+        aria-live="polite"
+      >
         <div className={styles["tip-form-status"]}>Tip received</div>
         <p>
           Thanks — your tip is in our review queue. We&apos;ll cross-check it
@@ -102,6 +106,7 @@ export default function TipForm() {
       ref={formRef}
       className={styles["tip-form"]}
       onSubmit={handleSubmit}
+      aria-label="Submit a shrinkflation tip"
       noValidate
     >
       <div className={styles["tip-form-row"]}>
@@ -137,6 +142,7 @@ export default function TipForm() {
           name="description"
           rows={4}
           required
+          aria-required="true"
           minLength={10}
           maxLength={4000}
           placeholder="e.g. The bag went from 96g to 80g but the price stayed the same. I have the old bag at home for comparison."

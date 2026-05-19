@@ -8,6 +8,7 @@
 // that creates claims with this tag, so this section stays as the
 // single source of truth for skimpflation evidence.)
 import styles from "../styles.module.css";
+import SafeImage from "../../_components/SafeImage";
 import { isoDay } from "../lib";
 import type { TaggedClaim } from "../types";
 
@@ -55,7 +56,16 @@ export default function SkimpflationLeaderboard({ rows }: Props) {
             <>
               {img && (
                 <div className={styles["skimp-thumb"]}>
-                  <img src={img} alt={r.product_name || "Skimpflation"} loading="lazy" />
+                  <SafeImage
+                    src={img}
+                    alt={
+                      r.brand && r.product_name
+                        ? `${r.brand} ${r.product_name} — skimpflation evidence`
+                        : r.product_name || "Skimpflation"
+                    }
+                    fill
+                    sizes="(min-width: 1024px) 280px, (min-width: 640px) 33vw, 50vw"
+                  />
                 </div>
               )}
               <div className={styles["skimp-body"]}>

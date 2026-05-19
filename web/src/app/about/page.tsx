@@ -1,11 +1,27 @@
 import SiteNav from "@/components/SiteNav";
 import TipForm from "./_components/TipForm";
+import Term, { GLOSSARY } from "../_components/Term";
 import styles from "./styles.module.css";
 
 export const metadata = {
-  title: "About · FullCarts",
+  title: "About",
   description:
     "FullCarts is a public database of shrinkflation events. Our mission is to name the shrinkers, cite the evidence, and make consumer-product downsizing impossible to hide. Methodology, sources, and how to submit a tip.",
+  alternates: { canonical: "/about" },
+  openGraph: {
+    title: "About FullCarts",
+    description:
+      "Methodology, sources, and how to submit a tip. FullCarts is a public, evidence-based record of consumer-product shrinkflation.",
+    type: "website",
+    url: "/about",
+    siteName: "FullCarts",
+  },
+  twitter: {
+    card: "summary",
+    title: "About FullCarts",
+    description:
+      "A public, evidence-based record of consumer-product shrinkflation.",
+  },
 };
 
 // All public data sources we pull from, in source-type order. Each
@@ -57,7 +73,7 @@ const SOURCES: Array<{
     name: "BLS R-CPI-SC",
     tag: "Government-grade",
     desc:
-      "The Bureau of Labor Statistics' Research CPI excluding product Size Changes (R-CPI-SC) is the only official US measure of shrinkflation. BLS counts how many CPI-tracked items shrank between quarterly surveys — we plot it alongside our own count so you can see whether our catch list moves with the government's.",
+      "The Bureau of Labor Statistics' Research CPI excluding product Size Changes is the only official US measure of shrinkflation. BLS counts how many CPI-tracked items shrank between quarterly surveys — we plot it alongside our own count so you can see whether our catch list moves with the government's.",
     href: "https://www.bls.gov/cpi/research-series/r-cpi-sc.htm",
   },
   {
@@ -121,7 +137,7 @@ export default function AboutPage() {
   return (
     <>
       <SiteNav />
-      <div className={styles.container}>
+      <main id="main-content" className={styles.container}>
         <header className={styles.hero}>
           <div className={styles["hero-eyebrow"]}>About FullCarts</div>
           <h1>
@@ -147,10 +163,11 @@ export default function AboutPage() {
             corresponding price drop. We also track <strong>restorations</strong>
             {" "}
             (when a product&apos;s size is increased back) and{" "}
-            <strong>skimpflation</strong> (when the recipe quietly gets cheaper —
-            less protein, more filler, swapped fats). Every event has at
-            minimum a brand, product name, before/after size with units, an
-            observed date, and at least one source URL.
+            <Term label="skimpflation" define={GLOSSARY["Skimpflation"]} />{" "}
+            (when the recipe quietly gets cheaper — less protein, more filler,
+            swapped fats). Every event has at minimum a brand, product name,
+            before/after size with units, an observed date, and at least one
+            source URL.
           </p>
           <div className={styles["count-grid"]}>
             <div className={styles["count-card"]}>
@@ -218,7 +235,10 @@ export default function AboutPage() {
                 <div className={styles["source-tag"]}>{s.tag}</div>
                 <div className={styles["source-name"]}>{s.name}</div>
                 <div className={styles["source-desc"]}>{s.desc}</div>
-                <div className={styles["source-link"]}>Visit ↗</div>
+                <div className={styles["source-link"]}>
+                  Visit <span aria-hidden="true">↗</span>
+                  <span className="sr-only"> (opens in new tab)</span>
+                </div>
               </a>
             ))}
           </div>
@@ -279,7 +299,7 @@ export default function AboutPage() {
             </a>
           </div>
         </section>
-      </div>
+      </main>
     </>
   );
 }

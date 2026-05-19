@@ -85,6 +85,7 @@ export default function ChangeHistory({ events }: Props) {
               className={styles["history-summary"]}
               onClick={() => toggle(e.event_id)}
               aria-expanded={open}
+              aria-controls={`history-detail-${e.event_id}`}
             >
               <div className={styles["history-date"]}>
                 <span className={styles.year}>{year}</span>
@@ -145,7 +146,7 @@ export default function ChangeHistory({ events }: Props) {
               <div className={styles["history-toggle"]}>▾</div>
             </button>
 
-            <div className={styles["history-expanded"]}>
+            <div id={`history-detail-${e.event_id}`} className={styles["history-expanded"]} role="region">
               <div className={styles["src-list"]}>
                 {sourcesShown.map((s, i) => (
                   <a

@@ -4,6 +4,7 @@
 // sort pills, name search, and a top-25 + show-all toggle. Cards link
 // to the per-product detail page at /products/[entity_id].
 import { useMemo, useState } from "react";
+import SafeImage from "../../../_components/SafeImage";
 import styles from "../styles.module.css";
 import type { ProductRollup } from "../types";
 
@@ -63,7 +64,9 @@ export default function ProductGrid({ products, brand }: Props) {
       <div className={styles.controls}>
         <input
           className={styles["search-input"]}
+          type="search"
           placeholder="Filter products…"
+          aria-label={`Filter ${brand} products`}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           autoComplete="off"
@@ -102,7 +105,12 @@ export default function ProductGrid({ products, brand }: Props) {
             >
               {p.image_url ? (
                 <div className={styles["product-thumb"]}>
-                  <img src={p.image_url} alt={`${brand} ${p.canonical_name} package`} loading="lazy" />
+                  <SafeImage
+                    src={p.image_url}
+                    alt={`${brand} ${p.canonical_name} package`}
+                    fill
+                    sizes="(min-width: 1024px) 220px, (min-width: 640px) 33vw, 50vw"
+                  />
                   {p.lead_source_type && p.lead_source_type !== "reddit" && (
                     <span className={styles["img-tag-sm"]}>News</span>
                   )}

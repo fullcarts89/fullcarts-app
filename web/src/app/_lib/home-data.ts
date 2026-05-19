@@ -143,7 +143,7 @@ export async function loadHomeData(): Promise<HomeData> {
     .limit(1)
     .maybeSingle();
   let bowBrand: string | null = bowResp.data?.brand ?? null;
-  let bowTopEvidence = n(bowResp.data?.evidence_count);
+  const bowTopEvidence = n(bowResp.data?.evidence_count);
   if (!bowBrand) {
     const fallback = await sb
       .from("published_changes")

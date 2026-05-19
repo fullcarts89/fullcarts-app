@@ -10,6 +10,7 @@
 //     tier collapsed by default behind a toggle
 //   - flat grid otherwise
 import { Fragment, useMemo, useState } from "react";
+import SafeImage from "../../_components/SafeImage";
 import styles from "../styles.module.css";
 import type { RankedBrand } from "../types";
 
@@ -166,7 +167,9 @@ export default function BrandIndex({ brands, initialQuery = "" }: Props) {
       <div className={styles.controls}>
         <input
           className={styles["search-input"]}
+          type="search"
           placeholder="Filter brands…"
+          aria-label="Filter brands"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           autoComplete="off"
@@ -193,7 +196,7 @@ export default function BrandIndex({ brands, initialQuery = "" }: Props) {
         </div>
       </div>
 
-      <div className={styles["results-meta"]}>
+      <div className={styles["results-meta"]} aria-live="polite">
         {query.trim() || category ? (
           <>
             <strong>{filtered.length}</strong> of {brands.length} brands
@@ -285,7 +288,12 @@ export default function BrandIndex({ brands, initialQuery = "" }: Props) {
         </span>
         <div className={styles["card-img"]}>
           {b.thumbnail ? (
-            <img src={b.thumbnail} alt={`${b.brand} product photo`} loading="lazy" />
+            <SafeImage
+              src={b.thumbnail}
+              alt={`${b.brand} product photo`}
+              fill
+              sizes="(min-width: 1280px) 200px, (min-width: 640px) 25vw, 50vw"
+            />
           ) : (
             <div className={styles["card-placeholder"]}>
               <span className={styles["card-placeholder-name"]}>{b.brand}</span>

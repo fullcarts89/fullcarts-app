@@ -1,5 +1,6 @@
 // Shared "coming soon" stub used by /products, /insights, and /about
 // until those routes get their real implementations.
+import Link from "next/link";
 import SiteNav from "@/components/SiteNav";
 import styles from "./StubPage.module.css";
 
@@ -18,7 +19,7 @@ export default function StubPage({ title, phase, lede, planned }: StubPageProps)
   return (
     <>
       <SiteNav />
-      <div className={styles.container}>
+      <main id="main-content" className={styles.container}>
         <div className={styles.breadcrumb}>
           <span className={styles.current}>{title}</span>
         </div>
@@ -37,14 +38,14 @@ export default function StubPage({ title, phase, lede, planned }: StubPageProps)
         </div>
 
         <div className={styles["cta-row"]}>
-          <a className={styles.cta} href="/brands">
+          <Link className={styles.cta} href="/brands">
             Browse all brands →
-          </a>
-          <a className={`${styles.cta} ${styles["cta-secondary"]}`} href="/">
+          </Link>
+          <Link className={`${styles.cta} ${styles["cta-secondary"]}`} href="/">
             ← Back home
-          </a>
+          </Link>
         </div>
-      </div>
+      </main>
     </>
   );
 }

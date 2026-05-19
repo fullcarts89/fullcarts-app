@@ -15,6 +15,7 @@
 //   much MORE product would you get for the same money", expressed
 //   in dollars.
 import { useMemo, useState } from "react";
+import SafeImage from "../../_components/SafeImage";
 import styles from "../styles.module.css";
 import type { CartItem } from "../types";
 
@@ -135,8 +136,12 @@ export default function ShrinkingCart({ basket }: Props) {
             value={spend || ""}
             onChange={handleSpend}
             className={styles["cart-input"]}
+            aria-describedby="cart-spend-hint"
           />
         </div>
+        <span id="cart-spend-hint" className="sr-only">
+          Enter a weekly grocery spend between $1 and $10,000.
+        </span>
       </div>
 
       <div className={styles["cart-result-row"]}>
@@ -173,11 +178,11 @@ export default function ShrinkingCart({ basket }: Props) {
             >
               <div className={styles["cart-item-img"]}>
                 {it.image_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  <SafeImage
                     src={it.image_url}
                     alt={`${it.brand} ${it.product_name} package`}
-                    loading="lazy"
+                    fill
+                    sizes="(min-width: 1024px) 120px, 100px"
                   />
                 ) : (
                   <div className={styles["cart-item-placeholder"]} aria-hidden="true">

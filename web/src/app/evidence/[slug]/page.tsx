@@ -15,6 +15,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import SiteNav from "@/components/SiteNav";
+import SafeImage from "../../_components/SafeImage";
 import {
   EVIDENCE_CHANNELS,
   findChannelBySlug,
@@ -120,10 +121,29 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   const channel = findChannelBySlug(slug);
-  if (!channel) return { title: "Evidence channel · FullCarts" };
+  if (!channel) {
+    return {
+      title: "Evidence channel",
+      robots: { index: false, follow: true },
+    };
+  }
+  const title = `${channel.title} — Evidence channel`;
   return {
-    title: `${channel.title} — Evidence channel · FullCarts`,
+    title,
     description: channel.intro,
+    alternates: { canonical: `/evidence/${channel.slug}` },
+    openGraph: {
+      title: `${title} · FullCarts`,
+      description: channel.intro,
+      type: "article",
+      url: `/evidence/${channel.slug}`,
+      siteName: "FullCarts",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} · FullCarts`,
+      description: channel.intro,
+    },
   };
 }
 
@@ -152,19 +172,11 @@ export default async function EvidenceChannelPage({
     .limit(PAGE_SIZE);
 
   if (error) {
-    // Don't blow up the route; render a soft error so the channel page
-    // is still navigable from the homepage even during a Supabase blip.
-    return (
-      <>
-        <SiteNav />
-        <div className={styles.container}>
-          <div className={styles.error}>
-            We couldn&rsquo;t load evidence for this channel right now. Please
-            try again in a moment.
-          </div>
-        </div>
-      </>
-    );
+    // Throw so the route-segment error.tsx boundary engages — that
+    // gives the reader a real Retry button instead of a dead-end
+    // static message. The boundary preserves the breadcrumb + nav
+    // so the channel page stays navigable.
+    throw new Error(`Failed to load evidence channel "${channel.slug}": ${error.message}`);
   }
 
   const rows = (data ?? []) as unknown as EvidenceRow[];
@@ -185,7 +197,7 @@ export default async function EvidenceChannelPage({
   return (
     <>
       <SiteNav />
-      <div className={styles.container}>
+      <main id="main-content" className={styles.container}>
         <div className={styles.breadcrumb}>
           <Link href="/">Home</Link>
           <span className={styles.sep}>/</span>
@@ -227,11 +239,11 @@ export default async function EvidenceChannelPage({
                 <>
                   <div className={styles.thumb}>
                     {c.image ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                      <SafeImage
                         src={c.image}
                         alt={`${c.brand} ${c.product}`}
-                        loading="lazy"
+                        fill
+                        sizes="(min-width: 1024px) 300px, (min-width: 640px) 33vw, 50vw"
                       />
                     ) : (
                       <div className={styles.thumbPlaceholder} aria-hidden="true">
@@ -298,7 +310,7 @@ export default async function EvidenceChannelPage({
             ))}
           </div>
         </nav>
-      </div>
+      </main>
     </>
   );
 }

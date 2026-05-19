@@ -73,7 +73,7 @@ function ConfidenceBadge({ value, label }: { value: number; label: string }) {
   const color =
     value >= 0.8 ? "bg-[var(--green-bg)] text-[var(--green-base)] border-[var(--green-border)]" :
     value >= 0.5 ? "bg-[var(--amber-bg)] text-[var(--amber-base)] border-amber-500/20" :
-    "bg-[var(--red-bg)] text-[var(--red-base)] border-[var(--red-border)]";
+    "bg-[var(--red-bg)] text-[var(--red-text)] border-[var(--red-border)]";
   return (
     <span className={`inline-block px-2 py-0.5 text-xs font-mono rounded border ${color}`}>
       {label}: {(value * 100).toFixed(0)}%
@@ -93,9 +93,9 @@ function SizeChange({ claim }: { claim: Claim }) {
   return (
     <div className="font-mono text-sm">
       <span className="text-[var(--text-secondary)]">{old}</span>
-      <span className="mx-2 text-[var(--red-base)]">&rarr;</span>
+      <span className="mx-2 text-[var(--red-text)]">&rarr;</span>
       <span className="text-[var(--text-primary)]">{newS}</span>
-      {pct && <span className="text-[var(--red-base)] text-xs ml-1">{pct}</span>}
+      {pct && <span className="text-[var(--red-text)] text-xs ml-1">{pct}</span>}
     </div>
   );
 }
@@ -207,9 +207,13 @@ export default async function ClaimsReviewPage({
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([date, counts]) => ({ date, ...counts }));
 
-  // Pipeline health: healthy if extraction ran within 48h
+  // Pipeline health: healthy if extraction ran within 48h. The page is
+  // a server component (async function), so Date.now() runs once per
+  // render on the server — the react-hooks/purity rule doesn't apply
+  // outside client components.
   const latestExtractedAt = latestClaimRes.data?.[0]?.extracted_at;
   const hoursAgo = latestExtractedAt
+    // eslint-disable-next-line react-hooks/purity
     ? Math.floor((Date.now() - new Date(latestExtractedAt as string).getTime()) / 3600000)
     : Infinity;
   const pipelineHealthy = hoursAgo < 48;
@@ -236,6 +240,7 @@ export default async function ClaimsReviewPage({
     .from("claims")
     .select(selectExpr, { count: "exact" })
     .eq("status", statusFilter)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- supabase-js doesn't type JSONB ->path columns
     .order("confidence->overall" as any, { ascending: false });
 
   if (sourceFilter) {
@@ -243,12 +248,15 @@ export default async function ClaimsReviewPage({
     // JOIN filter inflates the type tree past TypeScript's inference depth
     // (TS2589) — without this the entire claims query type goes "excessively
     // deep". Behavior is the standard PostgREST `raw_items.source_type=eq.X`.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     query = (query as any).eq("raw_items.source_type", sourceFilter);
   }
 
   if (confFilter !== "all") {
     query = query
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- JSONB path same as above
       .gte("confidence->overall" as any, tier.min)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .lte("confidence->overall" as any, tier.max);
   }
 
@@ -312,7 +320,7 @@ export default async function ClaimsReviewPage({
         lastExtractionAgo={lastExtractionAgo}
       />
 
-      <main className="max-w-5xl mx-auto px-6 py-6 space-y-4">
+      <main id="main-content" className="max-w-5xl mx-auto px-6 py-6 space-y-4">
         {claims.map((claim) => {
           const raw = rawMap.get(claim.raw_item_id);
           const payload = raw?.raw_payload;

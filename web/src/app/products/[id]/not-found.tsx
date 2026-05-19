@@ -1,3 +1,4 @@
+import Link from "next/link";
 import SiteNav from "@/components/SiteNav";
 import styles from "./styles.module.css";
 
@@ -5,7 +6,7 @@ export default function ProductNotFound() {
   return (
     <>
       <SiteNav />
-      <div className={styles.container}>
+      <main id="main-content" className={styles.container}>
         <div style={{ padding: "120px 0 80px", textAlign: "center" }}>
           <h1
             style={{
@@ -20,12 +21,12 @@ export default function ProductNotFound() {
           </h1>
           <p style={{ color: "var(--text-secondary)", fontSize: 18 }}>
             We don&apos;t have a record for that product.{" "}
-            <a href="/brands" style={{ color: "var(--red-base)" }}>
+            <Link href="/brands" style={{ color: "var(--red-text)" }}>
               Browse brands →
-            </a>
+            </Link>
           </p>
         </div>
-      </div>
+      </main>
     </>
   );
 }

@@ -11,6 +11,7 @@ import NewsFeed from "./_components/NewsFeed";
 import EvidenceWall from "./_components/EvidenceWall";
 import ShrinkingCart from "./_components/ShrinkingCart";
 import CorporateTree from "./_components/CorporateTree";
+import Term, { GLOSSARY } from "../_components/Term";
 import {
   buildCartBasket,
   buildChart,
@@ -40,9 +41,24 @@ import styles from "./styles.module.css";
 export const revalidate = 3600;
 
 export const metadata = {
-  title: "By the numbers · Shrinkflation insights · FullCarts",
+  title: "Insights · By the numbers",
   description:
     "Macro shrinkflation data: BLS R-CPI-SC counts, FRED food CPI, USDA skimpflation findings, worst categories, and the products that keep shrinking. Cross-referenced across every source we track.",
+  alternates: { canonical: "/insights" },
+  openGraph: {
+    title: "Shrinkflation insights · FullCarts",
+    description:
+      "Macro shrinkflation data, cross-referenced from BLS, FRED, USDA, and our own documented events.",
+    type: "website",
+    url: "/insights",
+    siteName: "FullCarts",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Shrinkflation insights · FullCarts",
+    description:
+      "Macro shrinkflation data, cross-referenced from BLS, FRED, USDA, and our own documented events.",
+  },
 };
 
 async function loadInsights() {
@@ -394,6 +410,13 @@ export default async function InsightsPage() {
   const today = new Date().toISOString();
   const lastUpdated = isoDay(today);
 
+  // Per-source freshness — surfaced on each macro card so readers can
+  // see how stale the data is. We expose the most-recent observation
+  // date for each upstream feed; the page-level "Updated {lastUpdated}"
+  // remains the build-time stamp.
+  const fredLatest = isoDay(data.fred[0]?.observation_date);
+  const blsLatestPeriod = isoDay(data.bls[0]?.period);
+
   // Sticky in-page nav anchors. Order matches the section order below;
   // each label maps to the matching <h2> via id. Lets a reader jump
   // straight to the chart or to "Who actually owns these brands?"
@@ -413,7 +436,7 @@ export default async function InsightsPage() {
   return (
     <>
       <SiteNav />
-      <div className={styles.container}>
+      <main id="main-content" className={styles.container}>
         <InsightsHero stats={data.stats} lastUpdated={lastUpdated} />
         <BlsHeadline
           count={headline.count}
@@ -433,7 +456,11 @@ export default async function InsightsPage() {
         <section id="trade-off" className={styles.block}>
           <div className={styles["section-head"]}>
             <h2>Inflation, shrinkflation, and how they trade off</h2>
-            <div className={styles.meta}>Monthly · trailing window</div>
+            <div className={styles.meta}>
+              Monthly · trailing window
+              {fredLatest && ` · FRED latest ${fredLatest}`}
+              {blsLatestPeriod && ` · BLS latest ${blsLatestPeriod.slice(0, 7)}`}
+            </div>
           </div>
           <p className={styles["section-lede"]}>
             When grocery prices rise, brands face a choice — raise the price,
@@ -486,15 +513,20 @@ export default async function InsightsPage() {
         <section className={styles.block}>
           <div id="skimpflation" className={styles["section-head"]}>
             <h2>Skimpflation: when the recipe quietly changes</h2>
-            <div className={styles.meta}>USDA FoodData Central</div>
+            <div className={styles.meta}>
+              USDA FoodData Central · {data.skimpClaims.length} flagged
+              {data.skimpClaims[0]?.observed_date &&
+                ` · latest ${isoDay(data.skimpClaims[0].observed_date)}`}
+            </div>
           </div>
           <p className={styles["section-lede"]}>
             It&apos;s not just the bag getting smaller.{" "}
-            <strong>Skimpflation</strong> is when brands swap ingredients to
-            lower cost — less meat, more filler, less butter, more palm oil.
-            We cross-reference USDA&apos;s quarterly FoodData Central releases
-            to flag nutrition changes that look like ingredient substitution
-            rather than reformulation for taste.
+            <Term label="Skimpflation" define={GLOSSARY["Skimpflation"]} /> is
+            when brands swap ingredients to lower cost — less meat, more
+            filler, less butter, more palm oil. We cross-reference USDA&apos;s
+            quarterly FoodData Central releases to flag nutrition changes
+            that look like ingredient substitution rather than reformulation
+            for taste.
           </p>
           <SkimpflationLeaderboard rows={data.skimpClaims} />
         </section>
@@ -565,7 +597,7 @@ export default async function InsightsPage() {
           </p>
           <EvidenceWall rows={data.spotDiffClaims} />
         </section>
-      </div>
+      </main>
     </>
   );
 }

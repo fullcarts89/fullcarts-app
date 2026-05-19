@@ -4,6 +4,7 @@
 // image as fallback). Metrics are intentionally absent here — the
 // section's job is the visual side-by-side, not the numeric delta.
 import styles from "../styles.module.css";
+import SafeImage from "../../_components/SafeImage";
 import type { TaggedClaim } from "../types";
 
 interface Props {
@@ -61,7 +62,16 @@ export default function EvidenceWall({ rows }: Props) {
             rel={isExternal ? "noopener noreferrer" : undefined}
           >
             <div className={styles["wall-img"]}>
-              <img src={img!} alt={r.product_name || "Spot the difference"} loading="lazy" />
+              <SafeImage
+                src={img!}
+                alt={
+                  r.brand && r.product_name
+                    ? `${r.brand} ${r.product_name} — side-by-side comparison`
+                    : r.product_name || "Spot the difference"
+                }
+                fill
+                sizes="(min-width: 1024px) 280px, (min-width: 640px) 33vw, 50vw"
+              />
             </div>
             <div className={styles["wall-body"]}>
               <div className={styles["wall-product"]}>

@@ -1,0 +1,15 @@
+.term {
+  /* Override the browser default italic <abbr> styling. */
+  font-style: inherit;
+  text-decoration: none;
+  border-bottom: 1px dashed var(--text-tertiary);
+  cursor: help;
+  /* Make focusable abbrs feel like a real interactive element. */
+  outline: none;
+}
+
+.term:hover,
+.term:focus-visible {
+  border-bottom-color: var(--red-text);
+  color: var(--text-primary);
+}

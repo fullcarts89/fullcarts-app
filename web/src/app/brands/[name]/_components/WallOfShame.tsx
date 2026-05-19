@@ -6,6 +6,7 @@
 // Card anatomy: photo / source caption / size diagram / title / size+%
 // / source-type badge + date.
 import styles from "../styles.module.css";
+import SafeImage from "../../../_components/SafeImage";
 import type { EventRow, EventSource, ProductEntity } from "../types";
 import { isoDay, leadImageFromSources, num } from "../lib";
 import SizeDiagram from "./SizeDiagram";
@@ -92,10 +93,11 @@ export default function WallOfShame({ events, entities }: Props) {
             <>
               <div className={styles["shame-img"]}>
                 {imgUrl ? (
-                  <img
+                  <SafeImage
                     src={imgUrl}
                     alt={`${e.brand} ${productName} — ${sizeBefore}${unit} to ${sizeAfter}${unit}`}
-                    loading="lazy"
+                    fill
+                    sizes="(min-width: 1024px) 280px, (min-width: 640px) 33vw, 50vw"
                   />
                 ) : (
                   <div className={styles["placeholder-stub"]}>
@@ -158,7 +160,7 @@ export default function WallOfShame({ events, entities }: Props) {
               className={styles["shame-card"]}
               href={cardHref}
               target={isExternal ? "_blank" : undefined}
-              rel={isExternal ? "noopener" : undefined}
+              rel={isExternal ? "noopener noreferrer" : undefined}
               aria-label={
                 e.entity_id
                   ? `${e.brand} ${productName} — product scorecard`

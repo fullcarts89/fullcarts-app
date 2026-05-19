@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import SiteNav from "@/components/SiteNav";
 import BrandHero from "./_components/BrandHero";
@@ -72,6 +73,51 @@ async function loadBrand(slug: string) {
   };
 }
 
+export async function generateMetadata({ params }: PageProps) {
+  const { name } = await params;
+  const lower = decodeURIComponent(name).toLowerCase();
+  const sb = createAdminClient();
+  const { data } = await sb
+    .from("brand_index")
+    .select("brand, shrinkflation_events, product_count, worst_delta_pct, thumbnail")
+    .ilike("brand", lower)
+    .maybeSingle();
+  if (!data) {
+    return {
+      title: "Brand not found",
+      robots: { index: false, follow: true },
+    };
+  }
+  const ev = (data as { shrinkflation_events: number }).shrinkflation_events ?? 0;
+  const pc = (data as { product_count: number }).product_count ?? 0;
+  const brand = (data as { brand: string }).brand;
+  const thumb = (data as { thumbnail: string | null }).thumbnail;
+  const slug = encodeURIComponent(brand.toLowerCase());
+  const title = `${brand} — ${ev} documented shrink${ev === 1 ? "" : "s"}`;
+  const description = `Full scorecard for ${brand}: ${ev} documented shrinkflation event${
+    ev === 1 ? "" : "s"
+  } across ${pc} product${pc === 1 ? "" : "s"}, with timeline, evidence trail, and per-product history.`;
+  return {
+    title,
+    description,
+    alternates: { canonical: `/brands/${slug}` },
+    openGraph: {
+      title: `${title} · FullCarts`,
+      description,
+      type: "article",
+      url: `/brands/${slug}`,
+      siteName: "FullCarts",
+      images: thumb ? [{ url: thumb, alt: `${brand} product photo` }] : undefined,
+    },
+    twitter: {
+      card: thumb ? "summary_large_image" : "summary",
+      title: `${title} · FullCarts`,
+      description,
+      images: thumb ? [thumb] : undefined,
+    },
+  };
+}
+
 export default async function BrandPage({ params }: PageProps) {
   const { name } = await params;
   const data = await loadBrand(name);
@@ -81,12 +127,35 @@ export default async function BrandPage({ params }: PageProps) {
   const manufacturer = dominantManufacturer(entities);
   const products = rollupProducts(entities, events);
 
+  // BreadcrumbList JSON-LD mirrors the visible breadcrumb so search
+  // results can render the brand → product hierarchy. Organization
+  // payloads live in the root layout (Phase F).
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://fullcarts.org";
+  const brandSlug = encodeURIComponent(ranking.brand.toLowerCase());
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Brands", item: `${siteUrl}/brands` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: ranking.brand,
+        item: `${siteUrl}/brands/${brandSlug}`,
+      },
+    ],
+  };
+
   return (
     <>
       <SiteNav />
-      <div className={styles.container}>
+      <main id="main-content" className={styles.container}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        />
         <div className={styles.breadcrumb}>
-          <a href="/brands">Brands</a>
+          <Link href="/brands">Brands</Link>
           <span className={styles.sep}>/</span>
           <span className={styles.current}>{ranking.brand}</span>
         </div>
@@ -98,7 +167,7 @@ export default async function BrandPage({ params }: PageProps) {
         <WallOfShame events={events} entities={entities} />
 
         <ProductGrid products={products} brand={ranking.brand} />
-      </div>
+      </main>
     </>
   );
 }

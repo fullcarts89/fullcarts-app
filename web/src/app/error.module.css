@@ -1,0 +1,72 @@
+.wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 96px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--red-text);
+}
+
+.heading {
+  font-family: var(--font-headline);
+  font-weight: 700;
+  font-size: clamp(32px, 4vw, 44px);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.body {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.digest {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-tertiary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  padding: 8px 12px;
+  letter-spacing: 0.06em;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.primary, .secondary {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 12px 18px;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid var(--red-base);
+  background: var(--red-base);
+  color: #fff;
+}
+
+.secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border-color: var(--border-medium);
+}
+
+.secondary:hover {
+  border-color: var(--red-text);
+  color: var(--red-text);
+}

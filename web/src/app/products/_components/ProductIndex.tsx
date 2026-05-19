@@ -9,6 +9,7 @@
 //   - tier-grouped grid when sort=events & no filters
 //   - flat grid otherwise
 import { Fragment, useMemo, useState } from "react";
+import SafeImage from "../../_components/SafeImage";
 import styles from "../styles.module.css";
 import type { RankedProduct } from "../types";
 
@@ -155,7 +156,9 @@ export default function ProductIndex({ products }: Props) {
       <div className={styles.controls}>
         <input
           className={styles["search-input"]}
+          type="search"
           placeholder="Filter by brand or product name…"
+          aria-label="Filter products by brand or product name"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           autoComplete="off"
@@ -182,7 +185,7 @@ export default function ProductIndex({ products }: Props) {
         </div>
       </div>
 
-      <div className={styles["results-meta"]}>
+      <div className={styles["results-meta"]} aria-live="polite">
         {query.trim() || category ? (
           <>
             <strong>{filtered.length}</strong> of {products.length} products
@@ -278,8 +281,12 @@ export default function ProductIndex({ products }: Props) {
         </span>
         <div className={styles["card-img"]}>
           {p.image_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={p.image_url} alt={`${p.brand} ${p.canonical_name} package`} loading="lazy" />
+            <SafeImage
+              src={p.image_url}
+              alt={`${p.brand} ${p.canonical_name} package`}
+              fill
+              sizes="(min-width: 1280px) 200px, (min-width: 640px) 25vw, 50vw"
+            />
           ) : (
             <div className={styles["card-placeholder"]}>
               <span className={styles["card-placeholder-name"]}>
