@@ -40,7 +40,7 @@
 .section-head .meta { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-tertiary); }
 
 .timeline { display: flex; align-items: flex-end; gap: 4px; height: 220px; padding: 30px 0 16px; border-bottom: 1px solid var(--border-subtle); }
-.bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 8px; min-width: 0; position: relative; }
+.bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 8px; min-width: 0; position: relative; background: transparent; border: 0; padding: 0; font: inherit; color: inherit; text-align: inherit; }
 .bar { width: 100%; max-width: 40px; background: var(--red-bg); border-top: 2px solid var(--red-base); transition: background .15s; position: relative; }
 .bar.zero { background: transparent; border-top: 1px dashed var(--border-medium); }
 .bar:hover { background: var(--red-border); }
@@ -139,7 +139,7 @@
 
 .evt-list { display: flex; flex-direction: column; border-top: 1px solid var(--border-subtle); }
 .evt-row { border-bottom: 1px solid var(--border-subtle); }
-.evt-summary { display: grid; grid-template-columns: 110px 1fr 32px; gap: 24px; padding: 22px 0; align-items: start; cursor: pointer; transition: background .15s; }
+.evt-summary { display: grid; grid-template-columns: 110px 1fr 32px; gap: 24px; padding: 22px 0; align-items: start; cursor: pointer; transition: background .15s; width: 100%; background: transparent; border: 0; font: inherit; color: inherit; text-align: left; }
 .evt-summary:hover { background: var(--bg-hover); }
 .evt-badge-col { padding-top: 2px; }
 .evt-badge { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; padding: 4px 8px; border-radius: 2px; width: fit-content; }
