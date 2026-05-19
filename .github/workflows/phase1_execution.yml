@@ -16,6 +16,8 @@ on:
           - "6-backfill-images"
           - "7-activate-variants-dry-run"
           - "8-activate-variants-live"
+          - "9-restore-originators-dry-run"
+          - "10-restore-originators-apply"
           - "all-dry-run"
           - "all-live"
 
@@ -111,3 +113,21 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: python3 -m pipeline.scripts.activate_variants
+
+      # Step 9: Restore originator claims (dry run)
+      # One-shot. Recovers status='matched' for claims wrongly demoted to
+      # 'evidence' by the pre-fix cleanup_stuck_matched loop (May 17-19).
+      - name: "Step 9: Restore matched originators (dry run)"
+        if: inputs.step == '9-restore-originators-dry-run'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python3 -m pipeline.scripts.restore_matched_originators
+
+      # Step 10: Restore originator claims (apply)
+      - name: "Step 10: Restore matched originators (apply)"
+        if: inputs.step == '10-restore-originators-apply'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python3 -m pipeline.scripts.restore_matched_originators --apply
