@@ -34,10 +34,11 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] flex items-center justify-center px-4">
+    <main id="main-content" className="min-h-screen bg-[var(--bg-primary)] flex items-center justify-center px-4">
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-sm space-y-4 bg-[var(--bg-secondary)] border border-[var(--bg-tertiary)] rounded-lg p-6"
+        aria-label="Admin login"
       >
         <h1 className="font-[var(--font-headline)] text-xl font-bold text-[var(--text-primary)] text-center">
           Admin Access
@@ -61,6 +62,6 @@ export default function AdminLoginPage() {
           {loading ? "..." : "Sign In"}
         </button>
       </form>
-    </div>
+    </main>
   );
 }

@@ -320,7 +320,7 @@ export default async function ClaimsReviewPage({
         lastExtractionAgo={lastExtractionAgo}
       />
 
-      <main className="max-w-5xl mx-auto px-6 py-6 space-y-4">
+      <main id="main-content" className="max-w-5xl mx-auto px-6 py-6 space-y-4">
         {claims.map((claim) => {
           const raw = rawMap.get(claim.raw_item_id);
           const payload = raw?.raw_payload;
