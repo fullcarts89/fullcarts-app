@@ -156,7 +156,9 @@ export default function ProductIndex({ products }: Props) {
       <div className={styles.controls}>
         <input
           className={styles["search-input"]}
+          type="search"
           placeholder="Filter by brand or product name…"
+          aria-label="Filter products by brand or product name"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           autoComplete="off"

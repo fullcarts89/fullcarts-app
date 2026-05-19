@@ -102,6 +102,7 @@ export default function TipForm() {
       ref={formRef}
       className={styles["tip-form"]}
       onSubmit={handleSubmit}
+      aria-label="Submit a shrinkflation tip"
       noValidate
     >
       <div className={styles["tip-form-row"]}>

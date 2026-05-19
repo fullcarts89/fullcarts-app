@@ -64,7 +64,9 @@ export default function ProductGrid({ products, brand }: Props) {
       <div className={styles.controls}>
         <input
           className={styles["search-input"]}
+          type="search"
           placeholder="Filter products…"
+          aria-label={`Filter ${brand} products`}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           autoComplete="off"

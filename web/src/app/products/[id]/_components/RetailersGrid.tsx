@@ -136,7 +136,7 @@ export default function RetailersGrid({ variants, observations }: Props) {
 
           {c.upc && (
             <div className={styles["retailer-row"]}>
-              <span className={styles.k}>UPC</span>
+              <span className={styles.k}>Barcode</span>
               <span className={`${styles.v} ${styles.upc}`}>{c.upc}</span>
             </div>
           )}

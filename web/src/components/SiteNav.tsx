@@ -70,8 +70,8 @@ export default function SiteNav() {
 
   return (
     <>
-      <div className={styles["bp-grid"]} />
-      <nav className={styles.nav}>
+      <div className={styles["bp-grid"]} aria-hidden="true" />
+      <nav className={styles.nav} aria-label="Main">
         <div className={styles["nav-inner"]}>
           <Link
             href="/"

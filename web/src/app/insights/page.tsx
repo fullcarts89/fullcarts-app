@@ -513,7 +513,11 @@ export default async function InsightsPage() {
         <section className={styles.block}>
           <div id="skimpflation" className={styles["section-head"]}>
             <h2>Skimpflation: when the recipe quietly changes</h2>
-            <div className={styles.meta}>USDA FoodData Central</div>
+            <div className={styles.meta}>
+              USDA FoodData Central · {data.skimpClaims.length} flagged
+              {data.skimpClaims[0]?.observed_date &&
+                ` · latest ${isoDay(data.skimpClaims[0].observed_date)}`}
+            </div>
           </div>
           <p className={styles["section-lede"]}>
             It&apos;s not just the bag getting smaller.{" "}

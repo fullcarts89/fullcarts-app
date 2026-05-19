@@ -66,10 +66,37 @@ export default async function ProductsPage() {
   );
   const brandCount = new Set(products.map((p) => p.brand)).size;
 
+  // CollectionPage JSON-LD — same pattern as /brands. Top 100 by
+  // event count are explicitly enumerated for search engines; the
+  // long tail is reachable via the sitemap.
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://fullcarts.org";
+  const collectionJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "All products · FullCarts",
+    description: "Every product we're tracking with at least one documented shrinkflation event.",
+    url: `${siteUrl}/products`,
+    isPartOf: { "@type": "WebSite", name: "FullCarts", url: siteUrl },
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: products.length,
+      itemListElement: products.slice(0, 100).map((p, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: `${p.brand} ${p.canonical_name}`,
+        url: `${siteUrl}/products/${p.entity_id}`,
+      })),
+    },
+  };
+
   return (
     <>
       <SiteNav />
       <main id="main-content" className={styles.container}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
+        />
         <div className={styles.breadcrumb}>
           <span className={styles.current}>All products</span>
         </div>

@@ -1,6 +1,7 @@
 // Server component. Renders the split product hero: image card on the
 // left (real image or styled placeholder), info block on the right
 // (name, brand/category/manufacturer chips, tagline, 4-stat strip).
+import Link from "next/link";
 import styles from "../styles.module.css";
 import SafeImage from "../../../_components/SafeImage";
 import type { EventRow, PackVariant, ProductEntity } from "../types";
@@ -89,9 +90,9 @@ export default function ProductHero({ entity, events, variants }: Props) {
         </div>
         <h1>{entity.canonical_name}</h1>
         <div className={styles["hero-meta"]}>
-          <a href={`/brands/${encodeURIComponent(entity.brand.toLowerCase())}`}>
+          <Link href={`/brands/${encodeURIComponent(entity.brand.toLowerCase())}`}>
             {entity.brand}
-          </a>
+          </Link>
           {entity.category && <span className={styles.chip}>{entity.category}</span>}
           {entity.manufacturer && (
             <span className={`${styles.chip} ${styles.parent}`}>
@@ -139,7 +140,19 @@ export default function ProductHero({ entity, events, variants }: Props) {
           </div>
           <div className={styles.stat}>
             <div className={styles["stat-label"]}>Cumulative shrink</div>
-            <div className={`${styles["stat-value"]} ${styles.red}`}>
+            <div
+              className={`${styles["stat-value"]} ${styles.red}`}
+              title={
+                cumulative < 0
+                  ? undefined
+                  : "Not enough events to compute a cumulative shrink — we need at least two size observations."
+              }
+              aria-label={
+                cumulative < 0
+                  ? `${cumulative.toFixed(0)}%`
+                  : "Not enough events to compute cumulative shrink"
+              }
+            >
               {cumulative < 0 ? `${cumulative.toFixed(0)}%` : "—"}
             </div>
             <div className={styles["stat-meta"]}>
@@ -150,18 +163,39 @@ export default function ProductHero({ entity, events, variants }: Props) {
           </div>
           <div className={styles.stat}>
             <div className={styles["stat-label"]}>Biggest single drop</div>
-            <div className={`${styles["stat-value"]} ${styles.red}`}>
+            <div
+              className={`${styles["stat-value"]} ${styles.red}`}
+              title={
+                biggest
+                  ? undefined
+                  : "We haven't recorded a size drop for this product yet."
+              }
+              aria-label={
+                biggest
+                  ? `${biggest.pct.toFixed(0)}%`
+                  : "No size drop recorded yet"
+              }
+            >
               {biggest ? `${biggest.pct.toFixed(0)}%` : "—"}
             </div>
             <div className={styles["stat-meta"]}>
               {biggest
                 ? `${biggest.before}${unit} → ${biggest.after}${unit} · ${monthYear(biggest.date)}`
-                : "—"}
+                : "no measured drop"}
             </div>
           </div>
           <div className={styles.stat}>
             <div className={styles["stat-label"]}>First detected</div>
-            <div className={styles["stat-value"]}>{firstYear || "—"}</div>
+            <div
+              className={styles["stat-value"]}
+              title={
+                firstYear
+                  ? undefined
+                  : "No detection date on file — this product may have been added manually."
+              }
+            >
+              {firstYear || "—"}
+            </div>
             <div className={styles["stat-meta"]}>
               last update {lastUpdate || "—"}
             </div>

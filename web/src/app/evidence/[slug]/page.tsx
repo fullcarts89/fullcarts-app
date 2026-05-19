@@ -172,19 +172,11 @@ export default async function EvidenceChannelPage({
     .limit(PAGE_SIZE);
 
   if (error) {
-    // Don't blow up the route; render a soft error so the channel page
-    // is still navigable from the homepage even during a Supabase blip.
-    return (
-      <>
-        <SiteNav />
-        <main id="main-content" className={styles.container}>
-          <div className={styles.error}>
-            We couldn&rsquo;t load evidence for this channel right now. Please
-            try again in a moment.
-          </div>
-        </main>
-      </>
-    );
+    // Throw so the route-segment error.tsx boundary engages — that
+    // gives the reader a real Retry button instead of a dead-end
+    // static message. The boundary preserves the breadcrumb + nav
+    // so the channel page stays navigable.
+    throw new Error(`Failed to load evidence channel "${channel.slug}": ${error.message}`);
   }
 
   const rows = (data ?? []) as unknown as EvidenceRow[];

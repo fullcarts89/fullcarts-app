@@ -47,10 +47,11 @@ export default async function Home() {
                 type="search"
                 placeholder={`Did your favorite product shrink? Search ${fmt(data.counters.products)}+ products`}
                 autoComplete="off"
+                aria-describedby="hero-search-hint"
               />
               <span className={styles["search-icon"]} aria-hidden="true">⌕</span>
             </form>
-            <div className={styles["search-hint"]}>
+            <div id="hero-search-hint" className={styles["search-hint"]}>
               Try &ldquo;Cadbury&rdquo;, &ldquo;Pringles&rdquo;, &ldquo;Charmin&rdquo;
               · {fmt(data.counters.brands)} brands tracked
             </div>
@@ -149,9 +150,9 @@ export default async function Home() {
               <span className={styles["meth-src"]}>Consumer Reports</span>
               <span className={styles["meth-src"]}>Wikidata</span>
             </div>
-            <a className={styles["meth-cta"]} href="/about">
+            <Link className={styles["meth-cta"]} href="/about">
               Read the full methodology <span className={styles.arrow}>→</span>
-            </a>
+            </Link>
           </div>
         </section>
 

@@ -136,8 +136,12 @@ export default function ShrinkingCart({ basket }: Props) {
             value={spend || ""}
             onChange={handleSpend}
             className={styles["cart-input"]}
+            aria-describedby="cart-spend-hint"
           />
         </div>
+        <span id="cart-spend-hint" className="sr-only">
+          Enter a weekly grocery spend between $1 and $10,000.
+        </span>
       </div>
 
       <div className={styles["cart-result-row"]}>
