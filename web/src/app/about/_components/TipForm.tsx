@@ -79,7 +79,11 @@ export default function TipForm() {
 
   if (status === "success") {
     return (
-      <div className={`${styles["tip-form"]} ${styles["tip-form-success"]}`}>
+      <div
+        className={`${styles["tip-form"]} ${styles["tip-form-success"]}`}
+        role="status"
+        aria-live="polite"
+      >
         <div className={styles["tip-form-status"]}>Tip received</div>
         <p>
           Thanks — your tip is in our review queue. We&apos;ll cross-check it

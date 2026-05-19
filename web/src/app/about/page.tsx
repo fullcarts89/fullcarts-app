@@ -235,7 +235,10 @@ export default function AboutPage() {
                 <div className={styles["source-tag"]}>{s.tag}</div>
                 <div className={styles["source-name"]}>{s.name}</div>
                 <div className={styles["source-desc"]}>{s.desc}</div>
-                <div className={styles["source-link"]}>Visit ↗</div>
+                <div className={styles["source-link"]}>
+                  Visit <span aria-hidden="true">↗</span>
+                  <span className="sr-only"> (opens in new tab)</span>
+                </div>
               </a>
             ))}
           </div>

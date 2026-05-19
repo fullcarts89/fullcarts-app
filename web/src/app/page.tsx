@@ -151,7 +151,7 @@ export default async function Home() {
               <span className={styles["meth-src"]}>Wikidata</span>
             </div>
             <Link className={styles["meth-cta"]} href="/about">
-              Read the full methodology <span className={styles.arrow}>→</span>
+              Read the full methodology <span className={styles.arrow} aria-hidden="true">→</span>
             </Link>
           </div>
         </section>
@@ -208,7 +208,7 @@ export default async function Home() {
                   </div>
                 </div>
                 <span className={styles["botw-cta"]}>
-                  See the full scorecard <span className={styles.arrow}>→</span>
+                  See the full scorecard <span className={styles.arrow} aria-hidden="true">→</span>
                 </span>
               </div>
             </a>
