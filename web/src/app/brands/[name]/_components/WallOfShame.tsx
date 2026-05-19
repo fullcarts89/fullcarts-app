@@ -92,7 +92,11 @@ export default function WallOfShame({ events, entities }: Props) {
             <>
               <div className={styles["shame-img"]}>
                 {imgUrl ? (
-                  <img src={imgUrl} alt="" loading="lazy" />
+                  <img
+                    src={imgUrl}
+                    alt={`${e.brand} ${productName} — ${sizeBefore}${unit} to ${sizeAfter}${unit}`}
+                    loading="lazy"
+                  />
                 ) : (
                   <div className={styles["placeholder-stub"]}>
                     <span className={styles["ps-tag"]}>No archive</span>

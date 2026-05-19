@@ -101,7 +101,7 @@ export default function ProductGrid({ products, brand }: Props) {
             >
               {p.image_url ? (
                 <div className={styles["product-thumb"]}>
-                  <img src={p.image_url} alt="" loading="lazy" />
+                  <img src={p.image_url} alt={`${brand} ${p.canonical_name} package`} loading="lazy" />
                   {p.lead_source_type && p.lead_source_type !== "reddit" && (
                     <span className={styles["img-tag-sm"]}>News</span>
                   )}

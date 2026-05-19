@@ -165,8 +165,18 @@ export default function ShrinkingCart({ basket }: Props) {
               className={styles["cart-item"]}
             >
               <div className={styles["cart-item-img"]}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={it.image_url ?? ""} alt="" loading="lazy" />
+                {it.image_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={it.image_url}
+                    alt={`${it.brand} ${it.product_name} package`}
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className={styles["cart-item-placeholder"]} aria-hidden="true">
+                    {it.brand.slice(0, 1)}
+                  </div>
+                )}
               </div>
               <div className={styles["cart-item-body"]}>
                 <div className={styles["cart-item-brand"]}>{it.brand}</div>

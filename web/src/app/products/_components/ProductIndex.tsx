@@ -276,7 +276,7 @@ export default function ProductIndex({ products }: Props) {
         <div className={styles["card-img"]}>
           {p.image_url ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={p.image_url} alt="" loading="lazy" />
+            <img src={p.image_url} alt={`${p.brand} ${p.canonical_name} package`} loading="lazy" />
           ) : (
             <div className={styles["card-placeholder"]}>
               <span className={styles["card-placeholder-name"]}>

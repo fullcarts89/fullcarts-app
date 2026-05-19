@@ -184,6 +184,7 @@
 .cart-item:hover { border-color: var(--red-border); transform: translateY(-2px); }
 .cart-item-img { aspect-ratio: 1; background: var(--bg-tertiary); overflow: hidden; }
 .cart-item-img img { width: 100%; height: 100%; object-fit: cover; }
+.cart-item-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-family: var(--font-headline); font-size: 36px; font-weight: 700; color: var(--text-tertiary); }
 .cart-item-body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 4px; }
 .cart-item-brand { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); font-weight: 700; }
 .cart-item-name { font-family: var(--font-headline); font-size: 13px; font-weight: 700; line-height: 1.2; color: var(--text-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
