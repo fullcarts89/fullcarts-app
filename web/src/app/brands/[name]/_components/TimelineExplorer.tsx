@@ -11,6 +11,7 @@ import { useMemo, useState } from "react";
 import styles from "../styles.module.css";
 import type { BrandRanking, EventRow, EventSource } from "../types";
 import { isoDay, num, publisherLabel, timelineBuckets } from "../lib";
+import RetractEventButton from "@/components/admin/RetractEventButton";
 
 interface Props {
   ranking: BrandRanking;
@@ -269,6 +270,7 @@ export default function TimelineExplorer({ ranking, events }: Props) {
                         View this product&rsquo;s full scorecard →
                       </a>
                     )}
+                    <RetractEventButton eventId={e.event_id} />
                     <div className={styles["src-list"]}>
                       {shownSources.map((s, idx) => {
                         const key = `${s.claim_id}-${idx}`;
