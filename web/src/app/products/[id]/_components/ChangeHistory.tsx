@@ -9,6 +9,7 @@ import { useState } from "react";
 import styles from "../styles.module.css";
 import type { EventRow, EventSource } from "../types";
 import { dominantSource, isoDay, num, publisherLabel } from "../lib";
+import RetractEventButton from "@/components/admin/RetractEventButton";
 
 interface Props {
   events: EventRow[];
@@ -174,6 +175,7 @@ export default function ChangeHistory({ events }: Props) {
                   </div>
                 )}
               </div>
+              <RetractEventButton eventId={e.event_id} />
             </div>
           </div>
         );

@@ -5,7 +5,10 @@
 
 .nav { position: sticky; top: 0; z-index: 50; background: rgba(10,11,13,.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-subtle); }
 .nav-inner { max-width: 1280px; margin: 0 auto; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
-.logo { font-family: var(--font-headline); font-weight: 700; font-size: 20px; letter-spacing: -0.02em; text-decoration: none; color: var(--text-primary); }
+/* -webkit-touch-callout + user-select disabled so iOS Safari doesn't open
+   the native "Open Link / Copy Link / Share" callout on the 800ms long-press
+   we use as the hidden admin-login affordance. */
+.logo { font-family: var(--font-headline); font-weight: 700; font-size: 20px; letter-spacing: -0.02em; text-decoration: none; color: var(--text-primary); -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 .logo span { color: var(--red-text); }
 
 .nav-links { display: flex; gap: 32px; font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; }
