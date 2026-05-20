@@ -265,6 +265,7 @@ export default function GroupsClient({ groups: initial, categories }: Props) {
         <EntityPicker
           brand={pickerFor.brand_display}
           nameHint={pickerFor.name_display}
+          groupSizeChange={pickerFor.size_change}
           onCancel={() => setPickerFor(null)}
           onPick={handleMergeConfirmed}
         />
