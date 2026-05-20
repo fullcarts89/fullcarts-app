@@ -120,6 +120,12 @@ export default async function AdminEntitiesPage({
           >
             ← Claims Review
           </Link>
+          <Link
+            href="/admin/duplicates"
+            className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline-offset-4 hover:underline"
+          >
+            Duplicates →
+          </Link>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
