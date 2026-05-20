@@ -200,6 +200,12 @@ export default async function ProductPage({ params }: PageProps) {
   const data = await loadProduct(id);
   if (!data) notFound();
 
+  // Phase A invariant: no public page without at least one live event.
+  // Belt to the DB-trigger braces (migration 069) — even if the trigger
+  // ever misses, the page guard catches it and 404s rather than render
+  // an empty shell.
+  if (!data.events || data.events.length === 0) notFound();
+
   const { entity, events, variants, observations, related, skimp, press } = data;
   const eventsDesc = eventsByDateDesc(events);
   const trajectory = buildTrajectory(events);
