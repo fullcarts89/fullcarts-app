@@ -100,7 +100,8 @@ export async function loadHomeData(): Promise<HomeData> {
       .select("*", { count: "exact", head: true }),
     sb
       .from("product_entities")
-      .select("*", { count: "exact", head: true }),
+      .select("*", { count: "exact", head: true })
+      .eq("is_retracted", false),
     sb
       .from("bls_shrinkflation")
       .select("downsizing_count")
@@ -171,6 +172,7 @@ export async function loadHomeData(): Promise<HomeData> {
         .from("product_entities")
         .select("image_url")
         .eq("brand", bowBrand)
+        .eq("is_retracted", false)
         .not("image_url", "is", null)
         .order("created_at", { ascending: false })
         .limit(1)

@@ -304,6 +304,7 @@ async function loadInsights() {
         .from("product_entities")
         .select("id, canonical_name, brand, category, image_url")
         .in("id", hydrateIds)
+        .eq("is_retracted", false)
     : { data: [] };
   const entityById = new Map<string, {
     canonical_name: string;

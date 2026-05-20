@@ -66,6 +66,7 @@ async function loadProduct(id: string): Promise<{
     .from("product_entities")
     .select("id, brand, canonical_name, category, image_url, manufacturer")
     .eq("id", id)
+    .eq("is_retracted", false)
     .maybeSingle();
 
   if (!entity) return null;

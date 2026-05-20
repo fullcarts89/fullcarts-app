@@ -288,9 +288,17 @@ export default async function ClaimsReviewPage({
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <header className="border-b border-[var(--bg-tertiary)] px-6 py-4 space-y-3">
-        <h1 className="font-[var(--font-headline)] text-2xl font-bold tracking-tight">
-          Claim Review
-        </h1>
+        <div className="flex items-baseline gap-4">
+          <h1 className="font-[var(--font-headline)] text-2xl font-bold tracking-tight">
+            Claim Review
+          </h1>
+          <a
+            href="/admin/entities"
+            className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline-offset-4 hover:underline"
+          >
+            Entity Browser →
+          </a>
+        </div>
         {/* Status tabs */}
         <div className="flex gap-3">
           {["pending", "matched", "merged", "evidence", "discarded"].map((s) => (

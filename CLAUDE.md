@@ -112,7 +112,7 @@ Cursor state persists in `scraper_state` table. Config lives in `pipeline/config
 
 ### Database migrations
 
-SQL migrations in `db/migrations/` numbered `001_` through `061_`. Deploy manually via Supabase SQL Editor or via the Management API with a PAT (`POST /v1/projects/{ref}/database/query`; **set a `User-Agent` header** or Cloudflare returns 1010). Views in `043_rewrite_views_new_schema.sql` and `049_insight_views.sql` plus newer per-page views power the frontend. Notable recent additions:
+SQL migrations in `db/migrations/` numbered `001_` through `062_`. Deploy manually via Supabase SQL Editor or via the Management API with a PAT (`POST /v1/projects/{ref}/database/query`; **set a `User-Agent` header** or Cloudflare returns 1010). Views in `043_rewrite_views_new_schema.sql` and `049_insight_views.sql` plus newer per-page views power the frontend. Notable recent additions:
 
 - `050_event_dedup.sql` — `published_changes.evidence_count` + dedup index on `(entity_id, size_before, size_after)`
 - `051_event_evidence_summary_view.sql` — `event_evidence_summary` view, used by `/brands/[name]` evidence trail
@@ -123,7 +123,8 @@ SQL migrations in `db/migrations/` numbered `001_` through `061_`. Deploy manual
 - `057_google_trends_data.sql` — `google_trends_data` table, drives the fourth line on the /insights macro chart. Refreshed monthly via `pipeline_google_trends.yml`
 - `058_consumer_reports_findings.sql` — `consumer_reports_findings` table for structured CR citations. Refreshed monthly via `pipeline_consumer_reports.yml`. Powers the "Press coverage" section on `/products/[id]`
 - `060_claims_status_discipline.sql` — adds `merged` to `claims.status` CHECK constraint, backfills PR-#63 fold-ins out of `evidence` into `merged`, adds a soft `(status IN matched/merged ⇒ matched_entity_id NOT NULL)` invariant. Closes the Evidence-tab overload gotcha
-- `061_published_changes_sanity.sql` — auto-retracts the 75 known corrupted upsizing events (1L→900L class of AI unit-parse errors) and installs a CHECK constraint on `size_after / size_before ∈ [0.05, 5.0]`. `promote_claims.sane_size_ratio()` mirrors the bounds so the daily cron rejects violators before insert
+- `061_published_changes_sanity.sql` — auto-retracts size-ratio violators (1L→900L class of AI unit-parse errors) via the in-place `is_retracted` columns and installs a CHECK constraint on `size_after / size_before ∈ [0.05, 5.0]` (retracted rows exempted — they're the trash bin). `promote_claims.sane_size_ratio()` mirrors the bounds so the daily cron rejects violators before insert
+- `062_entity_retraction.sql` — `product_entities.is_retracted` flag + `set_entity_retracted()` RPC (cascades retract to all the entity's `published_changes`). Rebuilds `brand_index` and `dashboard_stats()` to exclude retracted entities; closes a pre-existing leak where `event_evidence_summary` didn't filter `pc.is_retracted`. Powers `/admin/entities`. (Renumbered from `054_` during PR #75 rebase to clear collision with `054_product_index_view.sql`.)
 
 ### Web routes (Next.js App Router)
 
@@ -136,7 +137,8 @@ SQL migrations in `db/migrations/` numbered `001_` through `061_`. Deploy manual
 | `/insights` | Static + ISR 1h | Macro insights. 8 sections: hero counters, BLS headline + news, three-line trend chart (events + BLS + CPI), category bars, repeat offenders, skimpflation leaderboard, news feed, restoration corner. |
 | `/about` | Static | Mission, methodology, full source list, "submit a tip" stub card. Contact `fullcartsinfo@gmail.com`. |
 | `/products` | Static + ISR 1h | All entities with at least one shrink event. Severity tiers + category chips + brand-or-name search, mirroring `/brands`. |
-| `/admin/*` | SSR | Internal admin tool (claim review). Has its own nav, not the public SiteNav. |
+| `/admin/claims` | SSR | Claim review queue (pending/matched/merged/evidence/discarded). Long-press the public homepage logo to reveal the password form. Sets `admin_session` cookie checked by `middleware.ts`. |
+| `/admin/entities` | SSR | Entity browser. Paginated table with brand+name search, status filter (active/retracted/all), per-row retract toggle. Retracting cascades to `published_changes`. |
 
 Shared nav lives at `web/src/components/SiteNav.tsx` (client component, uses `usePathname` for active detection). All public routes render `<SiteNav />` once at the top of their JSX.
 
