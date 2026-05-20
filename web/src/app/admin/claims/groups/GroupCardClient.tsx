@@ -14,13 +14,32 @@ interface Props {
   selected: boolean;
   onSelectChange: (next: boolean) => void;
   onAction: (
-    action: "approve_all" | "discard_all" | "merge_into" | "edit_then_approve",
+    action: "approve_all" | "discard_all" | "merge_into" | "edit_then_approve" | "move_to_evidence",
     group: ClaimGroup,
   ) => void;
   busy: boolean;
+  onClaimAction: (
+    claimId: string,
+    action: "approve" | "discard" | "evidence",
+    group: ClaimGroup,
+  ) => void;
 }
 
-function ClaimRow({ c }: { c: PendingClaim }) {
+function ClaimRow({
+  c,
+  group,
+  onClaimAction,
+  busy,
+}: {
+  c: PendingClaim;
+  group: ClaimGroup;
+  onClaimAction: (
+    claimId: string,
+    action: "approve" | "discard" | "evidence",
+    group: ClaimGroup,
+  ) => void;
+  busy: boolean;
+}) {
   return (
     <div className="flex gap-3 py-2 border-t border-[var(--bg-tertiary)] text-sm">
       <div className="relative w-16 h-16 bg-[var(--bg-primary)] flex-shrink-0 rounded overflow-hidden">
@@ -56,11 +75,44 @@ function ClaimRow({ c }: { c: PendingClaim }) {
           </a>
         )}
       </div>
+      <div className="flex flex-col gap-1 ml-2 flex-shrink-0">
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => onClaimAction(c.id, "approve", group)}
+          className="px-2 py-0.5 text-xs rounded border border-[var(--green-border)] bg-[var(--green-bg)] text-[var(--green-base)] hover:opacity-80 disabled:opacity-50"
+        >
+          Approve
+        </button>
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => onClaimAction(c.id, "discard", group)}
+          className="px-2 py-0.5 text-xs rounded border border-[var(--red-border)] bg-[var(--red-bg)] text-[var(--red-text)] hover:opacity-80 disabled:opacity-50"
+        >
+          Discard
+        </button>
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => onClaimAction(c.id, "evidence", group)}
+          className="px-2 py-0.5 text-xs rounded border border-[var(--amber-base)]/20 bg-[var(--amber-bg)] text-[var(--amber-base)] hover:opacity-80 disabled:opacity-50"
+        >
+          Evidence
+        </button>
+      </div>
     </div>
   );
 }
 
-export default function GroupCardClient({ group, selected, onSelectChange, onAction, busy }: Props) {
+export default function GroupCardClient({
+  group,
+  selected,
+  onSelectChange,
+  onAction,
+  busy,
+  onClaimAction,
+}: Props) {
   const [expanded, setExpanded] = useState(false);
   const rep = group.claims[0];
 
@@ -89,7 +141,7 @@ export default function GroupCardClient({ group, selected, onSelectChange, onAct
       </header>
 
       <div className="p-4">
-        {rep && <ClaimRow c={rep} />}
+        {rep && <ClaimRow c={rep} group={group} onClaimAction={onClaimAction} busy={busy} />}
         {group.count > 1 && (
           <button
             type="button"
@@ -102,7 +154,7 @@ export default function GroupCardClient({ group, selected, onSelectChange, onAct
         {expanded && (
           <div className="mt-2">
             {group.claims.slice(1).map((c) => (
-              <ClaimRow key={c.id} c={c} />
+              <ClaimRow key={c.id} c={c} group={group} onClaimAction={onClaimAction} busy={busy} />
             ))}
           </div>
         )}
@@ -124,6 +176,14 @@ export default function GroupCardClient({ group, selected, onSelectChange, onAct
           className="px-3 py-1.5 text-sm rounded border border-[var(--red-border)] bg-[var(--red-bg)] text-[var(--red-text)] hover:opacity-80 disabled:opacity-50"
         >
           Discard all
+        </button>
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => onAction("move_to_evidence", group)}
+          className="px-3 py-1.5 text-sm rounded border border-[var(--amber-base)]/20 bg-[var(--amber-bg)] text-[var(--amber-base)] hover:opacity-80 disabled:opacity-50"
+        >
+          Move to evidence →
         </button>
         <button
           type="button"

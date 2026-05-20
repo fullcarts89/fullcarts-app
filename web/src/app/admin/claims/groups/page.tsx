@@ -61,8 +61,24 @@ async function loadAllPendingClaims(): Promise<PendingClaim[]> {
   return all;
 }
 
+async function loadCategories(): Promise<string[]> {
+  const sb = createAdminClient();
+  const { data, error } = await sb
+    .from("product_entities")
+    .select("category")
+    .eq("is_retracted", false)
+    .not("category", "is", null)
+    .limit(10000);
+  if (error) throw new Error(`categories load: ${error.message}`);
+  const set = new Set<string>();
+  for (const r of (data ?? []) as Array<{ category: string | null }>) {
+    if (r.category && r.category.trim()) set.add(r.category.trim());
+  }
+  return [...set].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+}
+
 export default async function ClaimsGroupsPage() {
-  const claims = await loadAllPendingClaims();
+  const [claims, categories] = await Promise.all([loadAllPendingClaims(), loadCategories()]);
   const groups: ClaimGroup[] = groupPendingClaims(claims);
   const totalClaims = claims.length;
   const totalGroups = groups.length;
@@ -99,7 +115,7 @@ export default async function ClaimsGroupsPage() {
             No pending claims to group.
           </div>
         ) : (
-          <GroupsClient groups={groups} />
+          <GroupsClient groups={groups} categories={categories} />
         )}
       </main>
     </div>
