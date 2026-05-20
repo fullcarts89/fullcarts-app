@@ -94,6 +94,31 @@ def calc_delta_pct(old: Optional[float], new: Optional[float]) -> Optional[float
     return None
 
 
+# Reject AI extraction errors like "1L -> 900L" or "1kg -> 1000kg" before they
+# land in published_changes. Mirrors the CHECK constraint added by migration
+# 061. Threshold rationale lives in that migration file.
+SIZE_RATIO_MIN = 0.05
+SIZE_RATIO_MAX = 5.0
+
+
+def sane_size_ratio(old_size: Optional[float], new_size: Optional[float]) -> bool:
+    """Return True if (old_size, new_size) clears the sanity bounds.
+
+    Both-null is fine (skimpflation claims carry no numeric size change).
+    Either-side null is also fine — no ratio to evaluate. A zero or negative
+    old_size is rejected as suspect (legitimate products never start at zero).
+    """
+    if old_size is None or new_size is None:
+        return True
+    try:
+        if old_size <= 0:
+            return False
+        ratio = float(new_size) / float(old_size)
+    except (TypeError, ValueError, ZeroDivisionError):
+        return False
+    return SIZE_RATIO_MIN <= ratio <= SIZE_RATIO_MAX
+
+
 def find_existing_event(
     sb,
     entity_id: str,
@@ -157,6 +182,7 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
         "evidence_added_to_existing": 0,  # syndicated claims merged into an existing event
         "skipped_no_size": 0,
         "discarded_no_size": 0,  # no-size claims demoted out of the promote queue
+        "discarded_size_sanity": 0,  # AI unit-parse errors (1L -> 900L etc.); mirrors migration 061
         "errors": 0,
     }
 
@@ -213,6 +239,24 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
                      .eq("id", claim["id"])
                      .execute())
                     stats["discarded_no_size"] += 1
+                continue
+
+            # Reject AI unit-parse errors before they hit published_changes.
+            # Mirrors the CHECK constraint installed by migration 061. The
+            # constraint would block the insert anyway, but failing here
+            # keeps the cron green and writes a counter so the daily summary
+            # surfaces the problem instead of swallowing a 500-class error.
+            if not sane_size_ratio(old_size, new_size):
+                print(f"  [SKIP] claim {claim['id']} ({brand}/{name}): "
+                      f"size ratio {old_size}->{new_size} outside sanity "
+                      f"bounds [{SIZE_RATIO_MIN}, {SIZE_RATIO_MAX}]; "
+                      f"discarding (suspected unit-parse error)")
+                stats["discarded_size_sanity"] += 1
+                if not dry_run:
+                    (sb.table("claims")
+                     .update({"status": "discarded"})
+                     .eq("id", claim["id"])
+                     .execute())
                 continue
 
             ekey = entity_key(brand, name)
