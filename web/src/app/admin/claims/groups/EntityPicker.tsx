@@ -7,6 +7,7 @@ interface EntityRow {
   brand: string;
   canonical_name: string;
   category: string | null;
+  event_count: number;
 }
 
 interface Props {
@@ -64,10 +65,23 @@ export default function EntityPicker({ brand, nameHint, onCancel, onPick }: Prop
               onClick={() => onPick(r.id)}
               className="block w-full text-left px-3 py-2 hover:bg-[var(--bg-tertiary)] border-b border-[var(--bg-tertiary)]"
             >
-              <div className="text-sm font-medium">
-                {r.brand} <span className="text-[var(--text-secondary)]">·</span> {r.canonical_name}
+              <div className="flex items-baseline justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-medium truncate">
+                    {r.brand} <span className="text-[var(--text-secondary)]">·</span> {r.canonical_name}
+                  </div>
+                  {r.category && <div className="text-xs text-[var(--text-tertiary)]">{r.category}</div>}
+                </div>
+                <span
+                  className={`font-mono text-xs flex-shrink-0 ${
+                    r.event_count > 0
+                      ? "text-[var(--green-base)]"
+                      : "text-[var(--text-tertiary)]"
+                  }`}
+                >
+                  {r.event_count} {r.event_count === 1 ? "event" : "events"}
+                </span>
               </div>
-              {r.category && <div className="text-xs text-[var(--text-tertiary)]">{r.category}</div>}
             </button>
           ))}
         </div>
