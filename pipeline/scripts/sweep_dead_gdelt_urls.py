@@ -38,8 +38,13 @@ USER_AGENT = "Mozilla/5.0 (compatible; FullCartsBot/1.0)"
 TIMEOUT = 10.0
 WORKERS = 10
 PAGE = 1000
-FLAG_KIND = "dead_gdelt_source_url"
-DETECTED_BY = "gdelt_url_health_sweep"
+FLAG_KIND = "dead_source_url"
+DETECTED_BY = "source_url_health_sweep"
+# Source types whose URLs we check. Reddit excluded: deleted/removed posts
+# still return 200 with "[deleted]" body, and banned-subreddit 404s are
+# legitimate dead content but rare. News + GDELT publishers rotate paths
+# constantly — both are the same kind of news-article URL.
+SWEEPABLE_SOURCE_TYPES = ("gdelt", "news")
 
 # Verdict constants used by classify_url + process_claims.
 DEAD = "dead"
@@ -96,7 +101,7 @@ def find_pending_gdelt_claims(sb):
             sb.table("claims")
             .select("id,raw_item_id,raw_items!inner(source_type,source_url)")
             .eq("status", "pending")
-            .eq("raw_items.source_type", "gdelt")
+            .in_("raw_items.source_type", list(SWEEPABLE_SOURCE_TYPES))
             .not_.is_("raw_items.source_url", "null")
             .order("id")
             .range(offset, offset + PAGE - 1)

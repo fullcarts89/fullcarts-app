@@ -143,7 +143,7 @@ def _mock_sb_with_pages(pages):
         empty.data = []
         responses.append(empty)
 
-    chain = sb.table.return_value.select.return_value.eq.return_value.eq.return_value
+    chain = sb.table.return_value.select.return_value.eq.return_value.in_.return_value
     chain = chain.not_.is_.return_value.order.return_value.range.return_value
     chain.execute.side_effect = responses
     return sb
@@ -263,7 +263,7 @@ class TestProcessClaims:
         kwargs = raise_flag_mock.call_args.kwargs
         assert kwargs["flag_kind"] == sweep.FLAG_KIND
         assert kwargs["severity"] == "low"
-        assert kwargs["detected_by"] == "gdelt_url_health_sweep"
+        assert kwargs["detected_by"] == sweep.DETECTED_BY
         assert kwargs["claim_id"] == "c-dead"
         assert kwargs["detail"] == {
             "http_status": 404,
