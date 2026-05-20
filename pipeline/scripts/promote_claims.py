@@ -11,7 +11,8 @@ Flow: claims (matched, no entity) -> product_entities -> pack_variants ->
 
 The status stays 'matched' the whole time — this script only fills in the
 matched_entity_id / matched_variant_id columns and creates the downstream
-event rows. Claims folded into an existing event flip to status='evidence'.
+event rows. Claims folded into an existing event flip to status='merged'
+(migration 060 split that bucket out from the evidence-wall 'evidence' status).
 
 Usage:
     python -m pipeline promote_claims [--limit N] [--dry-run]
@@ -419,8 +420,10 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
             # 6. Fill in the entity/variant link. Status is already 'matched'
             # (the admin's Approve click set it). If we folded this claim into
             # an existing event instead of publishing a new one, flip status
-            # to 'evidence' so the admin queue distinguishes the two.
-            new_status = "evidence" if folded_into_existing else "matched"
+            # to 'merged' so the admin queue distinguishes the two. Note:
+            # 'merged' was carved out of 'evidence' by migration 060; pre-060
+            # rows are backfilled in the same migration.
+            new_status = "merged" if folded_into_existing else "matched"
             (sb.table("claims")
              .update({
                  "matched_entity_id": entity_id,

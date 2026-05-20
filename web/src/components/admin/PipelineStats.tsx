@@ -7,7 +7,13 @@ type DailyCount = {
 };
 
 type Props = {
-  statusCounts: { pending: number; matched: number; evidence: number; discarded: number };
+  statusCounts: {
+    pending: number;
+    matched: number;
+    merged: number;
+    evidence: number;
+    discarded: number;
+  };
   dailyCounts: DailyCount[];
   pipelineHealthy: boolean;
   lastExtractionAgo: string;
@@ -60,8 +66,11 @@ export function PipelineStats({
         </div>
       </div>
 
-      {/* Status summary cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {/* Status summary cards. Five tiles since migration 060 split the
+          overloaded `evidence` bucket: `merged` = claims folded into an
+          existing event during dedup, `evidence` = claims tagged for an
+          evidence-wall channel (Skimpflation / So Smol / etc.). */}
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         <StatusCard
           label="Pending"
           count={statusCounts.pending}
@@ -71,6 +80,11 @@ export function PipelineStats({
           label="Matched"
           count={statusCounts.matched}
           colorClass="bg-[var(--green-bg)] border-[var(--green-border)] text-[var(--green-base)]"
+        />
+        <StatusCard
+          label="Merged"
+          count={statusCounts.merged}
+          colorClass="bg-cyan-500/10 border-cyan-500/20 text-cyan-400"
         />
         <StatusCard
           label="Evidence"

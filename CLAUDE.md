@@ -102,7 +102,7 @@ Cursor state persists in `scraper_state` table. Config lives in `pipeline/config
 ### Key database tables
 
 - `raw_items` — Immutable raw payloads from all sources, deduped by `(source_type, source_id)`
-- `claims` — AI-extracted assertions with confidence scores. Status workflow: `pending` → admin approves → `matched` → daily `promote_claims` cron either keeps `matched` (claim originated a new event) or flips to `evidence` (claim folded into an existing event during dedup). `discarded` is the terminal "junk" bucket. The legacy `approved` and `unmatched` statuses are retired; nothing writes them.
+- `claims` — AI-extracted assertions with confidence scores. Status workflow: `pending` → admin approves → `matched` → daily `promote_claims` cron either keeps `matched` (claim originated a new event) or flips to `merged` (claim folded into an existing event during dedup). The `evidence` status is now reserved for claims tagged with an evidence-wall channel (`evidence_tags` non-empty). `discarded` is the terminal "junk" bucket. The legacy `approved` and `unmatched` statuses are retired; nothing writes them. The `merged` vs `evidence` split was carved out by migration 060 — before that, `evidence` was overloaded with both meanings.
 - `product_entities` — Canonical products (brand + name), full-text search via tsvector
 - `pack_variants` — Specific SKUs with UPC, linked to entities. `is_active=true` enables weekly monitoring
 - `variant_observations` — Time-series size/price snapshots
@@ -112,7 +112,7 @@ Cursor state persists in `scraper_state` table. Config lives in `pipeline/config
 
 ### Database migrations
 
-SQL migrations in `db/migrations/` numbered `001_` through `058_`. Deploy manually via Supabase SQL Editor or via the Management API with a PAT (`POST /v1/projects/{ref}/database/query`; **set a `User-Agent` header** or Cloudflare returns 1010). Views in `043_rewrite_views_new_schema.sql` and `049_insight_views.sql` plus newer per-page views power the frontend. Notable recent additions:
+SQL migrations in `db/migrations/` numbered `001_` through `060_`. Deploy manually via Supabase SQL Editor or via the Management API with a PAT (`POST /v1/projects/{ref}/database/query`; **set a `User-Agent` header** or Cloudflare returns 1010). Views in `043_rewrite_views_new_schema.sql` and `049_insight_views.sql` plus newer per-page views power the frontend. Notable recent additions:
 
 - `050_event_dedup.sql` — `published_changes.evidence_count` + dedup index on `(entity_id, size_before, size_after)`
 - `051_event_evidence_summary_view.sql` — `event_evidence_summary` view, used by `/brands/[name]` evidence trail
@@ -122,6 +122,7 @@ SQL migrations in `db/migrations/` numbered `001_` through `058_`. Deploy manual
 - `056_corporate_tree.sql` — `corporate_tree` view (per-manufacturer rollup with top-3 child brands as a JSONB array), used by /insights "Who actually owns these brands" section. Empty until Wikidata backfill runs
 - `057_google_trends_data.sql` — `google_trends_data` table, drives the fourth line on the /insights macro chart. Refreshed monthly via `pipeline_google_trends.yml`
 - `058_consumer_reports_findings.sql` — `consumer_reports_findings` table for structured CR citations. Refreshed monthly via `pipeline_consumer_reports.yml`. Powers the "Press coverage" section on `/products/[id]`
+- `060_claims_status_discipline.sql` — adds `merged` to `claims.status` CHECK constraint, backfills PR-#63 fold-ins out of `evidence` into `merged`, adds a soft `(status IN matched/merged ⇒ matched_entity_id NOT NULL)` invariant. Closes the Evidence-tab overload gotcha
 
 ### Web routes (Next.js App Router)
 
@@ -162,5 +163,5 @@ All use the `FULLCARTS_DESIGN_EXPORT.md` system (dark graphite + Space Grotesk +
 
 ### Known gotchas
 
-- **`/admin/claims` Evidence tab is semantically overloaded.** The tab filter is a literal `eq("status","evidence")` (`web/src/app/admin/claims/page.tsx:175-176`). The original meaning of `evidence` was "claim was tagged for the evidence wall (Skimpflation / So Smol / Slack Fill / Stretchflation / Spot the Difference) but isn't a numeric size shrink." PR #63 reused the same status for "claim was folded into an existing event during dedup," so the tab now shows ~4,600 fold-ins mixed in with a few hundred genuine tagged-evidence claims. Fix options live in issue #81: A) repoint the tab query to filter by `evidence_tags` non-empty, or B) rename the fold-in status to `'merged'` via migration + backfill.
+- **`/admin/claims` has five status tabs since migration 060.** `evidence` now means strictly "claim tagged for an evidence-wall channel (`evidence_tags` non-empty)" and `merged` is the dedicated bucket for claims folded into an existing event during dedup. Pre-060 these two senses shared the `evidence` status, which buried the few hundred genuine evidence-wall claims under ~4,600 fold-ins (described in issue #81 / PR #63 backstory).
 - **`promote_claims.py` writes the originator's claim id into `change_candidates.supporting_claims[]` exactly once at candidate-create time.** Folded-in claims go to `published_changes.evidence_summary` instead. That asymmetry is what `cleanup_stuck_matched.py:108-130` (originator guard) and `restore_matched_originators.py` rely on to tell originators from duplicates.
