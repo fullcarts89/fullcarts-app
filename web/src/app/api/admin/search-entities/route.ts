@@ -41,5 +41,6 @@ export async function GET(req: Request) {
     .map((r) => ({ ...r, event_count: counts.get(r.id) || 0 }))
     .sort((a, b) => b.event_count - a.event_count);
 
-  return NextResponse.json({ rows: enriched });
+  const filtered = enriched.filter((r) => r.event_count > 0);
+  return NextResponse.json({ rows: filtered });
 }
