@@ -14,10 +14,8 @@ Two stuck shapes get handled here:
      entity got linked by some older path but the event was never built.
      If a published_change for that tuple now exists (e.g. created by a
      different claim): add this claim to its evidence_summary and flip the
-     status to 'merged'. Otherwise: clear matched_entity_id so the
-     regular promote run picks them up. (Pre-migration-060 this script
-     wrote 'evidence' for fold-ins; 060 carved out the dedicated 'merged'
-     status to keep the evidence-wall bucket clean.)
+     status to 'evidence'. Otherwise: clear matched_entity_id so the
+     regular promote run picks them up.
 
   3. Claims missing sizes are demoted to 'unmatched' (can't build an event).
 
@@ -267,9 +265,9 @@ def cleanup(sb, dry_run: bool = False) -> Dict[str, int]:
             if _claim_already_in_summary(summary, c["id"]):
                 if dry_run:
                     LOG.info("[DRY] claim %s already in event %s evidence — would just set "
-                             "status='merged'", c["id"], event["id"])
+                             "status='evidence'", c["id"], event["id"])
                 else:
-                    update_payload = {"status": "merged"}
+                    update_payload = {"status": "evidence"}
                     if not c.get("matched_variant_id") and event.get("variant_id"):
                         update_payload["matched_variant_id"] = event["variant_id"]
                     (sb.table("claims")
@@ -301,7 +299,7 @@ def cleanup(sb, dry_run: bool = False) -> Dict[str, int]:
                  })
                  .eq("id", event["id"])
                  .execute())
-                update_payload = {"status": "merged"}
+                update_payload = {"status": "evidence"}
                 # Backfill matched_variant_id from the event if claim was missing it.
                 if not c.get("matched_variant_id") and event.get("variant_id"):
                     update_payload["matched_variant_id"] = event["variant_id"]

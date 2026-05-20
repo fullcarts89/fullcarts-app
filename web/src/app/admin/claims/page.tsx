@@ -169,10 +169,20 @@ export default async function ClaimsReviewPage({
 
   const supabase = createAdminClient();
 
-  // Pipeline stats queries (run in parallel with claims query)
-  const [statusCountsRaw, dailyStatsRes, latestClaimRes] = await Promise.all([
+  // Pipeline stats queries (run in parallel with claims query).
+  // The Evidence tile counts evidence-wall-tagged claims via `evidence_tags`,
+  // not `status='evidence'`. promote_claims writes status='evidence' for
+  // fold-ins (claims merged into an existing event during dedup), which
+  // would otherwise drown out the genuine evidence-wall claims in this tab.
+  // The predicate matches `evidence_tags` non-null AND non-empty.
+  const [evidenceCountRes, otherStatusCountsRaw, dailyStatsRes, latestClaimRes] = await Promise.all([
+    supabase
+      .from("claims")
+      .select("*", { count: "exact", head: true })
+      .not("evidence_tags", "is", null)
+      .not("evidence_tags", "eq", "{}"),
     Promise.all(
-      (["pending", "matched", "merged", "evidence", "discarded"] as const).map((s) =>
+      (["pending", "matched", "discarded"] as const).map((s) =>
         supabase.from("claims").select("*", { count: "exact", head: true }).eq("status", s)
       )
     ),
@@ -185,11 +195,10 @@ export default async function ClaimsReviewPage({
   ]);
 
   const statusCounts = {
-    pending: statusCountsRaw[0].count ?? 0,
-    matched: statusCountsRaw[1].count ?? 0,
-    merged: statusCountsRaw[2].count ?? 0,
-    evidence: statusCountsRaw[3].count ?? 0,
-    discarded: statusCountsRaw[4].count ?? 0,
+    pending: otherStatusCountsRaw[0].count ?? 0,
+    matched: otherStatusCountsRaw[1].count ?? 0,
+    evidence: evidenceCountRes.count ?? 0,
+    discarded: otherStatusCountsRaw[2].count ?? 0,
   };
 
   // Pivot DB function results (per date+source rows) into per-date objects
@@ -237,12 +246,21 @@ export default async function ClaimsReviewPage({
     ? `${baseSelect},raw_items!inner(source_type)`
     : baseSelect;
 
+  // Evidence tab is special: filter by `evidence_tags` non-empty instead of
+  // by `status='evidence'`. That keeps PR-#63 fold-ins (which also land at
+  // status='evidence' from promote_claims) out of the tab without needing
+  // a separate status value in the claims_status_check constraint.
   let query = supabase
     .from("claims")
     .select(selectExpr, { count: "exact" })
-    .eq("status", statusFilter)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- supabase-js doesn't type JSONB ->path columns
     .order("confidence->overall" as any, { ascending: false });
+
+  if (statusFilter === "evidence") {
+    query = query.not("evidence_tags", "is", null).not("evidence_tags", "eq", "{}");
+  } else {
+    query = query.eq("status", statusFilter);
+  }
 
   if (sourceFilter) {
     // Cast through `any` here: the supabase-js generic for an embedded INNER
@@ -301,7 +319,7 @@ export default async function ClaimsReviewPage({
         </div>
         {/* Status tabs */}
         <div className="flex gap-3">
-          {["pending", "matched", "merged", "evidence", "discarded"].map((s) => (
+          {["pending", "matched", "evidence", "discarded"].map((s) => (
             <a
               key={s}
               href={`/admin/claims?status=${s}&page=1${confFilter !== "all" ? `&conf=${confFilter}` : ""}${categoryFilter ? `&category=${categoryFilter}` : ""}${sourceFilter ? `&source=${encodeURIComponent(sourceFilter)}` : ""}`}

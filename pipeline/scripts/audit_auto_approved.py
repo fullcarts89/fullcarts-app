@@ -94,8 +94,8 @@ def _get_client():
 def _fetch_candidate_claims(sb, threshold: float) -> List[Dict[str, Any]]:
     """Pull every claim whose overall confidence clears the threshold.
 
-    Status doesn't matter — we want both the ones currently in matched
-    /merged (the actual cohort) AND any pending ones that would clear
+    Status doesn't matter — we want both the ones currently in matched /
+    evidence (the actual cohort) AND any pending ones that would clear
     today's filter. Caller filters further via hard-filter check.
     """
     out: List[Dict[str, Any]] = []
