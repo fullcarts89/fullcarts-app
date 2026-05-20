@@ -4,21 +4,24 @@ import { isAdminRequest } from "@/lib/admin-auth";
 
 // Bulk-approve a set of claims while patching shared fields (brand /
 // product_name / category / size fields) in the same UPDATE. Called from
-// /admin/claims/groups when the founder uses the "edit then approve"
-// flow to normalise a group before approval (e.g. canonicalising brand
-// spelling or correcting a missing old_size). Only patch fields that
-// are present-and-non-empty are written; the rest of each row stays
-// as-is. Status flips to 'matched' by default.
+// /admin/claims/groups via the unified Resolve modal — handles the
+// "edit + approve" path (with or without a hand-picked target entity)
+// and also the "save-only" path (approve=false; patch without status
+// change).
 //
-// Per-claim "Edit (don't approve)" path: pass approve=false in the body
-// and status will be left untouched (the patch still applies).
+// Only patch fields that are present-and-non-empty are written; the
+// rest of each row stays as-is. Status flips to 'matched' by default
+// when approve!=false.
 //
-// When approve=true and a claim has matched_entity_id=null, the
-// claims_match_required constraint blocks the UPDATE. We work around
-// it by auto-deriving an entity from the EDITED brand+product_name
-// (patch values take precedence over the existing claim values, since
-// the user is correcting them in this same call) and back-filling
-// matched_entity_id before the status flip.
+// When approve=true and any claim is still unmatched, the
+// claims_match_required constraint blocks the UPDATE. The route picks
+// the entity in this priority order:
+//   1. body.entity_id (the Resolve modal's "pick existing entity"
+//      branch) — verify it exists + not retracted, route every
+//      unmatched claim there.
+//   2. find-or-create from the EDITED brand+product_name (patch
+//      values override existing claim values, since the user is
+//      correcting them in this same call).
 
 export const dynamic = "force-dynamic";
 
@@ -93,6 +96,10 @@ export async function POST(request: NextRequest) {
   }
 
   const approve = body?.approve !== false; // default true
+  const explicitEntityId =
+    typeof body?.entity_id === "string" && body.entity_id
+      ? (body.entity_id as string)
+      : null;
   const update: Record<string, unknown> = approve
     ? { status: "matched", ...patch }
     : { ...patch };
@@ -106,8 +113,9 @@ export async function POST(request: NextRequest) {
   const sb = createAdminClient();
 
   // When approving, ensure every claim has a matched_entity_id (the DB
-  // constraint requires it). Auto-derive from the edited values if any
-  // claim is still unmatched.
+  // constraint requires it). Prefer an explicit entity_id if the caller
+  // passed one (the Resolve modal's "pick existing entity" branch);
+  // otherwise auto-derive from the edited values.
   if (approve) {
     type ClaimRow = {
       id: string;
@@ -129,7 +137,41 @@ export async function POST(request: NextRequest) {
     const rows = claims as ClaimRow[];
     const needsEntity = rows.filter((c) => !c.matched_entity_id);
 
-    if (needsEntity.length > 0) {
+    if (explicitEntityId) {
+      const { data: ent, error: entErr } = await sb
+        .from("product_entities")
+        .select("id, is_retracted")
+        .eq("id", explicitEntityId)
+        .maybeSingle();
+      if (entErr) {
+        return NextResponse.json({ error: entErr.message }, { status: 500 });
+      }
+      if (!ent) {
+        return NextResponse.json(
+          { error: "entity not found" },
+          { status: 404 },
+        );
+      }
+      if (ent.is_retracted) {
+        return NextResponse.json(
+          { error: "entity is retracted" },
+          { status: 400 },
+        );
+      }
+      if (needsEntity.length > 0) {
+        const unmatchedIds = needsEntity.map((c) => c.id);
+        const { error: setMatchErr } = await sb
+          .from("claims")
+          .update({ matched_entity_id: explicitEntityId })
+          .in("id", unmatchedIds);
+        if (setMatchErr) {
+          return NextResponse.json(
+            { error: setMatchErr.message },
+            { status: 500 },
+          );
+        }
+      }
+    } else if (needsEntity.length > 0) {
       const seed = needsEntity[0];
       // Patch values override existing claim values for the derivation —
       // the user is correcting brand/name in this same call.
@@ -139,7 +181,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           {
             error:
-              "cannot approve: at least one claim has no entity AND no brand/product name to derive one. Fill in Brand and Product name in the Edit form.",
+              "cannot approve: at least one claim has no entity AND no brand/product name to derive one. Fill in Brand and Product name in the Edit form, or pick an existing entity.",
           },
           { status: 400 },
         );

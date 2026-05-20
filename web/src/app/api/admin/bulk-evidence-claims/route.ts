@@ -3,15 +3,19 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdminRequest } from "@/lib/admin-auth";
 
 // Bulk-flip a set of claims to status='evidence' with the given
-// evidence_tags. Called from /admin/claims/groups GroupsClient for
-// "send to evidence wall" on a group or per-claim.
+// evidence_tags. Called from /admin/claims/groups via the unified
+// Resolve modal for "tag as evidence" on a group or per-claim.
 //
 // Prod constraint `claims_status_requires_match` (not in migration
 // files — added manually) forbids status='evidence' when
 // matched_entity_id is null. Migration 066 INTENDED to allow null but
-// the prod constraint disagrees. We work around it by auto-deriving an
-// entity for any unmatched claim before flipping status, mirroring the
-// bulk-approve-claims pattern.
+// the prod constraint disagrees. We work around it by ensuring every
+// unmatched claim has an entity before the status flip:
+//   Branch A — caller passed `entity_id`; we verify it and route every
+//     unmatched claim there.
+//   Branch B — no entity_id; we auto-derive one from the first unmatched
+//     claim's brand+product_name (find-or-create), matching
+//     bulk-approve-claims and bulk-edit-approve-claims.
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +40,11 @@ export async function POST(request: NextRequest) {
   if (tags.length === 0) {
     return NextResponse.json({ error: "tags required" }, { status: 400 });
   }
+
+  const explicitEntityId =
+    typeof body?.entity_id === "string" && body.entity_id
+      ? (body.entity_id as string)
+      : null;
 
   const sb = createAdminClient();
 
@@ -64,7 +73,47 @@ export async function POST(request: NextRequest) {
   let derivedEntityId: string | null = null;
   let createdEntity = false;
 
-  if (needsEntity.length > 0) {
+  // Branch A: explicit entity_id — verify, then point every unmatched
+  // claim at it. (Matched-already claims keep their existing entity so
+  // that an admin tagging a mixed batch as evidence doesn't rewrite
+  // entity links the pipeline already made.)
+  if (explicitEntityId) {
+    const { data: ent, error: entErr } = await sb
+      .from("product_entities")
+      .select("id, is_retracted")
+      .eq("id", explicitEntityId)
+      .maybeSingle();
+    if (entErr) {
+      return NextResponse.json({ error: entErr.message }, { status: 500 });
+    }
+    if (!ent) {
+      return NextResponse.json(
+        { error: "entity not found" },
+        { status: 404 },
+      );
+    }
+    if (ent.is_retracted) {
+      return NextResponse.json(
+        { error: "entity is retracted" },
+        { status: 400 },
+      );
+    }
+    derivedEntityId = explicitEntityId;
+    if (needsEntity.length > 0) {
+      const unmatchedIds = needsEntity.map((c) => c.id);
+      const { error: setMatchErr } = await sb
+        .from("claims")
+        .update({ matched_entity_id: explicitEntityId })
+        .in("id", unmatchedIds);
+      if (setMatchErr) {
+        return NextResponse.json(
+          { error: setMatchErr.message },
+          { status: 500 },
+        );
+      }
+    }
+  } else if (needsEntity.length > 0) {
+    // Branch B: auto-derive from first unmatched claim's brand+name.
     const seed = needsEntity[0];
     const brand = typeof seed.brand === "string" ? seed.brand.trim() : "";
     const productName =
@@ -73,7 +122,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error:
-            "cannot tag as evidence: at least one claim has no entity AND no brand or product name to derive one; use Merge into entity → first or Edit the claim to fill in brand+name",
+            "cannot tag as evidence: at least one claim has no entity AND no brand or product name to derive one; pick an entity in the Resolve modal or edit brand+name first",
         },
         { status: 400 },
       );
@@ -142,5 +191,6 @@ export async function POST(request: NextRequest) {
     matched_count: needsEntity.length,
     entity_id: derivedEntityId,
     created_entity: createdEntity,
+    explicit_entity: explicitEntityId !== null,
   });
 }

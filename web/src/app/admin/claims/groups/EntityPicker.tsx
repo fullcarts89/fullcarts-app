@@ -16,7 +16,7 @@ interface Props {
   nameHint: string;
   groupSizeChange: string;
   onCancel: () => void;
-  onPick: (entityId: string) => void;
+  onPick: (entity: { id: string; brand: string; canonical_name: string }) => void;
 }
 
 export default function EntityPicker({ brand, nameHint, groupSizeChange, onCancel, onPick }: Props) {
@@ -75,7 +75,9 @@ export default function EntityPicker({ brand, nameHint, groupSizeChange, onCance
               >
                 <button
                   type="button"
-                  onClick={() => onPick(r.id)}
+                  onClick={() =>
+                    onPick({ id: r.id, brand: r.brand, canonical_name: r.canonical_name })
+                  }
                   className="flex-1 min-w-0 text-left px-3 py-2"
                 >
                   <div className="flex items-baseline justify-between gap-3">

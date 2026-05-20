@@ -6,41 +6,43 @@ import { ClaimImage } from "@/components/admin/ClaimImage";
 
 // Renders one expandable card per group. Selection (the per-group
 // "Select" checkbox the bulk toolbar listens to) is managed by the
-// parent GroupsClient (Task 5); this component just exposes the
-// expand toggle and per-group action buttons.
+// parent GroupsClient; this component just exposes the expand toggle
+// and per-group action buttons.
+//
+// The footer collapses to 3 buttons (Approve all / Discard all /
+// Resolve…) and the per-claim row to 3 buttons (Approve / Discard /
+// Edit & Resolve…). All edit / merge / evidence flows now go through
+// the unified ResolveModal opened by the parent.
 
 interface Props {
   group: ClaimGroup;
   selected: boolean;
   onSelectChange: (next: boolean) => void;
   onAction: (
-    action: "approve_all" | "discard_all" | "merge_into" | "edit_then_approve" | "move_to_evidence",
+    action: "approve_all" | "discard_all" | "resolve",
     group: ClaimGroup,
   ) => void;
   busy: boolean;
   onClaimAction: (
     claimId: string,
-    action: "approve" | "discard" | "evidence",
+    action: "approve" | "discard" | "resolve",
     group: ClaimGroup,
   ) => void;
-  onClaimEdit: (claimId: string, group: ClaimGroup) => void;
 }
 
 function ClaimRow({
   c,
   group,
   onClaimAction,
-  onClaimEdit,
   busy,
 }: {
   c: PendingClaim;
   group: ClaimGroup;
   onClaimAction: (
     claimId: string,
-    action: "approve" | "discard" | "evidence",
+    action: "approve" | "discard" | "resolve",
     group: ClaimGroup,
   ) => void;
-  onClaimEdit: (claimId: string, group: ClaimGroup) => void;
   busy: boolean;
 }) {
   return (
@@ -98,18 +100,10 @@ function ClaimRow({
         <button
           type="button"
           disabled={busy}
-          onClick={() => onClaimAction(c.id, "evidence", group)}
-          className="px-2 py-0.5 text-xs rounded border border-[var(--amber-base)]/20 bg-[var(--amber-bg)] text-[var(--amber-base)] hover:opacity-80 disabled:opacity-50"
-        >
-          Evidence
-        </button>
-        <button
-          type="button"
-          disabled={busy}
-          onClick={() => onClaimEdit(c.id, group)}
+          onClick={() => onClaimAction(c.id, "resolve", group)}
           className="px-2 py-0.5 text-xs rounded border border-[var(--bg-tertiary)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] disabled:opacity-50"
         >
-          Edit
+          Edit & Resolve…
         </button>
       </div>
     </div>
@@ -123,7 +117,6 @@ export default function GroupCardClient({
   onAction,
   busy,
   onClaimAction,
-  onClaimEdit,
 }: Props) {
   const [expanded, setExpanded] = useState(false);
   const rep = group.claims[0];
@@ -153,7 +146,7 @@ export default function GroupCardClient({
       </header>
 
       <div className="p-4">
-        {rep && <ClaimRow c={rep} group={group} onClaimAction={onClaimAction} onClaimEdit={onClaimEdit} busy={busy} />}
+        {rep && <ClaimRow c={rep} group={group} onClaimAction={onClaimAction} busy={busy} />}
         {group.count > 1 && (
           <button
             type="button"
@@ -166,7 +159,7 @@ export default function GroupCardClient({
         {expanded && (
           <div className="mt-2">
             {group.claims.slice(1).map((c) => (
-              <ClaimRow key={c.id} c={c} group={group} onClaimAction={onClaimAction} onClaimEdit={onClaimEdit} busy={busy} />
+              <ClaimRow key={c.id} c={c} group={group} onClaimAction={onClaimAction} busy={busy} />
             ))}
           </div>
         )}
@@ -192,26 +185,10 @@ export default function GroupCardClient({
         <button
           type="button"
           disabled={busy}
-          onClick={() => onAction("move_to_evidence", group)}
-          className="px-3 py-1.5 text-sm rounded border border-[var(--amber-base)]/20 bg-[var(--amber-bg)] text-[var(--amber-base)] hover:opacity-80 disabled:opacity-50"
-        >
-          Move to evidence →
-        </button>
-        <button
-          type="button"
-          disabled={busy}
-          onClick={() => onAction("merge_into", group)}
-          className="px-3 py-1.5 text-sm rounded border border-[var(--blue-border)] bg-[var(--blue-bg)] text-[var(--blue-base)] hover:opacity-80 disabled:opacity-50"
-        >
-          Merge into entity →
-        </button>
-        <button
-          type="button"
-          disabled={busy}
-          onClick={() => onAction("edit_then_approve", group)}
+          onClick={() => onAction("resolve", group)}
           className="px-3 py-1.5 text-sm rounded border border-[var(--bg-tertiary)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] disabled:opacity-50"
         >
-          Edit then approve…
+          Resolve…
         </button>
       </footer>
     </article>
