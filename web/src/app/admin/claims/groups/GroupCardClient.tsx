@@ -23,12 +23,14 @@ interface Props {
     action: "approve" | "discard" | "evidence",
     group: ClaimGroup,
   ) => void;
+  onClaimEdit: (claimId: string, group: ClaimGroup) => void;
 }
 
 function ClaimRow({
   c,
   group,
   onClaimAction,
+  onClaimEdit,
   busy,
 }: {
   c: PendingClaim;
@@ -38,6 +40,7 @@ function ClaimRow({
     action: "approve" | "discard" | "evidence",
     group: ClaimGroup,
   ) => void;
+  onClaimEdit: (claimId: string, group: ClaimGroup) => void;
   busy: boolean;
 }) {
   return (
@@ -100,6 +103,14 @@ function ClaimRow({
         >
           Evidence
         </button>
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => onClaimEdit(c.id, group)}
+          className="px-2 py-0.5 text-xs rounded border border-[var(--bg-tertiary)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] disabled:opacity-50"
+        >
+          Edit
+        </button>
       </div>
     </div>
   );
@@ -112,6 +123,7 @@ export default function GroupCardClient({
   onAction,
   busy,
   onClaimAction,
+  onClaimEdit,
 }: Props) {
   const [expanded, setExpanded] = useState(false);
   const rep = group.claims[0];
@@ -141,7 +153,7 @@ export default function GroupCardClient({
       </header>
 
       <div className="p-4">
-        {rep && <ClaimRow c={rep} group={group} onClaimAction={onClaimAction} busy={busy} />}
+        {rep && <ClaimRow c={rep} group={group} onClaimAction={onClaimAction} onClaimEdit={onClaimEdit} busy={busy} />}
         {group.count > 1 && (
           <button
             type="button"
@@ -154,7 +166,7 @@ export default function GroupCardClient({
         {expanded && (
           <div className="mt-2">
             {group.claims.slice(1).map((c) => (
-              <ClaimRow key={c.id} c={c} group={group} onClaimAction={onClaimAction} busy={busy} />
+              <ClaimRow key={c.id} c={c} group={group} onClaimAction={onClaimAction} onClaimEdit={onClaimEdit} busy={busy} />
             ))}
           </div>
         )}

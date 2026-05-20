@@ -3,12 +3,18 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdminRequest } from "@/lib/admin-auth";
 
 // Bulk-approve a set of claims while patching shared fields (brand /
-// product_name / category) in the same UPDATE. Called from
+// product_name / category / size fields) in the same UPDATE. Called from
 // /admin/claims/groups when the founder uses the "edit then approve"
 // flow to normalise a group before approval (e.g. canonicalising brand
-// spelling). Only patch fields that are present-and-non-empty are
-// written; the rest of each row stays as-is. Status always flips to
-// 'matched'.
+// spelling or correcting a missing old_size). Only patch fields that
+// are present-and-non-empty are written; the rest of each row stays
+// as-is. Status flips to 'matched' by default.
+//
+// Per-claim "Edit (don't approve)" path: pass approve=false in the body
+// and status will be left untouched (the patch still applies). When
+// approve=true (the default) and a row's matched_entity_id is null, the
+// DB's claims_match_required constraint will reject the UPDATE; that
+// 500 is surfaced back to the client which alerts on failure.
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +22,11 @@ interface Patch {
   brand?: string;
   product_name?: string;
   category?: string;
+  old_size?: number;
+  old_size_unit?: string;
+  new_size?: number;
+  new_size_unit?: string;
+  change_description?: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -49,8 +60,44 @@ export async function POST(request: NextRequest) {
   if (typeof patchRaw.category === "string" && patchRaw.category) {
     patch.category = patchRaw.category;
   }
+  // Numeric size fields: accept either number or numeric-string. Reject NaN.
+  if (patchRaw.old_size != null && patchRaw.old_size !== "") {
+    const n =
+      typeof patchRaw.old_size === "number"
+        ? patchRaw.old_size
+        : parseFloat(String(patchRaw.old_size));
+    if (!Number.isNaN(n)) patch.old_size = n;
+  }
+  if (typeof patchRaw.old_size_unit === "string" && patchRaw.old_size_unit) {
+    patch.old_size_unit = patchRaw.old_size_unit;
+  }
+  if (patchRaw.new_size != null && patchRaw.new_size !== "") {
+    const n =
+      typeof patchRaw.new_size === "number"
+        ? patchRaw.new_size
+        : parseFloat(String(patchRaw.new_size));
+    if (!Number.isNaN(n)) patch.new_size = n;
+  }
+  if (typeof patchRaw.new_size_unit === "string" && patchRaw.new_size_unit) {
+    patch.new_size_unit = patchRaw.new_size_unit;
+  }
+  if (
+    typeof patchRaw.change_description === "string" &&
+    patchRaw.change_description
+  ) {
+    patch.change_description = patchRaw.change_description;
+  }
 
-  const update: Record<string, unknown> = { status: "matched", ...patch };
+  const approve = body?.approve !== false; // default true
+  const update: Record<string, unknown> = approve
+    ? { status: "matched", ...patch }
+    : { ...patch };
+  if (Object.keys(update).length === 0) {
+    return NextResponse.json(
+      { error: "patch is empty and approve=false" },
+      { status: 400 },
+    );
+  }
 
   const sb = createAdminClient();
   const { error } = await sb.from("claims").update(update).in("id", ids);
