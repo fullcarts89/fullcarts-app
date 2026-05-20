@@ -43,6 +43,9 @@ UPDATE published_changes
 
 -- 2. Hard CHECK going forward.
 -- Edge cases:
+--   - is_retracted=true: allowed (retracted rows are the trash bin; the
+--     point of the constraint is to keep new live rows clean, not to
+--     re-judge already-retired data).
 --   - NULL size_before or size_after: allowed (migration 055 made these
 --     nullable for skimpflation events, which carry no size change).
 --   - size_before = 0: rejected (division-by-zero; a legitimate product
@@ -50,7 +53,8 @@ UPDATE published_changes
 ALTER TABLE published_changes
     ADD CONSTRAINT published_changes_size_ratio_sane
     CHECK (
-        size_before IS NULL
+        is_retracted = true
+        OR size_before IS NULL
         OR size_after IS NULL
         OR (size_before > 0 AND size_after / size_before BETWEEN 0.05 AND 5.0)
     ) NOT VALID;
@@ -68,7 +72,8 @@ COMMIT;
 --      AND size_before IS NOT NULL AND size_after IS NOT NULL
 --      AND size_before > 0
 --      AND (size_after / size_before > 5.0 OR size_after / size_before < 0.05);
---     Expected: empty result. Any rows here block VALIDATE CONSTRAINT.
+--     Expected: empty result. (Retracted rows excluded by design — the
+--     CHECK constraint exempts them.)
 --
 -- Once verified clean:
 --   ALTER TABLE published_changes
