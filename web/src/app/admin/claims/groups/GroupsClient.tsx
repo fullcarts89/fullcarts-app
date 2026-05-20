@@ -53,6 +53,11 @@ export default function GroupsClient({ groups: initial, categories }: Props) {
   const [editDraft, setEditDraft] = useState<EditDraft>(EMPTY_DRAFT);
   const [editClaimFor, setEditClaimFor] = useState<{ group: ClaimGroup; claim: PendingClaim } | null>(null);
   const [evidenceFor, setEvidenceFor] = useState<ClaimGroup | null>(null);
+  // When the evidence modal was opened from a per-claim button (not the
+  // group-level button), this holds the single claim id so the confirm
+  // handler removes just that one claim from local state instead of
+  // nuking the whole group.
+  const [evidenceClaimId, setEvidenceClaimId] = useState<string | null>(null);
   const [evidenceTags, setEvidenceTags] = useState<Set<string>>(new Set());
 
   const toggle = useCallback((key: string, next: boolean) => {
@@ -102,6 +107,7 @@ export default function GroupsClient({ groups: initial, categories }: Props) {
     }
     if (action === "move_to_evidence") {
       setEvidenceFor(group);
+      setEvidenceClaimId(null); // group-level, not per-claim
       setEvidenceTags(new Set());
       return;
     }
@@ -264,12 +270,29 @@ export default function GroupsClient({ groups: initial, categories }: Props) {
     if (!evidenceFor || evidenceTags.size === 0) return;
     const g = evidenceFor;
     const tags = Array.from(evidenceTags);
+    const singleClaimId = evidenceClaimId;
     setEvidenceFor(null);
-    const ids = g.claims.map((c) => c.id);
+    setEvidenceClaimId(null);
+    const ids = singleClaimId ? [singleClaimId] : g.claims.map((c) => c.id);
     startTransition(async () => {
       try {
         await runBulkApi("bulk-evidence-claims", { claim_ids: ids, tags });
-        removeGroupsFromState([g.key]);
+        if (singleClaimId) {
+          // Per-claim path: remove just the one claim from this group;
+          // drop the group only if it becomes empty.
+          setGroups((gs) =>
+            gs
+              .map((gr) => {
+                if (gr.key !== g.key) return gr;
+                const remaining = gr.claims.filter((c) => c.id !== singleClaimId);
+                return { ...gr, claims: remaining, count: remaining.length };
+              })
+              .filter((gr) => gr.count > 0),
+          );
+        } else {
+          // Group-level path: the whole group goes to evidence.
+          removeGroupsFromState([g.key]);
+        }
       } catch (e) {
         alert(`Failed: ${String(e)}`);
       }
@@ -282,8 +305,12 @@ export default function GroupsClient({ groups: initial, categories }: Props) {
     group: ClaimGroup,
   ) {
     if (action === "evidence") {
-      // Same modal flow as group-level, but pre-target a single claim
-      setEvidenceFor({ ...group, claims: group.claims.filter((c) => c.id === claimId), count: 1 });
+      // Per-claim evidence: keep the real group reference (don't
+      // synthesise one with the same key — that would make
+      // removeGroupsFromState nuke the whole group on confirm). Mark
+      // evidenceClaimId so the confirm handler removes just this claim.
+      setEvidenceFor(group);
+      setEvidenceClaimId(claimId);
       setEvidenceTags(new Set());
       return;
     }
@@ -598,7 +625,11 @@ export default function GroupsClient({ groups: initial, categories }: Props) {
       {evidenceFor && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-6 z-50">
           <div className="bg-[var(--bg-secondary)] border border-[var(--bg-tertiary)] rounded-lg p-6 w-full max-w-md space-y-3">
-            <h3 className="font-medium">Move {evidenceFor.count} claims to evidence wall</h3>
+            <h3 className="font-medium">
+              {evidenceClaimId
+                ? "Move 1 claim to evidence wall"
+                : `Move ${evidenceFor.count} claims to evidence wall`}
+            </h3>
             <p className="text-xs text-[var(--text-tertiary)]">
               Pick one or more tags. Claims will move to status=&apos;evidence&apos; with these tags.
             </p>
@@ -629,7 +660,14 @@ export default function GroupsClient({ groups: initial, categories }: Props) {
               })}
             </div>
             <div className="flex justify-end gap-2 pt-2">
-              <button type="button" onClick={() => setEvidenceFor(null)} className="px-3 py-1.5 text-sm">
+              <button
+                type="button"
+                onClick={() => {
+                  setEvidenceFor(null);
+                  setEvidenceClaimId(null);
+                }}
+                className="px-3 py-1.5 text-sm"
+              >
                 Cancel
               </button>
               <button
