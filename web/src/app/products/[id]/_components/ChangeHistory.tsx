@@ -8,8 +8,18 @@
 import { useState } from "react";
 import styles from "../styles.module.css";
 import type { EventRow, EventSource } from "../types";
-import { dominantSource, isoDay, num, publisherLabel } from "../lib";
+import { claimImageUrl, dominantSource, isoDay, num, publisherLabel } from "../lib";
 import RetractEventButton from "@/components/admin/RetractEventButton";
+import RawPayloadInspector from "@/components/admin/RawPayloadInspector";
+
+// Reddit posts whose author / body deleted-out come back as the literal
+// string "[deleted]" — render nothing in that case rather than the marker.
+function cleanField(v: string | null | undefined): string | null {
+  if (!v) return null;
+  const trimmed = v.trim();
+  if (!trimmed || trimmed === "[deleted]" || trimmed === "[removed]") return null;
+  return trimmed;
+}
 
 interface Props {
   events: EventRow[];
@@ -149,26 +159,72 @@ export default function ChangeHistory({ events }: Props) {
 
             <div id={`history-detail-${e.event_id}`} className={styles["history-expanded"]} role="region">
               <div className={styles["src-list"]}>
-                {sourcesShown.map((s, i) => (
-                  <a
-                    key={`${s.claim_id}-${i}`}
-                    className={styles["src-row"]}
-                    href={s.url || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`${s.title || "Source"} on ${publisherLabel(s)} (opens in new tab)`}
-                  >
-                    <div
-                      className={`${styles["src-pub"]} ${publisherClass(s)}`}
+                {sourcesShown.map((s, i) => {
+                  const thumb =
+                    claimImageUrl(s.claim_image_path) || s.image || null;
+                  const author = cleanField(s.author);
+                  const excerpt = cleanField(s.body_excerpt);
+                  const hasUrl = !!s.url;
+                  return (
+                    <a
+                      key={`${s.claim_id}-${i}`}
+                      className={styles["src-row"]}
+                      href={s.url || "#"}
+                      target={hasUrl ? "_blank" : undefined}
+                      rel={hasUrl ? "noopener noreferrer" : undefined}
+                      aria-label={`${s.title || "Source"} on ${publisherLabel(s)}${hasUrl ? " (opens in new tab)" : ""}`}
+                      onClick={(e) => {
+                        if (!hasUrl) e.preventDefault();
+                      }}
                     >
-                      {publisherLabel(s)}
-                    </div>
-                    <div className={styles["src-title"]}>
-                      {s.title || s.url || "(no title)"}
-                    </div>
-                    <div className={styles["src-date"]}>{isoDay(s.date)}</div>
-                  </a>
-                ))}
+                      <div
+                        className={
+                          thumb
+                            ? styles["src-thumb"]
+                            : `${styles["src-thumb"]} ${styles.empty}`
+                        }
+                        aria-hidden="true"
+                      >
+                        {thumb ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={thumb} alt="" loading="lazy" />
+                        ) : (
+                          "·"
+                        )}
+                      </div>
+                      <div
+                        className={`${styles["src-pub"]} ${publisherClass(s)}`}
+                      >
+                        {publisherLabel(s)}
+                      </div>
+                      <div className={styles["src-body"]}>
+                        <div className={styles["src-title"]}>
+                          {s.title || s.url || "(no title)"}
+                        </div>
+                        {author && (
+                          <div className={styles["src-author"]}>{author}</div>
+                        )}
+                        {excerpt && (
+                          <div className={styles["src-excerpt"]}>
+                            “{excerpt}
+                            {excerpt.length >= 240 ? "…" : ""}”
+                          </div>
+                        )}
+                      </div>
+                      <div className={styles["src-meta"]}>
+                        <span className={styles["src-date"]}>
+                          {isoDay(s.date)}
+                        </span>
+                        {hasUrl && (
+                          <span className={styles["src-ext"]} aria-hidden="true">
+                            ↗ open
+                          </span>
+                        )}
+                        <RawPayloadInspector claimId={s.claim_id} />
+                      </div>
+                    </a>
+                  );
+                })}
                 {remaining > 0 && (
                   <div className={styles["src-date"]} style={{ padding: 16, textAlign: "left" }}>
                     + {remaining} more source{remaining === 1 ? "" : "s"}
