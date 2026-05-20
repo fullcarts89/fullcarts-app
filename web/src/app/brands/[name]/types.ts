@@ -30,6 +30,10 @@ export interface EventSource {
   image: string | null;
   claim_image_path: string | null;
   date: string | null;
+  // Added by migration 067 for source-row triage. Reddit/news posts may
+  // have neither field; UI renders them only when populated.
+  author: string | null;
+  body_excerpt: string | null;
 }
 
 export interface EventRow {

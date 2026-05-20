@@ -112,7 +112,7 @@ Cursor state persists in `scraper_state` table. Config lives in `pipeline/config
 
 ### Database migrations
 
-SQL migrations in `db/migrations/` numbered `001_` through `066_`. Deploy manually via Supabase SQL Editor or via the Management API with a PAT (`POST /v1/projects/{ref}/database/query`; **set a `User-Agent` header** or Cloudflare returns 1010). Views in `043_rewrite_views_new_schema.sql` and `049_insight_views.sql` plus newer per-page views power the frontend. Notable recent additions:
+SQL migrations in `db/migrations/` numbered `001_` through `067_`. Deploy manually via Supabase SQL Editor or via the Management API with a PAT (`POST /v1/projects/{ref}/database/query`; **set a `User-Agent` header** or Cloudflare returns 1010). Views in `043_rewrite_views_new_schema.sql` and `049_insight_views.sql` plus newer per-page views power the frontend. Notable recent additions:
 
 - `050_event_dedup.sql` — `published_changes.evidence_count` + dedup index on `(entity_id, size_before, size_after)`
 - `051_event_evidence_summary_view.sql` — `event_evidence_summary` view, used by `/brands/[name]` evidence trail
@@ -128,6 +128,7 @@ SQL migrations in `db/migrations/` numbered `001_` through `066_`. Deploy manual
 - `063_data_quality_flags.sql` — `data_quality_flags` soft-flag quarantine table. Detectors in `promote_claims` (short_brand) and `cleanup_stuck_matched` (stuck_approved_claim) write here instead of mutating suspect rows. Partial unique index makes the writes idempotent across cron runs. `pipeline/lib/data_quality_flags.raise_flag()` is the writer helper
 - `064_claim_status_audit_log.sql` — `claim_status_log` append-only audit trail + AFTER UPDATE trigger on `claims.status`. Future bulk-status drift bugs (the cleanup_stuck_matched regression class) surface as visible group rows instead of invisible silent updates
 - `065_entity_edit_merge_logs.sql` — Phase 2D steps 2+4. Adds `entity_edit_log` + `set_entity_field()` RPC (single-field inline edit with audit trail); `entity_merge_log` + `merge_entities()` RPC (all-or-nothing merge of source→target with claim/event/variant move counts logged). Powers the new edit / merge buttons on `/admin/entities`
+- `067_event_evidence_richer_sources.sql` — extends `event_evidence_summary` with `author` (Reddit) and `body_excerpt` (Reddit selftext / GDELT socialdescription / news description, first 240 chars). The per-source row on `/products/[id]` + `/brands/[name]` now shows a thumb + author + excerpt + an admin-only "Inspect raw payload" expander backed by `/api/admin/source-payload`
 
 ### Web routes (Next.js App Router)
 
