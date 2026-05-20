@@ -322,6 +322,12 @@ export default async function ClaimsReviewPage({
           >
             Quality Flags →
           </a>
+          <a
+            href="/admin/claims/groups"
+            className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline-offset-4 hover:underline"
+          >
+            Group view →
+          </a>
         </div>
         {/* Status tabs */}
         <div className="flex gap-3">
