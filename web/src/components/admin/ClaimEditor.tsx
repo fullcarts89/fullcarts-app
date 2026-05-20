@@ -18,9 +18,11 @@ type EditableFields = {
 export function ClaimEditor({
   claimId,
   initialValues,
+  categories,
 }: {
   claimId: string;
   initialValues: EditableFields;
+  categories: string[];
 }) {
   const [editing, setEditing] = useState(false);
   const [fields, setFields] = useState<EditableFields>(initialValues);
@@ -70,7 +72,11 @@ export function ClaimEditor({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <Field label="Brand" value={fields.brand} onChange={(v) => handleChange("brand", v)} />
         <Field label="Product" value={fields.product_name} onChange={(v) => handleChange("product_name", v)} />
-        <Field label="Category" value={fields.category} onChange={(v) => handleChange("category", v)} />
+        <CategorySelect
+          value={fields.category}
+          onChange={(v) => handleChange("category", v)}
+          categories={categories}
+        />
         <div className="flex gap-2">
           <Field label="Old size" value={fields.old_size} onChange={(v) => handleChange("old_size", v)} className="flex-1" />
           <Field label="Unit" value={fields.old_size_unit} onChange={(v) => handleChange("old_size_unit", v)} className="w-16" />
@@ -102,6 +108,36 @@ export function ClaimEditor({
           Cancel
         </button>
       </div>
+    </div>
+  );
+}
+
+function CategorySelect({
+  value,
+  onChange,
+  categories,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  categories: string[];
+}) {
+  const inputClass =
+    "w-full px-2 py-1 text-sm rounded border border-[var(--bg-tertiary)] bg-[var(--bg-primary)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--text-tertiary)]";
+  return (
+    <div>
+      <label className="block text-xs text-[var(--text-tertiary)] mb-0.5">Category</label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className={inputClass}
+      >
+        <option value="">(none)</option>
+        {categories.map((c) => (
+          <option key={c} value={c}>
+            {c}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }

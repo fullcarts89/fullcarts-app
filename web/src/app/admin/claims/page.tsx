@@ -150,6 +150,22 @@ const CONFIDENCE_TIERS = [
   { key: "weak", label: "<40%", min: 0, max: 0.39 },
 ];
 
+async function loadCategories(): Promise<string[]> {
+  const sb = createAdminClient();
+  const { data, error } = await sb
+    .from("product_entities")
+    .select("category")
+    .eq("is_retracted", false)
+    .not("category", "is", null)
+    .limit(10000);
+  if (error) throw new Error(`categories load: ${error.message}`);
+  const set = new Set<string>();
+  for (const r of (data ?? []) as Array<{ category: string | null }>) {
+    if (r.category && r.category.trim()) set.add(r.category.trim());
+  }
+  return [...set].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+}
+
 
 export default async function ClaimsReviewPage({
   searchParams,
@@ -175,7 +191,7 @@ export default async function ClaimsReviewPage({
   // fold-ins (claims merged into an existing event during dedup), which
   // would otherwise drown out the genuine evidence-wall claims in this tab.
   // The predicate matches `evidence_tags` non-null AND non-empty.
-  const [evidenceCountRes, otherStatusCountsRaw, dailyStatsRes, latestClaimRes] = await Promise.all([
+  const [evidenceCountRes, otherStatusCountsRaw, dailyStatsRes, latestClaimRes, categories] = await Promise.all([
     supabase
       .from("claims")
       .select("*", { count: "exact", head: true })
@@ -192,6 +208,7 @@ export default async function ClaimsReviewPage({
       .select("extracted_at")
       .order("extracted_at", { ascending: false })
       .limit(1),
+    loadCategories(),
   ]);
 
   const statusCounts = {
@@ -468,6 +485,7 @@ export default async function ClaimsReviewPage({
                         new_size_unit: claim.new_size_unit || "",
                         change_description: claim.change_description || "",
                       }}
+                      categories={categories}
                     />
                     <WaybackLookup
                       productName={claim.product_name || ""}
