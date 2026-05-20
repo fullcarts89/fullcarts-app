@@ -97,11 +97,16 @@ def load_brand_by_id(sb, entity_ids):
     summary. Paginated via `.in_()` in batches of PAGE rows because
     PostgREST chokes on huge `in.()` filters.
     """
+    # PostgREST GETs with .in_() encode the values in the query string;
+    # 1000 UUIDs (~36KB) breaks Cloudflare/PostgREST URL-length limits.
+    # 200 keeps the URL well under 8KB. Total run time for 18k entities
+    # stays fast because each batch round-trips in <100ms.
+    BRAND_LOAD_BATCH = 200
     out = {}  # type: Dict[str, str]
     if not entity_ids:
         return out
-    for i in range(0, len(entity_ids), PAGE):
-        batch = entity_ids[i:i + PAGE]
+    for i in range(0, len(entity_ids), BRAND_LOAD_BATCH):
+        batch = entity_ids[i:i + BRAND_LOAD_BATCH]
         resp = (
             sb.table("product_entities")
             .select("id,brand")
