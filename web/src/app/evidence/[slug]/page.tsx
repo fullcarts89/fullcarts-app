@@ -167,11 +167,7 @@ export default async function EvidenceChannelPage({
       "id, brand, product_name, category, old_size, old_size_unit, new_size, new_size_unit, change_description, observed_date, image_storage_path, matched_entity_id, raw_items ( source_url, raw_payload )",
     )
     .contains("evidence_tags", [channel.tag])
-    // 'merged' is included defensively. Migration 060 carved it out of
-    // 'evidence' for fold-ins; fold-ins never have evidence_tags so they
-    // won't actually match the contains() filter, but listing the status
-    // here keeps the page robust if an admin ever tags a merged claim.
-    .in("status", ["matched", "merged", "evidence", "approved"])
+    .in("status", ["matched", "evidence", "approved"])
     .order("observed_date", { ascending: false, nullsFirst: false })
     .limit(PAGE_SIZE);
 
