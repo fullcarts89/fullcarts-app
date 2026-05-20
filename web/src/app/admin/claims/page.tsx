@@ -316,6 +316,12 @@ export default async function ClaimsReviewPage({
           >
             Entity Browser →
           </a>
+          <a
+            href="/admin/quality-flags"
+            className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline-offset-4 hover:underline"
+          >
+            Quality Flags →
+          </a>
         </div>
         {/* Status tabs */}
         <div className="flex gap-3">

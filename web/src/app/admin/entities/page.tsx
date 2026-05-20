@@ -126,6 +126,12 @@ export default async function AdminEntitiesPage({
           >
             Duplicates →
           </Link>
+          <Link
+            href="/admin/quality-flags"
+            className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline-offset-4 hover:underline"
+          >
+            Quality Flags →
+          </Link>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
