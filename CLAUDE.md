@@ -102,7 +102,7 @@ Cursor state persists in `scraper_state` table. Config lives in `pipeline/config
 ### Key database tables
 
 - `raw_items` — Immutable raw payloads from all sources, deduped by `(source_type, source_id)`
-- `claims` — AI-extracted assertions with confidence scores, status workflow: pending → approved → matched
+- `claims` — AI-extracted assertions with confidence scores. Status workflow: `pending` → admin approves → `matched` → daily `promote_claims` cron either keeps `matched` (claim originated a new event) or flips to `evidence` (claim folded into an existing event during dedup). `discarded` is the terminal "junk" bucket. The legacy `approved` and `unmatched` statuses are retired; nothing writes them.
 - `product_entities` — Canonical products (brand + name), full-text search via tsvector
 - `pack_variants` — Specific SKUs with UPC, linked to entities. `is_active=true` enables weekly monitoring
 - `variant_observations` — Time-series size/price snapshots
@@ -138,6 +138,10 @@ SQL migrations in `db/migrations/` numbered `001_` through `058_`. Deploy manual
 
 Shared nav lives at `web/src/components/SiteNav.tsx` (client component, uses `usePathname` for active detection). All public routes render `<SiteNav />` once at the top of their JSX.
 
+### Admin affordances on public pages
+
+When the founder is signed in (long-press logo → `/admin/login` → password → 7-day `admin_session` cookie), a red **"↩ Send to pending"** button renders inside every expanded event-detail panel on `/products/[id]` (change-history accordion) and `/brands/[name]` (timeline). One click + confirm → `published_changes.is_retracted=true` for that event + every backing claim flipped to `status='pending'` with `matched_*` nulled. Routes: `POST /api/admin/retract-event`, `GET /api/admin/whoami` (existence check so non-admins see nothing). Helper: `web/src/lib/admin-auth.ts`. Component: `web/src/components/admin/RetractEventButton.tsx`.
+
 ### Design reference
 
 Visual targets are committed alongside the routes that realised them:
@@ -154,4 +158,9 @@ All use the `FULLCARTS_DESIGN_EXPORT.md` system (dark graphite + Space Grotesk +
 - `pipeline_promote.yml` — Daily 12:00 UTC: auto-decline junk → auto-approve high-confidence claims (threshold 90 + hard filters) → promote → backfill entity images. Markdown summaries in job output.
 - `pipeline_extraction.yml` — Daily 10:00 UTC: AI claim extraction from `raw_items` (Claude Haiku) + nightly vision enrichment
 - `pipeline_reddit.yml` / `pipeline_news.yml` — Daily/12h: ingest new data
-- `phase1_execution.yml` — Manual: run individual Phase 1 data-credibility scripts (event dedup, entity dedup, etc.)
+- `phase1_execution.yml` — Manual: run individual Phase 1 data-credibility scripts (event dedup, entity dedup, etc.). Step 9/10 = `restore_matched_originators` dry-run / apply.
+
+### Known gotchas
+
+- **`/admin/claims` Evidence tab is semantically overloaded.** The tab filter is a literal `eq("status","evidence")` (`web/src/app/admin/claims/page.tsx:175-176`). The original meaning of `evidence` was "claim was tagged for the evidence wall (Skimpflation / So Smol / Slack Fill / Stretchflation / Spot the Difference) but isn't a numeric size shrink." PR #63 reused the same status for "claim was folded into an existing event during dedup," so the tab now shows ~4,600 fold-ins mixed in with a few hundred genuine tagged-evidence claims. Fix options live in issue #81: A) repoint the tab query to filter by `evidence_tags` non-empty, or B) rename the fold-in status to `'merged'` via migration + backfill.
+- **`promote_claims.py` writes the originator's claim id into `change_candidates.supporting_claims[]` exactly once at candidate-create time.** Folded-in claims go to `published_changes.evidence_summary` instead. That asymmetry is what `cleanup_stuck_matched.py:108-130` (originator guard) and `restore_matched_originators.py` rely on to tell originators from duplicates.
