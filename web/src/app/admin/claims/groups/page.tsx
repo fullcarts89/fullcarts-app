@@ -2,7 +2,7 @@ import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { groupPendingClaims } from "./lib";
 import type { PendingClaim, ClaimGroup } from "./lib";
-import GroupCard from "./GroupCard";
+import GroupsClient from "./GroupsClient";
 
 export const dynamic = "force-dynamic";
 
@@ -99,7 +99,7 @@ export default async function ClaimsGroupsPage() {
             No pending claims to group.
           </div>
         ) : (
-          groups.map((g) => <GroupCard key={g.key} group={g} />)
+          <GroupsClient groups={groups} />
         )}
       </main>
     </div>
