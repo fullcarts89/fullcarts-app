@@ -30,7 +30,10 @@ import argparse
 import logging
 import os
 import sys
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional
+
+from pipeline.lib.data_quality_flags import raise_flag
 
 LOG = logging.getLogger("cleanup_stuck_matched")
 logging.basicConfig(
@@ -142,6 +145,50 @@ def _claim_already_in_summary(summary: Any, claim_id: str) -> bool:
     return False
 
 
+def _flag_stuck_unresolved(sb, dry_run: bool, stats: Dict[str, int]) -> None:
+    """Detector: claims in `status='matched'` AND `matched_entity_id IS NULL`
+    AND extracted_at > 7 days ago.
+
+    These are claims promote_claims has had repeated daily chances to resolve
+    and still can't (entity-matching failed, brand string is too weird, etc.).
+    They'll sit forever otherwise. Flag for admin review via the
+    data_quality_flags quarantine queue (migration 063).
+    """
+    threshold = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
+    resp = (sb.table("claims")
+            .select("id, brand, product_name, extracted_at")
+            .eq("status", "matched")
+            .is_("matched_entity_id", "null")
+            .lt("extracted_at", threshold)
+            .limit(1000)
+            .execute())
+    rows = resp.data or []
+    for r in rows:
+        if dry_run:
+            LOG.info("[DRY] would flag stuck claim %s (%s / %s, extracted %s)",
+                     r["id"], r.get("brand"), r.get("product_name"), r.get("extracted_at"))
+            stats["stuck_unresolved_flagged"] += 1
+            continue
+        try:
+            new_id = raise_flag(
+                sb,
+                flag_kind="stuck_approved_claim",
+                severity="med",
+                detected_by="cleanup_stuck_matched",
+                claim_id=r["id"],
+                detail={
+                    "brand": r.get("brand"),
+                    "product_name": r.get("product_name"),
+                    "extracted_at": r.get("extracted_at"),
+                },
+            )
+            if new_id:
+                stats["stuck_unresolved_flagged"] += 1
+        except Exception as exc:  # noqa: BLE001
+            stats["errors"] += 1
+            LOG.error("raise_flag failed for claim %s: %s", r["id"], exc)
+
+
 def cleanup(sb, dry_run: bool = False) -> Dict[str, int]:
     stats = {
         "legacy_approved_migrated": 0, # status='approved' stragglers post-refactor
@@ -151,6 +198,7 @@ def cleanup(sb, dry_run: bool = False) -> Dict[str, int]:
         "already_in_evidence": 0,      # idempotent re-run case
         "entity_cleared_for_retry": 0,
         "discarded_no_size": 0,        # missing sizes — can't fold or promote
+        "stuck_unresolved_flagged": 0, # data_quality_flags entries (migration 063)
         "errors": 0,
     }
 
@@ -266,6 +314,11 @@ def cleanup(sb, dry_run: bool = False) -> Dict[str, int]:
         except Exception as exc:  # noqa: BLE001 — surface but keep going
             stats["errors"] += 1
             LOG.error("Failed on claim %s: %s", c.get("id"), exc)
+
+    # Independent detector pass — flag claims that have been waiting on
+    # promote_claims for too long. Runs after the cleanup loop so any
+    # legacy migrations + entity_cleared retries have had a chance first.
+    _flag_stuck_unresolved(sb, dry_run, stats)
 
     return stats
 
