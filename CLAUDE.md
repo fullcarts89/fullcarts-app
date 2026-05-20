@@ -112,7 +112,7 @@ Cursor state persists in `scraper_state` table. Config lives in `pipeline/config
 
 ### Database migrations
 
-SQL migrations in `db/migrations/` numbered `001_` through `060_`. Deploy manually via Supabase SQL Editor or via the Management API with a PAT (`POST /v1/projects/{ref}/database/query`; **set a `User-Agent` header** or Cloudflare returns 1010). Views in `043_rewrite_views_new_schema.sql` and `049_insight_views.sql` plus newer per-page views power the frontend. Notable recent additions:
+SQL migrations in `db/migrations/` numbered `001_` through `061_`. Deploy manually via Supabase SQL Editor or via the Management API with a PAT (`POST /v1/projects/{ref}/database/query`; **set a `User-Agent` header** or Cloudflare returns 1010). Views in `043_rewrite_views_new_schema.sql` and `049_insight_views.sql` plus newer per-page views power the frontend. Notable recent additions:
 
 - `050_event_dedup.sql` — `published_changes.evidence_count` + dedup index on `(entity_id, size_before, size_after)`
 - `051_event_evidence_summary_view.sql` — `event_evidence_summary` view, used by `/brands/[name]` evidence trail
@@ -123,6 +123,7 @@ SQL migrations in `db/migrations/` numbered `001_` through `060_`. Deploy manual
 - `057_google_trends_data.sql` — `google_trends_data` table, drives the fourth line on the /insights macro chart. Refreshed monthly via `pipeline_google_trends.yml`
 - `058_consumer_reports_findings.sql` — `consumer_reports_findings` table for structured CR citations. Refreshed monthly via `pipeline_consumer_reports.yml`. Powers the "Press coverage" section on `/products/[id]`
 - `060_claims_status_discipline.sql` — adds `merged` to `claims.status` CHECK constraint, backfills PR-#63 fold-ins out of `evidence` into `merged`, adds a soft `(status IN matched/merged ⇒ matched_entity_id NOT NULL)` invariant. Closes the Evidence-tab overload gotcha
+- `061_published_changes_sanity.sql` — auto-retracts the 75 known corrupted upsizing events (1L→900L class of AI unit-parse errors) and installs a CHECK constraint on `size_after / size_before ∈ [0.05, 5.0]`. `promote_claims.sane_size_ratio()` mirrors the bounds so the daily cron rejects violators before insert
 
 ### Web routes (Next.js App Router)
 
