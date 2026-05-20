@@ -26,6 +26,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from supabase import create_client
 
+from pipeline.lib.data_quality_flags import raise_flag
+
 SUPABASE_URL = os.getenv("SUPABASE_URL", "https://ntyhbapphnzlariakgrw.supabase.co")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 
@@ -86,6 +88,30 @@ def entity_key(brand: str, name: str) -> str:
     """Deterministic key for deduplication."""
     raw = (brand.lower().strip() + "|" + name.lower().strip())
     return hashlib.md5(raw.encode()).hexdigest()[:16]
+
+
+# Placeholders that the AI extractor falls back to when it can't parse a
+# brand or product name. They land in product_entities verbatim and need an
+# admin to either delete the entity or supply the real brand. The
+# data_quality_flags detector below catches new entities matching any of
+# these or with a brand string shorter than 3 chars.
+_SUSPECT_BRAND_PLACEHOLDERS = frozenset({
+    "Unknown", "Various", "Poor", "N/A", "Generic", "Misc",
+})
+_SUSPECT_NAME_PLACEHOLDERS = frozenset({"Unknown Product", "Product", "Item"})
+
+
+def is_suspect_brand(brand: str) -> bool:
+    """True if the brand string looks like an AI extraction failure.
+
+    Floor of 2 chars (i.e. reject single-char brands). Real 2-char brands
+    exist (3M, AB, etc.) so we don't go higher. The placeholder set catches
+    the longer placeholder strings ("Unknown", "Various", etc.) the AI
+    falls back to when it can't parse a brand at all.
+    """
+    if not brand or len(brand.strip()) < 2:
+        return True
+    return brand in _SUSPECT_BRAND_PLACEHOLDERS
 
 
 def calc_delta_pct(old: Optional[float], new: Optional[float]) -> Optional[float]:
@@ -183,6 +209,7 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
         "skipped_no_size": 0,
         "discarded_no_size": 0,  # no-size claims demoted out of the promote queue
         "discarded_size_sanity": 0,  # AI unit-parse errors (1L -> 900L etc.); mirrors migration 061
+        "dq_flags_raised": 0,        # data_quality_flags entries created (short_brand etc.); migration 063
         "errors": 0,
     }
 
@@ -298,6 +325,30 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
                            .execute())
                     entity_id = resp.data[0]["id"]
                     stats["entities_created"] += 1
+
+                    # Quarantine flag: new entities with placeholder/short
+                    # brand names look like AI extraction failures. Mark
+                    # them for admin review without blocking the promote.
+                    # The partial unique index on (flag_kind, entity_id) for
+                    # open rows makes this idempotent across cron runs.
+                    if is_suspect_brand(brand) or name in _SUSPECT_NAME_PLACEHOLDERS:
+                        try:
+                            raise_flag(
+                                sb,
+                                flag_kind="short_brand",
+                                severity="med",
+                                detected_by="promote_claims",
+                                entity_id=entity_id,
+                                detail={
+                                    "brand": brand,
+                                    "name": name,
+                                    "claim_id": str(claim["id"]),
+                                },
+                            )
+                            stats["dq_flags_raised"] += 1
+                        except Exception as exc:  # noqa: BLE001
+                            # Detector failures must never stop promotion.
+                            print(f"  [WARN] raise_flag failed for entity {entity_id}: {exc}")
 
                 entity_cache[ekey] = entity_id
 

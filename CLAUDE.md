@@ -112,7 +112,7 @@ Cursor state persists in `scraper_state` table. Config lives in `pipeline/config
 
 ### Database migrations
 
-SQL migrations in `db/migrations/` numbered `001_` through `062_`. Deploy manually via Supabase SQL Editor or via the Management API with a PAT (`POST /v1/projects/{ref}/database/query`; **set a `User-Agent` header** or Cloudflare returns 1010). Views in `043_rewrite_views_new_schema.sql` and `049_insight_views.sql` plus newer per-page views power the frontend. Notable recent additions:
+SQL migrations in `db/migrations/` numbered `001_` through `064_`. Deploy manually via Supabase SQL Editor or via the Management API with a PAT (`POST /v1/projects/{ref}/database/query`; **set a `User-Agent` header** or Cloudflare returns 1010). Views in `043_rewrite_views_new_schema.sql` and `049_insight_views.sql` plus newer per-page views power the frontend. Notable recent additions:
 
 - `050_event_dedup.sql` — `published_changes.evidence_count` + dedup index on `(entity_id, size_before, size_after)`
 - `051_event_evidence_summary_view.sql` — `event_evidence_summary` view, used by `/brands/[name]` evidence trail
@@ -125,6 +125,8 @@ SQL migrations in `db/migrations/` numbered `001_` through `062_`. Deploy manual
 - `060_claims_status_discipline.sql` — adds `merged` to `claims.status` CHECK constraint, backfills PR-#63 fold-ins out of `evidence` into `merged`, adds a soft `(status IN matched/merged ⇒ matched_entity_id NOT NULL)` invariant. Closes the Evidence-tab overload gotcha
 - `061_published_changes_sanity.sql` — auto-retracts size-ratio violators (1L→900L class of AI unit-parse errors) via the in-place `is_retracted` columns and installs a CHECK constraint on `size_after / size_before ∈ [0.05, 5.0]` (retracted rows exempted — they're the trash bin). `promote_claims.sane_size_ratio()` mirrors the bounds so the daily cron rejects violators before insert
 - `062_entity_retraction.sql` — `product_entities.is_retracted` flag + `set_entity_retracted()` RPC (cascades retract to all the entity's `published_changes`). Rebuilds `brand_index` and `dashboard_stats()` to exclude retracted entities; closes a pre-existing leak where `event_evidence_summary` didn't filter `pc.is_retracted`. Powers `/admin/entities`. (Renumbered from `054_` during PR #75 rebase to clear collision with `054_product_index_view.sql`.)
+- `063_data_quality_flags.sql` — `data_quality_flags` soft-flag quarantine table. Detectors in `promote_claims` (short_brand) and `cleanup_stuck_matched` (stuck_approved_claim) write here instead of mutating suspect rows. Partial unique index makes the writes idempotent across cron runs. `pipeline/lib/data_quality_flags.raise_flag()` is the writer helper
+- `064_claim_status_audit_log.sql` — `claim_status_log` append-only audit trail + AFTER UPDATE trigger on `claims.status`. Future bulk-status drift bugs (the cleanup_stuck_matched regression class) surface as visible group rows instead of invisible silent updates
 
 ### Web routes (Next.js App Router)
 
