@@ -56,13 +56,25 @@ def get_client():
 def fetch_matched_claims_to_promote(sb, limit: int = 0) -> List[Dict[str, Any]]:
     """Fetch matched claims that don't yet have a published_change.
 
-    `matched_entity_id IS NULL` is the marker for "admin clicked Approve
-    but the daily promote run hasn't built the event yet."
+    Two cohorts qualify:
+      1. Legacy flow — `matched_entity_id IS NULL`. Admin clicked Approve
+         via the original single-card UI which only flipped status; the
+         daily promote run is supposed to fill in matched_entity_id.
+      2. New bulk Resolve flow — `matched_entity_id IS NOT NULL` but no
+         published_change exists yet for (entity_id, old_size, new_size).
+         /admin/claims/groups pre-sets matched_entity_id at approve time
+         to satisfy the claims_match_required constraint; the promoter
+         still needs to create the event.
+
+    To avoid an expensive NOT EXISTS subquery we pull every matched claim
+    and let the main loop's find_existing_event check dedupe. The
+    main loop is idempotent: if an event already exists for the
+    (entity_id, old_size, new_size) key, the claim's data is folded as
+    additional evidence rather than producing a duplicate event.
     """
     q = (sb.table("claims")
          .select("*")
          .eq("status", "matched")
-         .is_("matched_entity_id", "null")
          .order("extracted_at", desc=False))
     if limit > 0:
         q = q.limit(limit)
@@ -302,7 +314,18 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
                 continue
 
             # 1. Find or create product_entity
-            if ekey in entity_cache:
+            # If the claim already has a matched_entity_id (the new bulk
+            # Resolve flow pre-sets this — see web/src/app/api/admin/
+            # bulk-approve-claims/route.ts and friends), trust it and skip
+            # the find-or-create dance. Without this, the case-insensitive
+            # entity created by Resolve would not match the case-sensitive
+            # .eq() lookup below and the script would create a duplicate.
+            pre_set_entity_id = claim.get("matched_entity_id")
+            if pre_set_entity_id:
+                entity_id = pre_set_entity_id
+                stats["entities_reused"] += 1
+                entity_cache[ekey] = entity_id
+            elif ekey in entity_cache:
                 entity_id = entity_cache[ekey]
                 stats["entities_reused"] += 1
             else:
