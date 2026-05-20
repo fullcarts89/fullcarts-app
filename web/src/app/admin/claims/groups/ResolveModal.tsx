@@ -65,6 +65,26 @@ function draftFromClaim(c: PendingClaim): EditDraft {
   };
 }
 
+// Group-mode pre-fill: pull values that DEFINITELY apply to every claim in
+// the group (the grouper key guarantees they share brand/name canonicalisation
+// and exact size_change). Category and change_description vary per claim, so
+// leave them blank (founder fills in when they want to overwrite all claims'
+// values, otherwise blank = leave each claim's value as-is).
+function draftFromGroup(g: ClaimGroup): EditDraft {
+  const rep = g.claims[0];
+  return {
+    brand: g.brand_display && g.brand_display !== "(no brand)" ? g.brand_display : "",
+    product_name:
+      g.name_display && g.name_display !== "(no name)" ? g.name_display : "",
+    category: "",
+    old_size: rep && rep.old_size != null ? String(rep.old_size) : "",
+    old_size_unit: rep ? rep.size_unit || "" : "",
+    new_size: rep && rep.new_size != null ? String(rep.new_size) : "",
+    new_size_unit: rep ? rep.size_unit || "" : "",
+    change_description: "",
+  };
+}
+
 function buildPatch(d: EditDraft): Record<string, unknown> {
   const patch: Record<string, unknown> = {};
   if (d.brand) patch.brand = d.brand;
@@ -108,7 +128,7 @@ export default function ResolveModal({
   setBusy,
 }: ResolveModalProps) {
   const [fields, setFields] = useState<EditDraft>(() =>
-    claim ? draftFromClaim(claim) : EMPTY_DRAFT,
+    claim ? draftFromClaim(claim) : draftFromGroup(group),
   );
   const [selectedEntity, setSelectedEntity] = useState<SelectedEntity | null>(null);
   const [action, setAction] = useState<"approve" | "evidence">("approve");
