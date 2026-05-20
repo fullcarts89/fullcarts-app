@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { RetractButton } from "./RetractButton";
+import { EditableField } from "./EditableField";
+import { MergeButton } from "./MergeButton";
+import { SendClaimsToPendingButton } from "./SendClaimsToPendingButton";
 
 type EntityRow = {
   id: string;
@@ -215,32 +218,52 @@ export default async function AdminEntitiesPage({
                       )}
                     </td>
                     <td className="px-3 py-2 font-medium">
+                      <EditableField
+                        entityId={e.id}
+                        field="brand"
+                        value={e.brand}
+                      />
                       <Link
                         href={`/brands/${encodeURIComponent(e.brand.toLowerCase())}`}
-                        className="hover:underline underline-offset-2"
+                        className="ml-1 text-xs text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
                         target="_blank"
                         rel="noreferrer"
+                        title="Open public brand page"
                       >
-                        {e.brand}
+                        ↗
                       </Link>
                     </td>
                     <td className="px-3 py-2">
+                      <EditableField
+                        entityId={e.id}
+                        field="canonical_name"
+                        value={e.canonical_name}
+                      />
                       <Link
                         href={`/products/${e.id}`}
-                        className="hover:underline underline-offset-2"
+                        className="ml-1 text-xs text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
                         target="_blank"
                         rel="noreferrer"
+                        title="Open public product page"
                       >
-                        {e.canonical_name}
+                        ↗
                       </Link>
-                      {e.manufacturer && (
-                        <div className="text-xs text-[var(--text-tertiary)] mt-0.5">
-                          mfr: {e.manufacturer}
-                        </div>
-                      )}
+                      <div className="text-xs text-[var(--text-tertiary)] mt-0.5">
+                        mfr:{" "}
+                        <EditableField
+                          entityId={e.id}
+                          field="manufacturer"
+                          value={e.manufacturer}
+                          placeholder="(none)"
+                        />
+                      </div>
                     </td>
                     <td className="px-3 py-2 text-[var(--text-secondary)]">
-                      {e.category ?? <span className="text-[var(--text-tertiary)]">—</span>}
+                      <EditableField
+                        entityId={e.id}
+                        field="category"
+                        value={e.category}
+                      />
                     </td>
                     <td className="px-3 py-2 text-right font-mono">
                       {events > 0 ? events : <span className="text-[var(--text-tertiary)]">0</span>}
@@ -249,12 +272,24 @@ export default async function AdminEntitiesPage({
                       {e.created_at.slice(0, 10)}
                     </td>
                     <td className="px-3 py-2 text-right">
-                      <RetractButton
-                        entityId={e.id}
-                        isRetracted={e.is_retracted}
-                        entityLabel={`${e.brand} — ${e.canonical_name}`}
-                        eventCount={events}
-                      />
+                      <div className="flex flex-col items-end gap-1.5">
+                        <RetractButton
+                          entityId={e.id}
+                          isRetracted={e.is_retracted}
+                          entityLabel={`${e.brand} — ${e.canonical_name}`}
+                          eventCount={events}
+                        />
+                        {e.is_retracted && (
+                          <SendClaimsToPendingButton
+                            entityId={e.id}
+                            entityLabel={`${e.brand} — ${e.canonical_name}`}
+                          />
+                        )}
+                        <MergeButton
+                          sourceId={e.id}
+                          sourceLabel={`${e.brand} — ${e.canonical_name}`}
+                        />
+                      </div>
                     </td>
                   </tr>
                 );
