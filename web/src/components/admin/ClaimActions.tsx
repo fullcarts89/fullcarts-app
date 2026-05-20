@@ -132,7 +132,9 @@ export function ClaimActions({
           </button>
         </>
       )}
-      {(currentStatus === "matched" || currentStatus === "evidence") && (
+      {(currentStatus === "matched" ||
+        currentStatus === "merged" ||
+        currentStatus === "evidence") && (
         <div className="flex items-center gap-2">
           {currentTags && currentTags.length > 0 && (
             <div className="flex gap-1">
