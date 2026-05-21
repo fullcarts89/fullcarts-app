@@ -100,14 +100,33 @@ function FuzzyGroupRow({ group }: { group: FuzzyDuplicateGroup }) {
           {group.members.length} entities
         </div>
         <div className={fuzzyStyles.group_sep}>·</div>
-        <div className={fuzzyStyles.group_matched_label}>matched sizes:</div>
-        <div className={fuzzyStyles.group_matched_chips}>
-          {matchedList.map((s) => (
-            <span key={s} className={fuzzyStyles.chip_matched}>
-              {s}
-            </span>
-          ))}
-        </div>
+        {group.has_size_overlap ? (
+          <>
+            <div className={fuzzyStyles.group_matched_label}>
+              <span
+                title="At least one event-size signature is shared by ≥2 members — strong same-product signal"
+                style={{ color: "var(--green-base)" }}
+              >
+                ✓ size match
+              </span>
+            </div>
+            <div className={fuzzyStyles.group_matched_chips}>
+              {matchedList.map((s) => (
+                <span key={s} className={fuzzyStyles.chip_matched}>
+                  {s}
+                </span>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div
+            className={fuzzyStyles.group_matched_label}
+            title="No shared event-size signature — these may be different size variants of the same product line. Check member sizes below before merging."
+            style={{ color: "var(--amber-base)" }}
+          >
+            ⚠ no size overlap — check sizes before merging
+          </div>
+        )}
       </div>
 
       <div className={fuzzyStyles.members}>
