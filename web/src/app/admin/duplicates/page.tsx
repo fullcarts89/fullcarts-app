@@ -1,17 +1,31 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { findDuplicatePairs } from "./lib";
+import { findDuplicatePairs, findFuzzyDuplicateGroups } from "./lib";
 import type { EntityRow } from "./lib";
 import DuplicatesClient from "./DuplicatesClient";
+import FuzzyDuplicatesClient from "./FuzzyDuplicatesClient";
 import styles from "./styles.module.css";
+import fuzzyStyles from "./fuzzy.module.css";
+
+type EventSizeRow = {
+  entity_id: string | null;
+  size_before: number | null;
+  size_after: number | null;
+  size_unit: string | null;
+};
 
 // Pull every non-retracted entity (paginated past PostgREST's 1k cap),
 // also count events per entity in the same pass so the duplicate picker
-// can rank target = highest-event-count.
+// can rank target = highest-event-count. Now also returns the raw
+// size-per-event list so the fuzzy matcher can apply the size-overlap
+// requirement.
 //
 // This is admin-only via the /admin/* middleware. Reads ~21k rows; runs
 // in <1s server-side.
-async function loadEntities(): Promise<EntityRow[]> {
+async function loadData(): Promise<{
+  entities: EntityRow[];
+  events: EventSizeRow[];
+}> {
   const sb = createAdminClient();
   const PAGE = 1000;
   const all: EntityRow[] = [];
@@ -29,31 +43,38 @@ async function loadEntities(): Promise<EntityRow[]> {
     if (batch.length < PAGE) break;
   }
 
-  // Step 2: tally events per entity. Single batched fetch (~3k rows post-retract).
-  const counts = new Map<string, number>();
+  // Step 2: pull all live event rows once (with size fields for fuzzy
+  // matcher). Used for both the per-entity count and the size-overlap
+  // requirement — saves a second round-trip.
+  const events: EventSizeRow[] = [];
   for (let from = 0; ; from += PAGE) {
     const { data, error } = await sb
       .from("published_changes")
-      .select("entity_id")
+      .select("entity_id, size_before, size_after, size_unit")
       .eq("is_retracted", false)
       .not("entity_id", "is", null)
       .range(from, from + PAGE - 1);
     if (error) throw new Error(`published_changes: ${error.message}`);
-    const batch = (data ?? []) as Array<{ entity_id: string | null }>;
-    for (const r of batch) {
-      if (r.entity_id) counts.set(r.entity_id, (counts.get(r.entity_id) ?? 0) + 1);
-    }
+    const batch = (data ?? []) as EventSizeRow[];
+    for (const r of batch) events.push(r);
     if (batch.length < PAGE) break;
   }
+
+  // Step 3: derive per-entity event counts from the same event list.
+  const counts = new Map<string, number>();
+  for (const r of events) {
+    if (r.entity_id) counts.set(r.entity_id, (counts.get(r.entity_id) ?? 0) + 1);
+  }
   for (const ent of all) ent.event_count = counts.get(ent.id) ?? 0;
-  return all;
+  return { entities: all, events };
 }
 
 export const dynamic = "force-dynamic";
 
 export default async function DuplicatesPage() {
-  const entities = await loadEntities();
+  const { entities, events } = await loadData();
   const pairs = findDuplicatePairs(entities);
+  const fuzzyGroups = findFuzzyDuplicateGroups(entities, events);
 
   return (
     <div className={styles.page}>
@@ -73,13 +94,17 @@ export default async function DuplicatesPage() {
         <div className={styles.stats}>
           <span className={styles.stat}>
             <span className={styles.stat_value}>{pairs.length.toLocaleString()}</span>
-            <span className={styles.stat_label}>merge candidates</span>
+            <span className={styles.stat_label}>exact-merge candidates</span>
           </span>
           <span className={styles.stat}>
             <span className={styles.stat_value}>
               {new Set(pairs.map((p) => p.group_key)).size.toLocaleString()}
             </span>
-            <span className={styles.stat_label}>collision groups</span>
+            <span className={styles.stat_label}>exact-collision groups</span>
+          </span>
+          <span className={styles.stat}>
+            <span className={styles.stat_value}>{fuzzyGroups.length.toLocaleString()}</span>
+            <span className={styles.stat_label}>fuzzy groups</span>
           </span>
           <span className={styles.stat}>
             <span className={styles.stat_value}>{entities.length.toLocaleString()}</span>
@@ -90,11 +115,40 @@ export default async function DuplicatesPage() {
 
       {pairs.length === 0 ? (
         <div className={styles.empty}>
-          No duplicate candidates. Nothing to merge.
+          No exact-match duplicate candidates.
         </div>
       ) : (
         <DuplicatesClient pairs={pairs} pageSize={50} />
       )}
+
+      <section>
+        <div className={fuzzyStyles.fuzzy_section_header}>
+          <h2 className={fuzzyStyles.fuzzy_title}>Fuzzy Duplicates</h2>
+          <p className={fuzzyStyles.fuzzy_subtitle}>
+            Groups of entities that share the same brand AND a token-sorted, size-stripped
+            canonical_name AND at least one published_changes event at the same (size_before,
+            size_after, size_unit). Catches drift like &ldquo;Glacier Freeze&rdquo; vs &ldquo;Frost
+            Glacier Freeze&rdquo; that exact-match misses. Default target = highest event_count;
+            you can pick a different target per group.
+          </p>
+          <div className={fuzzyStyles.fuzzy_stats}>
+            <span className={styles.stat}>
+              <span className={styles.stat_value}>{fuzzyGroups.length.toLocaleString()}</span>
+              <span className={styles.stat_label}>fuzzy groups</span>
+            </span>
+            <span className={styles.stat}>
+              <span className={styles.stat_value}>
+                {fuzzyGroups
+                  .reduce((acc, g) => acc + g.members.length - 1, 0)
+                  .toLocaleString()}
+              </span>
+              <span className={styles.stat_label}>mergeable sources</span>
+            </span>
+          </div>
+        </div>
+
+        <FuzzyDuplicatesClient groups={fuzzyGroups} />
+      </section>
     </div>
   );
 }

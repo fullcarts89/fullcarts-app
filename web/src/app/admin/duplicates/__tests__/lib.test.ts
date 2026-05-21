@@ -6,7 +6,7 @@
 // assertions still belong here because they document the function's
 // behaviour for future readers.
 
-import { findDuplicatePairs, slugify } from "../lib";
+import { findDuplicatePairs, findFuzzyDuplicateGroups, slugify } from "../lib";
 import type { EntityRow } from "../lib";
 
 function ent(overrides: Partial<EntityRow>): EntityRow {
@@ -117,4 +117,168 @@ function ent(overrides: Partial<EntityRow>): EntityRow {
     throw new Error(`tie-break: target should be id=aaa (lex earlier), got ${pairs[0].target.id}`);
 }
 
-console.log("admin/duplicates/lib: 6 assertions passed");
+// ─── findFuzzyDuplicateGroups ──────────────────────────────────────────
+
+type EventRow = {
+  entity_id: string | null;
+  size_before: number | null;
+  size_after: number | null;
+  size_unit: string | null;
+};
+
+function ev(
+  entity_id: string,
+  size_before: number,
+  size_after: number,
+  size_unit = "g",
+): EventRow {
+  return { entity_id, size_before, size_after, size_unit };
+}
+
+// 1. Same brand + same fuzzy name key + shared size → forms a group.
+//    Note: fuzzyNameKey is token-sort + strip size/unit/punct, so
+//    "Glacier Freeze 200g" and "Freeze Glacier" both reduce to
+//    "freeze glacier".
+{
+  const entities = [
+    ent({ id: "a", brand: "Gatorade", canonical_name: "Glacier Freeze 200g", event_count: 4 }),
+    ent({ id: "b", brand: "Gatorade", canonical_name: "Freeze Glacier", event_count: 1 }),
+  ];
+  const events = [ev("a", 200, 180), ev("b", 200, 180)];
+  const groups = findFuzzyDuplicateGroups(entities, events);
+  if (groups.length !== 1) throw new Error(`fuzzy/share: expected 1 group, got ${groups.length}`);
+  const g = groups[0];
+  if (g.brand !== "Gatorade") throw new Error(`fuzzy/share: brand should be Gatorade`);
+  if (g.members.length !== 2) throw new Error(`fuzzy/share: expected 2 members`);
+  if (!g.members[0].matched_sizes.includes("200g→180g"))
+    throw new Error(`fuzzy/share: expected matched size 200g→180g, got ${JSON.stringify(g.members[0].matched_sizes)}`);
+}
+
+// 2. Same brand + same fuzzy name but NO size overlap → not flagged.
+{
+  const entities = [
+    ent({ id: "a", brand: "Gatorade", canonical_name: "Glacier Freeze" }),
+    ent({ id: "b", brand: "Gatorade", canonical_name: "Freeze Glacier" }),
+  ];
+  const events = [ev("a", 200, 180), ev("b", 591, 532)];
+  const groups = findFuzzyDuplicateGroups(entities, events);
+  if (groups.length !== 0)
+    throw new Error(`fuzzy/nooverlap: expected 0 groups, got ${groups.length}`);
+}
+
+// 3. Same brand + different fuzzy names → not flagged even with same size event.
+{
+  const entities = [
+    ent({ id: "a", brand: "Gatorade", canonical_name: "Glacier Freeze" }),
+    ent({ id: "b", brand: "Gatorade", canonical_name: "Lemon Lime" }),
+  ];
+  const events = [ev("a", 200, 180), ev("b", 200, 180)];
+  const groups = findFuzzyDuplicateGroups(entities, events);
+  if (groups.length !== 0)
+    throw new Error(`fuzzy/diffname: expected 0 groups, got ${groups.length}`);
+}
+
+// 4. Different brands → never flagged even if name + size align.
+{
+  const entities = [
+    ent({ id: "a", brand: "Gatorade", canonical_name: "Glacier Freeze" }),
+    ent({ id: "b", brand: "Powerade", canonical_name: "Glacier Freeze" }),
+  ];
+  const events = [ev("a", 200, 180), ev("b", 200, 180)];
+  const groups = findFuzzyDuplicateGroups(entities, events);
+  if (groups.length !== 0)
+    throw new Error(`fuzzy/diffbrand: expected 0 groups, got ${groups.length}`);
+}
+
+// 5. Members sorted by event_count descending (target = members[0]).
+//    All three variants reduce to "dairy milk" under token-sort + size strip.
+{
+  const entities = [
+    ent({ id: "a", brand: "Cadbury", canonical_name: "Dairy Milk", event_count: 2 }),
+    ent({ id: "b", brand: "Cadbury", canonical_name: "Dairy-Milk 200g", event_count: 9 }),
+    ent({ id: "c", brand: "Cadbury", canonical_name: "Milk Dairy", event_count: 5 }),
+  ];
+  const events = [ev("a", 200, 180), ev("b", 200, 180), ev("c", 200, 180)];
+  const groups = findFuzzyDuplicateGroups(entities, events);
+  if (groups.length !== 1)
+    throw new Error(`fuzzy/sort: expected 1 group, got ${groups.length}`);
+  const ids = groups[0].members.map((m) => m.id);
+  if (ids[0] !== "b" || ids[1] !== "c" || ids[2] !== "a")
+    throw new Error(`fuzzy/sort: expected [b,c,a], got ${JSON.stringify(ids)}`);
+}
+
+// 6. matched_sizes only includes sizes shared with ≥1 other member.
+//    event_sizes lists ALL of the entity's signatures, matched or not.
+{
+  const entities = [
+    ent({ id: "a", brand: "Cadbury", canonical_name: "Dairy Milk" }),
+    ent({ id: "b", brand: "Cadbury", canonical_name: "milk-dairy" }),
+  ];
+  // Shared: 200g→180g. Unique to a: 400→360g. Unique to b: 100→90g.
+  const events = [
+    ev("a", 200, 180),
+    ev("a", 400, 360),
+    ev("b", 200, 180),
+    ev("b", 100, 90),
+  ];
+  const groups = findFuzzyDuplicateGroups(entities, events);
+  if (groups.length !== 1)
+    throw new Error(`fuzzy/matched: expected 1 group, got ${groups.length}`);
+  const a = groups[0].members.find((m) => m.id === "a");
+  const b = groups[0].members.find((m) => m.id === "b");
+  if (!a || !b) throw new Error(`fuzzy/matched: missing members`);
+  if (a.matched_sizes.length !== 1 || a.matched_sizes[0] !== "200g→180g")
+    throw new Error(
+      `fuzzy/matched: a.matched should be [200g→180g], got ${JSON.stringify(a.matched_sizes)}`,
+    );
+  if (b.matched_sizes.length !== 1 || b.matched_sizes[0] !== "200g→180g")
+    throw new Error(
+      `fuzzy/matched: b.matched should be [200g→180g], got ${JSON.stringify(b.matched_sizes)}`,
+    );
+  if (a.event_sizes.length !== 2)
+    throw new Error(`fuzzy/matched: a should have 2 event_sizes, got ${a.event_sizes.length}`);
+  if (b.event_sizes.length !== 2)
+    throw new Error(`fuzzy/matched: b should have 2 event_sizes, got ${b.event_sizes.length}`);
+}
+
+// 7. Singleton bucket (only 1 entity matching fuzzy key) → not flagged.
+{
+  const entities = [
+    ent({ id: "a", brand: "Cadbury", canonical_name: "Dairy Milk" }),
+    ent({ id: "b", brand: "Cadbury", canonical_name: "Whole Nut" }),
+  ];
+  const events = [ev("a", 200, 180), ev("b", 200, 180)];
+  const groups = findFuzzyDuplicateGroups(entities, events);
+  if (groups.length !== 0)
+    throw new Error(`fuzzy/singleton: expected 0 groups, got ${groups.length}`);
+}
+
+// 8. Result ordering: groups with more members come first.
+//    All names within a group must reduce to the same fuzzy key.
+{
+  const entities = [
+    // Pair group (Cadbury Dairy Milk × 2)
+    ent({ id: "p1", brand: "Cadbury", canonical_name: "Dairy Milk", event_count: 3 }),
+    ent({ id: "p2", brand: "Cadbury", canonical_name: "milk-dairy 200g", event_count: 1 }),
+    // Trio group (Gatorade Glacier Freeze × 3)
+    ent({ id: "t1", brand: "Gatorade", canonical_name: "Glacier Freeze", event_count: 2 }),
+    ent({ id: "t2", brand: "Gatorade", canonical_name: "Freeze-Glacier", event_count: 1 }),
+    ent({ id: "t3", brand: "Gatorade", canonical_name: "Freeze Glacier 591ml", event_count: 1 }),
+  ];
+  const events = [
+    ev("p1", 200, 180),
+    ev("p2", 200, 180),
+    ev("t1", 591, 532, "ml"),
+    ev("t2", 591, 532, "ml"),
+    ev("t3", 591, 532, "ml"),
+  ];
+  const groups = findFuzzyDuplicateGroups(entities, events);
+  if (groups.length !== 2)
+    throw new Error(`fuzzy/order: expected 2 groups, got ${groups.length}`);
+  if (groups[0].members.length !== 3)
+    throw new Error(`fuzzy/order: first group should have 3 members`);
+  if (groups[1].members.length !== 2)
+    throw new Error(`fuzzy/order: second group should have 2 members`);
+}
+
+console.log("admin/duplicates/lib: 14 assertions passed");
