@@ -135,7 +135,8 @@ function ev(
   return { entity_id, size_before, size_after, size_unit };
 }
 
-// 1. Same brand + same fuzzy name key + shared size → forms a group.
+// 1. Same brand + same fuzzy name key + shared size → forms a group
+//    with has_size_overlap=true.
 //    Note: fuzzyNameKey is token-sort + strip size/unit/punct, so
 //    "Glacier Freeze 200g" and "Freeze Glacier" both reduce to
 //    "freeze glacier".
@@ -149,12 +150,14 @@ function ev(
   if (groups.length !== 1) throw new Error(`fuzzy/share: expected 1 group, got ${groups.length}`);
   const g = groups[0];
   if (g.brand !== "Gatorade") throw new Error(`fuzzy/share: brand should be Gatorade`);
+  if (!g.has_size_overlap) throw new Error(`fuzzy/share: expected has_size_overlap=true`);
   if (g.members.length !== 2) throw new Error(`fuzzy/share: expected 2 members`);
   if (!g.members[0].matched_sizes.includes("200g→180g"))
     throw new Error(`fuzzy/share: expected matched size 200g→180g, got ${JSON.stringify(g.members[0].matched_sizes)}`);
 }
 
-// 2. Same brand + same fuzzy name but NO size overlap → not flagged.
+// 2. Same brand + same fuzzy name but NO size overlap → STILL flagged
+//    (Medium tier), but has_size_overlap=false and matched_sizes empty.
 {
   const entities = [
     ent({ id: "a", brand: "Gatorade", canonical_name: "Glacier Freeze" }),
@@ -162,8 +165,35 @@ function ev(
   ];
   const events = [ev("a", 200, 180), ev("b", 591, 532)];
   const groups = findFuzzyDuplicateGroups(entities, events);
-  if (groups.length !== 0)
-    throw new Error(`fuzzy/nooverlap: expected 0 groups, got ${groups.length}`);
+  if (groups.length !== 1)
+    throw new Error(`fuzzy/nooverlap: expected 1 group (Medium tier surfaces), got ${groups.length}`);
+  if (groups[0].has_size_overlap)
+    throw new Error(`fuzzy/nooverlap: expected has_size_overlap=false`);
+  if (groups[0].members[0].matched_sizes.length !== 0)
+    throw new Error(`fuzzy/nooverlap: expected matched_sizes to be empty`);
+}
+
+// 2b. Sort: size-overlap groups float above no-overlap groups.
+{
+  const entities = [
+    // Group α: no overlap
+    ent({ id: "a1", brand: "Acme", canonical_name: "Foo Bar" }),
+    ent({ id: "a2", brand: "Acme", canonical_name: "Bar Foo" }),
+    // Group β: overlap
+    ent({ id: "b1", brand: "Beta", canonical_name: "Wibble" }),
+    ent({ id: "b2", brand: "Beta", canonical_name: "wibble" }),
+  ];
+  const events = [
+    ev("a1", 100, 90),
+    ev("a2", 200, 180), // different size — no overlap in group α
+    ev("b1", 50, 40),
+    ev("b2", 50, 40), // overlap in group β
+  ];
+  const groups = findFuzzyDuplicateGroups(entities, events);
+  if (groups.length !== 2)
+    throw new Error(`fuzzy/sort-tier: expected 2 groups, got ${groups.length}`);
+  if (!groups[0].has_size_overlap || groups[1].has_size_overlap)
+    throw new Error(`fuzzy/sort-tier: size-overlap group must come first`);
 }
 
 // 3. Same brand + different fuzzy names → not flagged even with same size event.

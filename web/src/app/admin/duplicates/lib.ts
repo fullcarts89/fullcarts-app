@@ -107,23 +107,34 @@ export interface FuzzyDuplicateGroup {
   brand: string;
   /** Normalised name key — useful for diagnostics / display. */
   shared_name_key: string;
+  /** True when at least one (size_before, size_after, size_unit) signature
+   *  is shared by ≥2 members. Strong "same product" signal — the UI
+   *  highlights these groups as safe to merge. False groups still surface
+   *  but flag the admin to double-check sizes before merging. */
+  has_size_overlap: boolean;
   /** ≥2 entities, sorted highest event_count first (merge target = [0]).
    *  `event_sizes` is every size signature seen on this entity;
-   *  `matched_sizes` is the subset that's shared with ≥1 other group member. */
+   *  `matched_sizes` is the subset shared with ≥1 other group member
+   *  (empty array when has_size_overlap is false). */
   members: Array<EntityRow & { event_sizes: string[]; matched_sizes: string[] }>;
 }
 
 /**
- * Conservative fuzzy duplicate detector. Returns groups (≥2 members)
- * where ALL of the following hold:
+ * Medium-tier fuzzy duplicate detector. Returns groups (≥2 members)
+ * where BOTH:
  *   1. Same `brand` string (case-sensitive — Phase B's aggressive tier
  *      handles brand-string drift separately).
  *   2. Same `fuzzyNameKey(canonical_name)` (token-sort + strip
  *      size/unit/punct).
- *   3. At least one `(size_before, size_after, size_unit)` signature
- *      appears on ≥2 members in the group.
  *
- * Result ordering: most-members-first (largest dedup payoff up top).
+ * Size overlap is REPORTED (via `has_size_overlap`) but not REQUIRED —
+ * the founder can see at a glance which groups are safe to merge
+ * (size overlap = very likely same product) vs which need a manual
+ * size check (no overlap = could be different size variants of the
+ * same product line).
+ *
+ * Result ordering: size-overlap groups first (highest signal), then by
+ * member count descending.
  */
 export function findFuzzyDuplicateGroups(
   entities: EntityRow[],
@@ -154,15 +165,15 @@ export function findFuzzyDuplicateGroups(
     const sigs = new Map<string, Set<string>>();
     for (const m of members) sigs.set(m.id, entityEventSignatures(m.id, events));
 
-    // Size-overlap requirement: any signature appearing on ≥2 members
-    // counts as an overlap. Drop the group if none.
+    // Compute overlap (sizes appearing on ≥2 members). Reported via
+    // has_size_overlap but no longer required — Medium tier surfaces all
+    // same-brand+same-fuzzy-name groups and lets the founder decide.
     const sizeOccurrence = new Map<string, number>();
     for (const sig of sigs.values()) {
       for (const s of sig) sizeOccurrence.set(s, (sizeOccurrence.get(s) ?? 0) + 1);
     }
     const overlapSizes = new Set<string>();
     for (const [s, n] of sizeOccurrence) if (n >= 2) overlapSizes.add(s);
-    if (overlapSizes.size === 0) continue;
 
     // Highest event_count first (target = members[0]). Lex id tie-break
     // to match the exact-matcher's deterministic ordering.
@@ -176,6 +187,7 @@ export function findFuzzyDuplicateGroups(
       group_key: key,
       brand,
       shared_name_key: sharedNameKey,
+      has_size_overlap: overlapSizes.size > 0,
       members: sorted.map((m) => {
         const sig = sigs.get(m.id) ?? new Set<string>();
         return {
@@ -186,6 +198,10 @@ export function findFuzzyDuplicateGroups(
       }),
     });
   }
-  // Largest groups first — most dedup payoff at the top.
-  return out.sort((a, b) => b.members.length - a.members.length);
+  // Size-overlap groups float to top (highest confidence merge candidates),
+  // then larger groups before smaller ones within each tier.
+  return out.sort((a, b) => {
+    if (a.has_size_overlap !== b.has_size_overlap) return a.has_size_overlap ? -1 : 1;
+    return b.members.length - a.members.length;
+  });
 }
