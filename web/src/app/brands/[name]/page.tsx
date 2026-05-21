@@ -124,6 +124,11 @@ export default async function BrandPage({ params }: PageProps) {
   const data = await loadBrand(name);
   if (!data) notFound();
 
+  // Phase A invariant: no public page without at least one live event.
+  // A brand whose every entity got retracted by the zero-event sweep
+  // should also fall off — even if brand_index ever drifted.
+  if (!data.events || data.events.length === 0) notFound();
+
   const { ranking, events, entities } = data;
   const manufacturer = dominantManufacturer(entities);
   const products = rollupProducts(entities, events);
