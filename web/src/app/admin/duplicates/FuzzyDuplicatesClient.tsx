@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useCallback, useState, useTransition } from "react";
 import { mergePair } from "./actions";
 import type { FuzzyDuplicateGroup } from "./lib";
 import styles from "./styles.module.css";
@@ -37,6 +36,19 @@ const MAX_SOURCES_INLINE = 5;
  */
 export default function FuzzyDuplicatesClient({ groups, sourcesByKey }: Props) {
   const [limit, setLimit] = useState<number>(Math.min(50, groups.length));
+  // Lifted to top-level: tracks every entity merged this session, across all
+  // groups. Lifting keeps group order anchored (no router.refresh / no resort
+  // on merge) AND correctly hides an entity that happens to belong to multiple
+  // size-signature groups once it's merged in any of them.
+  const [mergedIds, setMergedIds] = useState<Set<string>>(new Set());
+  const markMerged = useCallback((id: string) => {
+    setMergedIds((prev) => {
+      if (prev.has(id)) return prev;
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+  }, []);
   const visible = groups.slice(0, limit);
 
   if (groups.length === 0) {
@@ -85,7 +97,13 @@ export default function FuzzyDuplicatesClient({ groups, sourcesByKey }: Props) {
 
       <div className={fuzzyStyles.list}>
         {visible.map((g) => (
-          <FuzzyGroupRow key={g.group_key} group={g} sourcesByKey={sourcesByKey} />
+          <FuzzyGroupRow
+            key={g.group_key}
+            group={g}
+            sourcesByKey={sourcesByKey}
+            mergedIds={mergedIds}
+            onMerged={markMerged}
+          />
         ))}
       </div>
     </>
@@ -97,16 +115,23 @@ export default function FuzzyDuplicatesClient({ groups, sourcesByKey }: Props) {
 function FuzzyGroupRow({
   group,
   sourcesByKey,
+  mergedIds,
+  onMerged,
 }: {
   group: FuzzyDuplicateGroup;
   sourcesByKey: Record<string, SourceLink[]>;
+  /** Lifted state — entities merged this session, across the whole page. */
+  mergedIds: Set<string>;
+  onMerged: (id: string) => void;
 }) {
   const [targetId, setTargetId] = useState<string>(group.members[0].id);
-  // Track which sources have already been merged so the row collapses
-  // after a successful merge.
-  const [mergedSources, setMergedSources] = useState<Set<string>>(new Set());
 
   const target = group.members.find((m) => m.id === targetId) ?? group.members[0];
+  // Count source rows (= members minus target) still requiring action.
+  const remainingSources = group.members.filter(
+    (m) => m.id !== target.id && !mergedIds.has(m.id),
+  ).length;
+  const allMerged = remainingSources === 0;
 
   return (
     <div className={fuzzyStyles.group}>
@@ -138,12 +163,21 @@ function FuzzyGroupRow({
             ⚠ names diverge — verify before merging
           </div>
         )}
+        {allMerged && (
+          <div
+            className={fuzzyStyles.group_matched_label}
+            style={{ color: "var(--green-base)" }}
+            title="All source members of this group have been merged into the target this session. Reload the page to drop this group from the list."
+          >
+            ✓ group fully merged
+          </div>
+        )}
       </div>
 
       <div className={fuzzyStyles.members}>
         {group.members.map((m) => {
           const isTarget = m.id === target.id;
-          const isMerged = mergedSources.has(m.id);
+          const isMerged = mergedIds.has(m.id);
           const sourceKey = m.id + "|" + group.size_signature;
           const sources = sourcesByKey[sourceKey] ?? [];
           return (
@@ -157,13 +191,7 @@ function FuzzyGroupRow({
               targetId={target.id}
               sources={sources}
               onPickTarget={() => setTargetId(m.id)}
-              onMerged={() =>
-                setMergedSources((prev) => {
-                  const next = new Set(prev);
-                  next.add(m.id);
-                  return next;
-                })
-              }
+              onMerged={() => onMerged(m.id)}
             />
           );
         })}
@@ -198,7 +226,6 @@ function MemberRow({
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
-  const router = useRouter();
 
   function onMerge() {
     if (isTarget) return;
@@ -219,8 +246,11 @@ function MemberRow({
         setResult(
           `Merged. ${out.claimsMoved} claims, ${out.eventsMoved} events, ${out.variantsMoved} variants moved.`,
         );
+        // Mark merged locally only. We deliberately skip router.refresh()
+        // here so the group stays anchored at its original position.
+        // The server-side revalidatePath in mergePair still invalidates
+        // the cache, so the next full navigation picks up fresh data.
         onMerged();
-        router.refresh();
       } catch (e) {
         setError(e instanceof Error ? e.message : "merge failed");
       }
