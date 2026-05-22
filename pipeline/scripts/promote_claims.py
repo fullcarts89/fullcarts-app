@@ -141,6 +141,40 @@ SIZE_RATIO_MIN = 0.05
 SIZE_RATIO_MAX = 5.0
 
 
+def should_block_new_event_no_image(
+    claim: Dict[str, Any],
+    source_type_for_raw_item: Dict[str, str],
+    socialimg_for_raw_item: Dict[str, bool],
+) -> bool:
+    """True if this claim should NOT be allowed to create a new
+    published_changes event because it lacks photographic evidence.
+
+    Policy (scoped to the user's stated quality bar, May 2026):
+      * Reddit-sourced claim → must have `image_storage_path` set
+        (Reddit-archived). Reddit posts are anonymous anecdote; without
+        a photograph there is no corroborating evidence at all.
+      * Non-reddit (news, gdelt, kroger_change, usda_size_change, …) →
+        always allowed. These carry third-party catalog or journalism
+        evidence even when no image accompanies them.
+
+    Fold-ins to an existing event bypass this guard entirely — the
+    event has its own image corroboration from prior sources.
+
+    Returns True when the guard should fire (i.e. block + discard the claim).
+    """
+    raw_id = claim.get("raw_item_id")
+    source_type = source_type_for_raw_item.get(raw_id, "") if raw_id else ""
+    if source_type != "reddit":
+        return False
+    if claim.get("image_storage_path"):
+        return False
+    if raw_id and socialimg_for_raw_item.get(raw_id):
+        # Edge case: archived reddit post that somehow has a socialimage.
+        # Treat as having image evidence.
+        return False
+    return True
+
+
 def sane_size_ratio(old_size: Optional[float], new_size: Optional[float]) -> bool:
     """Return True if (old_size, new_size) clears the sanity bounds.
 
@@ -223,6 +257,7 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
         "skipped_no_size": 0,
         "discarded_no_size": 0,  # no-size claims demoted out of the promote queue
         "discarded_size_sanity": 0,  # AI unit-parse errors (1L -> 900L etc.); mirrors migration 061
+        "discarded_no_image_new_event": 0,  # no-image guard — reddit claim with no archived image AND no event yet exists; can't publish on a single uncorroborated reddit post
         "dq_flags_raised": 0,        # data_quality_flags entries created (short_brand etc.); migration 063
         "errors": 0,
     }
@@ -235,26 +270,37 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
     # didn't pick an observed_date. Falling back to today distorts the
     # /insights monthly chart by piling every dateless claim into the
     # current month. Costs one batched query for the whole run.
+    #
+    # Also preload raw_items.raw_payload->>'socialimage' so the no-image
+    # guard below can decide without an N+1 lookup. The guard blocks
+    # NEW-event creation when the claim has neither image_storage_path
+    # nor a socialimage on its raw_item.
     raw_item_dates = {}  # type: Dict[str, str]
+    raw_item_socialimg = {}  # type: Dict[str, bool]   # raw_item_id -> has socialimage
+    raw_item_source = {}  # type: Dict[str, str]   # raw_item_id -> source_type
     raw_item_ids = list({
-        c["raw_item_id"] for c in claims
-        if c.get("raw_item_id") and not c.get("observed_date")
+        c["raw_item_id"] for c in claims if c.get("raw_item_id")
     })
     # PostgREST's `in.()` filter has a URL length limit; chunk to be safe.
     for i in range(0, len(raw_item_ids), 500):
         chunk = raw_item_ids[i : i + 500]
         try:
             resp = (sb.table("raw_items")
-                    .select("id, source_date")
+                    .select("id, source_date, source_type, raw_payload")
                     .in_("id", chunk)
                     .execute())
             for row in (resp.data or []):
                 sd = row.get("source_date")
                 if sd:
                     raw_item_dates[row["id"]] = sd[:10]
+                payload = row.get("raw_payload") or {}
+                socialimg = (payload.get("socialimage") or "").strip()
+                raw_item_socialimg[row["id"]] = bool(socialimg)
+                raw_item_source[row["id"]] = row.get("source_type") or ""
         except Exception:
             # Don't fail the whole promote run if the preload errors —
-            # we'll just fall back to date.today() for those claims.
+            # we'll just fall back to date.today() for those claims and
+            # treat unknown rows as image-less (conservative).
             pass
 
     for i, claim in enumerate(claims):
@@ -495,6 +541,29 @@ def promote_claims(sb, claims: List[Dict], dry_run: bool = False) -> Dict[str, i
                     stats["evidence_added_to_existing"] += 1
                     folded_into_existing = True
                 else:
+                    # No-image guard. Reddit posts without an archived image
+                    # cannot create a NEW published_change — anonymous anecdote
+                    # without a photo isn't evidence. Other source_types
+                    # (news, gdelt, catalog records) still pass since they
+                    # carry third-party corroboration on their own. Fold-ins
+                    # above bypass the guard entirely because the existing
+                    # event already has its own image corroboration.
+                    #
+                    # When the guard fires we discard the claim so it stops
+                    # cycling through the promote queue. If an image is later
+                    # backfilled, the admin can flip the claim back to pending
+                    # via /admin/claims and let the next promote run create
+                    # the event.
+                    if should_block_new_event_no_image(
+                        claim, raw_item_source, raw_item_socialimg,
+                    ):
+                        stats["discarded_no_image_new_event"] += 1
+                        (sb.table("claims")
+                         .update({"status": "discarded"})
+                         .eq("id", claim["id"])
+                         .execute())
+                        continue
+
                     # First time we see this event — create candidate + published_change.
                     resp = (sb.table("change_candidates")
                            .insert({
