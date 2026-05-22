@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { RetractButton } from "./RetractButton";
+import { BrandMergeButton } from "./BrandMergeButton";
 import { EditableField } from "./EditableField";
 import { MergeButton } from "./MergeButton";
 import { SendClaimsToPendingButton } from "./SendClaimsToPendingButton";
@@ -132,6 +133,9 @@ export default async function AdminEntitiesPage({
           >
             Quality Flags →
           </Link>
+          <div className="ml-auto">
+            <BrandMergeButton />
+          </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
