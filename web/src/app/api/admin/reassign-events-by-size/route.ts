@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdminRequest } from "@/lib/admin-auth";
 
@@ -124,6 +125,15 @@ export async function POST(request: NextRequest) {
   const row = (
     rpcData as Array<{ events_moved: number; claims_moved: number }>
   )[0];
+
+  // Invalidate public ISR caches — moved events affect both source and
+  // target entities' product pages and their brand pages.
+  revalidatePath("/");
+  revalidatePath("/brands");
+  revalidatePath("/brands/[name]", "page");
+  revalidatePath("/products");
+  revalidatePath("/products/[id]", "page");
+  revalidatePath("/insights");
 
   return NextResponse.json({
     targetEntityId,

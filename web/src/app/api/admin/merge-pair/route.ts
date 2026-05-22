@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdminRequest } from "@/lib/admin-auth";
 
@@ -57,6 +58,19 @@ export async function POST(request: NextRequest) {
       variants_moved: number;
     }>
   )[0];
+  // Invalidate public ISR caches so /brands/[name], /products/[id],
+  // /brands, /products, /insights show the post-merge state on next view
+  // rather than waiting up to an hour for the ambient revalidate window.
+  // We deliberately don't revalidate /admin/duplicates: the page is
+  // force-dynamic (every nav re-fetches) and revalidating it doesn't help
+  // anchoring.
+  revalidatePath("/");
+  revalidatePath("/brands");
+  revalidatePath("/brands/[name]", "page");
+  revalidatePath("/products");
+  revalidatePath("/products/[id]", "page");
+  revalidatePath("/insights");
+
   return NextResponse.json({
     logId: row.log_id,
     claimsMoved: row.claims_moved,
