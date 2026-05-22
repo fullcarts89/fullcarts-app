@@ -17,6 +17,7 @@ type EventSizeRow = {
 };
 
 type EvidenceRow = {
+  event_id: string | null;
   entity_id: string | null;
   size_before: number | null;
   size_after: number | null;
@@ -109,7 +110,7 @@ async function loadSourcesForGroups(
     const slice = wantedEntityIds.slice(i, i + BATCH);
     const { data, error } = await sb
       .from("event_evidence_summary")
-      .select("entity_id, size_before, size_after, size_unit, sources")
+      .select("event_id, entity_id, size_before, size_after, size_unit, sources")
       .in("entity_id", slice);
     if (error) throw new Error(`event_evidence_summary: ${error.message}`);
     for (const r of (data ?? []) as EvidenceRow[]) rows.push(r);
@@ -137,6 +138,7 @@ async function loadSourcesForGroups(
         publisher: s.publisher ?? null,
         title: s.title ?? null,
         date: s.date ?? null,
+        event_id: r.event_id ?? null,
       });
     }
   }
@@ -233,7 +235,16 @@ export default async function DuplicatesPage() {
             <strong> ✓ name match</strong> = members also share a fuzzy name key (high-confidence
             merge). <strong>⚠ names diverge</strong> = could still be the same product OR a real
             product line (e.g. five Herbal Essences scents shrinking uniformly) — verify member
-            names before merging. Default target = highest event_count; pick per group via radio.
+            names before merging.
+          </p>
+          <p className={fuzzyStyles.fuzzy_subtitle} style={{ marginTop: 6 }}>
+            <strong>Actions on each row:</strong>{" "}
+            <code>Merge into target →</code> consolidates a source into the radio target.{" "}
+            <code>click a size chip</code> opens the &ldquo;extract events at this size&rdquo;
+            modal so you can split off events that belong to a different product.{" "}
+            <code>↩ send to pending</code> next to any source link retracts the event and flips
+            its claims back to /admin/claims for re-review (use this for AI errors, off-topic
+            articles, or anything that isn&rsquo;t really a shrinkflation event).
           </p>
           <div className={fuzzyStyles.fuzzy_stats}>
             <span className={styles.stat}>

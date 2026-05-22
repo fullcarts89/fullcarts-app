@@ -259,6 +259,40 @@
   font-style: italic;
 }
 
+/* Applied alongside .chip_size or .chip_size_match when the chip is
+   rendered as a <button> (clickable to open the extract modal). Resets
+   default button chrome and signals interactivity. */
+.chip_size_button {
+  appearance: none;
+  cursor: pointer;
+  font: inherit;
+}
+.chip_size_button:hover:not(:disabled) {
+  filter: brightness(1.25);
+  outline: 1px solid var(--text-tertiary);
+}
+.chip_size_button:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+/* Replacement chip shown after a successful extract for this
+   (entity, size) pair. Marks the size as "moved off this entity". */
+.chip_size_extracted {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  background: var(--green-bg);
+  color: var(--green-base);
+  border: 1px solid var(--green-border);
+  font-weight: 600;
+  white-space: nowrap;
+  max-width: 40ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .member_id {
   font-family: var(--font-mono);
   font-size: 10px;
@@ -375,6 +409,72 @@
 .source_overflow:hover {
   color: var(--text-primary);
   text-decoration: underline;
+}
+
+/* Wrap around a source link + its inline ↩ wrong action button. */
+.source_row_wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+}
+
+.source_row_wrap > .source_row {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Send-back action — always visible button to the right of each source
+   link. Subtle red so it reads as a destructive admin action without
+   shouting over the source link itself. */
+.source_send_back {
+  appearance: none;
+  background: var(--bg-primary);
+  border: 1px solid var(--red-base);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--red-base);
+  padding: 2px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 600;
+  flex-shrink: 0;
+  transition: background 0.1s ease-out, color 0.1s ease-out;
+}
+
+.source_send_back:hover:not(:disabled) {
+  background: var(--red-base);
+  color: #fff;
+}
+
+.source_send_back:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Send-back action error label inline next to the button. */
+.source_send_err {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--red-base);
+}
+
+/* Source row after the backing event has been retracted: dim + strike,
+   plus the "✓ sent to pending" badge in place of the open-in-new arrow. */
+.source_row_sent {
+  opacity: 0.55;
+  text-decoration: line-through;
+  text-decoration-color: var(--text-tertiary);
+  pointer-events: none;
+}
+
+.source_sent_label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--green-base);
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .member_actions {
