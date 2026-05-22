@@ -17,6 +17,7 @@ type EventSizeRow = {
 };
 
 type EvidenceRow = {
+  event_id: string | null;
   entity_id: string | null;
   size_before: number | null;
   size_after: number | null;
@@ -109,7 +110,7 @@ async function loadSourcesForGroups(
     const slice = wantedEntityIds.slice(i, i + BATCH);
     const { data, error } = await sb
       .from("event_evidence_summary")
-      .select("entity_id, size_before, size_after, size_unit, sources")
+      .select("event_id, entity_id, size_before, size_after, size_unit, sources")
       .in("entity_id", slice);
     if (error) throw new Error(`event_evidence_summary: ${error.message}`);
     for (const r of (data ?? []) as EvidenceRow[]) rows.push(r);
@@ -137,6 +138,7 @@ async function loadSourcesForGroups(
         publisher: s.publisher ?? null,
         title: s.title ?? null,
         date: s.date ?? null,
+        event_id: r.event_id ?? null,
       });
     }
   }

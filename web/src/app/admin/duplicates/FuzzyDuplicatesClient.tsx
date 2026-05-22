@@ -47,6 +47,10 @@ export interface SourceLink {
   publisher: string | null;
   title: string | null;
   date: string | null;
+  /** published_changes.id this source backs. Used by the "↩ wrong" action —
+   *  retracting the event also flips every claim feeding it (including
+   *  this source) back to pending. */
+  event_id: string | null;
 }
 
 interface Props {
@@ -98,6 +102,19 @@ export default function FuzzyDuplicatesClient({ groups, sourcesByKey }: Props) {
     },
     [],
   );
+
+  // Tracks event_ids that have been retracted via the "↩ wrong" action on
+  // a source row. Used to grey out all sources sharing that event_id
+  // without reflowing the page.
+  const [sentBackEventIds, setSentBackEventIds] = useState<Set<string>>(new Set());
+  const markSentBack = useCallback((eventId: string) => {
+    setSentBackEventIds((prev) => {
+      if (prev.has(eventId)) return prev;
+      const next = new Set(prev);
+      next.add(eventId);
+      return next;
+    });
+  }, []);
 
   // Modal state — single instance at top level so it overlays the whole
   // duplicates view, independent of group/member identity.
@@ -195,6 +212,8 @@ export default function FuzzyDuplicatesClient({ groups, sourcesByKey }: Props) {
             onMerged={markMerged}
             extractedKeys={extractedKeys}
             onRequestExtract={requestExtract}
+            sentBackEventIds={sentBackEventIds}
+            onSentBack={markSentBack}
           />
         ))}
       </div>
@@ -230,6 +249,8 @@ function FuzzyGroupRow({
   onMerged,
   extractedKeys,
   onRequestExtract,
+  sentBackEventIds,
+  onSentBack,
 }: {
   group: FuzzyDuplicateGroup;
   sourcesByKey: Record<string, SourceLink[]>;
@@ -242,6 +263,8 @@ function FuzzyGroupRow({
     sizeSignature: string,
     eventCountAtSize: number,
   ) => void;
+  sentBackEventIds: Set<string>;
+  onSentBack: (eventId: string) => void;
 }) {
   const [targetId, setTargetId] = useState<string>(group.members[0].id);
 
@@ -310,9 +333,11 @@ function FuzzyGroupRow({
               targetId={target.id}
               sources={sources}
               extractedKeys={extractedKeys}
+              sentBackEventIds={sentBackEventIds}
               onPickTarget={() => setTargetId(m.id)}
               onMerged={() => onMerged(m.id)}
               onRequestExtract={onRequestExtract}
+              onSentBack={onSentBack}
             />
           );
         })}
@@ -330,6 +355,7 @@ interface MemberRowProps {
   targetName: string;
   sources: SourceLink[];
   extractedKeys: Map<string, { targetBrand: string; targetName: string; eventsMoved: number }>;
+  sentBackEventIds: Set<string>;
   onPickTarget(): void;
   onMerged(): void;
   onRequestExtract: (
@@ -337,6 +363,7 @@ interface MemberRowProps {
     sizeSignature: string,
     eventCountAtSize: number,
   ) => void;
+  onSentBack: (eventId: string) => void;
 }
 
 function MemberRow({
@@ -348,9 +375,11 @@ function MemberRow({
   targetName,
   sources,
   extractedKeys,
+  sentBackEventIds,
   onPickTarget,
   onMerged,
   onRequestExtract,
+  onSentBack,
 }: MemberRowProps) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -504,7 +533,12 @@ function MemberRow({
           <span className={fuzzyStyles.member_id}>{member.id.slice(0, 8)}</span>
         </div>
 
-        <MemberSources sources={sources} entityId={member.id} />
+        <MemberSources
+          sources={sources}
+          entityId={member.id}
+          sentBackEventIds={sentBackEventIds}
+          onSentBack={onSentBack}
+        />
       </div>
 
       <div className={fuzzyStyles.member_actions}>
@@ -534,25 +568,45 @@ function MemberRow({
 }
 
 /** Per-member source list — up to 5 inline. Each row links out to the
- *  underlying reddit post / news article / GDELT URL in a new tab. */
+ *  underlying reddit post / news article / GDELT URL in a new tab, with
+ *  a per-row "↩ wrong" admin action that retracts the backing event and
+ *  flips its claims to pending. */
 function MemberSources({
   sources,
   entityId,
+  sentBackEventIds,
+  onSentBack,
 }: {
   sources: SourceLink[];
   entityId: string;
+  sentBackEventIds: Set<string>;
+  onSentBack: (eventId: string) => void;
 }) {
   if (sources.length === 0) {
     return (
       <div className={fuzzyStyles.member_sources_empty}>no source evidence</div>
     );
   }
+  // Group sibling sources by event_id so the "↩ wrong" confirm can say how
+  // many sources will go to pending alongside the clicked one.
+  const eventSourceCount = new Map<string, number>();
+  for (const s of sources) {
+    if (s.event_id) {
+      eventSourceCount.set(s.event_id, (eventSourceCount.get(s.event_id) ?? 0) + 1);
+    }
+  }
   const visible = sources.slice(0, MAX_SOURCES_INLINE);
   const overflow = sources.length - visible.length;
   return (
     <div className={fuzzyStyles.member_sources}>
       {visible.map((s) => (
-        <SourceLinkRow key={s.url} source={s} />
+        <SourceLinkRow
+          key={s.url}
+          source={s}
+          siblingsForEvent={s.event_id ? eventSourceCount.get(s.event_id) ?? 1 : 1}
+          isSentBack={!!s.event_id && sentBackEventIds.has(s.event_id)}
+          onSentBack={onSentBack}
+        />
       ))}
       {overflow > 0 && (
         <a
@@ -576,7 +630,17 @@ function safeHostname(url: string): string {
   }
 }
 
-function SourceLinkRow({ source }: { source: SourceLink }) {
+function SourceLinkRow({
+  source,
+  siblingsForEvent,
+  isSentBack,
+  onSentBack,
+}: {
+  source: SourceLink;
+  siblingsForEvent: number;
+  isSentBack: boolean;
+  onSentBack: (eventId: string) => void;
+}) {
   const outlet =
     source.publisher ||
     source.domain ||
@@ -586,23 +650,100 @@ function SourceLinkRow({ source }: { source: SourceLink }) {
   const titleTrimmed = title.length > 90 ? title.slice(0, 90) + "…" : title;
   const dateLabel = source.date ? source.date.slice(0, 10) : null;
   const kind = (source.source_type || "src").toLowerCase();
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  async function sendBack(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!source.event_id) return;
+    const siblingNote =
+      siblingsForEvent > 1
+        ? `\n\nThis event has ${siblingsForEvent} sources backing it; all ${siblingsForEvent} claims will be flipped to pending.`
+        : "";
+    if (
+      !window.confirm(
+        `Send this event back to /admin/claims (status='pending')?` +
+          siblingNote +
+          `\n\nThe event will be retracted from public views; you can re-decide each claim individually in the admin queue.`,
+      )
+    ) {
+      return;
+    }
+    setBusy(true);
+    setErr(null);
+    try {
+      const r = await fetch("/api/admin/retract-event", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ event_id: source.event_id }),
+      });
+      if (!r.ok) {
+        const det = await r.json().catch(() => ({ error: r.statusText }));
+        throw new Error(det.error || "retract failed");
+      }
+      onSentBack(source.event_id);
+    } catch (ex) {
+      setErr(ex instanceof Error ? ex.message : "retract failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (isSentBack) {
+    return (
+      <div
+        className={`${fuzzyStyles.source_row} ${fuzzyStyles.source_row_sent}`}
+        title="This event was sent back to pending — the claim is now in the /admin/claims queue."
+      >
+        <span className={`${fuzzyStyles.source_kind} ${fuzzyStyles[`source_kind_${kind}`] ?? ""}`}>
+          {kind}
+        </span>
+        <span className={fuzzyStyles.source_outlet}>{outlet}</span>
+        {titleTrimmed && (
+          <span className={fuzzyStyles.source_title}>{titleTrimmed}</span>
+        )}
+        {dateLabel && <span className={fuzzyStyles.source_date}>{dateLabel}</span>}
+        <span className={fuzzyStyles.source_sent_label}>✓ sent to pending</span>
+      </div>
+    );
+  }
+
   return (
-    <a
-      href={source.url}
-      target="_blank"
-      rel="noreferrer"
-      className={fuzzyStyles.source_row}
-      title={source.url}
-    >
-      <span className={`${fuzzyStyles.source_kind} ${fuzzyStyles[`source_kind_${kind}`] ?? ""}`}>
-        {kind}
-      </span>
-      <span className={fuzzyStyles.source_outlet}>{outlet}</span>
-      {titleTrimmed && (
-        <span className={fuzzyStyles.source_title}>{titleTrimmed}</span>
+    <div className={fuzzyStyles.source_row_wrap}>
+      <a
+        href={source.url}
+        target="_blank"
+        rel="noreferrer"
+        className={fuzzyStyles.source_row}
+        title={source.url}
+      >
+        <span className={`${fuzzyStyles.source_kind} ${fuzzyStyles[`source_kind_${kind}`] ?? ""}`}>
+          {kind}
+        </span>
+        <span className={fuzzyStyles.source_outlet}>{outlet}</span>
+        {titleTrimmed && (
+          <span className={fuzzyStyles.source_title}>{titleTrimmed}</span>
+        )}
+        {dateLabel && <span className={fuzzyStyles.source_date}>{dateLabel}</span>}
+        <span className={fuzzyStyles.source_arrow}>↗</span>
+      </a>
+      {source.event_id && (
+        <button
+          type="button"
+          onClick={sendBack}
+          disabled={busy}
+          className={fuzzyStyles.source_send_back}
+          title={
+            siblingsForEvent > 1
+              ? `Retract the event (${siblingsForEvent} sources) and send the claims back to /admin/claims`
+              : `Retract the event and send the claim back to /admin/claims`
+          }
+        >
+          {busy ? "…" : "↩ wrong"}
+        </button>
       )}
-      {dateLabel && <span className={fuzzyStyles.source_date}>{dateLabel}</span>}
-      <span className={fuzzyStyles.source_arrow}>↗</span>
-    </a>
+      {err && <span className={fuzzyStyles.source_send_err}>{err}</span>}
+    </div>
   );
 }

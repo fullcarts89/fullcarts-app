@@ -411,6 +411,74 @@
   text-decoration: underline;
 }
 
+/* Wrap around a source link + its inline ↩ wrong action button. */
+.source_row_wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+}
+
+.source_row_wrap > .source_row {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Send-back action — small, secondary, only revealed on row hover so it
+   stays out of the way during normal source-link scanning. */
+.source_send_back {
+  appearance: none;
+  background: transparent;
+  border: 1px solid transparent;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-tertiary);
+  padding: 1px 6px;
+  border-radius: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+  opacity: 0.35;
+  transition: opacity 0.1s ease-out, color 0.1s ease-out, border-color 0.1s ease-out;
+}
+
+.source_row_wrap:hover .source_send_back {
+  opacity: 1;
+}
+
+.source_send_back:hover:not(:disabled) {
+  color: var(--red-base);
+  border-color: var(--red-base);
+}
+
+.source_send_back:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Send-back action error label inline next to the button. */
+.source_send_err {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--red-base);
+}
+
+/* Source row after the backing event has been retracted: dim + strike,
+   plus the "✓ sent to pending" badge in place of the open-in-new arrow. */
+.source_row_sent {
+  opacity: 0.55;
+  text-decoration: line-through;
+  text-decoration-color: var(--text-tertiary);
+  pointer-events: none;
+}
+
+.source_sent_label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--green-base);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .member_actions {
   display: flex;
   flex-direction: column;
