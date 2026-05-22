@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sizeBucket } from "@/app/admin/claims/groups/lib";
 import { findDuplicatePairs, findFuzzyDuplicateGroups } from "./lib";
 import type { EntityRow } from "./lib";
 import DuplicatesClient from "./DuplicatesClient";
 import FuzzyDuplicatesClient from "./FuzzyDuplicatesClient";
+import type { SourceLink } from "./FuzzyDuplicatesClient";
 import styles from "./styles.module.css";
 import fuzzyStyles from "./fuzzy.module.css";
 
@@ -12,6 +14,23 @@ type EventSizeRow = {
   size_before: number | null;
   size_after: number | null;
   size_unit: string | null;
+};
+
+type EvidenceRow = {
+  entity_id: string | null;
+  size_before: number | null;
+  size_after: number | null;
+  size_unit: string | null;
+  sources:
+    | Array<{
+        url?: string | null;
+        date?: string | null;
+        title?: string | null;
+        domain?: string | null;
+        publisher?: string | null;
+        source_type?: string | null;
+      }>
+    | null;
 };
 
 // Pull every non-retracted entity (paginated past PostgREST's 1k cap),
@@ -25,6 +44,7 @@ type EventSizeRow = {
 async function loadData(): Promise<{
   entities: EntityRow[];
   events: EventSizeRow[];
+  sb: ReturnType<typeof createAdminClient>;
 }> {
   const sb = createAdminClient();
   const PAGE = 1000;
@@ -66,15 +86,96 @@ async function loadData(): Promise<{
     if (r.entity_id) counts.set(r.entity_id, (counts.get(r.entity_id) ?? 0) + 1);
   }
   for (const ent of all) ent.event_count = counts.get(ent.id) ?? 0;
-  return { entities: all, events };
+  return { entities: all, events, sb };
+}
+
+// Second-pass fetch: for the entity_ids that landed in some duplicate group,
+// pull the rich source rows from `event_evidence_summary` (one row per
+// published_changes event, with the contributing claims expanded into a
+// `sources` jsonb array). Keyed by `${entity_id}|${size_signature}` so the
+// client can look up sources per member-in-group at render time.
+async function loadSourcesForGroups(
+  sb: ReturnType<typeof createAdminClient>,
+  wantedEntityIds: string[],
+  wantedSigs: Map<string, Set<string>>,
+): Promise<Record<string, SourceLink[]>> {
+  if (wantedEntityIds.length === 0) return {};
+
+  // Batch the `in()` filter to keep URL length sane (PostgREST tolerates
+  // ~2k chars in a query string; 100 UUIDs ≈ 4kb URL, so cap at 100).
+  const BATCH = 100;
+  const rows: EvidenceRow[] = [];
+  for (let i = 0; i < wantedEntityIds.length; i += BATCH) {
+    const slice = wantedEntityIds.slice(i, i + BATCH);
+    const { data, error } = await sb
+      .from("event_evidence_summary")
+      .select("entity_id, size_before, size_after, size_unit, sources")
+      .in("entity_id", slice);
+    if (error) throw new Error(`event_evidence_summary: ${error.message}`);
+    for (const r of (data ?? []) as EvidenceRow[]) rows.push(r);
+  }
+
+  // De-dup sources by URL within each (entity, sig) key, then sort by date desc.
+  const seenByKey = new Map<string, Set<string>>();
+  const out: Record<string, SourceLink[]> = {};
+  for (const r of rows) {
+    if (!r.entity_id || r.size_before == null || r.size_after == null) continue;
+    const sig = sizeBucket(r.size_before, r.size_after, r.size_unit);
+    const wanted = wantedSigs.get(r.entity_id);
+    if (!wanted || !wanted.has(sig)) continue;
+    const key = r.entity_id + "|" + sig;
+    let seen = seenByKey.get(key);
+    if (!seen) { seen = new Set<string>(); seenByKey.set(key, seen); }
+    const list = out[key] ?? (out[key] = []);
+    for (const s of r.sources ?? []) {
+      if (!s.url || seen.has(s.url)) continue;
+      seen.add(s.url);
+      list.push({
+        url: s.url,
+        source_type: s.source_type ?? null,
+        domain: s.domain ?? null,
+        publisher: s.publisher ?? null,
+        title: s.title ?? null,
+        date: s.date ?? null,
+      });
+    }
+  }
+  for (const key of Object.keys(out)) {
+    out[key].sort((a, b) => {
+      // Descending by date (nulls last for stability).
+      const ad = a.date ?? "";
+      const bd = b.date ?? "";
+      if (ad === bd) return 0;
+      return ad < bd ? 1 : -1;
+    });
+  }
+  return out;
 }
 
 export const dynamic = "force-dynamic";
 
 export default async function DuplicatesPage() {
-  const { entities, events } = await loadData();
+  const { entities, events, sb } = await loadData();
   const pairs = findDuplicatePairs(entities);
   const fuzzyGroups = findFuzzyDuplicateGroups(entities, events);
+
+  // Gather (entity_id, size_signature) pairs that landed in some group, then
+  // fetch the contributing claim sources for each.
+  const wantedEntityIds = new Set<string>();
+  const wantedSigs = new Map<string, Set<string>>();
+  for (const g of fuzzyGroups) {
+    for (const m of g.members) {
+      wantedEntityIds.add(m.id);
+      let bag = wantedSigs.get(m.id);
+      if (!bag) { bag = new Set<string>(); wantedSigs.set(m.id, bag); }
+      bag.add(g.size_signature);
+    }
+  }
+  const sourcesByKey = await loadSourcesForGroups(
+    sb,
+    [...wantedEntityIds],
+    wantedSigs,
+  );
 
   return (
     <div className={styles.page}>
@@ -158,7 +259,7 @@ export default async function DuplicatesPage() {
           </div>
         </div>
 
-        <FuzzyDuplicatesClient groups={fuzzyGroups} />
+        <FuzzyDuplicatesClient groups={fuzzyGroups} sourcesByKey={sourcesByKey} />
       </section>
     </div>
   );

@@ -7,9 +7,25 @@ import type { FuzzyDuplicateGroup } from "./lib";
 import styles from "./styles.module.css";
 import fuzzyStyles from "./fuzzy.module.css";
 
+export interface SourceLink {
+  url: string;
+  source_type: string | null;
+  domain: string | null;
+  publisher: string | null;
+  title: string | null;
+  date: string | null;
+}
+
 interface Props {
   groups: FuzzyDuplicateGroup[];
+  /** Per-member sources, keyed `${entity_id}|${size_signature}`. Each list
+   *  is already URL-deduped and date-desc sorted. May be missing keys if
+   *  the entity has no published-changes evidence (skimpflation rows are
+   *  excluded from event_evidence_summary). */
+  sourcesByKey: Record<string, SourceLink[]>;
 }
+
+const MAX_SOURCES_INLINE = 5;
 
 /**
  * Aggressive-tier review surface — sits below the exact-match section.
@@ -19,7 +35,7 @@ interface Props {
  * could be a real product line, verify before merging.
  * Default target = members[0] (highest event_count); admin picks via radio.
  */
-export default function FuzzyDuplicatesClient({ groups }: Props) {
+export default function FuzzyDuplicatesClient({ groups, sourcesByKey }: Props) {
   const [limit, setLimit] = useState<number>(Math.min(50, groups.length));
   const visible = groups.slice(0, limit);
 
@@ -69,7 +85,7 @@ export default function FuzzyDuplicatesClient({ groups }: Props) {
 
       <div className={fuzzyStyles.list}>
         {visible.map((g) => (
-          <FuzzyGroupRow key={g.group_key} group={g} />
+          <FuzzyGroupRow key={g.group_key} group={g} sourcesByKey={sourcesByKey} />
         ))}
       </div>
     </>
@@ -78,7 +94,13 @@ export default function FuzzyDuplicatesClient({ groups }: Props) {
 
 /** A single fuzzy group: header + per-member rows. The target row is
  *  highlighted in green and locked (no merge button — it's the target). */
-function FuzzyGroupRow({ group }: { group: FuzzyDuplicateGroup }) {
+function FuzzyGroupRow({
+  group,
+  sourcesByKey,
+}: {
+  group: FuzzyDuplicateGroup;
+  sourcesByKey: Record<string, SourceLink[]>;
+}) {
   const [targetId, setTargetId] = useState<string>(group.members[0].id);
   // Track which sources have already been merged so the row collapses
   // after a successful merge.
@@ -122,6 +144,8 @@ function FuzzyGroupRow({ group }: { group: FuzzyDuplicateGroup }) {
         {group.members.map((m) => {
           const isTarget = m.id === target.id;
           const isMerged = mergedSources.has(m.id);
+          const sourceKey = m.id + "|" + group.size_signature;
+          const sources = sourcesByKey[sourceKey] ?? [];
           return (
             <MemberRow
               key={m.id}
@@ -131,6 +155,7 @@ function FuzzyGroupRow({ group }: { group: FuzzyDuplicateGroup }) {
               isMerged={isMerged}
               targetName={target.canonical_name}
               targetId={target.id}
+              sources={sources}
               onPickTarget={() => setTargetId(m.id)}
               onMerged={() =>
                 setMergedSources((prev) => {
@@ -154,6 +179,7 @@ interface MemberRowProps {
   isMerged: boolean;
   targetId: string;
   targetName: string;
+  sources: SourceLink[];
   onPickTarget(): void;
   onMerged(): void;
 }
@@ -165,6 +191,7 @@ function MemberRow({
   isMerged,
   targetId,
   targetName,
+  sources,
   onPickTarget,
   onMerged,
 }: MemberRowProps) {
@@ -280,6 +307,8 @@ function MemberRow({
           )}
           <span className={fuzzyStyles.member_id}>{member.id.slice(0, 8)}</span>
         </div>
+
+        <MemberSources sources={sources} entityId={member.id} />
       </div>
 
       <div className={fuzzyStyles.member_actions}>
@@ -301,5 +330,79 @@ function MemberRow({
         )}
       </div>
     </div>
+  );
+}
+
+/** Per-member source list — up to 5 inline. Each row links out to the
+ *  underlying reddit post / news article / GDELT URL in a new tab. */
+function MemberSources({
+  sources,
+  entityId,
+}: {
+  sources: SourceLink[];
+  entityId: string;
+}) {
+  if (sources.length === 0) {
+    return (
+      <div className={fuzzyStyles.member_sources_empty}>no source evidence</div>
+    );
+  }
+  const visible = sources.slice(0, MAX_SOURCES_INLINE);
+  const overflow = sources.length - visible.length;
+  return (
+    <div className={fuzzyStyles.member_sources}>
+      {visible.map((s) => (
+        <SourceLinkRow key={s.url} source={s} />
+      ))}
+      {overflow > 0 && (
+        <a
+          href={`/products/${entityId}`}
+          target="_blank"
+          rel="noreferrer"
+          className={fuzzyStyles.source_overflow}
+        >
+          +{overflow} more →
+        </a>
+      )}
+    </div>
+  );
+}
+
+function safeHostname(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url.slice(0, 32);
+  }
+}
+
+function SourceLinkRow({ source }: { source: SourceLink }) {
+  const outlet =
+    source.publisher ||
+    source.domain ||
+    (source.source_type === "reddit" ? "reddit" : null) ||
+    safeHostname(source.url);
+  const title = (source.title || "").trim();
+  const titleTrimmed = title.length > 90 ? title.slice(0, 90) + "…" : title;
+  const dateLabel = source.date ? source.date.slice(0, 10) : null;
+  const kind = (source.source_type || "src").toLowerCase();
+  return (
+    <a
+      href={source.url}
+      target="_blank"
+      rel="noreferrer"
+      className={fuzzyStyles.source_row}
+      title={source.url}
+    >
+      <span className={`${fuzzyStyles.source_kind} ${fuzzyStyles[`source_kind_${kind}`] ?? ""}`}>
+        {kind}
+      </span>
+      <span className={fuzzyStyles.source_outlet}>{outlet}</span>
+      {titleTrimmed && (
+        <span className={fuzzyStyles.source_title}>{titleTrimmed}</span>
+      )}
+      {dateLabel && <span className={fuzzyStyles.source_date}>{dateLabel}</span>}
+      <span className={fuzzyStyles.source_arrow}>↗</span>
+    </a>
   );
 }

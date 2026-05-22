@@ -233,6 +233,117 @@
   margin-left: auto;
 }
 
+.member_sources {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+  min-width: 0;
+}
+
+.member_sources_empty {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-tertiary);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.source_row {
+  display: inline-grid;
+  grid-template-columns: 48px max-content 1fr max-content max-content;
+  gap: 8px;
+  align-items: baseline;
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  min-width: 0;
+}
+
+.source_row:hover {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.source_kind {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 4px;
+  border-radius: 2px;
+  background: var(--bg-primary);
+  color: var(--text-tertiary);
+  border: 1px solid var(--bg-tertiary);
+  font-weight: 700;
+  text-align: center;
+}
+
+.source_kind_reddit {
+  color: #ff7044;
+  border-color: rgba(255, 112, 68, 0.4);
+  background: rgba(255, 112, 68, 0.08);
+}
+
+.source_kind_news {
+  color: #4ec1ff;
+  border-color: rgba(78, 193, 255, 0.4);
+  background: rgba(78, 193, 255, 0.08);
+}
+
+.source_kind_gdelt {
+  color: #d3a3ff;
+  border-color: rgba(211, 163, 255, 0.4);
+  background: rgba(211, 163, 255, 0.08);
+}
+
+.source_outlet {
+  color: var(--text-primary);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.source_title {
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.source_date {
+  color: var(--text-tertiary);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.source_arrow {
+  color: var(--text-tertiary);
+  font-size: 10px;
+}
+
+.source_row:hover .source_arrow {
+  color: var(--text-primary);
+}
+
+.source_overflow {
+  display: inline-block;
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-tertiary);
+  padding: 2px 6px;
+  text-decoration: none;
+}
+
+.source_overflow:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
 .member_actions {
   display: flex;
   flex-direction: column;
