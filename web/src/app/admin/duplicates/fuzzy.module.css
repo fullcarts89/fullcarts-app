@@ -99,6 +99,39 @@
   border-left: 3px solid var(--bg-tertiary);
 }
 
+.member_done {
+  background: var(--green-bg);
+  border-left: 3px solid var(--green-border);
+  opacity: 0.65;
+}
+
+.member_done .member_thumb {
+  filter: grayscale(0.6);
+}
+
+.member_name_struck {
+  text-decoration: line-through;
+  text-decoration-color: var(--text-tertiary);
+  color: var(--text-secondary);
+}
+
+.merged_badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1px 6px;
+  border-radius: 2px;
+  background: var(--green-bg);
+  color: var(--green-base);
+  border: 1px solid var(--green-border);
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50ch;
+}
+
 .member_radio {
   display: flex;
   align-items: center;
@@ -395,33 +428,6 @@
   font-family: var(--font-mono);
   font-size: 10px;
   color: var(--green-base);
-}
-
-.member_merged {
-  grid-template-columns: 100px 1fr;
-  background: var(--green-bg);
-  color: var(--text-secondary);
-  opacity: 0.75;
-  padding: 8px 14px;
-}
-
-.member_merged_label {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--green-base);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 700;
-}
-
-.member_merged_detail {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-secondary);
-}
-
-.member_merged_counts {
-  color: var(--text-tertiary);
 }
 
 .fuzzy_section_header {

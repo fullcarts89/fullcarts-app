@@ -257,28 +257,22 @@ function MemberRow({
     });
   }
 
-  if (isMerged) {
-    return (
-      <div className={`${fuzzyStyles.member} ${fuzzyStyles.member_merged}`}>
-        <div className={fuzzyStyles.member_merged_label}>✓ merged</div>
-        <div className={fuzzyStyles.member_merged_detail}>
-          {member.canonical_name} → {targetName}
-          {result && <span className={fuzzyStyles.member_merged_counts}> · {result}</span>}
-        </div>
-      </div>
-    );
-  }
-
+  // Render the SAME layout for merged and unmerged rows so a merge doesn't
+  // visually compress the row and shift content below upward by ~150px. The
+  // merged version dims, strikes through the name, disables interactions,
+  // and swaps the merge button slot for a "✓ merged" badge.
+  const rowClass = isMerged
+    ? `${fuzzyStyles.member} ${fuzzyStyles.member_done}`
+    : `${fuzzyStyles.member} ${isTarget ? fuzzyStyles.member_target : fuzzyStyles.member_source}`;
   return (
-    <div
-      className={`${fuzzyStyles.member} ${isTarget ? fuzzyStyles.member_target : fuzzyStyles.member_source}`}
-    >
+    <div className={rowClass}>
       <label className={fuzzyStyles.member_radio}>
         <input
           type="radio"
           name={`target-${groupKey}`}
           checked={isTarget}
           onChange={onPickTarget}
+          disabled={isMerged}
           aria-label={`Use ${member.canonical_name} as merge target`}
         />
       </label>
@@ -299,7 +293,15 @@ function MemberRow({
 
       <div className={fuzzyStyles.member_meta}>
         <div className={fuzzyStyles.member_name_row}>
-          <span className={fuzzyStyles.member_name}>{member.canonical_name}</span>
+          <span
+            className={
+              isMerged
+                ? `${fuzzyStyles.member_name} ${fuzzyStyles.member_name_struck}`
+                : fuzzyStyles.member_name
+            }
+          >
+            {member.canonical_name}
+          </span>
           <a
             href={`/products/${member.id}`}
             target="_blank"
@@ -309,6 +311,14 @@ function MemberRow({
             ↗ view
           </a>
           {isTarget && <span className={fuzzyStyles.target_badge}>target</span>}
+          {isMerged && (
+            <span
+              className={fuzzyStyles.merged_badge}
+              title={`Merged into "${targetName}" this session`}
+            >
+              ✓ merged → {targetName}
+            </span>
+          )}
         </div>
         <div className={fuzzyStyles.member_chips}>
           <span
@@ -342,7 +352,11 @@ function MemberRow({
       </div>
 
       <div className={fuzzyStyles.member_actions}>
-        {isTarget ? (
+        {isMerged ? (
+          <div className={fuzzyStyles.target_note} title={result ?? undefined}>
+            ✓ merged
+          </div>
+        ) : isTarget ? (
           <div className={fuzzyStyles.target_note}>keep</div>
         ) : (
           <>
