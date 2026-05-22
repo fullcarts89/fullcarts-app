@@ -1,6 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdminRequest } from "@/lib/admin-auth";
+
+/** Invalidate every public surface that derives from product_entities.brand
+ *  so a fresh ISR render picks up the rebrand / merge / reassign. Called
+ *  from this route and the two other mutation routes that touch entities. */
+function revalidatePublicSurfaces() {
+  revalidatePath("/");
+  revalidatePath("/brands");
+  revalidatePath("/brands/[name]", "page");
+  revalidatePath("/products");
+  revalidatePath("/products/[id]", "page");
+  revalidatePath("/insights");
+}
 
 // POST /api/admin/merge-brand
 // Body: { sourceBrand: string, targetBrand: string, dryRun?: boolean }
@@ -85,6 +98,8 @@ export async function POST(request: NextRequest) {
     }
     written++;
   }
+
+  if (written > 0) revalidatePublicSurfaces();
 
   return NextResponse.json({
     affectedCount: affected.length,
