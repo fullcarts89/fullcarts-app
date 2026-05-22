@@ -1,8 +1,27 @@
 "use client";
 
 import { useCallback, useState, useTransition } from "react";
-import { mergePair } from "./actions";
 import type { FuzzyDuplicateGroup } from "./lib";
+
+/** Call the merge endpoint via plain fetch. Deliberately NOT importing the
+ *  mergePair server action: server actions in Next.js auto-refresh the
+ *  current route after completion, reflowing the page mid-triage. A POST
+ *  to a route handler has no such side-effect. */
+async function callMergePair(
+  sourceId: string,
+  targetId: string,
+): Promise<{ logId: number; claimsMoved: number; eventsMoved: number; variantsMoved: number }> {
+  const r = await fetch("/api/admin/merge-pair", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ sourceId, targetId }),
+  });
+  if (!r.ok) {
+    const detail = await r.json().catch(() => ({ error: r.statusText }));
+    throw new Error(detail.error || "merge failed");
+  }
+  return r.json();
+}
 import styles from "./styles.module.css";
 import fuzzyStyles from "./fuzzy.module.css";
 
@@ -242,14 +261,14 @@ function MemberRow({
     setResult(null);
     startTransition(async () => {
       try {
-        const out = await mergePair(member.id, targetId);
+        const out = await callMergePair(member.id, targetId);
         setResult(
           `Merged. ${out.claimsMoved} claims, ${out.eventsMoved} events, ${out.variantsMoved} variants moved.`,
         );
-        // Mark merged locally only. We deliberately skip router.refresh()
-        // here so the group stays anchored at its original position.
-        // The server-side revalidatePath in mergePair still invalidates
-        // the cache, so the next full navigation picks up fresh data.
+        // Mark merged in shared state only. The route handler does NOT
+        // trigger Next.js router refresh, so the page does not reflow.
+        // On next manual navigation to /admin/duplicates the page re-fetches
+        // and drops the retracted source naturally.
         onMerged();
       } catch (e) {
         setError(e instanceof Error ? e.message : "merge failed");
