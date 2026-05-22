@@ -102,9 +102,6 @@ export default function RootLayout({
       <body
         className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} antialiased`}
       >
-        <a href="#main-content" className="skip-to-main">
-          Skip to main content
-        </a>
         {children}
         <script
           type="application/ld+json"

@@ -72,69 +72,64 @@ export function findDuplicatePairs(entities: EntityRow[]): MergePair[] {
   return pairs;
 }
 
-// ─── Fuzzy duplicate detection (Phase B) ──────────────────────────────
+// ─── Aggressive duplicate detection (Phase B+) ─────────────────────────
 //
 // The exact-slug pass above catches case + punctuation variants only.
-// Real-world dupes drift further: "Gatorade Glacier Freeze",
-// "Gatorade Frost Glacier Freeze", "Gatorade Zero Glacier Freeze" all
-// collapse under `fuzzyNameKey`. We keep the noise floor low by also
-// requiring a SHARED published-changes size signature — the strongest
-// signal that two entities describe the same real product.
-
-/** Per-entity event size signatures (e.g. "200g→180g"). Helper for
- *  the fuzzy matcher; kept module-private to mirror the Phase A grouper. */
-function entityEventSignatures(
-  entityId: string,
-  events: Array<{
-    entity_id: string | null;
-    size_before: number | null;
-    size_after: number | null;
-    size_unit: string | null;
-  }>,
-): Set<string> {
-  const out = new Set<string>();
-  for (const e of events) {
-    if (e.entity_id !== entityId) continue;
-    if (e.size_before == null || e.size_after == null) continue;
-    out.add(sizeBucket(e.size_before, e.size_after, e.size_unit));
-  }
-  return out;
-}
+// The medium tier (now retired — see git history of this file at PR #100)
+// keyed on (brand, fuzzyNameKey) and reported size overlap as a hint —
+// but Gatorade-class drift, where AI extraction produced wildly
+// different names ("Bottle", "Gatorade Bottle", "Sports Drink",
+// "Gatorade Beverage", …) for the same real product, slipped past the
+// name gate. The aggressive tier inverts the contract: same brand
+// AND identical published_changes size signature is the cluster key,
+// and fuzzy name match becomes the green/amber HINT.
+//
+// Trade-off: this surfaces real product LINES (e.g. five Herbal
+// Essences scents that all shrank from 400→275ml in the same
+// announcement) alongside true duplicates. The admin must triage per
+// group — the tool's job is to surface candidates, not auto-decide.
+// The name-match hint helps them spot the easy wins at a glance.
 
 export interface FuzzyDuplicateGroup {
-  /** Composite key: brand + fuzzy name key. Stable across renders. */
+  /** Composite key: brand + size signature. Stable across renders. */
   group_key: string;
   brand: string;
-  /** Normalised name key — useful for diagnostics / display. */
-  shared_name_key: string;
-  /** True when at least one (size_before, size_after, size_unit) signature
-   *  is shared by ≥2 members. Strong "same product" signal — the UI
-   *  highlights these groups as safe to merge. False groups still surface
-   *  but flag the admin to double-check sizes before merging. */
-  has_size_overlap: boolean;
+  /** The size signature that defines this group, e.g. "32→28fl oz".
+   *  Displayed in the header. */
+  size_signature: string;
+  /** True when ≥2 members reduce to the same `fuzzyNameKey` — strong
+   *  same-product signal. False = names diverge: could still be the
+   *  same product (Gatorade case) OR a product LINE announcing a
+   *  uniform shrink. UI flips green/amber on this flag. */
+  has_fuzzy_name_match: boolean;
   /** ≥2 entities, sorted highest event_count first (merge target = [0]).
-   *  `event_sizes` is every size signature seen on this entity;
-   *  `matched_sizes` is the subset shared with ≥1 other group member
-   *  (empty array when has_size_overlap is false). */
+   *  `event_sizes` is every size signature seen on this entity (info
+   *  only); `matched_sizes` is `[size_signature]` — the group-defining
+   *  signature, kept as a singleton for UI back-compat with the chip
+   *  renderer. */
   members: Array<EntityRow & { event_sizes: string[]; matched_sizes: string[] }>;
 }
 
 /**
- * Medium-tier fuzzy duplicate detector. Returns groups (≥2 members)
- * where BOTH:
- *   1. Same `brand` string (case-sensitive — Phase B's aggressive tier
- *      handles brand-string drift separately).
- *   2. Same `fuzzyNameKey(canonical_name)` (token-sort + strip
- *      size/unit/punct).
+ * Aggressive-tier fuzzy duplicate detector. Returns groups (≥2 members)
+ * sharing BOTH:
+ *   1. Same `brand` string (case-sensitive — brand-string drift is a
+ *      separate concern handled by future canonicalization in
+ *      `promote_claims.find_or_create_entity`).
+ *   2. Same `published_changes` size signature
+ *      (size_before, size_after, size_unit).
  *
- * Size overlap is REPORTED (via `has_size_overlap`) but not REQUIRED —
- * the founder can see at a glance which groups are safe to merge
- * (size overlap = very likely same product) vs which need a manual
- * size check (no overlap = could be different size variants of the
- * same product line).
+ * The fuzzy name match is REPORTED (`has_fuzzy_name_match`) but not
+ * REQUIRED — that's what lets us catch the Gatorade-class drift the
+ * medium tier missed.
  *
- * Result ordering: size-overlap groups first (highest signal), then by
- * member count descending.
+ * An entity with N distinct size signatures appears in up to N groups
+ * (one per signature). After merge, the source entity is retracted
+ * and disappears from all subsequent groups on next page load.
+ *
+ * Result ordering: name-match groups first (highest confidence merge
+ * candidates — looks like the same product AND same shrink), then by
+ * member count descending within each tier.
  */
 export function findFuzzyDuplicateGroups(
   entities: EntityRow[],
@@ -145,63 +140,81 @@ export function findFuzzyDuplicateGroups(
     size_unit: string | null;
   }>,
 ): FuzzyDuplicateGroup[] {
-  // Bucket by (brand, fuzzyNameKey(canonical_name)).
-  const buckets = new Map<string, EntityRow[]>();
-  for (const e of entities) {
-    if (!e.brand) continue;
-    const nk = fuzzyNameKey(e.canonical_name);
-    if (!nk) continue;
-    const key = e.brand + "|" + nk;
-    const list = buckets.get(key);
-    if (list) list.push(e);
-    else buckets.set(key, [e]);
+  const entById = new Map<string, EntityRow>();
+  for (const e of entities) entById.set(e.id, e);
+
+  // Per-entity set of size signatures (for `event_sizes` info chip).
+  const entSigs = new Map<string, Set<string>>();
+  // Bucket (brand + "|" + signature) -> Set<entityId>.
+  const buckets = new Map<string, Set<string>>();
+  for (const ev of events) {
+    if (!ev.entity_id) continue;
+    const ent = entById.get(ev.entity_id);
+    if (!ent || !ent.brand) continue;
+    if (ev.size_before == null || ev.size_after == null) continue;
+    const sig = sizeBucket(ev.size_before, ev.size_after, ev.size_unit);
+
+    let sset = entSigs.get(ev.entity_id);
+    if (!sset) { sset = new Set<string>(); entSigs.set(ev.entity_id, sset); }
+    sset.add(sig);
+
+    const key = ent.brand + "|" + sig;
+    let bucket = buckets.get(key);
+    if (!bucket) { bucket = new Set<string>(); buckets.set(key, bucket); }
+    bucket.add(ev.entity_id);
   }
 
   const out: FuzzyDuplicateGroup[] = [];
-  for (const [key, members] of buckets) {
-    if (members.length < 2) continue;
+  for (const [key, idSet] of buckets) {
+    if (idSet.size < 2) continue;
 
-    // Compute per-member size signatures.
-    const sigs = new Map<string, Set<string>>();
-    for (const m of members) sigs.set(m.id, entityEventSignatures(m.id, events));
+    const sep = key.indexOf("|");
+    const brand = key.slice(0, sep);
+    const sig = key.slice(sep + 1);
+    const members = [...idSet]
+      .map((id) => entById.get(id)!)
+      .filter(Boolean);
 
-    // Compute overlap (sizes appearing on ≥2 members). Reported via
-    // has_size_overlap but no longer required — Medium tier surfaces all
-    // same-brand+same-fuzzy-name groups and lets the founder decide.
-    const sizeOccurrence = new Map<string, number>();
-    for (const sig of sigs.values()) {
-      for (const s of sig) sizeOccurrence.set(s, (sizeOccurrence.get(s) ?? 0) + 1);
+    // Name-match hint: ≥2 members reduce to the same fuzzy key.
+    const nameKeyCounts = new Map<string, number>();
+    for (const m of members) {
+      const nk = fuzzyNameKey(m.canonical_name);
+      if (!nk) continue;
+      nameKeyCounts.set(nk, (nameKeyCounts.get(nk) ?? 0) + 1);
     }
-    const overlapSizes = new Set<string>();
-    for (const [s, n] of sizeOccurrence) if (n >= 2) overlapSizes.add(s);
+    let hasNameMatch = false;
+    for (const n of nameKeyCounts.values()) {
+      if (n >= 2) { hasNameMatch = true; break; }
+    }
 
-    // Highest event_count first (target = members[0]). Lex id tie-break
-    // to match the exact-matcher's deterministic ordering.
     const sorted = [...members].sort((a, b) => {
       const cdiff = (b.event_count ?? 0) - (a.event_count ?? 0);
       if (cdiff !== 0) return cdiff;
       return a.id.localeCompare(b.id);
     });
-    const [brand, sharedNameKey] = key.split("|");
+
     out.push({
       group_key: key,
       brand,
-      shared_name_key: sharedNameKey,
-      has_size_overlap: overlapSizes.size > 0,
+      size_signature: sig,
+      has_fuzzy_name_match: hasNameMatch,
       members: sorted.map((m) => {
-        const sig = sigs.get(m.id) ?? new Set<string>();
+        const sigs = entSigs.get(m.id) ?? new Set<string>();
         return {
           ...m,
-          event_sizes: [...sig].sort(),
-          matched_sizes: [...sig].filter((s) => overlapSizes.has(s)).sort(),
+          event_sizes: [...sigs].sort(),
+          matched_sizes: [sig],
         };
       }),
     });
   }
-  // Size-overlap groups float to top (highest confidence merge candidates),
-  // then larger groups before smaller ones within each tier.
+
+  // Name-match groups first (✓ green), then names-diverge groups (⚠ amber).
+  // Within each tier: larger member count first (highest-leverage merges).
   return out.sort((a, b) => {
-    if (a.has_size_overlap !== b.has_size_overlap) return a.has_size_overlap ? -1 : 1;
+    if (a.has_fuzzy_name_match !== b.has_fuzzy_name_match) {
+      return a.has_fuzzy_name_match ? -1 : 1;
+    }
     return b.members.length - a.members.length;
   });
 }

@@ -1,24 +1,73 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { mergePair } from "./actions";
+import { useCallback, useState, useTransition } from "react";
 import type { FuzzyDuplicateGroup } from "./lib";
+
+/** Call the merge endpoint via plain fetch. Deliberately NOT importing the
+ *  mergePair server action: server actions in Next.js auto-refresh the
+ *  current route after completion, reflowing the page mid-triage. A POST
+ *  to a route handler has no such side-effect. */
+async function callMergePair(
+  sourceId: string,
+  targetId: string,
+): Promise<{ logId: number; claimsMoved: number; eventsMoved: number; variantsMoved: number }> {
+  const r = await fetch("/api/admin/merge-pair", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ sourceId, targetId }),
+  });
+  if (!r.ok) {
+    const detail = await r.json().catch(() => ({ error: r.statusText }));
+    throw new Error(detail.error || "merge failed");
+  }
+  return r.json();
+}
 import styles from "./styles.module.css";
 import fuzzyStyles from "./fuzzy.module.css";
 
-interface Props {
-  groups: FuzzyDuplicateGroup[];
+export interface SourceLink {
+  url: string;
+  source_type: string | null;
+  domain: string | null;
+  publisher: string | null;
+  title: string | null;
+  date: string | null;
 }
 
+interface Props {
+  groups: FuzzyDuplicateGroup[];
+  /** Per-member sources, keyed `${entity_id}|${size_signature}`. Each list
+   *  is already URL-deduped and date-desc sorted. May be missing keys if
+   *  the entity has no published-changes evidence (skimpflation rows are
+   *  excluded from event_evidence_summary). */
+  sourcesByKey: Record<string, SourceLink[]>;
+}
+
+const MAX_SOURCES_INLINE = 5;
+
 /**
- * Fuzzy-duplicate review surface — sits below the exact-match section.
- * Each group lists 2+ entities that share (brand, fuzzyNameKey, ≥1 size).
- * Default merge target is members[0] (highest event_count); admin can
- * pick a different target via the radio per group.
+ * Aggressive-tier review surface — sits below the exact-match section.
+ * Each group lists 2+ entities sharing the SAME brand + SAME exact
+ * (size_before, size_after, size_unit). Fuzzy name match is a hint:
+ * ✓ name match = high-confidence merge candidate, ⚠ names diverge =
+ * could be a real product line, verify before merging.
+ * Default target = members[0] (highest event_count); admin picks via radio.
  */
-export default function FuzzyDuplicatesClient({ groups }: Props) {
+export default function FuzzyDuplicatesClient({ groups, sourcesByKey }: Props) {
   const [limit, setLimit] = useState<number>(Math.min(50, groups.length));
+  // Lifted to top-level: tracks every entity merged this session, across all
+  // groups. Lifting keeps group order anchored (no router.refresh / no resort
+  // on merge) AND correctly hides an entity that happens to belong to multiple
+  // size-signature groups once it's merged in any of them.
+  const [mergedIds, setMergedIds] = useState<Set<string>>(new Set());
+  const markMerged = useCallback((id: string) => {
+    setMergedIds((prev) => {
+      if (prev.has(id)) return prev;
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+  }, []);
   const visible = groups.slice(0, limit);
 
   if (groups.length === 0) {
@@ -67,7 +116,13 @@ export default function FuzzyDuplicatesClient({ groups }: Props) {
 
       <div className={fuzzyStyles.list}>
         {visible.map((g) => (
-          <FuzzyGroupRow key={g.group_key} group={g} />
+          <FuzzyGroupRow
+            key={g.group_key}
+            group={g}
+            sourcesByKey={sourcesByKey}
+            mergedIds={mergedIds}
+            onMerged={markMerged}
+          />
         ))}
       </div>
     </>
@@ -76,55 +131,64 @@ export default function FuzzyDuplicatesClient({ groups }: Props) {
 
 /** A single fuzzy group: header + per-member rows. The target row is
  *  highlighted in green and locked (no merge button — it's the target). */
-function FuzzyGroupRow({ group }: { group: FuzzyDuplicateGroup }) {
+function FuzzyGroupRow({
+  group,
+  sourcesByKey,
+  mergedIds,
+  onMerged,
+}: {
+  group: FuzzyDuplicateGroup;
+  sourcesByKey: Record<string, SourceLink[]>;
+  /** Lifted state — entities merged this session, across the whole page. */
+  mergedIds: Set<string>;
+  onMerged: (id: string) => void;
+}) {
   const [targetId, setTargetId] = useState<string>(group.members[0].id);
-  // Track which sources have already been merged so the row collapses
-  // after a successful merge.
-  const [mergedSources, setMergedSources] = useState<Set<string>>(new Set());
 
   const target = group.members.find((m) => m.id === targetId) ?? group.members[0];
-  const allMatched = new Set<string>();
-  for (const m of group.members) for (const s of m.matched_sizes) allMatched.add(s);
-  const matchedList = [...allMatched].sort();
+  // Count source rows (= members minus target) still requiring action.
+  const remainingSources = group.members.filter(
+    (m) => m.id !== target.id && !mergedIds.has(m.id),
+  ).length;
+  const allMerged = remainingSources === 0;
 
   return (
     <div className={fuzzyStyles.group}>
       <div className={fuzzyStyles.group_header}>
         <div className={fuzzyStyles.group_brand}>{group.brand}</div>
         <div className={fuzzyStyles.group_sep}>·</div>
-        <div className={fuzzyStyles.group_namekey}>
-          &ldquo;{group.shared_name_key}&rdquo;
+        <div className={fuzzyStyles.group_matched_chips}>
+          <span className={fuzzyStyles.chip_matched}>{group.size_signature}</span>
         </div>
         <div className={fuzzyStyles.group_sep}>·</div>
         <div className={fuzzyStyles.group_count}>
           {group.members.length} entities
         </div>
         <div className={fuzzyStyles.group_sep}>·</div>
-        {group.has_size_overlap ? (
-          <>
-            <div className={fuzzyStyles.group_matched_label}>
-              <span
-                title="At least one event-size signature is shared by ≥2 members — strong same-product signal"
-                style={{ color: "var(--green-base)" }}
-              >
-                ✓ size match
-              </span>
-            </div>
-            <div className={fuzzyStyles.group_matched_chips}>
-              {matchedList.map((s) => (
-                <span key={s} className={fuzzyStyles.chip_matched}>
-                  {s}
-                </span>
-              ))}
-            </div>
-          </>
+        {group.has_fuzzy_name_match ? (
+          <div
+            className={fuzzyStyles.group_matched_label}
+            title="≥2 members reduce to the same fuzzy name key — high-confidence same-product candidate."
+            style={{ color: "var(--green-base)" }}
+          >
+            ✓ name match
+          </div>
         ) : (
           <div
             className={fuzzyStyles.group_matched_label}
-            title="No shared event-size signature — these may be different size variants of the same product line. Check member sizes below before merging."
+            title="Names diverge — could still be the same product (AI extraction noise) OR a product line announcing a uniform shrink. Check member names below before merging."
             style={{ color: "var(--amber-base)" }}
           >
-            ⚠ no size overlap — check sizes before merging
+            ⚠ names diverge — verify before merging
+          </div>
+        )}
+        {allMerged && (
+          <div
+            className={fuzzyStyles.group_matched_label}
+            style={{ color: "var(--green-base)" }}
+            title="All source members of this group have been merged into the target this session. Reload the page to drop this group from the list."
+          >
+            ✓ group fully merged
           </div>
         )}
       </div>
@@ -132,7 +196,9 @@ function FuzzyGroupRow({ group }: { group: FuzzyDuplicateGroup }) {
       <div className={fuzzyStyles.members}>
         {group.members.map((m) => {
           const isTarget = m.id === target.id;
-          const isMerged = mergedSources.has(m.id);
+          const isMerged = mergedIds.has(m.id);
+          const sourceKey = m.id + "|" + group.size_signature;
+          const sources = sourcesByKey[sourceKey] ?? [];
           return (
             <MemberRow
               key={m.id}
@@ -142,14 +208,9 @@ function FuzzyGroupRow({ group }: { group: FuzzyDuplicateGroup }) {
               isMerged={isMerged}
               targetName={target.canonical_name}
               targetId={target.id}
+              sources={sources}
               onPickTarget={() => setTargetId(m.id)}
-              onMerged={() =>
-                setMergedSources((prev) => {
-                  const next = new Set(prev);
-                  next.add(m.id);
-                  return next;
-                })
-              }
+              onMerged={() => onMerged(m.id)}
             />
           );
         })}
@@ -165,6 +226,7 @@ interface MemberRowProps {
   isMerged: boolean;
   targetId: string;
   targetName: string;
+  sources: SourceLink[];
   onPickTarget(): void;
   onMerged(): void;
 }
@@ -176,13 +238,13 @@ function MemberRow({
   isMerged,
   targetId,
   targetName,
+  sources,
   onPickTarget,
   onMerged,
 }: MemberRowProps) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
-  const router = useRouter();
 
   function onMerge() {
     if (isTarget) return;
@@ -199,40 +261,37 @@ function MemberRow({
     setResult(null);
     startTransition(async () => {
       try {
-        const out = await mergePair(member.id, targetId);
+        const out = await callMergePair(member.id, targetId);
         setResult(
           `Merged. ${out.claimsMoved} claims, ${out.eventsMoved} events, ${out.variantsMoved} variants moved.`,
         );
+        // Mark merged in shared state only. The route handler does NOT
+        // trigger Next.js router refresh, so the page does not reflow.
+        // On next manual navigation to /admin/duplicates the page re-fetches
+        // and drops the retracted source naturally.
         onMerged();
-        router.refresh();
       } catch (e) {
         setError(e instanceof Error ? e.message : "merge failed");
       }
     });
   }
 
-  if (isMerged) {
-    return (
-      <div className={`${fuzzyStyles.member} ${fuzzyStyles.member_merged}`}>
-        <div className={fuzzyStyles.member_merged_label}>✓ merged</div>
-        <div className={fuzzyStyles.member_merged_detail}>
-          {member.canonical_name} → {targetName}
-          {result && <span className={fuzzyStyles.member_merged_counts}> · {result}</span>}
-        </div>
-      </div>
-    );
-  }
-
+  // Render the SAME layout for merged and unmerged rows so a merge doesn't
+  // visually compress the row and shift content below upward by ~150px. The
+  // merged version dims, strikes through the name, disables interactions,
+  // and swaps the merge button slot for a "✓ merged" badge.
+  const rowClass = isMerged
+    ? `${fuzzyStyles.member} ${fuzzyStyles.member_done}`
+    : `${fuzzyStyles.member} ${isTarget ? fuzzyStyles.member_target : fuzzyStyles.member_source}`;
   return (
-    <div
-      className={`${fuzzyStyles.member} ${isTarget ? fuzzyStyles.member_target : fuzzyStyles.member_source}`}
-    >
+    <div className={rowClass}>
       <label className={fuzzyStyles.member_radio}>
         <input
           type="radio"
           name={`target-${groupKey}`}
           checked={isTarget}
           onChange={onPickTarget}
+          disabled={isMerged}
           aria-label={`Use ${member.canonical_name} as merge target`}
         />
       </label>
@@ -253,7 +312,15 @@ function MemberRow({
 
       <div className={fuzzyStyles.member_meta}>
         <div className={fuzzyStyles.member_name_row}>
-          <span className={fuzzyStyles.member_name}>{member.canonical_name}</span>
+          <span
+            className={
+              isMerged
+                ? `${fuzzyStyles.member_name} ${fuzzyStyles.member_name_struck}`
+                : fuzzyStyles.member_name
+            }
+          >
+            {member.canonical_name}
+          </span>
           <a
             href={`/products/${member.id}`}
             target="_blank"
@@ -263,6 +330,14 @@ function MemberRow({
             ↗ view
           </a>
           {isTarget && <span className={fuzzyStyles.target_badge}>target</span>}
+          {isMerged && (
+            <span
+              className={fuzzyStyles.merged_badge}
+              title={`Merged into "${targetName}" this session`}
+            >
+              ✓ merged → {targetName}
+            </span>
+          )}
         </div>
         <div className={fuzzyStyles.member_chips}>
           <span
@@ -291,10 +366,16 @@ function MemberRow({
           )}
           <span className={fuzzyStyles.member_id}>{member.id.slice(0, 8)}</span>
         </div>
+
+        <MemberSources sources={sources} entityId={member.id} />
       </div>
 
       <div className={fuzzyStyles.member_actions}>
-        {isTarget ? (
+        {isMerged ? (
+          <div className={fuzzyStyles.target_note} title={result ?? undefined}>
+            ✓ merged
+          </div>
+        ) : isTarget ? (
           <div className={fuzzyStyles.target_note}>keep</div>
         ) : (
           <>
@@ -312,5 +393,79 @@ function MemberRow({
         )}
       </div>
     </div>
+  );
+}
+
+/** Per-member source list — up to 5 inline. Each row links out to the
+ *  underlying reddit post / news article / GDELT URL in a new tab. */
+function MemberSources({
+  sources,
+  entityId,
+}: {
+  sources: SourceLink[];
+  entityId: string;
+}) {
+  if (sources.length === 0) {
+    return (
+      <div className={fuzzyStyles.member_sources_empty}>no source evidence</div>
+    );
+  }
+  const visible = sources.slice(0, MAX_SOURCES_INLINE);
+  const overflow = sources.length - visible.length;
+  return (
+    <div className={fuzzyStyles.member_sources}>
+      {visible.map((s) => (
+        <SourceLinkRow key={s.url} source={s} />
+      ))}
+      {overflow > 0 && (
+        <a
+          href={`/products/${entityId}`}
+          target="_blank"
+          rel="noreferrer"
+          className={fuzzyStyles.source_overflow}
+        >
+          +{overflow} more →
+        </a>
+      )}
+    </div>
+  );
+}
+
+function safeHostname(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url.slice(0, 32);
+  }
+}
+
+function SourceLinkRow({ source }: { source: SourceLink }) {
+  const outlet =
+    source.publisher ||
+    source.domain ||
+    (source.source_type === "reddit" ? "reddit" : null) ||
+    safeHostname(source.url);
+  const title = (source.title || "").trim();
+  const titleTrimmed = title.length > 90 ? title.slice(0, 90) + "…" : title;
+  const dateLabel = source.date ? source.date.slice(0, 10) : null;
+  const kind = (source.source_type || "src").toLowerCase();
+  return (
+    <a
+      href={source.url}
+      target="_blank"
+      rel="noreferrer"
+      className={fuzzyStyles.source_row}
+      title={source.url}
+    >
+      <span className={`${fuzzyStyles.source_kind} ${fuzzyStyles[`source_kind_${kind}`] ?? ""}`}>
+        {kind}
+      </span>
+      <span className={fuzzyStyles.source_outlet}>{outlet}</span>
+      {titleTrimmed && (
+        <span className={fuzzyStyles.source_title}>{titleTrimmed}</span>
+      )}
+      {dateLabel && <span className={fuzzyStyles.source_date}>{dateLabel}</span>}
+      <span className={fuzzyStyles.source_arrow}>↗</span>
+    </a>
   );
 }
