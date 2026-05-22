@@ -38,7 +38,12 @@ export async function mergePair(
       variants_moved: number;
     }>
   )[0];
-  revalidatePath("/admin/duplicates");
+  // Intentionally NOT revalidating /admin/duplicates: the page is
+  // force-dynamic (every nav re-fetches), and revalidatePath on the same
+  // route is the signal that makes Next.js auto-refresh the page after a
+  // server action — which reshuffles groups mid-review. /admin/entities
+  // is still revalidated so the entity browser picks up the retraction
+  // the next time it's visited.
   revalidatePath("/admin/entities");
   return {
     logId: row.log_id,
@@ -125,7 +130,8 @@ export async function mergeBatch(
     });
   }
 
-  revalidatePath("/admin/duplicates");
+  // See note in mergePair: skip revalidatePath('/admin/duplicates') so the
+  // batch UI stays anchored after the action completes.
   revalidatePath("/admin/entities");
   return { succeeded, failed, details };
 }

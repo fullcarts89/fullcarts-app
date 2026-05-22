@@ -93,30 +93,6 @@ body {
   border: 0;
 }
 
-/* Skip-to-main link. Off-screen until keyboard focus reveals it, so
-   keyboard users can bypass the persistent nav on every public page. */
-.skip-to-main {
-  position: absolute;
-  left: 12px;
-  top: -48px;
-  z-index: 100;
-  background: var(--red-base);
-  color: #fff;
-  padding: 10px 16px;
-  border-radius: 4px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  text-decoration: none;
-  transition: top .15s ease-out;
-}
-.skip-to-main:focus,
-.skip-to-main:focus-visible {
-  top: 12px;
-}
-
 /* Respect users who've asked the OS to reduce motion. The hero "live"
    pulse, hover transforms, and arrow slides all collapse to instant
    transitions so vestibular-sensitive readers don't get hit. */
