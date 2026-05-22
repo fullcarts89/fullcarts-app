@@ -53,7 +53,13 @@ function BrandMergeModal({ onClose }: { onClose: () => void }) {
   const [previewSample, setPreviewSample] = useState<AffectedEntity[]>([]);
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<string | null>(null);
+  const [history, setHistory] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
+  // Incremented after every successful merge; used as the `key` on the
+  // BrandPicker components so they remount with empty internal state on
+  // the next round (we can't reach into their `q` from out here without
+  // hoisting it, and remount-on-key is the cheapest workable reset).
+  const [resetKey, setResetKey] = useState(0);
   const router = useRouter();
 
   // Whenever both brands are chosen, run a dry-run to show what'll change.
@@ -99,25 +105,46 @@ function BrandMergeModal({ onClose }: { onClose: () => void }) {
     if (!sourceBrand || !targetBrand) return;
     setError(null);
     setResult(null);
+    const submittedSource = sourceBrand;
+    const submittedTarget = targetBrand;
     startTransition(async () => {
       try {
         const r = await fetch("/api/admin/merge-brand", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ sourceBrand, targetBrand }),
+          body: JSON.stringify({ sourceBrand: submittedSource, targetBrand: submittedTarget }),
         });
         const j = await r.json();
         if (!r.ok) throw new Error(j.error || "merge failed");
-        setResult(
-          `Rebranded ${j.writtenCount} of ${j.affectedCount} entities from "${sourceBrand}" → "${targetBrand}".${
-            (j.failed?.length ?? 0) > 0 ? ` ${j.failed.length} failed.` : ""
-          }`,
-        );
+        const summary = `Rebranded ${j.writtenCount} of ${j.affectedCount} entities from "${submittedSource}" → "${submittedTarget}".${
+          (j.failed?.length ?? 0) > 0 ? ` ${j.failed.length} failed.` : ""
+        }`;
+        setResult(summary);
+        setHistory((h) => [summary, ...h].slice(0, 8));
+        // Reset the form so the next merge starts clean — leave the result
+        // banner above for confirmation. New keypress in either picker will
+        // clear `result` (see BrandPicker onPick).
+        setSourceBrand(null);
+        setTargetBrand(null);
+        setPreviewCount(null);
+        setPreviewSample([]);
+        setResetKey((k) => k + 1);
         router.refresh();
       } catch (e) {
         setError(e instanceof Error ? e.message : "merge failed");
       }
     });
+  }
+
+  // Called by either BrandPicker when the user picks or types. Clears the
+  // success banner so it doesn't linger across distinct merges.
+  function onPickSource(b: string | null) {
+    setSourceBrand(b);
+    if (result) setResult(null);
+  }
+  function onPickTarget(b: string | null) {
+    setTargetBrand(b);
+    if (result) setResult(null);
   }
 
   return (
@@ -149,8 +176,9 @@ function BrandMergeModal({ onClose }: { onClose: () => void }) {
               Source brand
             </div>
             <BrandPicker
+              key={`source-${resetKey}`}
               placeholder="e.g. Celebrations"
-              onPick={setSourceBrand}
+              onPick={onPickSource}
               excludeRetracted
               minEntities={1}
             />
@@ -165,8 +193,9 @@ function BrandMergeModal({ onClose }: { onClose: () => void }) {
               Target brand
             </div>
             <BrandPicker
+              key={`target-${resetKey}`}
               placeholder="e.g. Mars"
-              onPick={setTargetBrand}
+              onPick={onPickTarget}
               allowFreeType
             />
             {targetBrand && (
@@ -212,6 +241,21 @@ function BrandMergeModal({ onClose }: { onClose: () => void }) {
           </div>
         )}
 
+        {/* History of this session's merges — keeps the user oriented when
+            they're chewing through Tier 1/Tier 2 in a single sitting. */}
+        {history.length > 1 && (
+          <details className="text-xs text-[var(--text-tertiary)]">
+            <summary className="cursor-pointer font-mono uppercase tracking-wide">
+              This session: {history.length} merges
+            </summary>
+            <ul className="mt-1 space-y-0.5 font-mono pl-4">
+              {history.map((line, i) => (
+                <li key={i} className="truncate">{line}</li>
+              ))}
+            </ul>
+          </details>
+        )}
+
         <div className="flex justify-end gap-2 pt-2">
           <button
             type="button"
@@ -219,26 +263,24 @@ function BrandMergeModal({ onClose }: { onClose: () => void }) {
             disabled={isPending}
             className="px-3 py-1.5 text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
           >
-            {result ? "Close" : "Cancel"}
+            Close
           </button>
-          {!result && (
-            <button
-              type="button"
-              onClick={commit}
-              disabled={
-                isPending ||
-                !sourceBrand ||
-                !targetBrand ||
-                sourceBrand === targetBrand ||
-                (previewCount ?? 0) === 0
-              }
-              className="px-4 py-1.5 text-sm rounded border border-[var(--amber-base)] bg-[var(--amber-bg)] text-[var(--amber-base)] hover:brightness-125 disabled:opacity-40"
-            >
-              {isPending
-                ? "rebranding…"
-                : `Rebrand ${previewCount ?? 0} entit${previewCount === 1 ? "y" : "ies"} →`}
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={commit}
+            disabled={
+              isPending ||
+              !sourceBrand ||
+              !targetBrand ||
+              sourceBrand === targetBrand ||
+              (previewCount ?? 0) === 0
+            }
+            className="px-4 py-1.5 text-sm rounded border border-[var(--amber-base)] bg-[var(--amber-bg)] text-[var(--amber-base)] hover:brightness-125 disabled:opacity-40"
+          >
+            {isPending
+              ? "rebranding…"
+              : `Rebrand ${previewCount ?? 0} entit${previewCount === 1 ? "y" : "ies"} →`}
+          </button>
         </div>
       </div>
     </div>
