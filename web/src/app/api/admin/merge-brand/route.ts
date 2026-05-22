@@ -85,6 +85,7 @@ export async function POST(request: NextRequest) {
   // safely — we explicitly trade write-amplification for reversibility.
   let written = 0;
   const failed: Array<{ id: string; error: string }> = [];
+  const writtenIds: string[] = [];
   for (const row of affected) {
     const { error: rpcErr } = await sb.rpc("set_entity_field", {
       p_entity_id: row.id,
@@ -97,6 +98,26 @@ export async function POST(request: NextRequest) {
       continue;
     }
     written++;
+    writtenIds.push(row.id);
+  }
+
+  // Cascade the brand change to published_changes.brand for every event
+  // attached to these entities. The denormalized brand column is the
+  // join key /brands/[name] uses, so without this sync the rebranded
+  // entities would disappear from the target brand page (and stay on
+  // the source brand page) until a manual fix. Migration 071 added the
+  // same sync to the merge_entities and reassign_events_by_size RPCs.
+  if (writtenIds.length > 0) {
+    const { error: syncErr } = await sb
+      .from("published_changes")
+      .update({ brand: targetBrand })
+      .in("entity_id", writtenIds);
+    if (syncErr) {
+      // Non-fatal: the entity rebrand succeeded; the cascade is recoverable
+      // via the migration 071 backfill statement. Surface it in `failed`
+      // so the modal can show the warning.
+      failed.push({ id: "published_changes_cascade", error: syncErr.message });
+    }
   }
 
   if (written > 0) revalidatePublicSurfaces();
