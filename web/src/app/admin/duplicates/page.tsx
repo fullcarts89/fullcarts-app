@@ -123,18 +123,29 @@ export default async function DuplicatesPage() {
 
       <section>
         <div className={fuzzyStyles.fuzzy_section_header}>
-          <h2 className={fuzzyStyles.fuzzy_title}>Fuzzy Duplicates</h2>
+          <h2 className={fuzzyStyles.fuzzy_title}>Size-Signature Duplicates</h2>
           <p className={fuzzyStyles.fuzzy_subtitle}>
-            Groups of entities that share the same brand AND a token-sorted, size-stripped
-            canonical_name AND at least one published_changes event at the same (size_before,
-            size_after, size_unit). Catches drift like &ldquo;Glacier Freeze&rdquo; vs &ldquo;Frost
-            Glacier Freeze&rdquo; that exact-match misses. Default target = highest event_count;
-            you can pick a different target per group.
+            Groups of entities that share the same brand AND identical published_changes size
+            change (size_before, size_after, size_unit). Catches Gatorade-class drift where AI
+            extraction produced wildly different canonical names (&ldquo;Bottle&rdquo;,
+            &ldquo;Gatorade Bottle&rdquo;, &ldquo;Sports Drink&rdquo;) for the same real product.
+            <strong> ✓ name match</strong> = members also share a fuzzy name key (high-confidence
+            merge). <strong>⚠ names diverge</strong> = could still be the same product OR a real
+            product line (e.g. five Herbal Essences scents shrinking uniformly) — verify member
+            names before merging. Default target = highest event_count; pick per group via radio.
           </p>
           <div className={fuzzyStyles.fuzzy_stats}>
             <span className={styles.stat}>
               <span className={styles.stat_value}>{fuzzyGroups.length.toLocaleString()}</span>
-              <span className={styles.stat_label}>fuzzy groups</span>
+              <span className={styles.stat_label}>candidate groups</span>
+            </span>
+            <span className={styles.stat}>
+              <span className={styles.stat_value}>
+                {fuzzyGroups
+                  .filter((g) => g.has_fuzzy_name_match)
+                  .length.toLocaleString()}
+              </span>
+              <span className={styles.stat_label}>✓ name match</span>
             </span>
             <span className={styles.stat}>
               <span className={styles.stat_value}>

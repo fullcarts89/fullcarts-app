@@ -12,10 +12,12 @@ interface Props {
 }
 
 /**
- * Fuzzy-duplicate review surface — sits below the exact-match section.
- * Each group lists 2+ entities that share (brand, fuzzyNameKey, ≥1 size).
- * Default merge target is members[0] (highest event_count); admin can
- * pick a different target via the radio per group.
+ * Aggressive-tier review surface — sits below the exact-match section.
+ * Each group lists 2+ entities sharing the SAME brand + SAME exact
+ * (size_before, size_after, size_unit). Fuzzy name match is a hint:
+ * ✓ name match = high-confidence merge candidate, ⚠ names diverge =
+ * could be a real product line, verify before merging.
+ * Default target = members[0] (highest event_count); admin picks via radio.
  */
 export default function FuzzyDuplicatesClient({ groups }: Props) {
   const [limit, setLimit] = useState<number>(Math.min(50, groups.length));
@@ -83,48 +85,35 @@ function FuzzyGroupRow({ group }: { group: FuzzyDuplicateGroup }) {
   const [mergedSources, setMergedSources] = useState<Set<string>>(new Set());
 
   const target = group.members.find((m) => m.id === targetId) ?? group.members[0];
-  const allMatched = new Set<string>();
-  for (const m of group.members) for (const s of m.matched_sizes) allMatched.add(s);
-  const matchedList = [...allMatched].sort();
 
   return (
     <div className={fuzzyStyles.group}>
       <div className={fuzzyStyles.group_header}>
         <div className={fuzzyStyles.group_brand}>{group.brand}</div>
         <div className={fuzzyStyles.group_sep}>·</div>
-        <div className={fuzzyStyles.group_namekey}>
-          &ldquo;{group.shared_name_key}&rdquo;
+        <div className={fuzzyStyles.group_matched_chips}>
+          <span className={fuzzyStyles.chip_matched}>{group.size_signature}</span>
         </div>
         <div className={fuzzyStyles.group_sep}>·</div>
         <div className={fuzzyStyles.group_count}>
           {group.members.length} entities
         </div>
         <div className={fuzzyStyles.group_sep}>·</div>
-        {group.has_size_overlap ? (
-          <>
-            <div className={fuzzyStyles.group_matched_label}>
-              <span
-                title="At least one event-size signature is shared by ≥2 members — strong same-product signal"
-                style={{ color: "var(--green-base)" }}
-              >
-                ✓ size match
-              </span>
-            </div>
-            <div className={fuzzyStyles.group_matched_chips}>
-              {matchedList.map((s) => (
-                <span key={s} className={fuzzyStyles.chip_matched}>
-                  {s}
-                </span>
-              ))}
-            </div>
-          </>
+        {group.has_fuzzy_name_match ? (
+          <div
+            className={fuzzyStyles.group_matched_label}
+            title="≥2 members reduce to the same fuzzy name key — high-confidence same-product candidate."
+            style={{ color: "var(--green-base)" }}
+          >
+            ✓ name match
+          </div>
         ) : (
           <div
             className={fuzzyStyles.group_matched_label}
-            title="No shared event-size signature — these may be different size variants of the same product line. Check member sizes below before merging."
+            title="Names diverge — could still be the same product (AI extraction noise) OR a product line announcing a uniform shrink. Check member names below before merging."
             style={{ color: "var(--amber-base)" }}
           >
-            ⚠ no size overlap — check sizes before merging
+            ⚠ names diverge — verify before merging
           </div>
         )}
       </div>
