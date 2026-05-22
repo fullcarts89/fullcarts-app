@@ -736,11 +736,11 @@ function SourceLinkRow({
           className={fuzzyStyles.source_send_back}
           title={
             siblingsForEvent > 1
-              ? `Retract the event (${siblingsForEvent} sources) and send the claims back to /admin/claims`
-              : `Retract the event and send the claim back to /admin/claims`
+              ? `Retract the event (${siblingsForEvent} sources) and send the claims back to /admin/claims for re-review`
+              : `Retract the event and send the claim back to /admin/claims for re-review`
           }
         >
-          {busy ? "…" : "↩ wrong"}
+          {busy ? "…" : "↩ send to pending"}
         </button>
       )}
       {err && <span className={fuzzyStyles.source_send_err}>{err}</span>}
