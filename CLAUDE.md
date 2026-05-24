@@ -16,6 +16,14 @@ Always grep the entire project for these patterns before committing.
 - Site: https://fullcarts.org
 - Admin login: long-press header logo -> password prompt (hash in app_settings table)
 
+## Social content voice (DCC-inspired)
+
+All social/marketing copy (TikTok, Reels, Instagram, X, newsletter) uses a voice **inspired by the Dungeon Crawler Carl series by Matt Dinniman** — bureaucratic-cheerful corporate-doublespeak parody (shrinkflation described as a customer service announcement: "successfully reformulated," "your fourth automatic enrollment in our weight reduction program") paired with working-class incredulity. When the user references "DCC" or "Dungeon Crawler Carl," this is what they mean.
+
+Non-negotiables: no profanity in captions; inspired-by not derivative-of (never name DCC characters or quote the books); no editorial accusations beyond what the data supports; every piece ends with a source count + at least one named outlet; no emojis in captions.
+
+**Full rules, hook bank, and the canonical reference script (Cadbury Mini Eggs 80g → 72g) live in `docs/plans/2026-05-13-social-content-engine.md` → "Voice & tone".** Read that section before generating any social content. When the `fullcarts-voice` skill is built, it becomes the runtime home for these rules; until then the plan doc is the source of truth.
+
 ## Commands
 
 ### Pipeline (data ingestion)
