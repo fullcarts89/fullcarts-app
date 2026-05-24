@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { updateClaimStatus } from "@/app/admin/claims/actions";
+import { approveClaim, updateClaimStatus } from "@/app/admin/claims/actions";
 
 const EVIDENCE_TAGS = [
   "Skimpflation",
@@ -30,8 +30,23 @@ export function ClaimActions({
 
   function handleAction(newStatus: string, tags?: string[]) {
     startTransition(async () => {
-      await updateClaimStatus(claimId, newStatus, tags);
-      router.refresh();
+      try {
+        await updateClaimStatus(claimId, newStatus, tags);
+        router.refresh();
+      } catch (e) {
+        alert(e instanceof Error ? e.message : "Action failed");
+      }
+    });
+  }
+
+  function handleApprove() {
+    startTransition(async () => {
+      try {
+        await approveClaim(claimId);
+        router.refresh();
+      } catch (e) {
+        alert(e instanceof Error ? e.message : "Approve failed");
+      }
     });
   }
 
@@ -91,7 +106,7 @@ export function ClaimActions({
       {currentStatus === "pending" && (
         <>
           <button
-            onClick={() => handleAction("matched")}
+            onClick={handleApprove}
             disabled={isPending}
             className="px-3 py-1 text-xs font-medium rounded border border-[var(--green-border)] bg-[var(--green-bg)] text-[var(--green-base)] hover:brightness-125 transition-all disabled:opacity-50"
             title="Mark this claim as a real shrinkflation event. The next daily promote run will create or fold it into a published_change."
