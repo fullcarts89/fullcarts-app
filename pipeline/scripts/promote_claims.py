@@ -28,6 +28,11 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from supabase import create_client
 
+# Add project root to path so `pipeline.*` resolves when this script is run
+# directly (python3 pipeline/scripts/promote_claims.py) and not only as a
+# module (python3 -m pipeline.scripts.promote_claims).
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+
 from pipeline.lib.data_quality_flags import raise_flag
 
 SUPABASE_URL = os.getenv("SUPABASE_URL", "https://ntyhbapphnzlariakgrw.supabase.co")
