@@ -276,6 +276,53 @@ TikTok script (hook in first 5 words, 30 seconds total): [script with voiceover 
 
 ---
 
+## Format Library — Segment Types Beyond the Event List
+
+The overplayed shrinkflation format is anecdotal and accusatory ("look how small, they're robbing us"). FullCarts' differentiator is a sourced, quantified, time-series database with economic and corporate-ownership context — so the formats that win are the ones a creator with a phone and a hunch literally **cannot make**. Every segment below converts a database record into one of three jobs: **hit the wallet** (turn a size delta into a number that stings), **give an action** (tell the viewer what to buy instead), or **reveal something invisible** (surface structure only the database knows). All obey the Voice & tone hard rules — named outlet + source count in the close, no emojis in captions, inspired-by not derivative, no accusation beyond the data.
+
+### A. Hit the wallet (quantify)
+
+| Segment | Job it does | Data source | Example hook (voice-compliant) | Pillar |
+|---|---|---|---|---|
+| **The Effective Price Hike** | Reframe the shrink as the stealth *price increase* it actually is (price held, size dropped → hidden +% per unit). The truest, most repeatable reframe. | `published_changes` size delta + price from Kroger / Walmart / Open Prices observations | "Attention valued consumer: [Brand] did not raise the price of your [product]. They raised the price of your [product]." | By the Numbers |
+| **The Annual Receipt** | Per-year wallet cost at a stated consumption rate (your example). | size delta + price/unit × on-screen consumption assumption | "Your involuntary annual contribution to [Brand], assuming one bag a week: $X. No receipt was issued." *(on-screen: "assumes 1/week")* | By the Numbers |
+| **What Your Money Used to Buy** | Purchasing-power erosion over time. | `variant_observations` time series + price | "In 2019, five dollars bought you 200 grams. Management has since revised your allocation downward." | By the Numbers |
+
+### B. Give an action (alternatives — rare in this niche, so own it)
+
+| Segment | Job it does | Data source | Example hook (voice-compliant) | Pillar |
+|---|---|---|---|---|
+| **Who Didn't Shrink** | Name the category holdout that held its size. Positive, shareable, and structurally uncopyable — needs the whole category in one database. | `product_index` / `brand_index` filtered by category, delta ≈ 0 | "In a category where everyone enrolled in the weight reduction program, one brand declined to participate. We checked twice." | NEW — "The Holdout" |
+| **Unit-Price Winner** | Best price-per-unit in a category right now. | latest `variant_observations` price + size by category | "Per gram, here is who is currently robbing you the least. Faint praise, fully sourced." | NEW — "The Holdout" |
+
+### C. Reveal what they can't see (your unique data = the moat)
+
+| Segment | Job it does | Data source | Example hook (voice-compliant) | Pillar |
+|---|---|---|---|---|
+| **The Illusion of Choice** | Reveal that "rival" brands that all shrank share one parent. Highest "wait, *what?*" payload; pure database flex. | `corporate_tree` (Wikidata manufacturer backfill) | "Six brands. Six separate shrink announcements. One corporate return address." | NEW — "Same Parent" |
+| **They Swapped the Recipe** | It didn't just shrink — cheaper ingredients went in (less cocoa, palm oil, real fruit out). The second, under-covered story. | `skimpflation_events` + `nutrient_deltas` + `consumer_reports_findings` | "[Brand] is pleased to announce your [product] now contains meaningfully less of the expensive part." | Skimpflation |
+| **Death by a Thousand Cuts** | Animate one product's multi-step shrink trajectory across years. The drip is more damning than any single event. | `variant_observations` / per-entity `published_changes` history (the trajectory step-chart) | "This is your fourth automatic enrollment since 2011. Each time, slightly less. Each time, you bought the bag." | Gotcha Reveal |
+| **Restoration Corner** | Brands that shrank then *restored* size — rare, positive, proves accountability works. | `restorations` view | "In a stunning reversal, [Brand] has returned the [N] grams it previously borrowed. We are as surprised as you are." | Restoration of the Month |
+| **Your Cart vs. the Official Number** | Contrast measured shrink with CPI; note the government's own downsizing log. Positions FullCarts as the source that counts what CPI doesn't. | `fred_cpi_data` + `bls_shrinkflation` | "Official inflation this year: three percent. The government's own downsizing log: see attached. Your cart has notes." | Monthly Shrinkflation Report |
+
+### D. Format & engagement mechanics (structure, not topic)
+
+| Mechanic | What it adds | Data / source hook |
+|---|---|---|
+| **The Corporate Announcement** | Make the DCC voice *structural*: every video framed as a chipper system-notification "customer service announcement," undercut by the data. The brand's signature beat, not just tone. | the system-popup cold open already in the Cadbury exemplar |
+| **Show the Receipts** | Put the evidence locker on screen — Wayback snapshots, source count, named outlet. Turns the mandatory source outro into a credibility flex. | `event_evidence_summary`, Wayback rows, source logos |
+| **Verified Viewer Tip** | Route the `/tips` intake into content: community + free pipeline + credibility. | `tips` table → matched to a verified `published_changes` row |
+| **Guess the Shrink** | Interactive: show the before, freeze, audience guesses the after, reveal. Comment-bait, cheap, repeatable. | any high-magnitude `content_candidates` record |
+
+### How this plugs into the engine
+
+- **Top 3 to build first:** Effective Price Hike (truest reframe), Who Didn't Shrink (the action competitors can't copy), Illusion of Choice (highest surprise payload).
+- **Two new pillar candidates** — *The Holdout* (Who Didn't Shrink / Unit-Price Winner) and *Same Parent* (Illusion of Choice) — are strong enough to earn a weekly rotation slot alongside Gotcha Reveal / By the Numbers.
+- **`content_candidates` scoring should gain segment-eligibility flags** so the generator can pick the right format per record: has category siblings → Holdout-eligible; has a `corporate_tree` parent with ≥2 shrunk children → Illusion-eligible; has non-empty `nutrient_deltas` → Skimpflation-eligible; appears in `restorations` → Restoration-eligible.
+- Each segment becomes a labelled example in `.claude/skills/fullcarts-voice/examples/` so Haiku generates against a concrete template per format, not abstract rules.
+
+---
+
 ## Implementation Plan
 
 ### Week 1: Set up the image pipeline
