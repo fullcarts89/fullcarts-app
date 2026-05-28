@@ -1,5 +1,5 @@
 import React from "react";
-import { AbsoluteFill, Sequence } from "remotion";
+import { AbsoluteFill, Audio, Sequence, staticFile } from "remotion";
 import { colors } from "../../theme";
 import { Watermark } from "../../components/Watermark";
 import { Hook } from "./Hook";
@@ -43,6 +43,10 @@ export const GotchaReveal: React.FC<{ event: ShrinkEvent }> = ({ event }) => {
       </Sequence>
 
       <Watermark />
+
+      {event.narrationAudio ? (
+        <Audio src={staticFile(event.narrationAudio)} volume={1} />
+      ) : null}
     </AbsoluteFill>
   );
 };

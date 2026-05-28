@@ -30,6 +30,12 @@ export const shrinkEventSchema = z.object({
 
   evidenceCount: z.number().int(),
   productSlug: z.string(),
+
+  // Narration text + the relative path (under video/public/) of the
+  // pre-generated mp3. Path is relative so Remotion's staticFile()
+  // can resolve it consistently across dev and render.
+  narration: z.string().optional(),
+  narrationAudio: z.string().optional(),
 });
 
 export type ShrinkEvent = z.infer<typeof shrinkEventSchema>;

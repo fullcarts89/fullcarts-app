@@ -3,3 +3,8 @@ out/
 .cache/
 *.log
 .DS_Store
+
+# Never commit credentials — see README "Voiceover setup".
+.env
+.env.local
+.env.*.local

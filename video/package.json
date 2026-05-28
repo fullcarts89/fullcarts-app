@@ -7,6 +7,7 @@
     "dev": "remotion studio",
     "build": "remotion render GotchaReveal out/gotcha-reveal.mp4",
     "build:still": "remotion still GotchaReveal out/gotcha-reveal-poster.png --frame=180",
+    "voice": "node scripts/generate-voice.mjs",
     "upgrade": "remotion upgrade"
   },
   "dependencies": {

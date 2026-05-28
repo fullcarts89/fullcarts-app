@@ -32,4 +32,16 @@ export const cadburyMiniEggs: ShrinkEvent = {
 
   evidenceCount: 9,
   productSlug: "cadbury-dairy-milk-mini-eggs",
+
+  // Narration paced to the 5-scene timing (30s total).
+  // Drafted in the "calm forensic watchdog, populist outrage licensed
+  // by data" register: every claim is provable from the on-screen data.
+  narration: [
+    "Cadbury just got caught shrinking Dairy Milk Mini Eggs.",
+    "Same colorful box on the shelf. Same four dollar price. But less inside.",
+    "Three years ago: eighty grams. Today: seventy-two. They quietly took ten percent out.",
+    "Which means you now pay more than ten percent more, per gram, without ever seeing a price tag change. Brand owner: Mondelez International.",
+    "Every shrink, with receipts, at full carts dot org.",
+  ].join(" "),
+  narrationAudio: "voice/cadbury-dairy-milk-mini-eggs.mp3",
 };
