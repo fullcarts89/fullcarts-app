@@ -1,0 +1,25 @@
+{
+  "name": "fullcarts-video",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Remotion video factory for FullCarts shrinkflation short-form content.",
+  "scripts": {
+    "dev": "remotion studio",
+    "build": "remotion render GotchaReveal out/gotcha-reveal.mp4",
+    "build:still": "remotion still GotchaReveal out/gotcha-reveal-poster.png --frame=180",
+    "upgrade": "remotion upgrade"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.290",
+    "@remotion/google-fonts": "^4.0.290",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remotion": "^4.0.290",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/react": "^19.0.0",
+    "typescript": "^5.4.0"
+  }
+}
