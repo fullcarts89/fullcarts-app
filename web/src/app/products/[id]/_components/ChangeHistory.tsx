@@ -160,8 +160,9 @@ export default function ChangeHistory({ events }: Props) {
             <div id={`history-detail-${e.event_id}`} className={styles["history-expanded"]} role="region">
               <div className={styles["src-list"]}>
                 {sourcesShown.map((s, i) => {
-                  const thumb =
-                    claimImageUrl(s.claim_image_path) || s.image || null;
+                  // Archived images only — external hero URLs rot into
+                  // "Media Removed" tombstones (see leadImageFromSources).
+                  const thumb = claimImageUrl(s.claim_image_path) || null;
                   const author = cleanField(s.author);
                   const excerpt = cleanField(s.body_excerpt);
                   const hasUrl = !!s.url;

@@ -19,19 +19,19 @@ interface Props {
 const TOP_N = 8;
 const POOL_N = 30;
 
-/** 0 = best (Reddit-archived photo). 1 = article hero. 2 = no image.
- *  Used to rank the showcase pool toward events with visible evidence. */
+/** 0 = has an archived photo we can show. 1 = no showable image.
+ *  Used to rank the showcase pool toward events with visible evidence.
+ *  Only archived images count — live external heros are excluded because
+ *  they rot (see leadImageFromSources). */
 function evidenceScore(e: EventRow): number {
   for (const s of e.sources) if (s.claim_image_path) return 0;
-  for (const s of e.sources) if (s.image) return 1;
-  return 2;
+  return 1;
 }
 
-/** Pick the first source whose image we end up showing, so the caption
- *  matches the photo. Mirrors leadImageFromSources priority order. */
+/** Pick the source whose image we end up showing, so the caption matches
+ *  the photo. Mirrors leadImageFromSources: archived images only. */
 function leadSource(sources: EventSource[]): EventSource | null {
   for (const s of sources) if (s.claim_image_path) return s;
-  for (const s of sources) if (s.image) return s;
   return sources[0] || null;
 }
 

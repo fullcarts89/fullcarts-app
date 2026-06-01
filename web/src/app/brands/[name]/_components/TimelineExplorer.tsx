@@ -290,8 +290,9 @@ export default function TimelineExplorer({ ranking, events }: Props) {
                     <div className={styles["src-list"]}>
                       {shownSources.map((s, idx) => {
                         const key = `${s.claim_id}-${idx}`;
-                        const thumb =
-                          claimImageUrl(s.claim_image_path) || s.image || null;
+                        // Archived images only — external hero URLs rot into
+                        // "Media Removed" tombstones (see leadImageFromSources).
+                        const thumb = claimImageUrl(s.claim_image_path) || null;
                         const author = cleanField(s.author);
                         const excerpt = cleanField(s.body_excerpt);
                         const hasUrl = !!s.url;
