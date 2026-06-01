@@ -10,6 +10,15 @@ import type { NextConfig } from "next";
 // model of next/image.
 const nextConfig: NextConfig = {
   images: {
+    // Vercel's image optimizer (`/_next/image`) returns HTTP 402
+    // OPTIMIZED_IMAGE_REQUEST_PAYMENT_REQUIRED once the plan's
+    // optimization quota is exhausted, which blanks every on-site image.
+    // Our product/claim photos are already archived as <=1200px WebP, so
+    // the optimizer buys almost nothing — serve sources as-is and skip it.
+    // This also lifts the remotePatterns host restriction (the long-tail
+    // news socialimages now load through next/image too), so SafeImage's
+    // allowlist branch is effectively a no-op.
+    unoptimized: true,
     remotePatterns: [
       // Reddit (claim photos, gallery images, previews)
       { hostname: "i.redd.it" },
