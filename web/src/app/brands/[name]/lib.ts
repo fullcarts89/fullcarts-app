@@ -30,10 +30,14 @@ export function claimImageUrl(storagePath: string | null | undefined): string | 
   return STORAGE_BUCKET_URL + storagePath;
 }
 
-/** Pick the first usable image for an event, in priority order:
- *  1. Any source's archived Reddit image (highest curation quality)
- *  2. Any source's article hero image (GDELT socialimage)
- *  3. null — caller can fall back to entity.image_url */
+/** Pick the lead image for an event. Only images we archived into our own
+ *  storage (claim_image_path) qualify. We deliberately do NOT fall back to a
+ *  source's live article hero (GDELT socialimage): those external URLs rot —
+ *  publishers delete or swap them for "Media Removed" tombstones — and we'd
+ *  render whatever they now serve. Still-good external heroes are copied into
+ *  our bucket by backfill_external_images.py, at which point they surface here
+ *  via claim_image_path. Anything not archived returns null so the caller can
+ *  fall back to entity.image_url (OFF / our storage) or the typographic stub. */
 export function leadImageFromSources(sources: EventSource[]): {
   url: string | null;
   source_type: string | null;
@@ -41,9 +45,6 @@ export function leadImageFromSources(sources: EventSource[]): {
   for (const s of sources) {
     const claimUrl = claimImageUrl(s.claim_image_path);
     if (claimUrl) return { url: claimUrl, source_type: s.source_type };
-  }
-  for (const s of sources) {
-    if (s.image) return { url: s.image, source_type: s.source_type };
   }
   return { url: null, source_type: null };
 }
