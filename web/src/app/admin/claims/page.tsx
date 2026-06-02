@@ -170,7 +170,7 @@ async function loadCategories(): Promise<string[]> {
 export default async function ClaimsReviewPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; status?: string; conf?: string; category?: string; source?: string }>;
+  searchParams: Promise<{ page?: string; status?: string; conf?: string; category?: string; source?: string; sort?: string }>;
 }) {
   const params = await searchParams;
   const page = parseInt(params.page || "1", 10);
@@ -178,6 +178,12 @@ export default async function ClaimsReviewPage({
   const confFilter = params.conf || "all";
   const categoryFilter = params.category || "";
   const sourceFilter = params.source || "";
+  // Sort order for the claim list. "confidence" (default) keeps the legacy
+  // highest-confidence-first behavior; "newest"/"oldest" sort by extracted_at
+  // (always populated + indexed, unlike the nullable observed_date).
+  const sortFilter = ["confidence", "newest", "oldest"].includes(params.sort || "")
+    ? (params.sort as string)
+    : "confidence";
   const perPage = 20;
   const offset = (page - 1) * perPage;
 
@@ -269,9 +275,17 @@ export default async function ClaimsReviewPage({
   // a separate status value in the claims_status_check constraint.
   let query = supabase
     .from("claims")
-    .select(selectExpr, { count: "exact" })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- supabase-js doesn't type JSONB ->path columns
-    .order("confidence->overall" as any, { ascending: false });
+    .select(selectExpr, { count: "exact" });
+
+  if (sortFilter === "newest") {
+    query = query.order("extracted_at", { ascending: false });
+  } else if (sortFilter === "oldest") {
+    query = query.order("extracted_at", { ascending: true });
+  } else {
+    query = query
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- supabase-js doesn't type JSONB ->path columns
+      .order("confidence->overall" as any, { ascending: false });
+  }
 
   if (statusFilter === "evidence") {
     query = query.not("evidence_tags", "is", null).not("evidence_tags", "eq", "{}");
@@ -351,7 +365,7 @@ export default async function ClaimsReviewPage({
           {["pending", "matched", "evidence", "discarded"].map((s) => (
             <a
               key={s}
-              href={`/admin/claims?status=${s}&page=1${confFilter !== "all" ? `&conf=${confFilter}` : ""}${categoryFilter ? `&category=${categoryFilter}` : ""}${sourceFilter ? `&source=${encodeURIComponent(sourceFilter)}` : ""}`}
+              href={`/admin/claims?status=${s}&page=1${confFilter !== "all" ? `&conf=${confFilter}` : ""}${categoryFilter ? `&category=${categoryFilter}` : ""}${sourceFilter ? `&source=${encodeURIComponent(sourceFilter)}` : ""}${sortFilter !== "confidence" ? `&sort=${sortFilter}` : ""}`}
               className={`px-3 py-1.5 text-sm rounded-md border transition-colors ${
                 statusFilter === s
                   ? "bg-[var(--bg-tertiary)] border-[var(--text-tertiary)] text-[var(--text-primary)]"
@@ -366,7 +380,7 @@ export default async function ClaimsReviewPage({
           </span>
         </div>
         {/* Confidence + Category filters */}
-        <ClaimFilters status={statusFilter} conf={confFilter} category={categoryFilter} source={sourceFilter} />
+        <ClaimFilters status={statusFilter} conf={confFilter} category={categoryFilter} source={sourceFilter} sort={sortFilter} />
       </header>
 
       <PipelineStats
@@ -510,7 +524,7 @@ export default async function ClaimsReviewPage({
           <div className="flex justify-center gap-2 pt-4">
             {page > 1 && (
               <a
-                href={`/admin/claims?status=${statusFilter}&page=${page - 1}${confFilter !== "all" ? `&conf=${confFilter}` : ""}${categoryFilter ? `&category=${categoryFilter}` : ""}`}
+                href={`/admin/claims?status=${statusFilter}&page=${page - 1}${confFilter !== "all" ? `&conf=${confFilter}` : ""}${categoryFilter ? `&category=${categoryFilter}` : ""}${sourceFilter ? `&source=${encodeURIComponent(sourceFilter)}` : ""}${sortFilter !== "confidence" ? `&sort=${sortFilter}` : ""}`}
                 className="px-4 py-2 text-sm rounded border border-[var(--bg-tertiary)] hover:bg-[var(--bg-tertiary)] transition-colors"
               >
                 Previous
@@ -518,7 +532,7 @@ export default async function ClaimsReviewPage({
             )}
             {page < totalPages && (
               <a
-                href={`/admin/claims?status=${statusFilter}&page=${page + 1}${confFilter !== "all" ? `&conf=${confFilter}` : ""}${categoryFilter ? `&category=${categoryFilter}` : ""}`}
+                href={`/admin/claims?status=${statusFilter}&page=${page + 1}${confFilter !== "all" ? `&conf=${confFilter}` : ""}${categoryFilter ? `&category=${categoryFilter}` : ""}${sourceFilter ? `&source=${encodeURIComponent(sourceFilter)}` : ""}${sortFilter !== "confidence" ? `&sort=${sortFilter}` : ""}`}
                 className="px-4 py-2 text-sm rounded border border-[var(--bg-tertiary)] hover:bg-[var(--bg-tertiary)] transition-colors"
               >
                 Next
