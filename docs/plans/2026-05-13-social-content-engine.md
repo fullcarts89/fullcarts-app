@@ -1,5 +1,11 @@
 # FullCarts Social Content Engine — Faceless Strategy
 
+> **⚠️ SUPERSEDED (2026-06-08).** This fully-automated render-pipeline plan was never
+> built and has been replaced by `2026-06-08-social-content-strategy.md`, which pivots to
+> hand-made content with automation limited to a content-*brief* generator. Kept for
+> historical reference (the niche analysis, viral examples, and convergence-signal sources
+> below still inform the new plan).
+
 **Date:** May 13, 2026
 **Goal:** Turn the FullCarts database into viral social media content without showing a face, using automation to minimize manual effort.
 
