@@ -1,5 +1,6 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isAdminRequest } from "@/lib/admin-auth";
 import { extractSizeFromHtml, detectRetailer } from "@/lib/wayback-extract";
 import crypto from "crypto";
 
@@ -325,6 +326,12 @@ function sha256(input: string): string {
  * If claimOldSize is provided, score results by size proximity.
  */
 export async function POST(request: NextRequest) {
+  // This handler uses the service-role client and writes to raw_items, so it
+  // must verify the admin session itself — middleware does not gate /api/admin/*.
+  if (!(await isAdminRequest())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const body = await request.json();
   const {
     snapshots: inputSnapshots,
