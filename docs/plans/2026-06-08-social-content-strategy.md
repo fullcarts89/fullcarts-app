@@ -139,6 +139,59 @@ A human reads the ranked digest, picks ~3, and produces the posts by hand.
 
 ---
 
+## AI vs. real-evidence content policy
+
+Learned the hard way during launch: a polished coffee video built on AI-generated "data" visuals (a fake market-crash screen, an AI Brazil/Vietnam map, an exploding-percentage graphic, a futuristic dashboard) got two TikTok posts flagged for Community Guidelines violations, with appeals auto-rejected. The problem was never "too much AI" — it was **AI impersonating evidence**. That trips the synthetic-media + misinformation filters *and* quietly undermines the one thing that differentiates FullCarts from every anecdotal creator: real, sourced data.
+
+### The principle
+
+> **Real FullCarts data proves the claim. AI only decorates around it. AI may illustrate — it must never testify.**
+
+The moment a visual is tied to a specific number, product, brand, or fact, it must be a real artifact. AI is only allowed where nothing factual is on the line.
+
+### The three buckets
+
+**1. MUST be real — the proof layer** (anything carrying a claim)
+- The product on camera — packaging, label, a kitchen-scale reading
+- The actual commodity/price chart (screenshot of the real source, e.g. ICE coffee, FRED CPI)
+- FullCarts dashboard / page screenshots (event counts, brand lists, the running shrink total)
+- Real news headlines, real before/after size comparisons
+
+If it's the thing that makes a viewer believe a number, it cannot be generated. Being real *is* the product.
+
+**2. CAN be AI — the connective layer** (only if it can't be mistaken for evidence, and labeled)
+- Abstract intros/outros, transitions, mood/atmosphere shots
+- Clearly-stylized metaphor (never a fake chart, never fake packaging)
+- Background textures, kinetic typography
+- Always toggle the platform's **AI-content label** when used.
+
+**3. NEVER AI — the impersonators**
+- Recreated product packaging or logos
+- Fabricated charts, graphs, maps, or "data dashboards"
+- Anything a viewer would reasonably read as *"this is the evidence"*
+
+Bucket 3 is exactly what got the launch video flagged.
+
+### The one-question test for any clip
+
+> **"Could a viewer mistake this for evidence of a fact, product, or number?"**
+> Yes → must be real. No → AI is fine, labeled.
+
+### Staged rollout (low-trust / new accounts)
+
+While an account is new or already flagged, go **fully AI-free** — pure real footage + real screenshots — until it earns trust and history. Then reintroduce **labeled** bucket-2 decoration only. Never reintroduce bucket 3.
+
+### Make "real" the easy path — build a reusable asset kit
+
+People reach for AI because real assets feel like work. Remove that friction once:
+- **Screen-record FullCarts pages** (brand/product pages, dashboard counters) — clean captures reused across videos.
+- **Screenshot the real source charts** (ICE coffee, FRED CPI) at capture time.
+- **Shoot a small product b-roll bank** — cans/boxes, a scale, hands.
+
+With the kit on hand, the real version is faster than prompting an AI scene.
+
+---
+
 ## Gaps and risks
 
 | Risk | Mitigation |
@@ -149,6 +202,8 @@ A human reads the ranked digest, picks ~3, and produces the posts by hand.
 | Legal risk from brand tagging | Stick to factual data; every brief carries source URLs from the evidence trail |
 | New-account suspension | Manual pace self-limits to a safe ramp; lead first posts with high-search hashtags + engage existing creators' comments |
 | Filmed vs. screenshot Reveal undecided | Resolve the production fork before the first batch session; doesn't block building the brief generator |
+| AI visuals trip synthetic-media / misinformation filters | Follow the AI vs. real-evidence policy above — AI never impersonates evidence; new accounts post AI-free until trusted |
+| Brand-callout content read as harassment / commercial review | Neutral documentary framing; on-screen source citations; de-emphasize logos; no link CTA on new accounts |
 
 ---
 
