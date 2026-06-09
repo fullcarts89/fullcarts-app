@@ -264,7 +264,8 @@ def _load_variant_metadata(client, variant_ids):
             client.table("pack_variants")
             .select(
                 "id,upc,variant_name,entity_id,"
-                "product_entities(id,canonical_name,brand,category)"
+                "product_entities!pack_variants_entity_id_fkey"
+                "(id,canonical_name,brand,category)"
             )
             .in_("id", batch)
             .execute()
