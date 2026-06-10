@@ -16,7 +16,8 @@ BUCKET:       Educational / Newsjack / Personal / Entertainment / Promo
 DATA SOURCE:  [FullCarts entry or macro event — the real artifact on screen]
 LENGTH:       30–60s · 9:16
 
-HOOK (0–3s)      FACE to camera + bold text overlay (must contain the number)
+HOOK (0–3s)      FACE + bold text overlay. Clarity first, then CONTRAST (same price / less),
+                 written to "you". Never a vague "guess how much" open loop. → see hooks.md
 PROOF (3–15s)    hands on real product + FullCarts entry / source chart screenshot
 CONTEXT (15–40s) you explaining the "trick" + Remotion data-viz overlay [credibility signature if 1-in-5 slot]
 PAYOFF (40–55s)  the kicker — restate the most outrageous comparison
@@ -34,7 +35,7 @@ PRODUCTION:      Remotion overlay needed · b-roll · trending sound vs original
 
 | Beat | Script |
 |---|---|
-| **HOOK (0–3s)** | *(face, holding the can)* "This Folgers can looks exactly like it did five years ago. It is **not** the same can." **Text overlay:** `51 oz → 43.5 oz` |
+| **HOOK (0–3s)** | *(face, holding the can)* "Your Folgers can looks exactly like it did five years ago — it's holding 14.7% less coffee for the same price." **Text overlay:** `51 oz → 43.5 oz` |
 | **PROOF (3–15s)** | *(hands turn can to the net-weight line; cut to FullCarts entry screen-record)* "Same canister, same shelf, same-ish price — but it quietly dropped from 51 ounces to 43.5. That's **14.7% of your coffee, gone.**" |
 | **CONTEXT (15–40s)** | *(to camera + Remotion bar overlay 51→43.5)* "Here's the trick: keep the package identical so your eye says 'same thing,' shrink what's inside. I do data for a company billions of people have used — reading numbers is my job — and this is textbook. Coffee beans *did* spike those years, so the cost was real. The sneaky part is hiding the size cut instead of just showing a higher price." |
 | **PAYOFF (40–55s)** | "You're brewing ~10 fewer pots per can and paying the same. That's not inflation you can see — it's the kind they hope you won't." |
@@ -51,13 +52,13 @@ PRODUCTION:      Remotion overlay needed · b-roll · trending sound vs original
 
 | Beat | Script |
 |---|---|
-| **HOOK (0–3s)** | *(face, a Gatorade bottle in hand)* "Don't scroll — **guess** how much smaller this bottle got. I'll wait." **Text overlay:** `32 oz → ?` |
+| **HOOK (0–3s)** | *(face, a Gatorade bottle in hand)* "Your Gatorade is 12.5% smaller than it was — same bottle shape, same price, less drink." **Text overlay:** `32oz → 28oz · same price` |
 | **PROOF (3–15s)** | *(hands present bottle; cut to FullCarts entry)* "If you said 'a sip,' you're being generous. It went 32 ounces to 28. **That's 12.5% — a full glass of Gatorade — same price.**" |
 | **CONTEXT (15–40s)** | *(to camera + Remotion 32→28 overlay)* "It's in my database backed by government data, so this isn't a vibe — it's documented. And the small bottles got hit *harder*: the 20-ouncer dropped to 16.9. The smaller the bottle, the bigger the cut, and the more often you buy it." |
 | **PAYOFF (40–55s)** | "So the bottle you grab after every workout? You're paying the old price for less, every single time." |
 | **CTA (3–5s)** | "Would you still buy it at the new size? 🛒 yes / 💀 no in the comments. Follow for more receipts." |
 
-**Non-negotiables:** ① 32→28oz/−12.5% ✓ ② "guess" interactive loop ✓ ③ "my database, government-backed" ✓ ④ "the bottle you grab after every workout" ✓ ⑤ explicit 🛒/💀 vote ✓
+**Non-negotiables:** ① 32→28oz/−12.5% ✓ ② stated-contrast hook (same price / less drink), "you" ✓ ③ "my database, government-backed" ✓ ④ "the bottle you grab after every workout" ✓ ⑤ explicit 🛒/💀 vote ✓
 **Production:** Remotion 32→28 + a second 20→16.9 chip; bottle b-roll; trending sound OK (entertainment).
 
 ---
@@ -85,7 +86,7 @@ PRODUCTION:      Remotion overlay needed · b-roll · trending sound vs original
 
 | Beat | Script |
 |---|---|
-| **HOOK (0–3s)** | *(face)* "I got annoyed that my cereal box felt lighter — so I built a database of **2,200+** times brands shrank their products." **Text overlay:** `2,228 documented shrinks` |
+| **HOOK (0–3s)** | *(face)* "If you've ever felt like your cereal box got lighter — you're not imagining it, and I've got **2,200+** receipts that prove it." **Text overlay:** `2,228 documented shrinks` |
 | **PROOF (3–15s)** | *(FullCarts homepage counter + a few entries scrolling)* "It's real and it's public — nearly 1,900 products across 900+ brands, every one backed by government data, receipts, and source links. The largest public shrinkflation database I'm aware of." |
 | **CONTEXT (15–40s)** | *(to camera)* "I do data for a living, so when something feels off I don't guess — I go find the receipt. Honestly? I almost didn't believe how *often* it happens until I saw them all in one place. Companies count on you noticing one product at a time. The database notices all of them at once." |
 | **PAYOFF (40–55s)** | "You're not imagining it, and you're not alone — there are 2,200 receipts and counting." |

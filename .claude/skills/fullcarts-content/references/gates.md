@@ -10,7 +10,8 @@ blocks the clip — fix it or drop it. Do not proceed on a 4/5. Canonical defini
 
 ```
 [ ] DATA-DRIVEN   a specific, sourced number is on screen, traceable to a real artifact
-[ ] INTERESTING   the first 3s open on a hook (face + bold claim), not b-roll or a dry stat
+[ ] INTERESTING   clear topic in the first sentence + a contrast-driven curiosity loop, written
+                  to "you"; NOT a vague open loop ("guess how much…"). Run the hooks.md checklist.
 [ ] CREDIBLE      database framing present; day-job signature used only if this is a ~1-in-5
                   video; employer NOT named; humility where natural
 [ ] RELATABLE     second person, kitchen-table language ("you", not "consumers")

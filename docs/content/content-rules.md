@@ -22,12 +22,17 @@ Anchored to a **specific FullCarts datapoint** *or* a **credible macroeconomic e
 > **Every stat and credibility claim must trace to `docs/content/approved-claims.md`** (the verified registry). If it's not in §1 of that file or a fresh DB pull, it doesn't go on camera. §3 lists forbidden, disprovable claims (e.g. "3,000+", "decades of data", "cited by Consumer Reports") — saying any of these undoes the entire authority position.
 
 ### 2. Interesting
-A genuine hook and a reason to keep watching. A curiosity loop, a surprise, a "guess before I tell you," a pattern interrupt. Never a flat stat read.
+A genuine hook that earns the next 3 seconds — built on **contrast**, not vagueness. Name the
+topic in the first sentence (speed to value), then open a curiosity loop by stating or implying
+the gap between what the viewer believes and what's true. Written to the viewer ("you/your").
 
-- ✅ "This bag looks identical to the 2019 one. Weigh them and one's missing a fistful of chips."
-- ❌ "Today's shrinkflation example is Doritos."
+- ✅ "You're paying the same price for this Doritos bag as 2019 — minus a fistful of chips."
+- ✅ "There's a second grocery price hike that doesn't show up in any inflation number."
+- ❌ "Guess how much smaller this got." / "You won't believe this." — context-free vague hooks
+  that only work off your face; the words add nothing. **Banned as the hook.**
 
-The first 3 seconds carry 50–60% of all drop-off. The hook is not optional decoration; it is the product.
+The first 3 seconds carry 50–60% of all drop-off. Full method + swipe file + checklist:
+the **Hook System** (`.claude/skills/fullcarts-content/references/hooks.md`).
 
 ### 3. Credible (authority framing)
 Framed from your earned authority — **always the database, sparingly the day-job** — and always *in service of the viewer*, never as a status flex.
@@ -58,7 +63,8 @@ Run this on every draft before it goes in the queue. **5/5 required.**
 
 ```
 [ ] 1. DATA — a specific, sourced number is on screen, traceable to a real artifact
-[ ] 2. INTEREST — the first 3 seconds open on a hook (face + bold claim), not b-roll or a dry stat
+[ ] 2. INTEREST — first sentence = clear topic (speed to value); hook opens a contrast loop,
+       written to "you", NOT a vague open loop ("guess how much…"). See hooks.md checklist.
 [ ] 3. CREDIBILITY — database framing present; day-job signature used (if this is a ~1-in-5 video); employer NOT named
 [ ] 4. RELATABLE — written in second person, kitchen-table language, "you" not "consumers"
 [ ] 5. REACTION — ends on a kicker + an explicit engagement ask (comment/share/tag)

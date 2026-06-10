@@ -43,7 +43,7 @@ human's face or a GUI app — and enforcing the rules so nothing ships off-brand
 
 1. **Refresh the facts.** Re-pull the DB counts + this week's candidates → update the banner number.
 2. **Brief.** Rank candidates by convergence (FullCarts signal × external news/macro/calendar). Pick 3–5.
-3. **Script.** Draft each to the house template (hook → proof → context → payoff → CTA), per-platform captions + hashtags.
+3. **Script.** Draft each to the house template (hook → proof → context → payoff → CTA), per-platform captions + hashtags. **Write every hook with the Hook System** ([references/hooks.md](references/hooks.md)) — clarity-first + contrast loop + "you/your"; never a vague open loop.
 4. **Gate.** Run all three gates on every script. A script that fails any gate does not proceed.
 5. **Assets.** Render the matching Remotion overlay(s); generate Bucket-2 Higgsfield b-roll if needed; note the real screenshots the human must grab.
 6. **Packet.** Emit a per-clip production packet (shot list, on-screen text + timing, overlay files, captions, hashtags, post time, and an Agent-Opus brief for any B-side clip).
