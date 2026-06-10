@@ -1,8 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { approveClaim, updateClaimStatus } from "@/app/admin/claims/actions";
+import { useClaimList } from "@/app/admin/claims/ClaimListContext";
 
 const EVIDENCE_TAGS = [
   "Skimpflation",
@@ -14,6 +13,29 @@ const EVIDENCE_TAGS = [
   "Not as Advertised",
 ] as const;
 
+// POST a single-claim admin mutation to a route handler. We use route
+// handlers (not Server Actions) because Server Actions auto-revalidate the
+// heavy /admin/claims route on completion, which left the buttons stuck on
+// "..." for the whole re-render — the "rejections stall" bug. On success the
+// caller removes the card optimistically; no router.refresh needed.
+async function postAdmin(route: string, body: object): Promise<void> {
+  const res = await fetch(`/api/admin/${route}`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    let msg = `Request failed (${res.status})`;
+    try {
+      const j = await res.json();
+      if (j?.error) msg = j.error;
+    } catch {
+      /* non-JSON error body */
+    }
+    throw new Error(msg);
+  }
+}
+
 export function ClaimActions({
   claimId,
   currentStatus,
@@ -23,29 +45,20 @@ export function ClaimActions({
   currentStatus: string;
   currentTags?: string[];
 }) {
-  const router = useRouter();
+  const { remove } = useClaimList();
   const [isPending, startTransition] = useTransition();
   const [showTags, setShowTags] = useState(false);
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
 
-  function handleAction(newStatus: string, tags?: string[]) {
+  // Every action takes the claim out of the current tab's filter, so on
+  // success we drop the card from local state instead of refreshing the page.
+  function run(route: string, extra?: object) {
     startTransition(async () => {
       try {
-        await updateClaimStatus(claimId, newStatus, tags);
-        router.refresh();
+        await postAdmin(route, { claim_ids: [claimId], ...extra });
+        remove(claimId);
       } catch (e) {
         alert(e instanceof Error ? e.message : "Action failed");
-      }
-    });
-  }
-
-  function handleApprove() {
-    startTransition(async () => {
-      try {
-        await approveClaim(claimId);
-        router.refresh();
-      } catch (e) {
-        alert(e instanceof Error ? e.message : "Approve failed");
       }
     });
   }
@@ -80,7 +93,7 @@ export function ClaimActions({
         <div className="flex gap-2">
           <button
             onClick={() =>
-              handleAction("evidence", Array.from(selectedTags))
+              run("bulk-evidence-claims", { tags: Array.from(selectedTags) })
             }
             disabled={isPending || selectedTags.size === 0}
             className="px-3 py-1 text-xs font-medium rounded border border-[var(--amber-base)]/20 bg-[var(--amber-bg)] text-[var(--amber-base)] hover:brightness-125 transition-all disabled:opacity-50"
@@ -106,7 +119,7 @@ export function ClaimActions({
       {currentStatus === "pending" && (
         <>
           <button
-            onClick={handleApprove}
+            onClick={() => run("bulk-approve-claims")}
             disabled={isPending}
             className="px-3 py-1 text-xs font-medium rounded border border-[var(--green-border)] bg-[var(--green-bg)] text-[var(--green-base)] hover:brightness-125 transition-all disabled:opacity-50"
             title="Mark this claim as a real shrinkflation event. The next daily promote run will create or fold it into a published_change."
@@ -121,7 +134,7 @@ export function ClaimActions({
             Evidence Wall
           </button>
           <button
-            onClick={() => handleAction("discarded")}
+            onClick={() => run("bulk-discard-claims")}
             disabled={isPending}
             className="px-3 py-1 text-xs font-medium rounded border border-[var(--red-border)] bg-[var(--red-bg)] text-[var(--red-text)] hover:brightness-125 transition-all disabled:opacity-50"
           >
@@ -132,7 +145,7 @@ export function ClaimActions({
       {currentStatus === "discarded" && (
         <>
           <button
-            onClick={() => handleAction("pending")}
+            onClick={() => run("claims-to-pending")}
             disabled={isPending}
             className="px-3 py-1 text-xs font-medium rounded border border-[var(--blue-border)] bg-[var(--blue-bg)] text-[var(--blue-base)] hover:brightness-125 transition-all disabled:opacity-50"
           >
@@ -162,7 +175,7 @@ export function ClaimActions({
             </div>
           )}
           <button
-            onClick={() => handleAction("pending", [])}
+            onClick={() => run("claims-to-pending")}
             disabled={isPending}
             className="px-3 py-1 text-xs font-medium rounded border border-[var(--blue-border)] bg-[var(--blue-bg)] text-[var(--blue-base)] hover:brightness-125 transition-all disabled:opacity-50"
           >

@@ -1,6 +1,8 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ClaimImage } from "@/components/admin/ClaimImage";
 import { ClaimActions } from "@/components/admin/ClaimActions";
+import { ClaimCard } from "@/components/admin/ClaimCard";
+import { ClaimListProvider } from "./ClaimListContext";
 import { ClaimEditor } from "@/components/admin/ClaimEditor";
 import { ClaimFilters } from "@/components/admin/ClaimFilters";
 import { SourceContent } from "@/components/admin/SourceContent";
@@ -391,6 +393,7 @@ export default async function ClaimsReviewPage({
       />
 
       <main id="main-content" className="max-w-5xl mx-auto px-6 py-6 space-y-4">
+        <ClaimListProvider>
         {claims.map((claim) => {
           const raw = rawMap.get(claim.raw_item_id);
           const payload = raw?.raw_payload;
@@ -404,8 +407,8 @@ export default async function ClaimsReviewPage({
             "Untitled";
 
           return (
+            <ClaimCard key={claim.id} claimId={claim.id}>
             <article
-              key={claim.id}
               className="border border-[var(--bg-tertiary)] rounded-lg bg-[var(--bg-secondary)] overflow-hidden"
             >
               <div className="flex flex-col sm:flex-row">
@@ -516,6 +519,7 @@ export default async function ClaimsReviewPage({
                 </div>
               </div>
             </article>
+            </ClaimCard>
           );
         })}
 
@@ -540,6 +544,7 @@ export default async function ClaimsReviewPage({
             )}
           </div>
         )}
+        </ClaimListProvider>
       </main>
     </div>
   );
