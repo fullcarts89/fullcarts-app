@@ -28,6 +28,7 @@ const LINKS: NavLink[] = [
   { href: "/brands", label: "Brands" },
   { href: "/products", label: "Products" },
   { href: "/insights", label: "Insights" },
+  { href: "/submit", label: "Submit" },
   { href: "/about", label: "About" },
 ];
 
