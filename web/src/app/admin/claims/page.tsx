@@ -109,6 +109,7 @@ function SourceBadge({ sourceType, sourceName }: { sourceType: string; sourceNam
     kroger_change: { label: "Kroger", color: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20" },
     usda_size_change: { label: "USDA", color: "bg-[var(--green-bg)] text-[var(--green-base)] border-[var(--green-border)]" },
     openfoodfacts: { label: "OFF", color: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20" },
+    community_tip: { label: "Community", color: "bg-pink-500/10 text-pink-400 border-pink-500/20" },
   };
   const c = config[sourceType] || { label: sourceType, color: "bg-[var(--bg-tertiary)] text-[var(--text-secondary)] border-[var(--bg-tertiary)]" };
   return (
@@ -197,7 +198,7 @@ export default async function ClaimsReviewPage({
   // fold-ins (claims merged into an existing event during dedup), which
   // would otherwise drown out the genuine evidence-wall claims in this tab.
   // The predicate matches `evidence_tags` non-null AND non-empty.
-  const [evidenceCountRes, otherStatusCountsRaw, dailyStatsRes, latestClaimRes, categories] = await Promise.all([
+  const [evidenceCountRes, otherStatusCountsRaw, dailyStatsRes, latestClaimRes, communityPendingRes, categories] = await Promise.all([
     supabase
       .from("claims")
       .select("*", { count: "exact", head: true })
@@ -214,8 +215,23 @@ export default async function ClaimsReviewPage({
       .select("extracted_at")
       .order("extracted_at", { ascending: false })
       .limit(1),
+    // Count of pending community submissions — drives the "top of queue"
+    // banner. Identified by raw_items.source_type='community_tip' via an
+    // INNER JOIN (same pattern as the source filter below). The embedded
+    // join inflates the supabase-js generic past TS inference depth (TS2589),
+    // so we cast the builder to `any` before the embedded-column filter —
+    // mirroring the `query as any` cast used for the source filter.
+    (
+      supabase
+        .from("claims")
+        .select("raw_items!inner(source_type)", { count: "exact", head: true })
+        .eq("status", "pending") as unknown as {
+        eq: (col: string, val: string) => PromiseLike<{ count: number | null }>;
+      }
+    ).eq("raw_items.source_type", "community_tip"),
     loadCategories(),
   ]);
+  const communityPending = communityPendingRes.count ?? 0;
 
   const statusCounts = {
     pending: otherStatusCountsRaw[0].count ?? 0,
@@ -391,6 +407,14 @@ export default async function ClaimsReviewPage({
       />
 
       <main id="main-content" className="max-w-5xl mx-auto px-6 py-6 space-y-4">
+        {communityPending > 0 && sourceFilter !== "community_tip" && (
+          <a
+            href="/admin/claims?status=pending&source=community_tip&sort=newest"
+            className="block px-4 py-3 rounded border border-pink-500/30 bg-pink-500/10 text-pink-300 text-sm hover:bg-pink-500/20 transition-colors"
+          >
+            📨 {communityPending} pending community submission{communityPending === 1 ? "" : "s"} awaiting review &rarr;
+          </a>
+        )}
         {claims.map((claim) => {
           const raw = rawMap.get(claim.raw_item_id);
           const payload = raw?.raw_payload;

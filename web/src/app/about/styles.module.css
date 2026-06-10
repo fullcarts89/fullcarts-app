@@ -53,6 +53,8 @@
 .tip-body { font-family: var(--font-sans); font-size: 15px; color: var(--text-secondary); line-height: 1.6; }
 .tip-link { color: var(--text-primary); text-decoration: none; border-bottom: 1px solid var(--red-base); padding-bottom: 1px; font-weight: 500; transition: color .15s; }
 .tip-link:hover { color: var(--red-text); }
+.tip-cta { display: inline-block; background: var(--red-base); border: 1px solid var(--red-base); color: #fff; font-family: var(--font-mono); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 12px 22px; text-decoration: none; transition: opacity .15s; }
+.tip-cta:hover { opacity: 0.9; }
 .tip-meta { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
 
 /* TIP FORM */

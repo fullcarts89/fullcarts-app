@@ -1,0 +1,53 @@
+/* /submit page styles. Page shell mirrors /about; the form rules mirror the
+   tip-form rules from about/styles.module.css with a `sub-form` prefix, plus
+   `.sub-form-inline` for the size value+unit pairs. Dark-graphite + Space
+   Grotesk + JetBrains Mono + alert red, per FULLCARTS_DESIGN_EXPORT.md. */
+
+.page { max-width: 1080px; margin: 0 auto; padding: 0 24px 120px; }
+
+.hero { padding: 64px 0 40px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 48px; }
+.eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--red-text); padding: 4px 10px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 2px; display: inline-block; margin-bottom: 20px; }
+.hero h1 { font-family: var(--font-sans); font-size: clamp(32px, 5vw, 52px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; color: var(--text-primary); margin: 0 0 16px; }
+.hero p { font-size: 17px; line-height: 1.6; color: var(--text-secondary); max-width: 680px; margin: 0; }
+
+.block { margin-bottom: 48px; max-width: 760px; }
+.section-head { margin-bottom: 16px; }
+.section-head h2 { font-family: var(--font-sans); font-size: 22px; font-weight: 700; letter-spacing: -0.01em; color: var(--text-primary); margin: 0; }
+.section-lede { font-size: 15px; line-height: 1.6; color: var(--text-secondary); margin: 0 0 20px; }
+
+.checklist { list-style: none; margin: 0 0 8px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.checklist li { position: relative; padding-left: 24px; font-size: 14px; line-height: 1.5; color: var(--text-secondary); }
+.checklist li::before { content: "→"; position: absolute; left: 0; color: var(--red-text); font-family: var(--font-mono); }
+
+.card { background: linear-gradient(180deg, rgba(220,38,38,.04) 0%, var(--bg-secondary) 60%); border: 1px solid var(--red-border); padding: 32px; }
+.card-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--red-text); padding: 4px 10px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 2px; display: inline-block; margin-bottom: 16px; }
+.card-meta { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
+.card-link { color: var(--text-primary); text-decoration: none; border-bottom: 1px solid var(--red-base); padding-bottom: 1px; font-weight: 500; transition: color .15s; }
+.card-link:hover { color: var(--red-text); }
+
+.sub-form { display: flex; flex-direction: column; gap: 16px; margin-top: 4px; }
+.sub-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.sub-form-field { display: flex; flex-direction: column; gap: 6px; }
+.sub-form-field label { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-tertiary); font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.req { font-size: 9px; color: var(--red-text); letter-spacing: 0.1em; }
+.sub-form-field input, .sub-form-field textarea { background: var(--bg-primary); border: 1px solid var(--border-subtle); color: var(--text-primary); font-family: var(--font-sans); font-size: 14px; padding: 10px 12px; outline: none; transition: border-color .15s; line-height: 1.5; resize: vertical; width: 100%; }
+.sub-form-field input::placeholder, .sub-form-field textarea::placeholder { color: var(--text-tertiary); }
+.sub-form-field input:focus, .sub-form-field textarea:focus { border-color: var(--red-text); }
+.sub-form-field input:disabled, .sub-form-field textarea:disabled { opacity: 0.5; }
+.sub-form-inline { display: flex; gap: 8px; }
+.sub-form-inline input:first-child { flex: 1; }
+.sub-form-inline input:last-child { width: 72px; flex: none; }
+.sub-form-error { font-family: var(--font-mono); font-size: 12px; color: var(--red-text); padding: 10px 12px; background: var(--red-bg); border: 1px solid var(--red-border); }
+.sub-form-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-top: 4px; }
+.sub-form-submit { background: var(--red-base); border: 1px solid var(--red-base); color: #fff; font-family: var(--font-mono); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 12px 22px; cursor: pointer; transition: opacity .15s; }
+.sub-form-submit:hover { opacity: 0.9; }
+.sub-form-submit:disabled { opacity: 0.5; cursor: wait; }
+.sub-form-note { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); letter-spacing: 0.06em; flex: 1; min-width: 240px; line-height: 1.45; }
+.sub-form-success { gap: 12px; }
+.sub-form-success .sub-form-status { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--red-text); padding: 4px 10px; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 2px; display: inline-block; align-self: flex-start; }
+.sub-form-success p { font-size: 15px; color: var(--text-secondary); line-height: 1.6; }
+.sub-form-success .sub-form-submit { align-self: flex-start; }
+
+@media (max-width: 640px) {
+  .sub-form-row { grid-template-columns: 1fr; }
+}
