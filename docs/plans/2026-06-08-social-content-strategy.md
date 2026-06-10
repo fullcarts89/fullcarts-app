@@ -1,5 +1,13 @@
 # FullCarts Social Content Strategy — Manual Engine + Brief Automation
 
+> **⚠️ PARTIALLY SUPERSEDED (2026-06-10).** The format thesis here ("faceless = hands +
+> product + voiceover") was reversed by `2026-06-10-face-forward-content-strategy.md`, which
+> pivots to a **face-forward, founder-led** strategy (you on camera, leading with personal
+> credibility). Still authoritative and carried forward unchanged: the **content-brief
+> generator** design, the **AI vs. real-evidence policy** (the three buckets), the platform
+> roles, and the convergence-detector concept. Read the June 10 plan first; treat the sections
+> below as the still-valid backstage machinery underneath it.
+
 **Date:** June 8, 2026
 **Supersedes:** `2026-05-13-social-content-engine.md` (the fully-automated render-pipeline plan)
 **Goal:** Turn the FullCarts database into engaging social content across Instagram, TikTok, and X — produced by hand, but *fed* by a single piece of automation that decides **what to make and why it'll land this week**.
