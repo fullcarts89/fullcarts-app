@@ -66,8 +66,9 @@ export default function SubmitPage() {
             <h2>Submit an event</h2>
           </div>
           <p className={styles["section-lede"]}>
-            Brand and product are required; everything else helps us verify
-            faster. Nothing is published until a human reviews it.
+            Brand, product, and evidence (a link or a photo) are required;
+            sizes and prices help us verify faster. Nothing is published until a
+            human reviews it.
           </p>
           <div className={styles.card}>
             <div className={styles["card-eyebrow"]}>Event submission</div>
