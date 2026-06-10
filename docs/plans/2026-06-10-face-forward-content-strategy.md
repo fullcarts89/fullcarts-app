@@ -7,8 +7,16 @@
 
 **Companion docs (the operating system this strategy runs on):**
 - `docs/content/content-rules.md` — the 5 non-negotiables every post must hit + pre-publish checklist
+- `docs/content/approved-claims.md` — the verified registry of what you may claim on camera
 - `docs/content/production-playbook.md` — tech stack + the repeatable batch workflow (Claude → phone → Remotion → Captions → distribute)
 - `docs/content/first-batch.md` — your first 5 ready-to-film scripts in the repeatable template
+- `docs/content/profile-copy.md` — per-platform bios + pinned posts
+- `video/` — the `@fullcarts/video` Remotion overlay toolkit (the branded data-viz moat)
+- `.claude/skills/fullcarts-content/` — the weekly-production operator skill (run it to make a batch)
+
+> **Tool note:** "Agent Opus" (`opus.pro/agent`) is a **separate AI-UGC web app, not Claude**. Its
+> AI-avatar output is for the faceless B-side + hook A/B tests only, clearly AI-labeled — never a
+> stand-in for your real face on authority/personal pieces (your real presence is the trust signal).
 
 ---
 

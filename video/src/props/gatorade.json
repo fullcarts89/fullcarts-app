@@ -1,0 +1,11 @@
+{
+  "brand": "Gatorade",
+  "productName": "Gatorade Sports Drink",
+  "sizeBefore": 32,
+  "sizeAfter": 28,
+  "unit": "fl oz",
+  "pctChange": 12.5,
+  "source": "FullCarts · retailer listing",
+  "observedDate": "Observed 2022-06",
+  "mode": "shrink"
+}

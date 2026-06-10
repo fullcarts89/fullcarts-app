@@ -115,7 +115,7 @@ PRODUCTION:      Remotion overlay needed · b-roll · trending sound vs original
 ## How to run this batch (ties to the playbook)
 
 1. **Sat:** these five *are* this week's brief — but re-pull the numbers (esp. the 2,228 total) so nothing's stale; swap any example for a higher-convergence one if the brief generator surfaces a hot brand.
-2. **Sat:** have Agent Opus render the **Remotion overlays** (51→43.5, 32→28, the 5 rundown chips) from the template; grab the **FullCarts screen-records** and the **BLS chart** for #3.
+2. **Sat:** have Claude render the **Remotion overlays** (51→43.5, 32→28, the 5 rundown chips) from the `video/` toolkit; grab the **FullCarts screen-records** and the **BLS chart** for #3.
 3. **Sun film:** shoot all 5 hooks back-to-back (teleprompter), then all hands-on-product proof. Scripts 1, 4 = original audio; 2, 5 = trending-sound-friendly; 3 = hold for CPI day.
 4. **Sun edit:** Captions App — burn captions, trim, drop overlays on the number-beats, light sound design.
 5. **Schedule:** TikTok-first, cross-post Reels + Shorts; queue Mon/Wed/Thu/Fri; hold #3 for the BLS release; post #3's X version live with the chart.

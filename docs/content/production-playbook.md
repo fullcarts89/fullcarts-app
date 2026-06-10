@@ -23,12 +23,13 @@ The whole stack below is just this principle applied tool by tool.
 
 | Stage | Tool | Role | Notes |
 |---|---|---|---|
-| **Ideation** | **Claude / Agent Opus** | Run the brief generator; rank ideas; pull data from the FullCarts DB (Supabase) | Ideation only — never writes the finished post. The convergence detector + 5-rule scorer. |
-| **Scripting** | **Claude / Agent Opus** | Draft the full hybrid script (hook→proof→context→payoff→CTA), captions, hashtags per platform | You edit to your voice. Claude proposes; you approve. |
+| **Ideation** | **Claude** (via the `fullcarts-content` skill) | Run the brief generator; rank ideas; pull data from the FullCarts DB (Supabase) | Ideation only — never writes the finished post. The convergence detector + 5-rule scorer. |
+| **Scripting** | **Claude** | Draft the full hybrid script (hook→proof→context→payoff→CTA), captions, hashtags per platform | You edit to your voice. Claude proposes; you approve. |
 | **Filming** | **Your phone** | Film the hook (face) + hands-on real product + real scale reading | The Bucket-1 real-evidence layer. Authentic > polished. |
-| **Data viz** | **Remotion** (+ Agent Opus to generate the React) | On-brand data overlays: the −12.5%, "32oz → 28oz," the FullCarts step-chart, lower-thirds | The moat, custom and reusable. Build a template once; feed it data forever. |
-| **Atmosphere b-roll** | **Higgsfield** | Bucket-2 connective shots ONLY — abstract intros, mood, metaphor | NEVER fake packaging/charts (Bucket 3). Toggle the AI label. Use `virality_predictor` to gut-check a cut. |
-| **Assembly + captions** | **Captions App** | Rough cut, burn-in captions, silence removal, eye-contact, layer sound FX/music, batch edit | The finishing line. Where most of the labor disappears. |
+| **Data viz** | **Remotion** (the `video/` toolkit; Claude renders) | On-brand data overlays: the −12.5%, "32oz → 28oz," the FullCarts step-chart, lower-thirds | The moat, custom and reusable. Template built once (`video/`); feed it data forever. |
+| **Atmosphere b-roll** | **Higgsfield** (MCP) | Bucket-2 connective shots ONLY — abstract intros, mood, metaphor | NEVER fake packaging/charts (Bucket 3). Toggle the AI label. Use `virality_predictor` to gut-check a cut. |
+| **B-side / hook tests** | **Agent Opus** (`opus.pro/agent`) | AI-UGC web app: a script/brief → 9:16 video with cloned-or-AI voice + your-or-AI avatar + stock visuals; multiple hook variations | **Separate tool, NOT Claude.** Faceless evergreen + A/B hook tests only, clearly AI-labeled. Never a stand-in for your real face on authority pieces. |
+| **Assembly + captions** | **Captions App** | Rough cut, burn-in captions, silence removal, eye-contact, layer sound FX/music, batch edit | The finishing line. Where most of the labor disappears. No API — manual by design. |
 | **AI voice** | **ElevenLabs** | Voiceover for *faceless evergreen / pure-data* clips only | Keep your REAL voice on authority + personal pieces. AI voice is for the SEO/data B-side. |
 | **Scheduling** | Buffer (free) or native schedulers | Queue TikTok/Reels/Shorts; post X reactively | X newsjacking is posted live, not scheduled. |
 
@@ -43,7 +44,7 @@ Spend one 60–90 min session before your first batch making "real" the fast pat
 1. **Screen-record FullCarts pages** — the homepage counter, a `/brands/[name]` timeline, a `/products/[id]` step-chart, the running shrink total. Clean 1080×1920 captures you'll reuse across dozens of videos.
 2. **Screenshot the real source charts** — FRED CPI, BLS shrinkflation series, ICE coffee. Grab fresh on data-drop days.
 3. **Shoot a product b-roll bank** — boxes/cans/bags on a clean surface, a kitchen scale, your hands picking items up. 10–15 clips covers months.
-4. **Build the Remotion template** (Agent Opus does the React) — one component that takes `{brand, oldSize, newSize, pctChange, unit, sourceUrl}` and renders the branded overlay (number, before→after bar, FullCarts watermark, source citation). This is the single highest-leverage build; after it, every data overlay is a one-line prop change.
+4. **The Remotion template is already built** — see the `video/` package (`@fullcarts/video`). It has four data-driven compositions (`ShrinkOverlay`, `StatCard`, `RundownChip`, `SourceFrame`); each takes a props JSON (`{brand, oldSize, newSize, pctChange, unit, source}`) and renders the branded overlay. Claude renders these for you; every new overlay is a one-line props change. (See `video/README.md`.)
 5. **Set the look** — pull the FullCarts design system (dark graphite + Space Grotesk + JetBrains Mono + alert red, per `FULLCARTS_DESIGN_EXPORT.md`) into the Remotion template and your caption style so every clip is unmistakably yours.
 
 ---
@@ -51,14 +52,15 @@ Spend one 60–90 min session before your first batch making "real" the fast pat
 ## The weekly loop (4–6 hrs)
 
 ### ① Saturday — Brief (15–30 min)
-- Run the content-brief generator (`pipeline/scripts/generate_content_briefs.py`, via Claude/Agent Opus) → ranked digest of ideas, each with data + why-now + source URLs + a 5-rule score.
+- Run the content-brief generator (`pipeline/scripts/generate_content_briefs.py`, via Claude / the `fullcarts-content` skill) → ranked digest of ideas, each with data + why-now + source URLs + a 5-rule score.
 - **Pick 3–5.** Favor a mix across the content buckets (≈2 educational, 1 newsjack, 1 reveal/entertainment, rotate in 1 personal).
 - For a newsjack, check the BLS/CPI/USDA calendar — if a print lands this week, that's an automatic slot.
 
 ### ② Saturday — Scripts + assets (30–45 min)
-- Claude/Agent Opus drafts each script in the repeatable template (hook→proof→context→payoff→CTA) with per-platform captions + hashtags. **You edit each to sound like you** — read it out loud; if you wouldn't say it at the store, change it.
+- Claude drafts each script in the repeatable template (hook→proof→context→payoff→CTA) with per-platform captions + hashtags. **You edit each to sound like you** — read it out loud; if you wouldn't say it at the store, change it.
 - Run each script through the **pre-publish checklist** (`content-rules.md`). 5/5 or it doesn't make the shoot list.
-- Agent Opus generates the **Remotion data-viz** for each (feed it the numbers from the brief). Render the overlays now so they're ready for edit.
+- Claude renders the **Remotion overlays** for each from the `video/` toolkit (feed it the numbers from the brief). Render now so they're ready for edit.
+- (Optional B-side) feed the script to **Agent Opus** to generate a faceless UGC variant or hook A/B tests — clearly AI-labeled, never a stand-in for your real-face core.
 - Pull the needed real assets from your kit (FullCarts screen-record, source chart). Grab any fresh product on camera you don't have.
 
 ### ③ Sunday — Batch film (60–90 min)
@@ -91,10 +93,11 @@ When you want extra reach without filming, spin a **pure-data, faceless** clip: 
 
 ## Tool-by-tool cheat notes
 
-- **Claude / Agent Opus** — your creative director + data analyst. It reads the DB, ranks ideas, drafts scripts, generates Remotion components, writes platform captions. It stops at *finished post* — you film and approve.
-- **Remotion** — programmatic, deterministic, on-brand data viz. One template, infinite data. This is what makes your overlays a moat instead of generic CapCut text. (See the project's `remotion` skill for best practices.)
+- **Claude** (the `fullcarts-content` skill) — your creative director + data analyst + operator. It reads the DB, ranks ideas, drafts scripts, renders the Remotion overlays, generates Higgsfield b-roll, runs the gates, and writes platform captions. It stops at *film-ready packet* — you film and approve.
+- **Agent Opus** (`opus.pro/agent`) — a **separate AI-UGC web app, not Claude.** Paste a script/brief → it generates a 9:16 UGC video (cloned-or-AI voice, your-or-AI avatar, stock visuals, multiple hook variants). Use for the faceless B-side + hook A/B tests only, clearly AI-labeled; never as your real face on authority pieces.
+- **Remotion** — the `video/` toolkit: programmatic, deterministic, on-brand data viz. One template, infinite data — your overlays as a moat instead of generic CapCut text. (See the project's `remotion` skill + `video/README.md`.)
 - **Higgsfield** — atmosphere/metaphor b-roll + `virality_predictor`. Hard rule: never let it render anything a viewer could read as evidence.
-- **Captions App** — the assembly + caption + sound finishing line; batch mode for doing the whole week at once.
+- **Captions App** — the assembly + caption + sound finishing line; batch mode for the whole week at once. No API — you drive it; the packet makes it drop-in.
 - **ElevenLabs** — voice for the faceless B-side only; your real voice carries authority/personal pieces.
 
 ---
