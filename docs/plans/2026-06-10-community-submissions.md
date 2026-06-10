@@ -651,6 +651,23 @@ git push -u origin claude/relaxed-faraday-l206l1
 
 ---
 
+## Implementation deviations (post-schema-check)
+
+The Task 1 checkpoint surfaced three facts that changed the implementation from
+the draft above:
+
+- **`source_type` uses `community_tip`, not `community_submission`.** The
+  `raw_items_source_type_check` constraint (latest: migration 045) has a fixed
+  allowed list; `community_tip` is already in it and semantically correct, so
+  we avoid a migration. All references (`/api/submit`, the SourceBadge,
+  the filter chip value, the count query, the banner href) use `community_tip`.
+- **`raw_items` requires `content_hash` + `scraper_version` (NOT NULL)** and the
+  timestamp column is `captured_at` (not `fetched_at`). The route supplies a
+  sha256 `content_hash` of the payload and `scraper_version='community-v1'`.
+- **Rate-limit dedup** matches the payload `session_id` via a JSONB filter
+  (`raw_payload->>session_id`) rather than a second "marker" row, which would
+  have collided on the `UNIQUE (source_type, source_id)` index.
+
 ## Risks & notes
 
 - **`raw_items` schema drift:** Task 1 Step 2 verifies the timestamp column name and the `(source_type, source_id)` uniqueness assumption before relying on them. Fix the route if they differ.
