@@ -19,6 +19,8 @@ Anchored to a **specific FullCarts datapoint** *or* a **credible macroeconomic e
 
 **Sources that count:** the FullCarts database (`product_entities` / `published_changes` / `skimpflation_events`), BLS shrinkflation series, FRED CPI, USDA food-price outlooks, a real retailer listing, a real receipt. **The number must trace to a real artifact** (see the three-bucket evidence policy below).
 
+> **Every stat and credibility claim must trace to `docs/content/approved-claims.md`** (the verified registry). If it's not in §1 of that file or a fresh DB pull, it doesn't go on camera. §3 lists forbidden, disprovable claims (e.g. "3,000+", "decades of data", "cited by Consumer Reports") — saying any of these undoes the entire authority position.
+
 ### 2. Interesting
 A genuine hook and a reason to keep watching. A curiosity loop, a surprise, a "guess before I tell you," a pattern interrupt. Never a flat stat read.
 
