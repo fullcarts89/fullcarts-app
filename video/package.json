@@ -9,7 +9,11 @@
     "upgrade": "remotion upgrade"
   },
   "dependencies": {
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/jetbrains-mono": "^5.2.8",
+    "@fontsource/space-grotesk": "^5.2.10",
     "@remotion/cli": "^4.0.0",
+    "@remotion/fonts": "^4.0.475",
     "@remotion/google-fonts": "^4.0.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
