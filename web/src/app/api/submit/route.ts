@@ -251,10 +251,13 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // 2. The claim. status='pending', modest confidence so the auto-approve cron
-  //    (threshold 90) never publishes it unreviewed. confidence stays numeric —
-  //    provenance is carried by raw_items.source_type. image_storage_path lights
-  //    up the photo in the admin claim queue via the existing ClaimImage.
+  // 2. The claim. status='pending'. Confidence is high (a human typed the
+  //    brand/product/size) but kept below 0.9 so a future threshold-90
+  //    auto-approve cron would still leave it for review. 0.8 also keeps it
+  //    visible under the admin "80%+" filter and sorted near the top, instead
+  //    of being buried at 0.5. confidence stays numeric — provenance is carried
+  //    by raw_items.source_type. image_storage_path lights up the photo in the
+  //    admin claim queue via the existing ClaimImage.
   const { error: claimErr } = await sb.from("claims").insert({
     raw_item_id: rawRow.id,
     extractor_version: "community-v1",
@@ -268,7 +271,7 @@ export async function POST(req: NextRequest) {
     new_price,
     change_description: description,
     image_storage_path,
-    confidence: { brand: 0.6, product_name: 0.6, size_change: 0.5, overall: 0.5 },
+    confidence: { brand: 0.9, product_name: 0.9, size_change: 0.7, overall: 0.8 },
     status: "pending",
   });
   if (claimErr) {
