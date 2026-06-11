@@ -8,14 +8,14 @@ Remotion only frames, pans, and annotates; it never fabricates evidence.
 
 | File | What | Status |
 |---|---|---|
-| `voiceover.srt` | Real Captions SRT (1:39.2, 6 paragraph-level cues — paginated to 6-word pages at runtime) | ✅ in repo (two text fixes: `fullcart.org`→`fullcarts.org`, dropped one "Um,") |
+| `voiceover.srt` | Real Captions SRT (6 paragraph-level cues — paginated to 6-word pages at runtime) | ✅ in repo (two text fixes: `fullcart.org`→`fullcarts.org`, dropped one "Um,"; cue-6 end retimed 99.22→97.66 to match the final export — see below) |
 | `listing-then.png` | Walmart **delisted** "OFFLINE-Folgers Classic Roast (51 oz.)" listing | ✅ in repo |
 | `listing-now.png` | Walmart current 43.5-Ounce listing ($25.89) | ✅ in repo |
 | `listing-sams.png` | Sam's Club current 43.5 oz listing ($17.88) — second-retailer receipt | ✅ in repo |
 | `price-chart.png` | Real coffee futures 12-month chart (2025 peak ~440 → 251 now) | ✅ in repo |
 | `fullcarts-overview.mov` | fullcarts.org homepage screen recording (H.264) | ✅ in repo |
 | `folgers-page.mov` | fullcarts.org Folgers page screen recording (H.264) | ✅ in repo |
-| `base.mp4` | **Captions talking-head export — the only missing piece.** Carries the audio. Drop it here locally and set the `baseVideo` prop to `folgers/base.mp4`. Gitignored (too heavy). | ⬜ local-only |
+| `base.mp4` | Captions talking-head export (Captions_A80B95, 720×1280 HEVC @30fps, **1:37.70**). Carries the audio. Drop it here locally and set the `baseVideo` prop to `folgers/base.mp4`. Gitignored (too heavy). The final export runs 1.5s shorter than the original SRT (the "Um," cut + tail trim compressed cue 6); silence-gap analysis confirmed cues 1–5 align within ±0.25s, so only the SRT's cue-6 end time was retimed. | ✅ delivered (keep a local copy — gitignored) |
 
 ## Verified facts (as of 2026-06-11 — captured same day)
 

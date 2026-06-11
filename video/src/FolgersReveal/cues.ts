@@ -11,7 +11,12 @@
 //   4 52.92 – 70.42   chart ("all-time high" ~55.5s, "forty percent" ~59s,
 //                     "price per pot crept up" ~65.5–70s)
 //   5 70.90 – 87.26   rockets & feathers (~75s), "permanent raise" ~86.6s
-//   6 87.94 – 99.22   CTA ("follow me" ~94.3s, "fullcarts.org" ~99s)
+//   6 87.94 – 97.66   CTA ("follow me" ~93.4s, "fullcarts.org" ~97.5s)
+//
+// 2026-06-11: the final Captions export (Captions_A80B95, 1:37.70) runs 1.5s
+// shorter than the original SRT — the "Um," cut + tail trim compressed cue 6.
+// Silence-gap analysis showed cues 1-5 still align within ±0.25s; only cue 6's
+// end moved (99.22 → 97.66 in voiceover.srt, measured end of speech).
 
 export interface CueWindow {
   start: number;
@@ -33,7 +38,7 @@ export const cues = {
   dropCallout: {start: 58.0, end: 61.5}, // "DOWN ~40% SINCE"
   rocketsFeathers: {start: 74.6, end: 83.0}, // kinetic typography metaphor
   permanentRaise: {start: 85.6, end: 89.5}, // "A PERMANENT RAISE" slam
-  endCard: {start: 93.6, end: 101.5}, // CTA card (runs to the end)
+  endCard: {start: 93.6, end: 100.0}, // CTA card (runs to the end; ~2.3s hold past speech)
 } satisfies Record<string, CueWindow>;
 
 export const inWindow = (tSec: number, w: CueWindow): boolean =>
