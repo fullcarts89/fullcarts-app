@@ -10,6 +10,11 @@ export const FRAME = { w: 1080, h: 1920 } as const;
 
 export const INSET = { top: 240, bottom: 450, left: 60, right: 170 } as const;
 
+// Burned-in caption lane (mute-first). Centered, sits BELOW the face and ABOVE the
+// lower-third overlays + platform UI — the natural eyes-rest band for sound-off viewing.
+// maxWidth keeps centered text clear of the right action rail.
+export const CAPTION = { top: 780, bottom: 1010, maxWidth: 720 } as const;
+
 export const safe = {
   left: INSET.left, // 60
   right: FRAME.w - INSET.right, // 910

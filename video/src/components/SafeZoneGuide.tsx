@@ -1,6 +1,6 @@
 import React from "react";
 import { AbsoluteFill } from "remotion";
-import { INSET, safe } from "../lib/safezone";
+import { FRAME, INSET, safe, CAPTION } from "../lib/safezone";
 import { mono } from "../lib/fonts";
 
 // PREVIEW ONLY — not part of any production render. Shades the platform-UI zones
@@ -35,6 +35,22 @@ export const SafeZoneGuide: React.FC = () => (
         borderRadius: 12,
       }}
     />
+
+    {/* caption lane (mute-first) */}
+    <div
+      style={{
+        position: "absolute",
+        left: (FRAME.w - CAPTION.maxWidth) / 2,
+        width: CAPTION.maxWidth,
+        top: CAPTION.top,
+        height: CAPTION.bottom - CAPTION.top,
+        border: "2px dashed rgba(245,158,11,0.8)",
+        borderRadius: 10,
+      }}
+    />
+    <div style={{ ...lbl, top: CAPTION.top - 30, left: (FRAME.w - CAPTION.maxWidth) / 2, color: "rgba(245,158,11,0.95)" }}>
+      caption lane
+    </div>
 
     {/* mock action rail (right) */}
     {[1120, 1280, 1440, 1600].map((y) => (

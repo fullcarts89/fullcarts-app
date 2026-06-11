@@ -91,6 +91,24 @@ When you want extra reach without filming, spin a **pure-data, faceless** clip: 
 
 ---
 
+## How assembly actually works (where graphics/cutaways/SFX get added)
+
+Important mental model: **Remotion doesn't watch your footage and decide things.** It's a deterministic
+renderer — it only places what it's told to place. The *decisions* (which overlay, when, which cutaway,
+which SFX) come from the **script/packet** (Claude) and your judgement. Two ways to assemble:
+
+**Model A — Remotion makes the assets, you assemble in Captions App (START HERE).**
+1. Film your talking head on your phone.
+2. Claude renders the branded graphics as **alpha `.mov` overlays** (ShrinkOverlay, CaughtTitle, etc.) + the StatCard/Thumbnail.
+3. In **Captions App**: import your film → auto-captions (set to the caption-lane style) → drop each `.mov` overlay onto a track above the video at the beat the packet specifies → add cutaways/b-roll and SFX from Captions' library (or your bank) using the packet's cues.
+- *Why start here:* fastest to learn, full tactile control, captions + SFX + cutaways are exactly what Captions App is built for. No coding per video.
+
+**Model B — full programmatic assembly in Remotion (scale-up, optional).**
+You hand Remotion your raw film **plus a timeline** (a JSON: overlay cues + cutaway clips/timestamps + SFX cues + caption text/timings), and a single `FinalVideo` composition composites *everything* — your footage (`<OffthreadVideo>`), the overlays, cutaways, burned-in captions, and SFX (`<Audio>`) — into one finished MP4.
+- *Yes, this is the "feed Remotion my film and it layers on the graphics + cutaways + sound" idea — it's fully possible.* The catch: it needs accurate caption timing (auto-transcribe with Whisper / `@remotion/captions`), the cutaway clips + SFX files prepared, and the timeline authored (Claude can generate the timeline JSON from the packet). It's more setup and less tactile, but it's repeatable and consistent at volume.
+
+**Recommendation:** run **Model A** for your first batches (learn the rhythm, see what lands). Once the format is dialed and you want to cut edit time, I can build the **`FinalVideo`** Remotion composition (Model B) so the operator outputs near-finished cuts and you just review. Either way, Claude's packet is the brain (cues + caption text + cutaway/SFX suggestions); Remotion and Captions App are just the two ways to execute it.
+
 ## Tool-by-tool cheat notes
 
 - **Claude** (the `fullcarts-content` skill) — your creative director + data analyst + operator. It reads the DB, ranks ideas, drafts scripts, renders the Remotion overlays, generates Higgsfield b-roll, runs the gates, and writes platform captions. It stops at *film-ready packet* — you film and approve.

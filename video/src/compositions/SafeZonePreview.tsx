@@ -2,7 +2,8 @@ import React from "react";
 import { z } from "zod";
 import { AbsoluteFill } from "remotion";
 import { theme } from "../lib/theme";
-import { mono } from "../lib/fonts";
+import { mono, headline } from "../lib/fonts";
+import { CAPTION } from "../lib/safezone";
 import { SafeZoneGuide } from "../components/SafeZoneGuide";
 import { ShrinkOverlay } from "./ShrinkOverlay";
 import { StatCard } from "./StatCard";
@@ -56,10 +57,43 @@ const Overlay: React.FC<{ which: Props["which"] }> = ({ which }) => {
   }
 };
 
+// Faux burned-in caption (mute-first, red-highlight style) to show the caption lane in context.
+const CaptionMock: React.FC = () => (
+  <div
+    style={{
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: CAPTION.top,
+      height: CAPTION.bottom - CAPTION.top,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    }}
+  >
+    <div
+      style={{
+        maxWidth: CAPTION.maxWidth,
+        textAlign: "center",
+        fontFamily: headline,
+        fontWeight: 700,
+        fontSize: 56,
+        lineHeight: 1.15,
+        color: theme.color.textPrimary,
+        textShadow: "0 3px 0 #000, 0 0 10px #000, 3px 0 0 #000, -3px 0 0 #000",
+      }}
+    >
+      they took <span style={{ color: theme.color.red }}>14.7%</span> and bet you'd{" "}
+      <span style={{ color: theme.color.red }}>blame yourself</span>
+    </div>
+  </div>
+);
+
 export const SafeZonePreview: React.FC<Props> = ({ which, guide }) => (
   <AbsoluteFill style={{ background: theme.color.bg }}>
     {which !== "stat" && <MockFootage />}
     <Overlay which={which} />
+    {guide && which !== "stat" && <CaptionMock />}
     {guide && <SafeZoneGuide />}
   </AbsoluteFill>
 );

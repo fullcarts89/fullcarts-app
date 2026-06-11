@@ -31,10 +31,15 @@ Keep these constant and the feed reads as one body of work.
 - Data blue `#3b82f6` (neutral) · amber `#f59e0b` (warning). Red = bad, green = good — always.
 
 ## Captions (burned-in, the most-seen element) — RED HIGHLIGHT
+Most people watch on mute, so captions are the primary read.
 - **Space Grotesk bold, cream `#f5f4f0`, heavy black outline** (legible over any footage).
-- **Highlight the key word/number in alert red `#dc2626`.**
-- Max **2 lines**, ~3–5 words/line, **lower-center**, timed exactly to speech.
-- No more than one highlight per line. In Captions App: set this as the saved template.
+- **Highlight the key word/number in alert red `#dc2626`** (word-by-word/karaoke highlight aids mute comprehension).
+- Max **2 lines**, ~3–5 words/line, timed exactly to speech. No more than one highlight per line.
+- **Placement — the caption lane:** **centered**, in the band **y ≈ 780–1010** (≈ 40–53% down),
+  `maxWidth ≈ 720` (clears the right rail). This sits **below the face, above the lower-third data
+  overlays and the platform UI** — the eyes-rest zone for sound-off, with no collisions. Keep it a
+  **fixed lane every video** (don't let captions jump around). In Captions App: set this as the saved
+  style + position. (Lane defined in `video/src/lib/safezone.ts` as `CAPTION`; preview it with `SafeZonePreview`.)
 
 ## Iconography
 `lucide-react` line icons (TrendingDown, AlertCircle, Package, Database, Shield…) in rounded
