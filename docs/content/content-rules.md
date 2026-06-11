@@ -113,7 +113,7 @@ A human reads the ranked digest, picks ~3–5, and Claude drafts the full script
 
 The moment a visual is tied to a specific number, product, brand, or fact, it must be a **real artifact**. This policy exists because two launch videos got flagged (and appeals auto-rejected) for AI impersonating data. With the face-forward pivot, **you are now the primary real-evidence asset** — your authentic on-camera presence is the hardest thing in the kit to fake, and that's a feature.
 
-**Bucket 1 — MUST be real (the proof layer):** the product on camera, a kitchen-scale reading, real commodity/price charts (ICE coffee, FRED CPI screenshots), FullCarts dashboard/page screenshots, real news headlines, real before/after comparisons. **And now: your face and voice.**
+**Bucket 1 — MUST be real (the proof layer):** the **real before/after (side-by-side) image** of the shrinkflation — your *default* proof, since you usually won't have the product on hand (source it from the FullCarts entry, a retailer listing, Reddit, or news); real commodity/price charts (ICE coffee, FRED CPI screenshots); FullCarts dashboard/page screenshots; real news headlines; and the product on camera *if* you happen to have it. **And: your face and voice.**
 
 **Bucket 2 — CAN be AI (connective layer, labeled):** abstract intros/outros, transitions, mood/atmosphere shots, clearly-stylized metaphor (never a fake chart, never fake packaging), background textures, kinetic typography. Always toggle the platform AI-content label.
 

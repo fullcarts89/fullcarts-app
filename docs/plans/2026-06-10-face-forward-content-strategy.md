@@ -71,14 +71,14 @@ You don't want to name your employer (smart — it caps employer-policy and pers
 
 ## Format: hybrid (your pick, and the right one)
 
-You film **hybrid**: your face carries the hook and the key human moments; hands-on-product and screen-recorded data carry the proof. This is the highest-leverage format for you because it satisfies both the retention data (open on a face) and the evidence policy (the proof layer is real footage + real screenshots, never AI).
+You film **hybrid**: your face carries the hook and the explainer; **real before/after evidence images** and screen-recorded data carry the proof. You usually *won't* have the physical product — and you don't need it: the proof is the documented before/after image (the receipt), shown as a cutaway. This satisfies both the retention data (open on a face) and the evidence policy (the proof layer is real imagery + real screenshots, never AI).
 
 **The anatomy of a FullCarts hybrid clip (30–60s):**
 
 | Beat | On screen | Job |
 |---|---|---|
 | **Hook (0–3s)** | **Your face**, talking, + a bold text overlay with a number | Stop the scroll. Open on you, not b-roll. |
-| **Proof (3–15s)** | Hands on the real product + the FullCarts entry / BLS chart screenshot | Make the number believable. This is the moat. |
+| **Proof (3–15s)** | The real **before/after (side-by-side) image** + the FullCarts entry / BLS chart screenshot | Make the number believable. This is the moat. |
 | **Context (15–40s)** | You (voiceover or to-camera) + Remotion data-viz overlay pinned to the product | Explain the trick; drop your credibility signature here when used. |
 | **Payoff (40–55s)** | The kicker — the most outrageous comparison, restated | Evoke the reaction that drives comments/shares. |
 | **CTA (final 3–5s)** | You + text overlay | "Follow — I find these so you don't get got. Search any product on fullcarts.org." |
@@ -185,7 +185,7 @@ If a draft misses any one, it doesn't ship. The brief generator scores candidate
 
 - **The content-brief generator** (`pipeline/scripts/generate_content_briefs.py`, to build): convergence detector — FullCarts signal × external convergence (news/macro/trend/calendar) → ranked, evidence-backed idea digest. Now also scores each candidate against the 5 non-negotiables. Still ideation-only; it never writes finished posts.
 - **AI vs. real-evidence policy (the three buckets):** MUST be real (anything carrying a claim — product, charts, dashboard, headlines), CAN be AI (connective/atmosphere, labeled), NEVER AI (fake packaging, fabricated charts/dashboards). The one-question test: *"Could a viewer mistake this for evidence of a fact, product, or number?"* Yes → real. This is non-negotiable and the reason two launch videos got flagged. With a face-forward format, **you are now the primary real-evidence asset** — your authentic presence is the hardest thing to fake.
-- **Reusable real-asset kit:** screen-recorded FullCarts pages, screenshotted source charts (ICE coffee, FRED CPI), a small product b-roll bank. Makes "real" the fast path.
+- **Reusable real-asset kit:** screen-recorded FullCarts pages, screenshotted source charts (ICE coffee, FRED CPI), a **before/after image bank** (sourced from entries/listings/Reddit/news, not filmed). Makes "real" the fast path.
 
 ---
 

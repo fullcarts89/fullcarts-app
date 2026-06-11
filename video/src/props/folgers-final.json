@@ -33,6 +33,7 @@
     { "type": "source", "fromSec": 24.0, "toSec": 30.0, "props": { "sourceName": "ICE Arabica (KC)", "url": "tradingeconomics.com", "asOfDate": "Jun 2026", "headline": "Coffee: −39% from peak" } }
   ],
   "cutaways": [
+    { "src": "cutaways/folgers-before-after.png", "kind": "image", "fromSec": 17.5, "toSec": 24.0 },
     { "src": "cutaways/coffee-chart.png", "kind": "image", "fromSec": 24.0, "toSec": 30.0 }
   ],
   "sfx": [

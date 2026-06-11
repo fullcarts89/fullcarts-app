@@ -18,7 +18,8 @@ LENGTH:       30–60s · 9:16
 
 HOOK (0–3s)      FACE + bold text overlay. Clarity first, then CONTRAST (same price / less),
                  written to "you". Never a vague "guess how much" open loop. → see hooks.md
-PROOF (3–15s)    hands on real product + FullCarts entry / source chart screenshot
+PROOF (3–15s)    real before/after (side-by-side) image + FullCarts entry / source chart
+                 (you source the image — you usually won't have the physical product)
 CONTEXT (15–40s) you explaining the "trick" + Remotion data-viz overlay [credibility signature if 1-in-5 slot]
 PAYOFF (40–55s)  the kicker — restate the most outrageous comparison
 CTA (final 3–5s) follow + "search any product on fullcarts.org"

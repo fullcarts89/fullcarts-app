@@ -30,8 +30,8 @@ because every episode features a recognizable brand.
 COLD-OPEN (0–1s):  "Caught: [Brand]."                          → on-screen CAUGHT: [BRAND]
 HOOK (1–4s):       The Snap — context → lean → reversal         → see hooks.md
 LOCK-IN (4–10s):   name the unspoken truth (they feel SEEN)     → content-angles.md §4
-PROOF (10–20s):    real product + FullCarts entry; resolves the → ShrinkOverlay (before→after)
-                   lock-in: "it's not you — here's the receipt"
+PROOF (10–20s):    real before/after image + FullCarts entry; resolves → ShrinkOverlay (before→after)
+                   the lock-in: "it's not you — here's the receipt"
 TRICK (20–40s):    how they hid it + (1-in-5) day-job signature → data-viz overlay
 PAYOFF (40–52s):   the kicker (price-per-unit gut-punch)
 CTA (52–57s):      "Follow — I catch the next one. fullcarts.org"

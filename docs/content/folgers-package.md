@@ -12,7 +12,8 @@ the pipeline. Now you swap in real film of yourself.
 
 ## Step 1 — Film yourself (9:16, ~55–60s)
 - **Framing:** vertical 9:16, **face upper-center** (leave the lower-middle clear — captions + the
-  data card live there). Good light, talk to camera, hold the Folgers can for the proof beat.
+  data card live there). Good light, talk to camera. **You do NOT need the physical product** — the
+  proof is a real before/after image (Step 2) that drops in over your voice during the proof beat.
 - **Read these lines** (the captions are timed to them — say them in this order, natural pace):
 
 ```
@@ -28,17 +29,23 @@ the pipeline. Now you swap in real film of yourself.
 "The costs left. The shrink stayed. You got a permanent raise — for them."
 "Follow — I catch the next one. Search your coffee at fullcarts.org."
 ```
-- One take is great; or film the hook/lock-in/payoff to camera and the proof/trick as voiceover while
-  you show the can. Aim for the total to land near **57s** (or note your actual length for Step 3).
+- One take is great; or film the hook/lock-in/payoff to camera and the proof/trick as voiceover (the
+  before/after image is on screen during the proof). Aim for ~**57s** (or note your actual length for Step 3).
 
 ## Step 2 — Drop in your assets
 Put files here (create the folders):
 | File | Path | Required? |
 |---|---|---|
-| Your film | `video/public/film/folgers.mp4` | **yes** |
-| Real coffee-price screenshot | `video/public/cutaways/coffee-chart.png` | recommended (Bucket-1 proof) |
+| Your film (talking head, no product needed) | `video/public/film/folgers.mp4` | **yes** |
+| **Before/after image** — Folgers **51 oz vs 43.5 oz**, side-by-side (your main proof) | `video/public/cutaways/folgers-before-after.png` | **yes (the proof)** |
+| Real coffee-price screenshot | `video/public/cutaways/coffee-chart.png` | recommended (Bucket-1) |
 | SFX: stamp | `video/public/sfx/caught-stamp.wav` | optional |
 | SFX: counter | `video/public/sfx/number-land.wav` | optional |
+
+- **Before/after image:** a real side-by-side of the old vs new Folgers can (51 oz vs 43.5 oz) — pull it
+  from the FullCarts Folgers entry, a retailer listing, Reddit r/shrinkflation, or a news piece. One
+  combined side-by-side image is ideal; if you have two separate photos, send both and I'll split-screen
+  them. It fills the frame during the proof beat with the `−14.7%` overlay on top. Real image only — never AI.
 
 - **Coffee chart:** screenshot the real chart at `tradingeconomics.com/commodity/coffee` (or FRED
   `PCOFFOTMUSDM`). Read the peak (~$4.40, early 2025) and current (~$2.70) **off your screenshot** and
