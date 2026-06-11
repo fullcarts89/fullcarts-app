@@ -17,6 +17,8 @@ human's face or a GUI app — and enforcing the rules so nothing ships off-brand
 - `docs/content/approved-claims.md` — the ONLY claims allowed on camera (refresh each batch)
 - `docs/content/production-playbook.md` — the stack + the weekly rhythm
 - `docs/content/first-batch.md` — the repeatable script template + 5 worked examples
+- `docs/content/series.md` — the bingeability engine: the "Caught:" series + future-series backlog
+- `references/hooks.md` — the Hook System (The Snap 3-beat + the 4-mistake fixes)
 - `docs/content/profile-copy.md` — bios + pinned posts
 
 ## The automation boundary (what you do vs. what the human does)
@@ -42,12 +44,12 @@ human's face or a GUI app — and enforcing the rules so nothing ships off-brand
 ## The weekly loop (drive it in order)
 
 1. **Refresh the facts.** Re-pull the DB counts + this week's candidates → update the banner number.
-2. **Brief.** Rank candidates by convergence (FullCarts signal × external news/macro/calendar). Pick 3–5.
+2. **Brief.** Rank candidates by convergence (FullCarts signal × external news/macro/calendar). Pick 3–5, and **assign each to a series** — default the primary **"Caught:"** series (keep the fixed `Caught: [Brand]` cold-open), or a future thread per `series.md`.
 3. **Script.** Draft each to the house template (hook → proof → context → payoff → CTA), per-platform captions + hashtags. **Write every hook with the Hook System** ([references/hooks.md](references/hooks.md)) — clarity-first + contrast loop + "you/your"; never a vague open loop.
 4. **Gate.** Run all three gates on every script. A script that fails any gate does not proceed.
 5. **Assets.** Render the matching Remotion overlay(s); generate Bucket-2 Higgsfield b-roll if needed; note the real screenshots the human must grab.
 6. **Packet.** Emit a per-clip production packet (shot list, on-screen text + timing, overlay files, captions, hashtags, post time, and an Agent-Opus brief for any B-side clip).
-7. **Hand off.** The human films, assembles in Captions, posts. You stop at the packet.
+7. **Hand off + iterate.** The human films, assembles in Captions, posts. You stop at the packet. **Every ~10 posts, review by _follows-driven_ (not views)** — find the outlier, extract why it won (hook? series? brand?), and bias the next batch toward it.
 
 **Full step-by-step (with the exact SQL, render commands, and packet shape):**
 see [references/operator-loop.md](references/operator-loop.md).

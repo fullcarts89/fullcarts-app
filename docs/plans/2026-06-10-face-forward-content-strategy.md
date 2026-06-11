@@ -11,6 +11,8 @@
 - `docs/content/production-playbook.md` — tech stack + the repeatable batch workflow (Claude → phone → Remotion → Captions → distribute)
 - `docs/content/first-batch.md` — your first 5 ready-to-film scripts in the repeatable template
 - `docs/content/profile-copy.md` — per-platform bios + pinned posts
+- `docs/content/series.md` — the bingeability engine: the "Caught:" series + future-series backlog
+- `.claude/skills/fullcarts-content/references/hooks.md` — the Hook System (The Snap + the 4-mistake fixes)
 - `video/` — the `@fullcarts/video` Remotion overlay toolkit (the branded data-viz moat)
 - `.claude/skills/fullcarts-content/` — the weekly-production operator skill (run it to make a batch)
 
@@ -135,7 +137,34 @@ You have **4–6 hrs/week**. That buys **one batch film day + reactive X presenc
 
 ---
 
-## The always-on rules (summary — full version in `content-rules.md`)
+## Growth mechanics (absorbed from the 0→1M playbook)
+
+A creator-growth playbook maps cleanly onto our build. We adopt its *principles* at *our*
+sustainable tempo (it's built for daily speedrunning; we're authority-building beside a day job —
+and it explicitly blesses "can't post daily → run a soft series").
+
+1. **Bingeability via a signature series** — our biggest former gap, now fixed: the **"Caught:"**
+   soft series is the spine, with "How They Hid It" / "Report Card" / "Same Price, Less Stuff" as
+   future threads. Connective tissue (identical cold-open + end-screen teases) turns one view into
+   many → the follow. See `docs/content/series.md`.
+2. **Signature visual style** (look · set · framing · editing) — define it once so every video is
+   instantly "ours." Cheapest high-leverage lever = a recognizable **set** (e.g. a product "shrink
+   wall" or a clean data-desk). Our **Remotion overlays are already the signature editing element**;
+   pair with a fixed set + consistent eye-level framing. *(Set build = a near-term to-do.)*
+3. **Unique edge** — we're elite here: the database is genuinely *new information* nobody else has.
+   Keep leading with "I have the receipts + the government data."
+4. **Hooks** — beyond the verbal Hook System, add: **(a) a visual hook** (open on the product/real
+   chart — scroll-stopping), **(b) cult-hopping** (lead with the recognizable brand/logo for instant
+   relatability — free for us), **(c) speed-to-value** (signal value by ~2.5s / the second sentence),
+   and **(d) The Snap** 3-beat structure. All in `hooks.md`.
+5. **Storytelling archetype** — pick the one that plays to our strengths: breakdown / case-study /
+   by-the-numbers, with personal-narrative on origin pieces (the current meta).
+6. **Posting & iteration** — keep **3–5×/week** (not daily). Adopt the discipline: review every
+   **~10 posts**, sort by **follows-driven** (not views), and double down on the outlier. Chase
+   **ignition** via a **super-share** (a big account / journalist reshare — our X + reporter angle)
+   and aim to clear **~5K followers** (the "minimum-viable-credibility" line) as fast as possible.
+
+
 
 Every single post must satisfy **all five non-negotiables**:
 

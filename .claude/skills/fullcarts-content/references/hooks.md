@@ -42,6 +42,35 @@ loop using CONTRAST.**
 > #1 + #4 at once). It only "works" off the creator's face/text on screen — the spoken words add
 > nothing. We do not use these as the hook. (Note: our old first-batch Gatorade hook was exactly this.)
 
+## The Snap — the lead hook template (use this first)
+
+The strongest hooks are a **3-beat reversal** ("the God-tier hook"): set a context the viewer
+buys → lean them toward the obvious expectation → **snap** them to the opposite. The "snap" is the
+contrast (mistake #4's fix) delivered as a mini-story instead of a flat statement.
+
+```
+BEAT 1 — context (buy-in):   a frame the viewer instantly accepts as true
+BEAT 2 — lean (expectation): nudge them toward the "obvious" conclusion
+BEAT 3 — snap (reversal):    yank them to the opposite — the thing that's actually true
+```
+
+It already powers our best hooks:
+
+| Hook | 1. Context (buy-in) | 2. Lean | 3. Snap |
+|---|---|---|---|
+| Coffee | "your coffee shrank because prices rose" | "ok, costs — fair" | "prices crashed ~40%; your can never came back" |
+| CPI | "groceries are 'only' up 3.2%" | "not so bad" | "that number hides a second price hike you're already paying" |
+| Cadbury | "same egg, same price as two years ago" | "normal" | "except a fifth of the chocolate is gone" |
+
+Write the snap first (it's the payoff), then the context that makes the reversal land.
+
+## The 2-question hook test (run on every hook)
+
+1. **Is the context immediately clear?** (kills Delay + Confusion)
+2. **Is there curiosity inducement?** (the Snap / contrast — kills Disinterest)
+
+If either is "no," the hook isn't ready.
+
 ## The FullCarts hook formula
 
 A hook is usually **2–3 lines**, not one punchy line: **clarity first, then contrast.**
@@ -77,7 +106,8 @@ Clarity and contrast can collapse into one line when it's tight enough.
 [ ] SPEED      no fluff/preamble before the point ("Guys, so…", "Ok this is wild…") — cut it
 [ ] YOU        written in second person; viewer sees themselves (not "I/my")
 [ ] PAINPOINT  ties to the rip-off feeling (a need-to-have, not a nice-to-have)
-[ ] CONTRAST   opens a loop via stated or implied contrast (A vs B distance)
+[ ] SNAP       a 3-beat reversal (context → lean → snap), not a flat stat or vague open loop
 [ ] NOT-VAGUE  not a context-free open loop ("guess how much", "you won't believe")
+[ ] 2-Q TEST   context immediately clear? + curiosity induced? — both yes
 ```
 A hook that misses CONTRAST or CLARITY is the most common failure — fix those first.
