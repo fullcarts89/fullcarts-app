@@ -1,0 +1,7 @@
+node_modules/
+out/
+build/
+# Heavy media drops (Captions export, screen recordings). Screenshots (*.png,
+# *.jpg) ARE committed -- they are the evidence kit and small enough.
+public/folgers/*.mp4
+public/folgers/*.mov

@@ -1,0 +1,26 @@
+{
+  "name": "fullcarts-video",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Remotion compositions for FullCarts social videos (TikTok/Reels, 1080x1920)",
+  "scripts": {
+    "dev": "remotion studio",
+    "render": "remotion render FolgersReveal out/folgers-reveal.mp4",
+    "still": "remotion still FolgersReveal out/preview.png --frame=120",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/captions": "^4.0.0",
+    "@remotion/cli": "^4.0.0",
+    "@remotion/google-fonts": "^4.0.0",
+    "@remotion/media-utils": "^4.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remotion": "^4.0.0",
+    "zod": "3.22.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "typescript": "^5.5.0"
+  }
+}
