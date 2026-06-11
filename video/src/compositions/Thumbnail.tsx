@@ -4,6 +4,7 @@ import { AbsoluteFill } from "remotion";
 import { theme, accentFor, signFor } from "../lib/theme";
 import { headline, mono } from "../lib/fonts";
 import { GridTexture } from "../components/GridTexture";
+import { INSET, safe } from "../lib/safezone";
 import { Brandmark } from "../components/Brandmark";
 
 export const thumbnailSchema = z.object({
@@ -27,20 +28,23 @@ export const Thumbnail: React.FC<Props> = ({ brand, pctChange, mode }) => {
         style={{ background: `linear-gradient(to top, ${theme.color.bg} 0%, transparent 45%)` }}
       />
 
-      <div style={{ position: "absolute", top: 90, left: 56, right: 56 }}>
+      <div style={{ position: "absolute", top: safe.top, left: safe.left, right: INSET.right }}>
         <div style={{ fontFamily: mono, fontSize: 30, letterSpacing: 8, textTransform: "uppercase", color: accent }}>
           Caught
         </div>
         <div style={{ fontFamily: headline, fontWeight: 700, fontSize: 92, lineHeight: 1, color: theme.color.textPrimary }}>
           {brand}
         </div>
+        <div style={{ marginTop: 18 }}>
+          <Brandmark scale={1.1} />
+        </div>
       </div>
 
       <div
         style={{
           position: "absolute",
-          bottom: 220,
-          left: 56,
+          bottom: INSET.bottom,
+          left: safe.left,
           fontFamily: mono,
           fontWeight: 700,
           fontSize: 200,
@@ -51,10 +55,6 @@ export const Thumbnail: React.FC<Props> = ({ brand, pctChange, mode }) => {
       >
         {signFor(mode)}
         {pctChange}%
-      </div>
-
-      <div style={{ position: "absolute", bottom: 110, left: 56 }}>
-        <Brandmark scale={1.1} />
       </div>
     </AbsoluteFill>
   );

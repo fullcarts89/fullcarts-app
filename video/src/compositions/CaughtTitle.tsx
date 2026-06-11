@@ -4,6 +4,7 @@ import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig } from "remo
 import { theme } from "../lib/theme";
 import { headline, mono } from "../lib/fonts";
 import { enter } from "../lib/anim";
+import { safe } from "../lib/safezone";
 
 export const caughtTitleSchema = z.object({
   brand: z.string(),
@@ -26,7 +27,7 @@ export const CaughtTitle: React.FC<Props> = ({ brand }) => {
 
   return (
     <AbsoluteFill>
-      <div style={{ position: "absolute", top: 150, left: 64, right: 64 }}>
+      <div style={{ position: "absolute", top: safe.top, left: safe.left, right: 64 }}>
         <div
           style={{
             fontFamily: mono,

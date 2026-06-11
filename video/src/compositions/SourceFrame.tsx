@@ -4,6 +4,7 @@ import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig } from "remo
 import { theme } from "../lib/theme";
 import { headline, body, mono } from "../lib/fonts";
 import { enter } from "../lib/anim";
+import { INSET, safe } from "../lib/safezone";
 import { Brandmark } from "../components/Brandmark";
 
 export const sourceFrameSchema = z.object({
@@ -29,9 +30,9 @@ export const SourceFrame: React.FC<Props> = ({ sourceName, url, asOfDate, headli
       <div
         style={{
           position: "absolute",
-          top: 120,
-          left: 48,
-          right: 48,
+          top: safe.top,
+          left: safe.left,
+          right: INSET.right,
           opacity: inAnim,
           transform: `translateY(${interpolate(inAnim, [0, 1], [-30, 0])}px)`,
           background: theme.color.cardScrim,
@@ -53,9 +54,9 @@ export const SourceFrame: React.FC<Props> = ({ sourceName, url, asOfDate, headli
       <div
         style={{
           position: "absolute",
-          bottom: 110,
-          left: 48,
-          right: 48,
+          bottom: INSET.bottom,
+          left: safe.left,
+          right: INSET.right,
           opacity: inAnim,
           display: "flex",
           alignItems: "center",

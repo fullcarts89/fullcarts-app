@@ -53,15 +53,22 @@ never cartoonish or stocky.
 > Source illustration via Higgsfield (labeled) or an illustrator; the `video/` toolkit doesn't make it.
 
 ## Safe zones (overlays never bleed off-frame)
-Overlays sit **fully inside** the frame — they do not run off the edge and do not animate in from
-outside. The platforms cover parts of the screen with their own UI, so critical content (the **−X%**,
-key numbers, the brand) must stay clear of:
-- **Right ~12%** — the like / comment / share / save action rail (TikTok, Reels).
-- **Bottom ~15%** — caption + @handle + (TikTok) the music ticker.
+Overlays sit **fully inside** the frame — they don't run off-edge or fly in from outside. The apps
+cover parts of the screen with their own UI, so critical content (the **−X%**, numbers, brand,
+burned-in captions) stays inside the safe rectangle. Values are the **union** of all three platforms
+(1080×1920), encoded in `video/src/lib/safezone.ts`:
 
-Practical rule for 1080×1920: keep critical elements within roughly **x: 56 → 940** and **above
-y ≈ 1640**. Right-aligned elements (badges) inset ≥ ~130px from the right edge. The toolkit comps are
-positioned for this; if you reposition, re-check the rail.
+| Inset | px | What's there |
+|---|---|---|
+| **Top** | 240 | platform tabs / search (Reels & Shorts top chrome) |
+| **Bottom** | 450 | caption + @handle + music ticker + nav (TikTok deepest) |
+| **Right** | 170 | like / comment / share / save action rail (Reels widest) |
+| **Left** | 60 | device / caption margin |
+
+→ **Safe area = x: 60 → 910, y: 240 → 1470.** Lower-thirds sit with their bottom on y=1470 (above the
+caption); the title card sits at y=240; centered content (StatCard) keeps `maxWidth ≤ 740` so it
+clears the rail on the right. All toolkit comps are positioned to this; verify new ones with the
+`SafeZonePreview` composition (renders the overlay over a mock of the TikTok/Reels/Shorts UI).
 
 ## Texture & motion
 - **Data-grid texture** (`GridTexture`, ~6–8% opacity) behind title cards / thumbnails / stat cards.

@@ -4,6 +4,7 @@ import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig } from "remo
 import { theme, accentFor, signFor } from "../lib/theme";
 import { headline, body, mono } from "../lib/fonts";
 import { enter } from "../lib/anim";
+import { INSET, safe } from "../lib/safezone";
 import { Brandmark } from "../components/Brandmark";
 
 export const shrinkOverlaySchema = z.object({
@@ -52,9 +53,9 @@ export const ShrinkOverlay: React.FC<Props> = ({
       <div
         style={{
           position: "absolute",
-          left: 56,
-          right: 96, // clear the right action-rail safe zone
-          bottom: 360,
+          left: safe.left,
+          right: INSET.right, // clear the right action-rail
+          bottom: INSET.bottom, // sit above the caption/handle zone
           opacity: cardIn,
           transform: `translateY(${y}px)`,
           background: theme.color.cardScrim,

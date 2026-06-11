@@ -6,6 +6,7 @@ import { RundownChip, rundownChipSchema } from "./compositions/RundownChip";
 import { SourceFrame, sourceFrameSchema } from "./compositions/SourceFrame";
 import { CaughtTitle, caughtTitleSchema } from "./compositions/CaughtTitle";
 import { Thumbnail, thumbnailSchema } from "./compositions/Thumbnail";
+import { SafeZonePreview, safeZonePreviewSchema } from "./compositions/SafeZonePreview";
 
 // 9:16 vertical, 30fps. Overlay comps have no background → render with alpha
 // (--codec=prores --prores-profile=4444). StatCard is full-frame → --codec=h264.
@@ -113,6 +114,18 @@ export const RemotionRoot: React.FC = () => {
         height={H}
         schema={thumbnailSchema}
         defaultProps={{ brand: "Folgers", pctChange: 14.7, mode: "shrink" as const }}
+      />
+
+      {/* Preview only — overlay + mock platform UI to verify safe zones. Not for export. */}
+      <Composition
+        id="SafeZonePreview"
+        component={SafeZonePreview}
+        durationInFrames={60}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={safeZonePreviewSchema}
+        defaultProps={{ which: "shrink" as const, guide: true }}
       />
     </>
   );

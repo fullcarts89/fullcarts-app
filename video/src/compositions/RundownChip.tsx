@@ -4,6 +4,7 @@ import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig } from "remo
 import { theme, accentFor, signFor } from "../lib/theme";
 import { headline, body, mono } from "../lib/fonts";
 import { enter } from "../lib/anim";
+import { INSET, safe } from "../lib/safezone";
 
 export const rundownChipSchema = z.object({
   rank: z.number(), // 1..5
@@ -33,9 +34,9 @@ export const RundownChip: React.FC<Props> = ({ rank, brand, productName, sizeBef
       <div
         style={{
           position: "absolute",
-          left: 56,
-          right: 96, // clear the right action-rail safe zone
-          bottom: 420,
+          left: safe.left,
+          right: INSET.right, // clear the right action-rail
+          bottom: INSET.bottom, // sit above the caption/handle zone
           opacity: chipIn,
           transform: `translateX(${x}px)`,
           display: "flex",

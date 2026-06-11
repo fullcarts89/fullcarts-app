@@ -4,6 +4,7 @@ import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig } from "remo
 import { theme } from "../lib/theme";
 import { headline, body, mono } from "../lib/fonts";
 import { enter, countUp, fmt } from "../lib/anim";
+import { INSET, safe } from "../lib/safezone";
 import { Brandmark } from "../components/Brandmark";
 
 export const statCardSchema = z.object({
@@ -38,7 +39,7 @@ export const StatCard: React.FC<Props> = ({ value, decimals, prefix, suffix, lab
           background: `radial-gradient(circle at 50% 38%, ${accentColor}22 0%, transparent 55%)`,
         }}
       />
-      <div style={{ position: "absolute", top: 90, left: 0, right: 0, display: "flex", justifyContent: "center" }}>
+      <div style={{ position: "absolute", top: safe.top, left: 0, right: 0, display: "flex", justifyContent: "center" }}>
         <Brandmark scale={1.1} />
       </div>
 
@@ -61,7 +62,7 @@ export const StatCard: React.FC<Props> = ({ value, decimals, prefix, suffix, lab
           style={{
             fontFamily: mono,
             fontWeight: 700,
-            fontSize: 240,
+            fontSize: 210,
             lineHeight: 1,
             color: theme.color.textPrimary,
             marginTop: 16,
@@ -80,7 +81,7 @@ export const StatCard: React.FC<Props> = ({ value, decimals, prefix, suffix, lab
             fontSize: 46,
             textAlign: "center",
             color: theme.color.textSecondary,
-            maxWidth: 880,
+            maxWidth: 700, // keep centered text inside the right action-rail safe zone
             marginTop: 28,
             opacity: contextIn,
           }}
@@ -92,7 +93,7 @@ export const StatCard: React.FC<Props> = ({ value, decimals, prefix, suffix, lab
       <div
         style={{
           position: "absolute",
-          bottom: 90,
+          bottom: INSET.bottom,
           left: 0,
           right: 0,
           textAlign: "center",
