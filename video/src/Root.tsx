@@ -8,6 +8,7 @@ import { CaughtTitle, caughtTitleSchema } from "./compositions/CaughtTitle";
 import { Thumbnail, thumbnailSchema } from "./compositions/Thumbnail";
 import { SafeZonePreview, safeZonePreviewSchema } from "./compositions/SafeZonePreview";
 import { FinalVideo, calcFinalMeta, type FinalVideoProps } from "./compositions/FinalVideo";
+import { BeforeAfter, beforeAfterSchema } from "./compositions/BeforeAfter";
 
 // 9:16 vertical, 30fps. Overlay comps have no background → render with alpha
 // (--codec=prores --prores-profile=4444). StatCard is full-frame → --codec=h264.
@@ -141,6 +142,25 @@ export const RemotionRoot: React.FC = () => {
         defaultProps={
           { fps: 30, durationSec: 57, captions: [], overlays: [] } satisfies FinalVideoProps
         }
+      />
+
+      <Composition
+        id="BeforeAfter"
+        component={BeforeAfter}
+        durationInFrames={30}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={beforeAfterSchema}
+        defaultProps={{
+          beforeSrc: "cutaways/folgers-before.jpg",
+          afterSrc: "cutaways/folgers-after.jpg",
+          beforeTag: "BEFORE",
+          afterTag: "AFTER",
+          beforeLabel: "51 oz · $0.22/oz",
+          afterLabel: "43.5 oz · 59.5¢/oz",
+          deltaLabel: "−14.7%",
+        }}
       />
     </>
   );

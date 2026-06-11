@@ -23,7 +23,7 @@ import { CaughtTitle } from "./CaughtTitle";
 // ---- Timeline types (Model B: feed your film + this timeline → one finished MP4) ----
 type OverlayCue = { type: "caught" | "shrink" | "stat" | "rundown" | "source"; fromSec: number; toSec: number; props: Record<string, unknown> };
 type CaptionCue = { text: string; fromSec: number; toSec: number }; // wrap a word in *asterisks* to red-highlight it
-type CutawayCue = { src: string; kind: "image" | "video"; fromSec: number; toSec: number };
+type CutawayCue = { src: string; kind: "image" | "video"; fromSec: number; toSec: number; fit?: "cover" | "contain" };
 type SfxCue = { src: string; atSec: number; volume?: number };
 
 export type FinalVideoProps = {
@@ -133,7 +133,13 @@ export const FinalVideo: React.FC<FinalVideoProps> = ({ film, fps, captions, ove
 
     {cutaways.map((c, i) => (
       <Sequence key={`c${i}`} {...span(c.fromSec, c.toSec, fps)}>
-        {c.kind === "image" ? <Img src={staticFile(c.src)} style={cover} /> : <OffthreadVideo src={staticFile(c.src)} style={cover} />}
+        {c.kind === "image" ? (
+          <AbsoluteFill style={{ background: theme.color.bg }}>
+            <Img src={staticFile(c.src)} style={{ ...cover, objectFit: c.fit ?? "cover" }} />
+          </AbsoluteFill>
+        ) : (
+          <OffthreadVideo src={staticFile(c.src)} style={{ ...cover, objectFit: c.fit ?? "cover" }} />
+        )}
       </Sequence>
     ))}
 

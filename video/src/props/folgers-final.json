@@ -10,10 +10,7 @@
   ],
   "cutaways": [
     { "src": "cutaways/folgers-before-after.png", "kind": "image", "fromSec": 17.5, "toSec": 24.0 },
-    { "src": "cutaways/coffee-chart.png", "kind": "image", "fromSec": 24.0, "toSec": 30.0 }
+    { "src": "cutaways/coffee-chart.jpg", "kind": "image", "fromSec": 24.0, "toSec": 30.0, "fit": "contain" }
   ],
-  "sfx": [
-    { "src": "sfx/caught-stamp.wav", "atSec": 0.2, "volume": 0.9 },
-    { "src": "sfx/number-land.wav", "atSec": 18.0, "volume": 0.7 }
-  ]
+  "sfx": []
 }
