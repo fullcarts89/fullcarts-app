@@ -9,6 +9,8 @@ import { Thumbnail, thumbnailSchema } from "./compositions/Thumbnail";
 import { SafeZonePreview, safeZonePreviewSchema } from "./compositions/SafeZonePreview";
 import { FinalVideo, calcFinalMeta, type FinalVideoProps } from "./compositions/FinalVideo";
 import { BeforeAfter, beforeAfterSchema } from "./compositions/BeforeAfter";
+import { KineticQuote, kineticQuoteSchema } from "./compositions/KineticQuote";
+import { ShrinkReveal, shrinkRevealSchema } from "./compositions/ShrinkReveal";
 
 // 9:16 vertical, 30fps. Overlay comps have no background → render with alpha
 // (--codec=prores --prores-profile=4444). StatCard is full-frame → --codec=h264.
@@ -162,6 +164,35 @@ export const RemotionRoot: React.FC = () => {
           afterSize: "43.5 oz",
           afterPer: "59.5¢ / oz",
           deltaLabel: "−14.7% coffee",
+        }}
+      />
+
+      <Composition
+        id="KineticQuote"
+        component={KineticQuote}
+        durationInFrames={90}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={kineticQuoteSchema}
+        defaultProps={{ lines: ["it's *not* you.", "you're being *robbed* —", "by design."], accent: "red" as const, align: "center" as const }}
+      />
+
+      <Composition
+        id="ShrinkReveal"
+        component={ShrinkReveal}
+        durationInFrames={90}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={shrinkRevealSchema}
+        defaultProps={{
+          imageSrc: "cutaways/folgers-before.jpg",
+          imagePosition: "left center",
+          beforeSize: 51,
+          afterSize: 43.5,
+          unit: "oz",
+          pctChange: 14.7,
         }}
       />
     </>

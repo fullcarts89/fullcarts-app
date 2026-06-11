@@ -19,9 +19,11 @@ import { StatCard } from "./StatCard";
 import { RundownChip } from "./RundownChip";
 import { SourceFrame } from "./SourceFrame";
 import { CaughtTitle } from "./CaughtTitle";
+import { KineticQuote } from "./KineticQuote";
+import { ShrinkReveal } from "./ShrinkReveal";
 
 // ---- Timeline types (Model B: feed your film + this timeline → one finished MP4) ----
-type OverlayCue = { type: "caught" | "shrink" | "stat" | "rundown" | "source"; fromSec: number; toSec: number; props: Record<string, unknown> };
+type OverlayCue = { type: "caught" | "shrink" | "stat" | "rundown" | "source" | "kinetic" | "shrinkreveal"; fromSec: number; toSec: number; props: Record<string, unknown> };
 type CaptionCue = { text: string; fromSec: number; toSec: number }; // wrap a word in *asterisks* to red-highlight it
 type CutawayCue = { src: string; kind: "image" | "video"; fromSec: number; toSec: number; fit?: "cover" | "contain" };
 type SfxCue = { src: string; atSec: number; volume?: number };
@@ -119,6 +121,10 @@ const renderOverlay = (o: OverlayCue) => {
       return <RundownChip {...(o.props as React.ComponentProps<typeof RundownChip>)} />;
     case "source":
       return <SourceFrame {...(o.props as React.ComponentProps<typeof SourceFrame>)} />;
+    case "kinetic":
+      return <KineticQuote {...(o.props as React.ComponentProps<typeof KineticQuote>)} />;
+    case "shrinkreveal":
+      return <ShrinkReveal {...(o.props as React.ComponentProps<typeof ShrinkReveal>)} />;
   }
 };
 
