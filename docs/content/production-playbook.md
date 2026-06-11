@@ -109,6 +109,31 @@ You hand Remotion your raw film **plus a timeline** (a JSON: overlay cues + cuta
 
 **Recommendation:** run **Model A** for your first batches (learn the rhythm, see what lands). Once the format is dialed and you want to cut edit time, I can build the **`FinalVideo`** Remotion composition (Model B) so the operator outputs near-finished cuts and you just review. Either way, Claude's packet is the brain (cues + caption text + cutaway/SFX suggestions); Remotion and Captions App are just the two ways to execute it.
 
+## The proven loop (SRT-synced Model B) — USE THIS
+
+Validated on the first real piece (Caught: Folgers). This is the standing process for every piece:
+
+1. **Film** to camera — vertical **9:16**, ~60s, **no product needed** (the proof is the real
+   before/after image, shown as a cutaway). Face upper-center; leave the lower-middle clear.
+2. **Caption it in your app** (CapCut/Captions) and **export the `.srt`**. (Your app transcribes the
+   audio anyway — the SRT is just that transcript with word timings.)
+3. **Send the operator, as FILES:**
+   - the **film** (compress to <30 MB if the chat caps it),
+   - the **`.srt`**,
+   - the **evidence** — before/after listing screenshots + any chart — **zipped** (⚠️ pasted/attached
+     *images* don't reach the operator in some environments; only real files like `.mov`/`.zip`/`.srt`
+     do — so **zip the images**).
+4. **Operator builds it:** a clean **before/after card** (real cans cropped out of the listing +
+   brand labels for size + price-per-oz), the **real chart** behind the `SourceFrame` citation, and
+   **every overlay/cutaway synced to the SRT word timings** — evidence appears *only when you name it*,
+   your face is primary the rest of the time, no duplicated data. Output: a finished MP4, **no captions**.
+5. **You** add captions in your app (from the same SRT) and post.
+
+**Why the SRT is non-negotiable:** without it, overlay timing is a blind guess and the cut feels like
+a slideshow interrupting you (we saw this on the first attempt). With it, evidence lands on the exact
+word. The engine is the `FinalVideo` composition (`video/`); the SRT timings drive a timeline JSON
+(`src/props/<brand>-final.json`).
+
 ## Tool-by-tool cheat notes
 
 - **Claude** (the `fullcarts-content` skill) — your creative director + data analyst + operator. It reads the DB, ranks ideas, drafts scripts, renders the Remotion overlays, generates Higgsfield b-roll, runs the gates, and writes platform captions. It stops at *film-ready packet* — you film and approve.
