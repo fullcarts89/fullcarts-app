@@ -15,10 +15,16 @@ const MONO = '"JetBrains Mono", monospace';
 // artifacts -- this component only frames, pans, and annotates them, with a
 // visible source citation). When `src` is null it renders a labeled drop slot
 // so the comp previews before captures land.
+//
+// Size `height` to the screenshot's aspect ratio at 934px inner width
+// (1080 - 2*70 margin - 2*3 border) so ring percentages map 1:1 onto the
+// image instead of onto a crop.
 export const EvidenceFrame: React.FC<{
   src: string | null;
   sourceLabel: string;
   placeholder: string;
+  top?: number;
+  height?: number;
   // Ken Burns drift, in % of frame size.
   panX?: number;
   panY?: number;
@@ -26,7 +32,7 @@ export const EvidenceFrame: React.FC<{
   // Optional highlight ring over the load-bearing number (% coordinates).
   ring?: {x: number; y: number; r: number};
   rotate?: number;
-}> = ({src, sourceLabel, placeholder, panX = -3, panY = -2, zoomTo = 1.12, ring, rotate = -1.5}) => {
+}> = ({src, sourceLabel, placeholder, top = 240, height = 980, panX = -3, panY = -2, zoomTo = 1.12, ring, rotate = -1.5}) => {
   const frame = useCurrentFrame();
   const {fps, durationInFrames} = useVideoConfig();
 
@@ -41,10 +47,10 @@ export const EvidenceFrame: React.FC<{
     <div
       style={{
         position: 'absolute',
-        top: 240,
+        top,
         left: 70,
         right: 70,
-        height: 980,
+        height,
         opacity: enter,
         transform: `rotate(${rotate}deg) translateY(${interpolate(enter, [0, 1], [80, 0])}px)`,
         background: theme.bgCard,

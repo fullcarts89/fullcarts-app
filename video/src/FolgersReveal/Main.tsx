@@ -42,6 +42,67 @@ const CueSequence: React.FC<{
   </Sequence>
 );
 
+// Framed screen recording (same visual language as EvidenceFrame).
+const RecordingFrame: React.FC<{
+  src: string | null;
+  sourceLabel: string;
+  placeholder: string;
+  rotate?: number;
+}> = ({src, sourceLabel, placeholder, rotate = 1}) =>
+  src ? (
+    <div
+      style={{
+        position: 'absolute',
+        top: 280,
+        left: 70,
+        right: 70,
+        height: 640,
+        borderRadius: 18,
+        overflow: 'hidden',
+        border: `3px solid ${theme.bgElevated}`,
+        boxShadow: '0 30px 80px rgba(0,0,0,0.7)',
+        transform: `rotate(${rotate}deg)`,
+      }}
+    >
+      <OffthreadVideo
+        muted
+        src={staticFile(src)}
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          objectPosition: 'top',
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          padding: '12px 24px',
+          background: 'rgba(10,11,13,0.92)',
+          fontFamily: MONO,
+          fontSize: 26,
+          color: theme.textSecondary,
+          display: 'flex',
+          gap: 14,
+        }}
+      >
+        <span style={{color: theme.green, fontWeight: 700}}>REAL</span>
+        <span>{sourceLabel}</span>
+      </div>
+    </div>
+  ) : (
+    <EvidenceFrame
+      src={null}
+      sourceLabel={sourceLabel}
+      placeholder={placeholder}
+      top={280}
+      height={640}
+    />
+  );
+
 export const Main: React.FC<MainProps> = (props) => {
   const {fps} = useVideoConfig();
   const pctDrop =
@@ -85,45 +146,34 @@ export const Main: React.FC<MainProps> = (props) => {
         <SlamCallout text="THE EXCUSE IS GONE" top={420} />
       </CueSequence>
 
-      {/* Beat 2 — credibility: real fullcarts.org screen recording */}
-      <CueSequence window={cues.dbRecording} fps={fps} name="db recording">
-        {props.dbRecording ? (
-          <div
-            style={{
-              position: 'absolute',
-              top: 260,
-              left: 80,
-              right: 80,
-              height: 920,
-              borderRadius: 18,
-              overflow: 'hidden',
-              border: `3px solid ${theme.bgElevated}`,
-              boxShadow: '0 30px 80px rgba(0,0,0,0.7)',
-              transform: 'rotate(1deg)',
-            }}
-          >
-            <OffthreadVideo
-              muted
-              src={staticFile(props.dbRecording)}
-              style={{width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top'}}
-            />
-          </div>
-        ) : (
-          <EvidenceFrame
-            src={null}
-            sourceLabel="fullcarts.org — live database"
-            placeholder={'drop screen recording at\npublic/folgers/db-recording.mp4'}
-          />
-        )}
+      {/* Beat 2 — credibility: real fullcarts.org screen recordings,
+          homepage first, then straight onto the Folgers page itself */}
+      <CueSequence window={cues.dbOverview} fps={fps} name="fullcarts overview">
+        <RecordingFrame
+          src={props.dbOverviewRecording}
+          sourceLabel="fullcarts.org — live database"
+          placeholder={'drop screen recording at\npublic/folgers/fullcarts-overview.mov'}
+        />
+      </CueSequence>
+      <CueSequence window={cues.dbFolgersPage} fps={fps} name="folgers page">
+        <RecordingFrame
+          src={props.dbFolgersRecording}
+          sourceLabel="fullcarts.org — the Folgers record"
+          placeholder={'drop screen recording at\npublic/folgers/folgers-page.mov'}
+          rotate={-1}
+        />
       </CueSequence>
 
-      {/* Beat 3 — the reveal: archived listing, current listing, the numbers */}
+      {/* Beat 3 — the reveal: delisted listing, current listing, the numbers.
+          Frame heights match each screenshot's aspect at 934px inner width. */}
       <CueSequence window={cues.listingThen} fps={fps} name="51oz listing">
         <EvidenceFrame
           src={props.listingThenImage}
           sourceLabel={props.listingThenSource}
-          placeholder={'drop archived 51 oz listing at\npublic/folgers/listing-then.png'}
-          ring={{x: 50, y: 42, r: 13}}
+          placeholder={'drop delisted 51 oz listing at\npublic/folgers/listing-then.png'}
+          top={280}
+          height={522}
+          ring={{x: 46, y: 10, r: 8}}
         />
       </CueSequence>
       <CueSequence window={cues.listingNow} fps={fps} name="43.5oz listing">
@@ -131,8 +181,10 @@ export const Main: React.FC<MainProps> = (props) => {
           src={props.listingNowImage}
           sourceLabel={props.listingNowSource}
           placeholder={'drop current 43.5 oz listing at\npublic/folgers/listing-now.png'}
+          top={280}
+          height={404}
           rotate={1.5}
-          ring={{x: 50, y: 42, r: 13}}
+          ring={{x: 36, y: 8, r: 7}}
         />
       </CueSequence>
       <CueSequence window={cues.sizeStrike} fps={fps} name="51 -> 43.5">
@@ -140,11 +192,11 @@ export const Main: React.FC<MainProps> = (props) => {
           before={props.sizeBefore}
           after={props.sizeAfter}
           unit={props.sizeUnit}
-          top={1290}
+          top={900}
         />
       </CueSequence>
       <CueSequence window={cues.pctCounter} fps={fps} name="-14.7%">
-        <PercentCounter toPct={pctDrop} label="of your coffee — gone" top={1290} />
+        <PercentCounter toPct={pctDrop} label="of your coffee — gone" top={880} />
       </CueSequence>
 
       {/* Beat 4 — real futures chart */}
@@ -153,15 +205,18 @@ export const Main: React.FC<MainProps> = (props) => {
           src={props.priceChartImage}
           sourceLabel={props.priceChartSource}
           placeholder={'drop real futures chart at\npublic/folgers/price-chart.png'}
-          zoomTo={1.08}
+          top={280}
+          height={485}
+          zoomTo={1.06}
           rotate={-1}
+          ring={{x: 93, y: 84, r: 6}}
         />
       </CueSequence>
       <CueSequence window={cues.peakCallout} fps={fps} name="peak callout">
-        <SlamCallout text={props.peakLabel} top={1300} />
+        <SlamCallout text={props.peakLabel} top={950} />
       </CueSequence>
       <CueSequence window={cues.dropCallout} fps={fps} name="drop callout">
-        <SlamCallout text={props.dropLabel} top={1300} />
+        <SlamCallout text={props.dropLabel} top={950} />
       </CueSequence>
 
       {/* Beat 5 — metaphor (typography only, never reads as data) */}

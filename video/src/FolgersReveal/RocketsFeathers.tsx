@@ -21,9 +21,10 @@ export const RocketsFeathers: React.FC = () => {
   const launch = spring({frame, fps, config: {damping: 9, mass: 0.4}});
   const rocketY = interpolate(launch, [0, 1], [520, 0]);
 
-  const featherStart = fps * 1.6;
+  // Feather starts ~2.4s in, landing on "...and float down like a feather"
+  const featherStart = fps * 2.4;
   const featherT = Math.max(0, frame - featherStart);
-  const featherY = interpolate(featherT, [0, fps * 7], [-80, 560], {
+  const featherY = interpolate(featherT, [0, fps * 6], [-80, 440], {
     extrapolateRight: 'clamp',
   });
   const sway = Math.sin(featherT / (fps * 0.55)) * 90;
@@ -74,7 +75,7 @@ export const RocketsFeathers: React.FC = () => {
       <div
         style={{
           position: 'absolute',
-          top: 1340,
+          top: 1130,
           left: 0,
           right: 0,
           display: 'flex',

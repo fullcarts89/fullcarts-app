@@ -1,7 +1,8 @@
 node_modules/
 out/
 build/
-# Heavy media drops (Captions export, screen recordings). Screenshots (*.png,
-# *.jpg) ARE committed -- they are the evidence kit and small enough.
-public/folgers/*.mp4
-public/folgers/*.mov
+# The Captions talking-head export is too heavy for git -- keep it local.
+# Screenshots + the two short screen recordings ARE committed: they're the
+# evidence kit the render depends on.
+public/folgers/base.mp4
+public/folgers/base.mov
