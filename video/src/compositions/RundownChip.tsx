@@ -34,7 +34,7 @@ export const RundownChip: React.FC<Props> = ({ rank, brand, productName, sizeBef
         style={{
           position: "absolute",
           left: 56,
-          right: 56,
+          right: 96, // clear the right action-rail safe zone
           bottom: 420,
           opacity: chipIn,
           transform: `translateX(${x}px)`,

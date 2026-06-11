@@ -1,6 +1,8 @@
 import { interpolate, spring, type SpringConfig } from "remotion";
 
-const SMOOTH: Partial<SpringConfig> = { damping: 200 };
+// Smooth, no-overshoot spring for every entrance — gentle ease-out that settles
+// cleanly, never a harsh snap, jitter, or bounce.
+const SMOOTH: Partial<SpringConfig> = { damping: 200, mass: 0.9 };
 
 // Eased 0→1 entrance progress for a beat, with an optional delay (in frames).
 export const enter = (
@@ -23,7 +25,7 @@ export const countUp = (
   { delay = 0, durationInFrames = 40, decimals = 0 }: { delay?: number; durationInFrames?: number; decimals?: number } = {}
 ) => {
   const p = enter(frame, fps, { delay, durationInFrames });
-  const v = interpolate(p, [0, 1], [0, to]);
+  const v = interpolate(p, [0, 1], [0, to], { extrapolateRight: "clamp" });
   const factor = Math.pow(10, decimals);
   return Math.round(v * factor) / factor;
 };

@@ -18,9 +18,11 @@ export const CaughtTitle: React.FC<Props> = ({ brand }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const slam = enter(frame, fps, { durationInFrames: 10 });
-  const brandIn = enter(frame, fps, { delay: 6, durationInFrames: 10 });
-  const barW = interpolate(enter(frame, fps, { delay: 10, durationInFrames: 12 }), [0, 1], [0, 100]);
+  const slam = enter(frame, fps, { durationInFrames: 14 });
+  const brandIn = enter(frame, fps, { delay: 6, durationInFrames: 16 });
+  const barW = interpolate(enter(frame, fps, { delay: 14, durationInFrames: 18 }), [0, 1], [0, 100], {
+    extrapolateRight: "clamp",
+  });
 
   return (
     <AbsoluteFill>

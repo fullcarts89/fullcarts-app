@@ -53,7 +53,7 @@ export const ShrinkOverlay: React.FC<Props> = ({
         style={{
           position: "absolute",
           left: 56,
-          right: 56,
+          right: 96, // clear the right action-rail safe zone
           bottom: 360,
           opacity: cardIn,
           transform: `translateY(${y}px)`,

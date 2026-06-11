@@ -52,10 +52,25 @@ never cartoonish or stocky.
 > viewer mistake this for evidence?* If yes → real, not illustrated. Label AI-made visuals.
 > Source illustration via Higgsfield (labeled) or an illustrator; the `video/` toolkit doesn't make it.
 
+## Safe zones (overlays never bleed off-frame)
+Overlays sit **fully inside** the frame — they do not run off the edge and do not animate in from
+outside. The platforms cover parts of the screen with their own UI, so critical content (the **−X%**,
+key numbers, the brand) must stay clear of:
+- **Right ~12%** — the like / comment / share / save action rail (TikTok, Reels).
+- **Bottom ~15%** — caption + @handle + (TikTok) the music ticker.
+
+Practical rule for 1080×1920: keep critical elements within roughly **x: 56 → 940** and **above
+y ≈ 1640**. Right-aligned elements (badges) inset ≥ ~130px from the right edge. The toolkit comps are
+positioned for this; if you reposition, re-check the rail.
+
 ## Texture & motion
 - **Data-grid texture** (`GridTexture`, ~6–8% opacity) behind title cards / thumbnails / stat cards.
-- **Motion:** spring entrances, count-up on numbers, bar-grow on the before→after. Restrained — the
-  data is the star, not the animation.
+- **Motion — smooth, never jittery.** Every element eases in on a **high-damping spring** (gentle
+  ease-out, *no bounce, no snap*): cards rise + fade, numbers/badges scale-pop, the before→after bar
+  and the "Caught" bar wipe, source bars drop. Entrances ~0.4–0.6s, **staggered** ~0.1–0.3s so beats
+  land in sequence (card → number → badge), not all at once. Count-ups are eased (fast then settle).
+  Restrained — the data is the star, the motion just guides the eye. The live feel is previewed in the
+  style board (it animates); the real output uses the `video/` toolkit's shared spring (`lib/anim.ts`).
 
 ## Signature components (the `video/` toolkit)
 | Element | Composition | Render |
