@@ -54,8 +54,16 @@ const calculateMetadata: CalculateMetadataFunction<MainProps> = async ({
     ) + END_CARD_TAIL_SEC;
 
   if (props.baseVideo) {
-    const meta = await getVideoMetadata(staticFile(props.baseVideo));
-    durationSec = Math.max(durationSec, meta.durationInSeconds);
+    // The probe decodes via <video>, so it fails on Chromium builds without
+    // proprietary codecs (e.g. headless-shell render boxes can't demux
+    // H.264). OffthreadVideo extracts frames via ffmpeg, so rendering is
+    // unaffected — fall back to the SRT / end-card duration.
+    try {
+      const meta = await getVideoMetadata(staticFile(props.baseVideo));
+      durationSec = Math.max(durationSec, meta.durationInSeconds);
+    } catch {
+      // keep the caption-derived duration
+    }
   }
 
   return {
