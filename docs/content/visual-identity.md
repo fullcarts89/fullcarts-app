@@ -75,3 +75,28 @@ Render: `npx remotion still Thumbnail out/thumb.png --frame=15 --props=src/props
 
 ## Emoji / stickers
 Restrained. A single 🛒 / ☕ in CTAs is fine; no sticker spam — it undercuts the credible, documentary tone.
+
+## Sound design (the sonic identity)
+**"A calm data terminal that occasionally slams down a receipt."** Restrained, mechanical/digital,
+evidence-flavored. The punch comes from **two accents** (the CAUGHT stamp + the number land), not
+constant SFX. This protects the credible/documentary tone — the opposite of bubbly meme audio.
+
+| Moment | Sound | Why |
+|---|---|---|
+| **"Caught:" cold-open** | one hard **stamp / shutter-thunk** as CAUGHT lands | the **sonic logo** — "caught red-handed." Most recognizable cue; keep it identical every episode |
+| **Number reveal / count-up** | fast **odometer/counter roll** → soft **ding/thunk** on stop | the data reveal; mono numbers made audible |
+| **Before→after bar shrinks** | short **descending "deflate"** + a tight **pop** on the −X% badge | you *hear* the product get smaller |
+| **Data / typing beats** | subtle **mechanical-keyboard typing** under "I do data for a living" | reinforces the data brand; diegetic, not cartoon |
+| **Proof / "documented, sourced"** | **receipt-print** or stamp tick | the receipts brand, audible |
+| **Cut / transition** | clean low **whoosh**, sparse (not every cut) | movement without noise |
+| **CTA** | soft positive **UI tap / ding** | gentle close, not salesy |
+| **Underbed** | low, tense, minimal **drone/beat**, ducked −18 dB under VO | authority; the voice stays the star |
+
+**Avoid:** glitter/sparkle, riser "vine-booms," meme SFX, busy stingers.
+**Source:** generate the signature ones (CAUGHT stamp, counter) in **ElevenLabs SFX** (text-to-SFX);
+use Captions App's library for the rest. Keep SFX ~−12 to −18 dB under the voice.
+
+## Visual reference
+`web/public/mockups/content-style-board.html` — open in a browser to see every element above
+rendered in-brand (color, type, all overlays in 9:16 context, captions, the sound table).
+

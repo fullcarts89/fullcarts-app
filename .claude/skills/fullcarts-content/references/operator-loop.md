@@ -99,6 +99,7 @@ POST TIME:   <day, optimal slot>
 SCRIPT:      <full hook→proof→context→payoff→CTA, exactly as to be said>
 SHOT LIST:   1) face hook  2) hands-on product  3) <real screenshot to grab>  ...
 ON-SCREEN:   <text overlays + the timestamp each appears>
+SFX:         <stamp on CAUGHT · counter-roll on the number · deflate+pop on −X% · etc. (visual-identity.md)>
 OVERLAYS:    video/out/<slug>.mov  (drop at 0:NN, the moment the number is said)
 B-ROLL:      <higgsfield file(s) or "none">  [AI-label ON]
 CAPTIONS:    <platform caption text>         HASHTAGS: <4–6>
