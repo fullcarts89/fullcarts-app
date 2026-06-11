@@ -93,7 +93,17 @@ clears the rail on the right. All toolkit comps are positioned to this; verify n
 | Ranked rundown chip | `RundownChip` | alpha .mov |
 | Citation bar on a REAL screenshot | `SourceFrame` | alpha .mov |
 | Cover/thumbnail overlay | **`Thumbnail`** | **still PNG** (drop over a face frame) |
+| Before→after evidence card (cropped cans + size/price) | **`BeforeAfter`** | still PNG (proof cutaway) |
+| "Watch it shrink" — product scales down + ghost outline + ticking number | **`ShrinkReveal`** | full-frame cutaway |
+| Kinetic typography for punch lines (red-highlight) | **`KineticQuote`** | full-frame cutaway |
 | FC wordmark | `Brandmark` | (in every comp) |
+
+## Shot density — cut away often, face is the anchor
+The screen should be **mostly branded motion + evidence**, with your face as the *anchor* (the open,
+the lock-in/emotional beat, the CTA) — not the default shot. Target roughly **~35% face / ~65%
+visuals**. Map **every script beat to something on screen** (a reveal, a stat count-up, a kinetic
+line, the chart, the before/after) so the viewer never just squints at a static talking head. New
+visual types get built as reusable Remotion comps and added to the table above.
 
 ## Thumbnail / cover
 Consistent across the profile so the grid reads as a series: **your face** (cover frame) + the
