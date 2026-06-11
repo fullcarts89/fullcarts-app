@@ -4,13 +4,12 @@
   "durationSec": 58.87,
   "captions": [],
   "overlays": [
-    { "type": "caught", "fromSec": 0.0, "toSec": 3.0, "props": { "brand": "Folgers" } },
-    { "type": "shrink", "fromSec": 17.5, "toSec": 24.0, "props": { "brand": "Folgers", "productName": "Coffee", "sizeBefore": 51, "sizeAfter": 43.5, "unit": "oz", "pctChange": 14.7, "source": "FullCarts · listing", "observedDate": "2022", "mode": "shrink" } },
-    { "type": "source", "fromSec": 24.0, "toSec": 30.0, "props": { "sourceName": "ICE Arabica (KC)", "url": "tradingeconomics.com", "asOfDate": "Jun 2026", "headline": "Coffee: −39% from peak" } }
+    { "type": "caught", "fromSec": 0.9, "toSec": 3.4, "props": { "brand": "Folgers" } },
+    { "type": "source", "fromSec": 29.6, "toSec": 36.0, "props": { "sourceName": "ICE Arabica (KC)", "url": "tradingeconomics.com", "asOfDate": "Jun 2026", "headline": "Coffee: −39% from peak" } }
   ],
   "cutaways": [
-    { "src": "cutaways/folgers-before-after.png", "kind": "image", "fromSec": 17.5, "toSec": 24.0 },
-    { "src": "cutaways/coffee-chart.jpg", "kind": "image", "fromSec": 24.0, "toSec": 30.0, "fit": "contain" }
+    { "src": "cutaways/folgers-before-after.png", "kind": "image", "fromSec": 23.4, "toSec": 29.0 },
+    { "src": "cutaways/coffee-chart.jpg", "kind": "image", "fromSec": 29.6, "toSec": 36.0, "fit": "contain" }
   ],
   "sfx": []
 }

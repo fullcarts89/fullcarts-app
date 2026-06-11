@@ -157,9 +157,11 @@ export const RemotionRoot: React.FC = () => {
           afterSrc: "cutaways/folgers-after.jpg",
           beforeTag: "BEFORE",
           afterTag: "AFTER",
-          beforeLabel: "51 oz · $0.22/oz",
-          afterLabel: "43.5 oz · 59.5¢/oz",
-          deltaLabel: "−14.7%",
+          beforeSize: "51 oz",
+          beforePer: "$0.22 / oz",
+          afterSize: "43.5 oz",
+          afterPer: "59.5¢ / oz",
+          deltaLabel: "−14.7% coffee",
         }}
       />
     </>
