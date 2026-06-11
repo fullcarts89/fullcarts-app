@@ -18,7 +18,8 @@ human's face or a GUI app — and enforcing the rules so nothing ships off-brand
 - `docs/content/production-playbook.md` — the stack + the weekly rhythm
 - `docs/content/first-batch.md` — the repeatable script template + 5 worked examples
 - `docs/content/series.md` — the bingeability engine: the "Caught:" series + future-series backlog
-- `references/hooks.md` — the Hook System (The Snap 3-beat + the 4-mistake fixes)
+- `docs/content/content-angles.md` — what & how to talk: pillars, contrarian takes, the Emotional Lock-In bank
+- `references/hooks.md` — the Hook System (The Snap 3-beat + Emotional Lock-In + the 4-mistake fixes)
 - `docs/content/profile-copy.md` — bios + pinned posts
 
 ## The automation boundary (what you do vs. what the human does)
@@ -45,7 +46,7 @@ human's face or a GUI app — and enforcing the rules so nothing ships off-brand
 
 1. **Refresh the facts.** Re-pull the DB counts + this week's candidates → update the banner number.
 2. **Brief.** Rank candidates by convergence (FullCarts signal × external news/macro/calendar). Pick 3–5, and **assign each to a series** — default the primary **"Caught:"** series (keep the fixed `Caught: [Brand]` cold-open), or a future thread per `series.md`.
-3. **Script.** Draft each to the house template (hook → proof → context → payoff → CTA), per-platform captions + hashtags. **Write every hook with the Hook System** ([references/hooks.md](references/hooks.md)) — clarity-first + contrast loop + "you/your"; never a vague open loop.
+3. **Script.** Draft each to the house template (cold-open → hook → **lock-in** → proof → trick → payoff → CTA). Pick an **angle + a contrarian take + a feeling** from `content-angles.md`, write the hook as **The Snap** and add the **Emotional Lock-In** beat ([references/hooks.md](references/hooks.md)); per-platform captions + hashtags. Never a vague open loop.
 4. **Gate.** Run all three gates on every script. A script that fails any gate does not proceed.
 5. **Assets.** Render the matching Remotion overlay(s); generate Bucket-2 Higgsfield b-roll if needed; note the real screenshots the human must grab.
 6. **Packet.** Emit a per-clip production packet (shot list, on-screen text + timing, overlay files, captions, hashtags, post time, and an Agent-Opus brief for any B-side clip).

@@ -12,6 +12,7 @@
 - `docs/content/first-batch.md` — your first 5 ready-to-film scripts in the repeatable template
 - `docs/content/profile-copy.md` — per-platform bios + pinned posts
 - `docs/content/series.md` — the bingeability engine: the "Caught:" series + future-series backlog
+- `docs/content/content-angles.md` — what & how to talk: pillars, contrarian takes, Emotional Lock-In bank
 - `.claude/skills/fullcarts-content/references/hooks.md` — the Hook System (The Snap + the 4-mistake fixes)
 - `video/` — the `@fullcarts/video` Remotion overlay toolkit (the branded data-viz moat)
 - `.claude/skills/fullcarts-content/` — the weekly-production operator skill (run it to make a batch)

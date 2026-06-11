@@ -48,6 +48,10 @@ Spoken to a real person who doesn't want to get ripped off at the grocery store.
 - ✅ "You're not crazy — your cereal box really did get thinner. Here's the proof."
 - ❌ "Consumers face eroding unit economics across the CPG sector."
 
+Go deeper than "you/your" when you can: name the **unspoken truth** the viewer won't say out loud
+(self-blame, "am I crazy," parental guilt) and resolve it with proof — the **Emotional Lock-In**
+(`content-angles.md` §4 + `hooks.md`).
+
 ### 5. Reaction-evoking
 Engineered to pull a reaction — a comment, a share, a "send this to whoever buys the groceries." A kicker, an outrage beat, a direct question, a "tag someone who eats these."
 

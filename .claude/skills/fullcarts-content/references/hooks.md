@@ -42,6 +42,31 @@ loop using CONTRAST.**
 > #1 + #4 at once). It only "works" off the creator's face/text on screen — the spoken words add
 > nothing. We do not use these as the hook. (Note: our old first-batch Gatorade hook was exactly this.)
 
+## The Emotional Lock-In (name the unspoken truth)
+
+The deepest retention lever in our niche. Beyond "you/your," name the **unspoken, slightly
+embarrassing emotional truth** the viewer feels but would never say out loud. Said *for* them, it
+makes them feel **seen** — and a viewer won't accept your data until they believe you *get it*.
+
+**Why it's unusually strong for shrinkflation:** the crime is engineered to be invisible, so victims
+blame *themselves* ("am I crazy / bad with money / failing my family"). We can do what other creators
+can't: **resolve that shame with proof.**
+
+**The spine (always land here):**
+> "It's not you. You're not crazy, not bad with money, not failing your family. You're being quietly
+> robbed — and they built it so you'd blame yourself. Here are the receipts."
+
+**Surface → unspoken-truth (swipe):**
+- ❌ "Another product shrank." → ✅ "Your paycheck didn't shrink — your groceries did, and you've
+  started wondering if *you're* the problem. You're not."
+- ❌ "Coffee got smaller." → ✅ "You've caught yourself rationing scoops to stretch the can, and felt
+  a little pathetic. That's not you being cheap — that's them taking 15% and betting you'd blame yourself."
+
+**Placement:** usually the **context beat** (right after the hook, before the data) — it's the "I get
+it" moment that earns the right to show receipts. On strong pieces it can *be* the hook, and it often
+*is* the Snap's reversal ("you think it's you → it's not, it's them — proof"). Full feelings bank:
+`docs/content/content-angles.md` §4.
+
 ## The Snap — the lead hook template (use this first)
 
 The strongest hooks are a **3-beat reversal** ("the God-tier hook"): set a context the viewer

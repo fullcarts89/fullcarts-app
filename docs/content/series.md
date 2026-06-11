@@ -25,14 +25,28 @@ series and binge backward. It also bakes in **cult-hopping** — opening on a fa
 instant relatability (the brain relaxes when it sees something it knows), which we get **for free**
 because every episode features a recognizable brand.
 
-**Episode structure (30–60s, the house template + the Snap hook):**
+**Episode structure (30–60s — house template + Snap hook + Emotional Lock-In):**
 ```
-COLD-OPEN (0–1s):  "Caught: [Brand]."                         → on-screen CAUGHT: [BRAND]
-HOOK (1–3s):       The Snap — context → lean → reversal        → see hooks.md
-PROOF (3–15s):     real product + FullCarts entry / source     → ShrinkOverlay (before→after)
-CONTEXT (15–40s):  the trick + (1-in-5) the day-job signature  → data-viz overlay
+COLD-OPEN (0–1s):  "Caught: [Brand]."                          → on-screen CAUGHT: [BRAND]
+HOOK (1–4s):       The Snap — context → lean → reversal         → see hooks.md
+LOCK-IN (4–10s):   name the unspoken truth (they feel SEEN)     → content-angles.md §4
+PROOF (10–20s):    real product + FullCarts entry; resolves the → ShrinkOverlay (before→after)
+                   lock-in: "it's not you — here's the receipt"
+TRICK (20–40s):    how they hid it + (1-in-5) day-job signature → data-viz overlay
 PAYOFF (40–52s):   the kicker (price-per-unit gut-punch)
 CTA (52–57s):      "Follow — I catch the next one. fullcarts.org"
+```
+
+**Worked example — "Caught: Cadbury"** (with the lock-in beat):
+```
+COLD-OPEN: "Caught: Cadbury."
+HOOK:      "Same egg, same price as two years ago — except a fifth of the chocolate is gone."
+LOCK-IN:   "And if you grabbed it for your kid and thought 'huh, this feels small' — then felt a
+           little silly for noticing — you're not imagining it, and you're not being cheap."
+PROOF:     "Freddo Faces went 122 grams to 99 — that's 18.9%, documented, sourced." [ShrinkOverlay]
+TRICK:     "Same mold, same wrapper, less inside — the cut you can't see on the shelf."
+PAYOFF:    "You didn't get worse at noticing. They got better at hiding it."
+CTA:       "Follow — I catch the next one. Search Cadbury at fullcarts.org. 🍫"
 ```
 
 **Flagship pilot episodes (already in the data):**
