@@ -10,7 +10,8 @@ Remotion only frames, pans, and annotates; it never fabricates evidence.
 |---|---|---|
 | `voiceover.srt` | Real Captions SRT (1:39.2, 6 paragraph-level cues — paginated to 6-word pages at runtime) | ✅ in repo (two text fixes: `fullcart.org`→`fullcarts.org`, dropped one "Um,") |
 | `listing-then.png` | Walmart **delisted** "OFFLINE-Folgers Classic Roast (51 oz.)" listing | ✅ in repo |
-| `listing-now.png` | Walmart current 43.5-Ounce listing | ✅ in repo |
+| `listing-now.png` | Walmart current 43.5-Ounce listing ($25.89) | ✅ in repo |
+| `listing-sams.png` | Sam's Club current 43.5 oz listing ($17.88) — second-retailer receipt | ✅ in repo |
 | `price-chart.png` | Real coffee futures 12-month chart (2025 peak ~440 → 251 now) | ✅ in repo |
 | `fullcarts-overview.mov` | fullcarts.org homepage screen recording (H.264) | ✅ in repo |
 | `folgers-page.mov` | fullcarts.org Folgers page screen recording (H.264) | ✅ in repo |
@@ -28,20 +29,21 @@ Remotion only frames, pans, and annotates; it never fabricates evidence.
 - **"Fallen almost forty percent" ✓ (conservative)** — chart shows ~440 peak
   → 251.10 now ≈ −43%. Understating is fine; overstating is not.
 
-## Known wrinkle: the two listing prices
+## Known wrinkle: visible listing prices
 
 `listing-then.png` shows **$11.24** (stale price on the delisted 51 oz item)
-and `listing-now.png` shows **$25.89**. The script says the shelf price
-"barely moved" — if both prices are legible in the same video, viewers may
-read "$11 → $26?!" and miss the point. Mitigations (pick in Studio): keep the
-Ken Burns crop tight on the size text, or crop the old price out of
-`listing-then.png`. The highlight rings already target the sizes, not the
-prices.
+vs **$25.89** (Walmart now) / **$17.88** (Sam's Club now). The script says
+the shelf price "barely moved" — if the old price is legible, viewers may
+read "$11 → $26?!" and miss the point. The owner kept the screenshot as-is
+(re-sent after this was flagged); mitigation if it tests badly: keep the Ken
+Burns crop tight on the size text. The highlight rings already target the
+sizes, not the prices.
 
 ## Ring placement (eyeball in Studio, scrubbing the cue)
 
 - `listing-then.png`: ring at (46%, 10%) on "(51 oz.)" in the title
 - `listing-now.png`: ring at (36%, 8%) on "43.5-Ounce"
+- `listing-sams.png`: ring at (88%, 31%) on "43.5 oz." in the title
 - `price-chart.png`: ring at (93%, 84%) on the current-price marker
 
 ## Reminders

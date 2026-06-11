@@ -24,7 +24,8 @@ export const cues = {
   dbOverview: {start: 20.9, end: 24.2}, // fullcarts.org homepage recording
   dbFolgersPage: {start: 24.2, end: 27.4}, // the Folgers product page recording
   listingThen: {start: 39.2, end: 43.6}, // delisted 51 oz Walmart listing
-  listingNow: {start: 43.6, end: 50.5}, // current 43.5 oz listing
+  listingNow: {start: 43.6, end: 48.0}, // current 43.5 oz Walmart listing
+  listingSams: {start: 48.0, end: 52.2}, // current 43.5 oz Sam's Club listing
   sizeStrike: {start: 42.0, end: 46.2}, // 51 -> 43.5 strike-through callout
   pctCounter: {start: 46.2, end: 52.0}, // "-14.7%" counter
   priceChart: {start: 53.3, end: 61.5}, // real futures chart screenshot

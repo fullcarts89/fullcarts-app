@@ -176,7 +176,7 @@ export const Main: React.FC<MainProps> = (props) => {
           ring={{x: 46, y: 10, r: 8}}
         />
       </CueSequence>
-      <CueSequence window={cues.listingNow} fps={fps} name="43.5oz listing">
+      <CueSequence window={cues.listingNow} fps={fps} name="43.5oz walmart">
         <EvidenceFrame
           src={props.listingNowImage}
           sourceLabel={props.listingNowSource}
@@ -185,6 +185,17 @@ export const Main: React.FC<MainProps> = (props) => {
           height={404}
           rotate={1.5}
           ring={{x: 36, y: 8, r: 7}}
+        />
+      </CueSequence>
+      <CueSequence window={cues.listingSams} fps={fps} name="43.5oz sams">
+        <EvidenceFrame
+          src={props.listingSamsImage}
+          sourceLabel={props.listingSamsSource}
+          placeholder={'drop second-retailer 43.5 oz listing at\npublic/folgers/listing-sams.png'}
+          top={280}
+          height={500}
+          rotate={-1.2}
+          ring={{x: 88, y: 31, r: 8}}
         />
       </CueSequence>
       <CueSequence window={cues.sizeStrike} fps={fps} name="51 -> 43.5">
