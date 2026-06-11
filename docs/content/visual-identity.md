@@ -96,6 +96,11 @@ clears the rail on the right. All toolkit comps are positioned to this; verify n
 | Before→after evidence card (cropped cans + size/price) | **`BeforeAfter`** | still PNG (proof cutaway) |
 | "Watch it shrink" — product scales down + ghost outline + ticking number | **`ShrinkReveal`** | full-frame cutaway |
 | Kinetic typography for punch lines (red-highlight) | **`KineticQuote`** | full-frame cutaway |
+| Text in the negative space around the face (above / chin) | **`HookText`** | overlay cue (`hook`) |
+| Rockets & feathers animated line — pay rockets/feathers, get steps down forever | **`RocketsFeathers`** | negative-space panel (`rockets` cue) |
+| Unit-price count-up — old price struck, new ticks up + lands with glow | **`PriceJump`** | negative-space panel (`pricejump` cue) |
+| "What you lost" cup grid — lost cups turn red + drop, deficit counts up | **`FewerCups`** | negative-space panel (`fewercups` cue) |
+| Branded outro / CTA close (brandmark + tagline + url chip + follow ask) | **`OutroCard`** | full-frame (`outro` cue) |
 | FC wordmark | `Brandmark` | (in every comp) |
 
 ## Shot density — cut away often, face is the anchor

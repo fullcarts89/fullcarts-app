@@ -12,7 +12,12 @@ import { BeforeAfter, beforeAfterSchema } from "./compositions/BeforeAfter";
 import { KineticQuote, kineticQuoteSchema } from "./compositions/KineticQuote";
 import { ShrinkReveal, shrinkRevealSchema } from "./compositions/ShrinkReveal";
 import { HookText, hookTextSchema } from "./compositions/HookText";
+import { RocketsFeathers, rocketsFeathersSchema } from "./compositions/RocketsFeathers";
+import { PriceJump, priceJumpSchema } from "./compositions/PriceJump";
+import { FewerCups, fewerCupsSchema } from "./compositions/FewerCups";
+import { OutroCard, outroCardSchema } from "./compositions/OutroCard";
 import folgersCut from "./props/folgers-final.json";
+import folgersCutV5 from "./props/folgers-final-v5.json";
 
 // 9:16 vertical, 30fps. Overlay comps have no background → render with alpha
 // (--codec=prores --prores-profile=4444). StatCard is full-frame → --codec=h264.
@@ -160,6 +165,19 @@ export const RemotionRoot: React.FC = () => {
         defaultProps={folgersCut as unknown as FinalVideoProps}
       />
 
+      {/* v5 — climax hooks replaced with motion graphics (PriceJump + RocketsFeathers)
+          and a branded OutroCard close. Face stays on screen for both graphics. */}
+      <Composition
+        id="FolgersCutV5"
+        component={FinalVideo}
+        durationInFrames={1766}
+        fps={FPS}
+        width={W}
+        height={H}
+        calculateMetadata={calcFinalMeta}
+        defaultProps={folgersCutV5 as unknown as FinalVideoProps}
+      />
+
       <Composition
         id="BeforeAfter"
         component={BeforeAfter}
@@ -201,6 +219,82 @@ export const RemotionRoot: React.FC = () => {
         height={H}
         schema={kineticQuoteSchema}
         defaultProps={{ lines: ["it's *not* you.", "you're being *robbed* —", "by design."], accent: "red" as const, align: "center" as const }}
+      />
+
+      {/* Motion-graphics panels for the negative space around the talking head.
+          Transparent overlays — preview standalone here, use via FinalVideo cues. */}
+      <Composition
+        id="RocketsFeathers"
+        component={RocketsFeathers}
+        durationInFrames={150}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={rocketsFeathersSchema}
+        defaultProps={{
+          title: "ROCKETS & FEATHERS",
+          payLabel: "WHAT YOU PAY",
+          getLabel: "WHAT YOU GET",
+          note: "up *fast* · down *slow* · *or never*",
+          zone: "above" as const,
+        }}
+      />
+
+      <Composition
+        id="PriceJump"
+        component={PriceJump}
+        durationInFrames={150}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={priceJumpSchema}
+        defaultProps={{
+          // approved per-oz figures (years apart — one listing archived); see approved-claims.md
+          label: "PRICE PER OZ — FOLGERS BIG CAN",
+          before: 22,
+          after: 59.5,
+          prefix: "",
+          suffix: "¢",
+          decimals: 1,
+          context: "the shelf price *barely moved.* the can did.",
+          zone: "above" as const,
+        }}
+      />
+
+      <Composition
+        id="FewerCups"
+        component={FewerCups}
+        durationInFrames={150}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={fewerCupsSchema}
+        defaultProps={{
+          // 51 → 43.5 oz is the verified hard fact; cups-per-can needs a real label first
+          before: 51,
+          after: 43.5,
+          unitLabel: "oz of coffee",
+          perIcon: 5,
+          decimals: 1,
+          subline: "same red can. same shelf.",
+          zone: "above" as const,
+        }}
+      />
+
+      <Composition
+        id="OutroCard"
+        component={OutroCard}
+        durationInFrames={180}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={outroCardSchema}
+        defaultProps={{
+          tagline: "Every claim.\n*Source-cited.*",
+          followLine: "follow — I catch the next one",
+          url: "fullcarts.org",
+          statLine: "2,200+ documented shrinks · every one source-cited",
+        }}
       />
 
       <Composition

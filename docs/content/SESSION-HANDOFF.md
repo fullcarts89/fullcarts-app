@@ -76,15 +76,26 @@ npx remotion studio
 ---
 
 ## Open items / next steps (where we stopped)
-1. **Review the v4 hooks-over-you cut** (`FolgersCut`) and tune: hook timing, zoom intensity, any text overlapping the face during the push-in (chin text at ~0:42).
-2. **Build more motion graphics** (requested): a real **Rockets & Feathers** animated line (price up fast / down slow, can stays small), a **price-per-pot count-up**, a **"fewer cups"** visual, a branded **outro/CTA card** — to break up the kinetic-text climax (37–52s).
-3. **Density balance:** user wants graphics over the face in negative space, fewer full cutaways — keep iterating toward that.
-4. **Studio access:** the sandbox can't expose a URL to the user → run Studio **locally** for live editing, or the agent renders previews. (This caused the friction at end of session.)
+1. **Review the v5 cut** (`FolgersCutV5`, `src/props/folgers-final-v5.json`) — same as v4 but the
+   climax hooks are replaced with the new motion graphics: `PriceJump` (37.7–41.8, per-oz 22¢→59.5¢,
+   above-head), `RocketsFeathers` (42.4–47.4, above-head), and a full-frame `OutroCard` close
+   (53.0–end). Needs the film + cutaway assets dropped back in to render (see asset section above).
+2. ~~Build more motion graphics~~ **DONE (2026-06-11):** `RocketsFeathers`, `PriceJump`, `FewerCups`,
+   `OutroCard` — all registered in Root, wired into `FinalVideo` as cue types `rockets` / `pricejump` /
+   `fewercups` / `outro`, schema-defaulted AND destructure-defaulted (cues can pass sparse props).
+   `FewerCups` is NOT in the v5 timeline: cups-per-can isn't in the approved-claims registry — read the
+   real number off a can label before using it (the default shows the verified −7.5 oz fact instead).
+3. **Density balance:** v5 keeps the face on screen for both climax graphics (negative-space panels,
+   `zone: "above"`). Keep iterating; `FewerCups`/`PriceJump`/`RocketsFeathers` all take `zone: "above" | "chin"`.
+4. **Studio access:** on the user's local machine `cd video && npx remotion studio` just works now.
 5. Then: repeat the loop for the next episode (Gatorade is scripted in `series.md`).
 
 ## Gotchas learned (don't relearn these)
 - **Zip images to send them** (pasted images aren't saved to disk in this env).
 - **SRT = sync.** Without word timings, overlay timing is blind-guessing and feels like a slideshow.
-- **Fonts** are embedded (no fetch) so long multi-tab renders don't hang.
+- **Fonts** are embedded (no fetch) so long multi-tab renders don't hang. ⚠️ The original
+  `fontsCss.ts` had EMPTY font-family names (`font-family:;`) — every render before 2026-06-11 fell
+  back to a serif. Fixed by `video/scripts/gen-fonts.mjs` (regenerates the file; rerun if fonts change).
+  **Re-render anything kept from before the fix.**
 - **Accuracy:** "2,200+" events, not "3,000+". Per-oz comparison spans years (one listing is archived) — frame the **51→43.5oz cut** as the hard fact, the chart as the rockets-and-feathers backdrop.
 - **Evidence policy:** real before/after image + real chart screenshot only; never an AI chart/packaging.

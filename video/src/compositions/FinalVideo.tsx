@@ -22,9 +22,13 @@ import { CaughtTitle } from "./CaughtTitle";
 import { KineticQuote } from "./KineticQuote";
 import { ShrinkReveal } from "./ShrinkReveal";
 import { HookText } from "./HookText";
+import { RocketsFeathers } from "./RocketsFeathers";
+import { PriceJump } from "./PriceJump";
+import { FewerCups } from "./FewerCups";
+import { OutroCard } from "./OutroCard";
 
 // ---- Timeline types (Model B: feed your film + this timeline → one finished MP4) ----
-type OverlayCue = { type: "caught" | "shrink" | "stat" | "rundown" | "source" | "kinetic" | "shrinkreveal" | "hook"; fromSec: number; toSec: number; props: Record<string, unknown> };
+type OverlayCue = { type: "caught" | "shrink" | "stat" | "rundown" | "source" | "kinetic" | "shrinkreveal" | "hook" | "rockets" | "pricejump" | "fewercups" | "outro"; fromSec: number; toSec: number; props: Record<string, unknown> };
 // Camera keyframes drive the film's scale/position over time — opening zoom, pattern
 // interrupts, and fake "angle change" rehooks from a single take.
 type CamKey = { atSec: number; scale: number; x?: number; y?: number };
@@ -152,6 +156,14 @@ const renderOverlay = (o: OverlayCue) => {
       return <ShrinkReveal {...(o.props as React.ComponentProps<typeof ShrinkReveal>)} />;
     case "hook":
       return <HookText {...(o.props as React.ComponentProps<typeof HookText>)} />;
+    case "rockets":
+      return <RocketsFeathers {...(o.props as React.ComponentProps<typeof RocketsFeathers>)} />;
+    case "pricejump":
+      return <PriceJump {...(o.props as React.ComponentProps<typeof PriceJump>)} />;
+    case "fewercups":
+      return <FewerCups {...(o.props as React.ComponentProps<typeof FewerCups>)} />;
+    case "outro":
+      return <OutroCard {...(o.props as React.ComponentProps<typeof OutroCard>)} />;
   }
 };
 
