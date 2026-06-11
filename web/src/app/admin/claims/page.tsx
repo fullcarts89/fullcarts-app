@@ -49,6 +49,8 @@ type RawItem = {
     media_metadata?: Record<string, { s?: { u?: string } }>;
     // Kroger analyzer raw_items: written by analyze_kroger_changes.py
     new_date?: string;
+    // Community submissions: all uploaded evidence photo paths (claim-images bucket)
+    image_storage_paths?: string[];
   };
 };
 
@@ -433,19 +435,44 @@ export default async function ClaimsReviewPage({
               className="border border-[var(--bg-tertiary)] rounded-lg bg-[var(--bg-secondary)] overflow-hidden"
             >
               <div className="flex flex-col sm:flex-row">
-                {/* Image column */}
+                {/* Image column. Community submissions can carry multiple
+                    evidence photos (e.g. before & after) in
+                    raw_payload.image_storage_paths; render them as a grid.
+                    Everything else keeps the single-image behavior. */}
                 <div className="w-full sm:w-64 h-48 sm:min-h-48 bg-[var(--bg-primary)] flex-shrink-0 relative">
-                  {imageUrl || claim.image_storage_path ? (
-                    <ClaimImage
-                      src={imageUrl || ""}
-                      storagePath={claim.image_storage_path}
-                      alt={title}
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center h-full text-[var(--text-tertiary)] text-sm">
-                      No image
-                    </div>
-                  )}
+                  {(() => {
+                    const photoPaths =
+                      payload?.image_storage_paths?.length
+                        ? payload.image_storage_paths
+                        : claim.image_storage_path
+                          ? [claim.image_storage_path]
+                          : [];
+                    if (photoPaths.length > 1) {
+                      return (
+                        <div className="absolute inset-0 grid grid-cols-2 gap-0.5">
+                          {photoPaths.slice(0, 4).map((p, i) => (
+                            <div key={p} className="relative bg-[var(--bg-primary)]">
+                              <ClaimImage src="" storagePath={p} alt={`${title} (${i + 1})`} />
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    }
+                    if (imageUrl || claim.image_storage_path) {
+                      return (
+                        <ClaimImage
+                          src={imageUrl || ""}
+                          storagePath={claim.image_storage_path}
+                          alt={title}
+                        />
+                      );
+                    }
+                    return (
+                      <div className="flex items-center justify-center h-full text-[var(--text-tertiary)] text-sm">
+                        No image
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 {/* Content column */}

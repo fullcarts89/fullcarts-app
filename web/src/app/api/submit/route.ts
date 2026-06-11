@@ -12,10 +12,12 @@
 // identifies and filters these with its existing source machinery. No new claim
 // status, no migration.
 //
-// Evidence is REQUIRED: a submission must carry either an evidence URL or an
-// uploaded photo (or both). Photos are uploaded to the public `claim-images`
-// storage bucket under a `community/` prefix and the path is stored on
-// claims.image_storage_path, so the admin claim queue renders it via the same
+// Evidence is REQUIRED: a submission must carry either an evidence URL or at
+// least one uploaded photo (or both). A submission may include several photos
+// (e.g. a before & after pair). Photos are uploaded to the public
+// `claim-images` storage bucket under `community/<id>/`; all paths go into
+// raw_payload.image_storage_paths and the first is mirrored to
+// claims.image_storage_path, so the admin claim queue renders them via the same
 // ClaimImage component used for scraped evidence.
 //
 // The request is multipart/form-data (so a file can ride along). Clients
@@ -36,7 +38,8 @@ const STORAGE_BUCKET = "claim-images";
 const MAX_DESCRIPTION = 4000;
 const MAX_FIELD = 200;
 const MAX_UNIT = 16;
-const MAX_PHOTO_BYTES = 6 * 1024 * 1024; // 6 MB backstop (clients compress first)
+const MAX_PHOTO_BYTES = 6 * 1024 * 1024; // 6 MB per-photo backstop (clients compress first)
+const MAX_PHOTOS = 4; // e.g. before + after (+ a couple extra)
 const ALLOWED_IMAGE_TYPES: Record<string, string> = {
   "image/jpeg": "jpg",
   "image/png": "png",
@@ -126,32 +129,33 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Optional photo. Validate type + size here; upload happens after we know the
-  // submission is otherwise valid.
-  const photoRaw = form.get("photo");
-  const photo =
-    photoRaw && typeof photoRaw === "object" && "arrayBuffer" in photoRaw
-      ? (photoRaw as File)
-      : null;
-  const hasPhoto = !!photo && photo.size > 0;
+  // Optional photos — one or more (e.g. a before & after pair). Validate each
+  // here; upload happens after we know the submission is otherwise valid.
+  const photos = form
+    .getAll("photo")
+    .filter(
+      (p): p is File =>
+        typeof p === "object" && p !== null && "arrayBuffer" in p && (p as File).size > 0,
+    )
+    .slice(0, MAX_PHOTOS);
 
-  if (hasPhoto) {
-    if (!ALLOWED_IMAGE_TYPES[photo!.type]) {
+  for (const p of photos) {
+    if (!ALLOWED_IMAGE_TYPES[p.type]) {
       return NextResponse.json(
-        { error: "Photo must be a JPEG, PNG, WebP, GIF or HEIC image" },
+        { error: "Photos must be JPEG, PNG, WebP, GIF or HEIC images" },
         { status: 400 },
       );
     }
-    if (photo!.size > MAX_PHOTO_BYTES) {
+    if (p.size > MAX_PHOTO_BYTES) {
       return NextResponse.json(
-        { error: "Photo is too large (max 6 MB after compression)" },
+        { error: "A photo is too large (max 6 MB each after compression)" },
         { status: 413 },
       );
     }
   }
 
-  // Evidence is required: a link, a photo, or both.
-  if (!evidence_url && !hasPhoto) {
+  // Evidence is required: a link, at least one photo, or both.
+  if (!evidence_url && photos.length === 0) {
     return NextResponse.json(
       { error: "Evidence is required — add a link or attach a photo." },
       { status: 400 },
@@ -179,24 +183,29 @@ export async function POST(req: NextRequest) {
 
   const submissionId = randomUUID();
 
-  // Upload the photo first (if any) so we can record its path on both rows.
-  let image_storage_path: string | null = null;
-  if (hasPhoto) {
-    const ext = ALLOWED_IMAGE_TYPES[photo!.type];
-    const path = `community/${submissionId}.${ext}`;
-    const bytes = new Uint8Array(await photo!.arrayBuffer());
+  // Upload the photos first (if any) so we can record their paths on both rows.
+  // All paths go into raw_payload.image_storage_paths; the first is mirrored to
+  // claims.image_storage_path so the existing single-image consumers (thumbnail,
+  // groups view) keep working.
+  const image_storage_paths: string[] = [];
+  for (let i = 0; i < photos.length; i++) {
+    const p = photos[i];
+    const ext = ALLOWED_IMAGE_TYPES[p.type];
+    const path = `community/${submissionId}/${i}.${ext}`;
+    const bytes = new Uint8Array(await p.arrayBuffer());
     const { error: uploadErr } = await sb.storage
       .from(STORAGE_BUCKET)
-      .upload(path, bytes, { contentType: photo!.type, upsert: false });
+      .upload(path, bytes, { contentType: p.type, upsert: false });
     if (uploadErr) {
       console.error("submission photo upload failed:", uploadErr);
       return NextResponse.json(
-        { error: "Could not save the photo — please try again." },
+        { error: "Could not save a photo — please try again." },
         { status: 500 },
       );
     }
-    image_storage_path = path;
+    image_storage_paths.push(path);
   }
+  const image_storage_path: string | null = image_storage_paths[0] ?? null;
 
   // 1. Evidence anchor. source_id is unique per submission so we never collide
   //    with the UNIQUE (source_type, source_id) index. content_hash and
@@ -214,6 +223,7 @@ export async function POST(req: NextRequest) {
     new_price,
     evidence_url,
     image_storage_path,
+    image_storage_paths,
     session_id,
     ip_hash,
   };
