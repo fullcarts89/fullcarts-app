@@ -14,6 +14,7 @@
 - `docs/content/series.md` — the bingeability engine: the "Caught:" series + future-series backlog
 - `docs/content/content-angles.md` — what & how to talk: pillars, contrarian takes, Emotional Lock-In bank
 - `docs/content/content-log.md` — ledger of what actually shipped (dedup + follows-driven iteration)
+- `docs/content/visual-identity.md` — the signature content style (fonts, color, captions, illustration boundary)
 - `.claude/skills/fullcarts-content/references/hooks.md` — the Hook System (The Snap + the 4-mistake fixes)
 - `video/` — the `@fullcarts/video` Remotion overlay toolkit (the branded data-viz moat)
 - `.claude/skills/fullcarts-content/` — the weekly-production operator skill (run it to make a batch)

@@ -4,6 +4,8 @@ import { ShrinkOverlay, shrinkOverlaySchema } from "./compositions/ShrinkOverlay
 import { StatCard, statCardSchema } from "./compositions/StatCard";
 import { RundownChip, rundownChipSchema } from "./compositions/RundownChip";
 import { SourceFrame, sourceFrameSchema } from "./compositions/SourceFrame";
+import { CaughtTitle, caughtTitleSchema } from "./compositions/CaughtTitle";
+import { Thumbnail, thumbnailSchema } from "./compositions/Thumbnail";
 
 // 9:16 vertical, 30fps. Overlay comps have no background → render with alpha
 // (--codec=prores --prores-profile=4444). StatCard is full-frame → --codec=h264.
@@ -89,6 +91,28 @@ export const RemotionRoot: React.FC = () => {
           asOfDate: "as of 2026-06-10",
           headline: "Grocery CPI — official print",
         }}
+      />
+
+      <Composition
+        id="CaughtTitle"
+        component={CaughtTitle}
+        durationInFrames={60}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={caughtTitleSchema}
+        defaultProps={{ brand: "Folgers" }}
+      />
+
+      <Composition
+        id="Thumbnail"
+        component={Thumbnail}
+        durationInFrames={30}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={thumbnailSchema}
+        defaultProps={{ brand: "Folgers", pctChange: 14.7, mode: "shrink" as const }}
       />
     </>
   );

@@ -19,6 +19,7 @@ human's face or a GUI app — and enforcing the rules so nothing ships off-brand
 - `docs/content/first-batch.md` — the repeatable script template + 5 worked examples
 - `docs/content/series.md` — the bingeability engine: the "Caught:" series + future-series backlog
 - `docs/content/content-angles.md` — what & how to talk: pillars, contrarian takes, the Emotional Lock-In bank
+- `docs/content/visual-identity.md` — signature style: fonts, color, red-highlight captions, illustration boundary
 - `references/hooks.md` — the Hook System (The Snap 3-beat + Emotional Lock-In + the 4-mistake fixes)
 - `docs/content/profile-copy.md` — bios + pinned posts
 

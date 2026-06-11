@@ -26,6 +26,8 @@ Tokens live in `src/lib/theme.ts` (graphite `#0a0b0d`, alert red `#dc2626`, sign
 | **StatCard** | By-the-Numbers hook, the DB counter (count-up), CPI newsjack headline | opaque graphite | mp4 |
 | **RundownChip** | "5 things that shrank" — one chip per item | transparent | **alpha** overlay |
 | **SourceFrame** | citation bar to lay **on top of a REAL screenshot** (BLS/FRED/FullCarts page) | transparent | **alpha** overlay |
+| **CaughtTitle** | the "Caught:" series cold-open (`CAUGHT: [BRAND]`) — overlay the face hook | transparent | **alpha** overlay |
+| **Thumbnail** | cover overlay (CAUGHT + brand + big mono −X%) — drop over a face cover frame | transparent | **still PNG** |
 
 > **Evidence-policy guardrail:** `SourceFrame` labels real evidence; the toolkit never generates
 > a fake chart or fake packaging (three-bucket policy in `content-rules.md`). Keep it that way.
@@ -48,7 +50,18 @@ npx remotion render SourceFrame out/bls.mov \
 # Full-frame card → standard mp4
 npx remotion render StatCard out/db-counter.mp4 \
   --codec=h264 --props=src/props/db-counter.json
+
+# Series cold-open (alpha overlay)
+npx remotion render CaughtTitle out/caught-folgers.mov \
+  --codec=prores --prores-profile=4444 --props=src/props/caught-folgers.json
+
+# Thumbnail/cover → still PNG (drop over a face cover frame)
+npx remotion still Thumbnail out/thumb-folgers.png \
+  --frame=15 --props=src/props/thumb-folgers.json
 ```
+
+Visual identity (fonts, color, the red-highlight caption spec, illustration boundary) lives in
+`docs/content/visual-identity.md`.
 
 Drop the `.mov` overlays onto a track above your footage in Captions App — the transparent
 areas show your video through; the `.mp4` card is a full-screen beat.
