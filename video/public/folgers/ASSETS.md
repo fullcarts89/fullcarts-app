@@ -60,6 +60,26 @@ sizes, not the prices.
   axis-free / number-free so it can't read as data).
 - Cover image: `FolgersThumb` comp → `npm run thumb` → `out/folgers-thumb.png`.
 
+## Style-board integration (contentstyleboard.html, received 2026-06-11)
+
+- Signature components live in `src/FolgersReveal/Overlays.tsx`: CaughtTitle
+  cold-open (0.4–6.0s), ShrinkOverlay (the bars+badge data card, reveal beat),
+  StatCard (2,228 documented shrinks — REAL count queried from
+  published_changes 2026-06-11), CiteCard + SourceHeader (chart + article
+  beats), FCMini. Board phone mocks are 248px = 1080 real (×4.355).
+- Safe zones per the board: keep badges/key numbers out of the right ~12%
+  (like rail) and bottom ~15% (caption UI). Overlay cards inset right:140.
+- Thumbnail = board cover pattern: face frame + scrim + CAUGHT/brand +
+  big mono −X% + FC mark. Face frame: `cover-face.png` (extracted from
+  base.mp4 @1.5s — the skeptical side-eye; local-only, gitignored).
+- `article.png` — **drop slot, not yet captured**: barchart.com 19-month-low
+  headline screenshot. When present (set `articleImage` prop) the hook beat
+  becomes a full SourceFrame cutaway; until then the 19-MONTH LOW slam
+  renders. barchart.com is blocked from the render box's network, so the
+  founder screenshots it manually.
+- SFX palette (CAUGHT stamp, counter roll, deflate+pop, etc.) is the
+  founder's job in the Captions edit — see the board's sound table.
+
 ## Reminders
 
 - No AI imagery anywhere in this video — account is in the fully-real phase

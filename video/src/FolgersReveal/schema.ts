@@ -12,8 +12,11 @@ export const folgersRevealSchema = z.object({
   listingThenImage: z.string().nullable(), // delisted 51 oz listing screenshot
   listingNowImage: z.string().nullable(), // current 43.5 oz listing screenshot
   priceChartImage: z.string().nullable(), // real coffee futures chart screenshot
+  articleImage: z.string().nullable(), // press headline screenshot (19-month-low). null => hook slam renders instead
+  coverImage: z.string().nullable(), // thumbnail face frame (extracted from base.mp4, local-only)
 
   brand: z.string(),
+  productName: z.string(),
   sizeBefore: z.number(),
   sizeAfter: z.number(),
   sizeUnit: z.string(),
@@ -22,12 +25,16 @@ export const folgersRevealSchema = z.object({
   lowLabel: z.string(), // "19-MONTH LOW"
   peakLabel: z.string(), // "ALL-TIME HIGH — 2025"
   dropLabel: z.string(), // "DOWN ~40% SINCE"
+  dbCount: z.number(), // real published_changes count (queried 2026-06-11: 2,228)
 
   // Source citations shown on the evidence frames (the policy: real artifacts,
   // visibly attributed).
   listingThenSource: z.string(),
   listingNowSource: z.string(),
   priceChartSource: z.string(),
+  articleHeadline: z.string(), // SourceHeader claim line over the article
+  articleName: z.string(), // CiteCard: publication
+  articleUrl: z.string(), // CiteCard: url + date
 });
 
 export type FolgersRevealProps = z.infer<typeof folgersRevealSchema>;
@@ -40,8 +47,11 @@ export const defaultProps: FolgersRevealProps = {
   listingThenImage: 'folgers/listing-then.png',
   listingNowImage: 'folgers/listing-now.png',
   priceChartImage: 'folgers/price-chart.png',
+  articleImage: null, // drop press screenshot at public/folgers/article.png and set 'folgers/article.png'
+  coverImage: null, // extract a face frame to public/folgers/cover-face.png and set 'folgers/cover-face.png'
 
   brand: 'Folgers',
+  productName: 'Classic Roast',
   sizeBefore: 51,
   sizeAfter: 43.5,
   sizeUnit: 'oz',
@@ -49,8 +59,12 @@ export const defaultProps: FolgersRevealProps = {
   lowLabel: '19-MONTH LOW',
   peakLabel: 'ALL-TIME HIGH — 2025',
   dropLabel: 'DOWN ~40% SINCE',
+  dbCount: 2228,
 
   listingThenSource: 'walmart.com — delisted 51 oz listing',
   listingNowSource: 'walmart.com — current listing, June 2026',
   priceChartSource: 'ICE coffee futures (KC) — 12-month chart',
+  articleHeadline: 'Coffee just hit a 19-month low',
+  articleName: 'Barchart',
+  articleUrl: 'barchart.com · June 2026',
 };

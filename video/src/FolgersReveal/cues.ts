@@ -29,20 +29,23 @@ export interface CueWindow {
 }
 
 export const cues = {
-  hookLowCallout: {start: 8.2, end: 12.0}, // "19-MONTH LOW" slam
+  caughtTitle: {start: 0.4, end: 6.0}, // "Caught: Folgers" cold-open (style board)
+  hookLowCallout: {start: 8.2, end: 12.0}, // article cutaway (or slam fallback)
   excuseGone: {start: 12.0, end: 16.2}, // "THE EXCUSE IS GONE"
 
   // Cutaway 1 — the database (credibility beat)
   cutDb: {start: 20.9, end: 27.4},
   dbOverview: {start: 0, end: 3.3}, // homepage recording (rel. to cutDb)
   dbFolgersPage: {start: 3.3, end: 6.5}, // Folgers page recording (rel. to cutDb)
+  dbStat: {start: 0.3, end: 6.5}, // "2,228 documented shrinks" StatCard (rel.)
 
-  // Cutaway 2 — the reveal (both windows rel. to cutReveal)
+  // Cutaway 2 — the reveal (windows rel. to cutReveal)
   cutReveal: {start: 39.2, end: 52.2},
   listingThen: {start: 0, end: 4.4}, // delisted 51 oz Walmart listing
   listingNow: {start: 4.4, end: 13.0}, // current 43.5 oz Walmart listing
-  sizeStrike: {start: 2.8, end: 7.0}, // 51 -> 43.5 strike-through callout
-  pctCounter: {start: 7.0, end: 13.0}, // "-14.7%" counter
+  shrinkOverlay: {start: 2.8, end: 13.0}, // signature data card ("fifty-one" ~42 abs)
+  shrinkAfterSec: 2.5, // after-bar shrinks on "forty-three and a half" (~44.5 abs)
+  shrinkBadgeSec: 4.6, // −14.7% badge pops on "fifteen percent" (~46.6 abs)
 
   // Cutaway 3 — the market (windows rel. to cutChart)
   cutChart: {start: 53.3, end: 61.5},

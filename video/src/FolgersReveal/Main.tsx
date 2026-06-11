@@ -11,13 +11,20 @@ import {loadFont as loadMono} from '@remotion/google-fonts/JetBrainsMono';
 import {theme} from '../theme';
 import {cues, CueWindow} from './cues';
 import type {FolgersRevealProps} from './schema';
-import {PercentCounter, SizeStrike, SlamCallout} from './NumberCallout';
+import {SlamCallout} from './NumberCallout';
 import {EvidenceFrame} from './EvidenceFrame';
 import {RocketsFeathers} from './RocketsFeathers';
 import {CutawayPanel} from './Cutaway';
 import {EndCard} from './EndCard';
 import {Watermark} from './Watermark';
 import {PeakFallAnnotation} from './ChartAnnotation';
+import {
+  CaughtTitle,
+  CiteCard,
+  ShrinkOverlay,
+  SourceHeader,
+  StatCard,
+} from './Overlays';
 
 loadGrotesk();
 loadMono();
@@ -111,8 +118,6 @@ const Rel = CueSequence;
 
 export const Main: React.FC<MainProps> = (props) => {
   const {fps} = useVideoConfig();
-  const pctDrop =
-    ((props.sizeAfter - props.sizeBefore) / props.sizeBefore) * 100;
 
   return (
     <AbsoluteFill style={{background: theme.bg}}>
@@ -145,9 +150,37 @@ export const Main: React.FC<MainProps> = (props) => {
 
       <Watermark />
 
-      {/* Beat 1 — hook (on the talking head) */}
+      {/* Cold open — "Caught: Folgers" (the sonic-logo moment) */}
+      <CueSequence window={cues.caughtTitle} fps={fps} name="caught: title">
+        <CaughtTitle brand={props.brand} />
+      </CueSequence>
+
+      {/* Beat 1 — hook. With a press screenshot: full SourceFrame cutaway.
+          Until it lands: the original slam over the talking head. */}
       <CueSequence window={cues.hookLowCallout} fps={fps} name="19-month low">
-        <SlamCallout text={props.lowLabel} sub="coffee futures, this week" />
+        {props.articleImage ? (
+          <CutawayPanel
+            kicker="THE NEWS"
+            durSec={cues.hookLowCallout.end - cues.hookLowCallout.start}
+          >
+            <SourceHeader headline={props.articleHeadline} top={280} />
+            <EvidenceFrame
+              src={props.articleImage}
+              sourceLabel={`${props.articleName} — ${props.articleUrl}`}
+              placeholder={'drop press screenshot at\npublic/folgers/article.png'}
+              top={560}
+              height={620}
+              inset={40}
+              zoomTo={1.04}
+              panX={0}
+              panY={-1}
+              rotate={0}
+            />
+            <CiteCard name={props.articleName} url={props.articleUrl} top={1280} />
+          </CutawayPanel>
+        ) : (
+          <SlamCallout text={props.lowLabel} sub="coffee futures, this week" />
+        )}
       </CueSequence>
       <CueSequence window={cues.excuseGone} fps={fps} name="excuse gone">
         <SlamCallout text="THE EXCUSE IS GONE" top={420} />
@@ -165,6 +198,7 @@ export const Main: React.FC<MainProps> = (props) => {
               src={props.dbOverviewRecording}
               sourceLabel="fullcarts.org — live database"
               placeholder={'drop screen recording at\npublic/folgers/fullcarts-overview.mov'}
+              top={300}
             />
           </Rel>
           <Rel window={cues.dbFolgersPage} fps={fps} name="folgers page">
@@ -172,7 +206,16 @@ export const Main: React.FC<MainProps> = (props) => {
               src={props.dbFolgersRecording}
               sourceLabel="fullcarts.org — the Folgers record"
               placeholder={'drop screen recording at\npublic/folgers/folgers-page.mov'}
+              top={300}
               rotate={-1}
+            />
+          </Rel>
+          <Rel window={cues.dbStat} fps={fps} name="2228 stat">
+            <StatCard
+              label="Documented shrinks"
+              value={props.dbCount}
+              caption="size cuts logged — every one source-cited"
+              top={1060}
             />
           </Rel>
         </CutawayPanel>
@@ -191,7 +234,7 @@ export const Main: React.FC<MainProps> = (props) => {
               src={props.listingThenImage}
               sourceLabel={props.listingThenSource}
               placeholder={'drop delisted 51 oz listing at\npublic/folgers/listing-then.png'}
-              top={300}
+              top={280}
               height={562}
               inset={40}
               zoomTo={1.05}
@@ -216,16 +259,21 @@ export const Main: React.FC<MainProps> = (props) => {
               ring={{x: 60.2, y: 8.9, rx: 8.5, ry: 7.5}}
             />
           </Rel>
-          <Rel window={cues.sizeStrike} fps={fps} name="51 -> 43.5">
-            <SizeStrike
-              before={props.sizeBefore}
-              after={props.sizeAfter}
+          {/* The signature data card carries the numbers (style board:
+              ShrinkOverlay) — bars wipe on the VO, badge pops on "fifteen
+              percent" */}
+          <Rel window={cues.shrinkOverlay} fps={fps} name="shrink overlay">
+            <ShrinkOverlay
+              brand={props.brand}
+              product={props.productName}
+              sizeBefore={props.sizeBefore}
+              sizeAfter={props.sizeAfter}
               unit={props.sizeUnit}
-              top={1010}
+              sourceLine="walmart.com · Jun 2026"
+              top={980}
+              afterAtSec={cues.shrinkAfterSec}
+              badgeAtSec={cues.shrinkBadgeSec}
             />
-          </Rel>
-          <Rel window={cues.pctCounter} fps={fps} name="-14.7%">
-            <PercentCounter toPct={pctDrop} label="of your coffee — gone" top={990} />
           </Rel>
         </CutawayPanel>
       </CueSequence>
@@ -241,7 +289,7 @@ export const Main: React.FC<MainProps> = (props) => {
             src={props.priceChartImage}
             sourceLabel={props.priceChartSource}
             placeholder={'drop real futures chart at\npublic/folgers/price-chart.png'}
-            top={320}
+            top={300}
             height={522}
             inset={40}
             zoomTo={1}
@@ -258,11 +306,16 @@ export const Main: React.FC<MainProps> = (props) => {
             />
           </EvidenceFrame>
           <Rel window={cues.peakCallout} fps={fps} name="peak callout">
-            <SlamCallout text={props.peakLabel} top={1010} />
+            <SlamCallout text={props.peakLabel} top={920} />
           </Rel>
           <Rel window={cues.dropCallout} fps={fps} name="drop callout">
-            <SlamCallout text={props.dropLabel} top={1010} />
+            <SlamCallout text={props.dropLabel} top={920} />
           </Rel>
+          <CiteCard
+            name="ICE Arabica (KC)"
+            url="12-month futures chart · Jun 2026"
+            top={1200}
+          />
         </CutawayPanel>
       </CueSequence>
 

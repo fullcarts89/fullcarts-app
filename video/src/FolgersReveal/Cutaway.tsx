@@ -11,10 +11,10 @@ import {theme} from '../theme';
 const GROTESK = '"Space Grotesk", sans-serif';
 const MONO = '"JetBrains Mono", monospace';
 
-// The hero-section grid pattern from FULLCARTS_DESIGN_EXPORT.md.
+// The 48px grid from the content style board (contentstyleboard.html).
 const GRID_BG = `
-  repeating-linear-gradient(0deg, rgba(245,244,240,0.05) 0px, transparent 1px, transparent 2px, rgba(245,244,240,0.05) 3px),
-  repeating-linear-gradient(90deg, rgba(245,244,240,0.05) 0px, transparent 1px, transparent 2px, rgba(245,244,240,0.05) 3px)
+  repeating-linear-gradient(0deg, rgba(245,244,240,0.06) 0px, rgba(245,244,240,0.06) 1px, transparent 1px, transparent 48px),
+  repeating-linear-gradient(90deg, rgba(245,244,240,0.06) 0px, rgba(245,244,240,0.06) 1px, transparent 1px, transparent 48px)
 `;
 
 // The site logo: red FC block + Space Grotesk wordmark (Navigation > Logo in
