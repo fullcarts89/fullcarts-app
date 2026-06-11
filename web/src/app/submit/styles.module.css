@@ -55,6 +55,9 @@
 .sub-form-evidence input[type="file"]::file-selector-button { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-primary); background: var(--bg-tertiary); border: 1px solid var(--border-subtle); padding: 6px 12px; margin-right: 12px; cursor: pointer; transition: border-color .15s; }
 .sub-form-evidence input[type="file"]::file-selector-button:hover { border-color: var(--red-text); }
 .sub-form-filename { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); margin-top: 2px; word-break: break-all; }
+.sub-form-filelist { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.sub-form-filelist li { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); word-break: break-all; padding-left: 14px; position: relative; }
+.sub-form-filelist li::before { content: "▸"; position: absolute; left: 0; color: var(--red-text); }
 
 @media (max-width: 640px) {
   .sub-form-row { grid-template-columns: 1fr; }

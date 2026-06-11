@@ -17,9 +17,11 @@ import styles from "../styles.module.css";
 
 type Status = "idle" | "submitting" | "success" | "error";
 const SESSION_KEY = "fc.submit.session_id";
-const MAX_DIM = 1920; // longest edge after downscale
-const JPEG_QUALITY = 0.82;
-const MAX_UPLOAD_BYTES = 6 * 1024 * 1024; // mirror the server backstop
+const MAX_DIM = 1600; // longest edge after downscale
+const JPEG_QUALITY = 0.8;
+const MAX_PHOTOS = 4; // e.g. before + after (+ a couple extra)
+const MAX_PHOTO_BYTES = 6 * 1024 * 1024; // per-photo, mirrors the server backstop
+const MAX_TOTAL_BYTES = 4 * 1024 * 1024; // combined, to stay under the serverless body limit
 
 function getOrCreateSessionId(): string {
   try {
@@ -66,12 +68,12 @@ async function compressImage(file: File): Promise<Blob> {
 export default function SubmissionForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
-  const [photoName, setPhotoName] = useState<string | null>(null);
+  const [photoNames, setPhotoNames] = useState<string[]>([]);
   const formRef = useRef<HTMLFormElement>(null);
 
   function onPhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0];
-    setPhotoName(f ? f.name : null);
+    const files = Array.from(e.target.files ?? []);
+    setPhotoNames(files.slice(0, MAX_PHOTOS).map((f) => f.name));
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -85,9 +87,10 @@ export default function SubmissionForm() {
     const product_name = String(fd.get("product_name") || "").trim();
     const description = String(fd.get("description") || "").trim();
     const evidence_url = String(fd.get("evidence_url") || "").trim();
-    const photoField = fd.get("photo");
-    const photo =
-      photoField instanceof File && photoField.size > 0 ? photoField : null;
+    const photoFiles = fd
+      .getAll("photo")
+      .filter((p): p is File => p instanceof File && p.size > 0)
+      .slice(0, MAX_PHOTOS);
 
     if (!brand || !product_name) {
       setError("Brand and product are both required.");
@@ -99,7 +102,7 @@ export default function SubmissionForm() {
       setStatus("error");
       return;
     }
-    if (!evidence_url && !photo) {
+    if (!evidence_url && photoFiles.length === 0) {
       setError("Evidence is required — add a link or attach a photo.");
       setStatus("error");
       return;
@@ -109,7 +112,7 @@ export default function SubmissionForm() {
     setError(null);
 
     // Build the multipart payload. Reuse the parsed text fields; replace the
-    // raw photo with a compressed JPEG when one was attached.
+    // raw photos with compressed JPEGs.
     const out = new FormData();
     out.set("brand", brand);
     out.set("product_name", product_name);
@@ -123,16 +126,24 @@ export default function SubmissionForm() {
     out.set("evidence_url", evidence_url);
     out.set("session_id", getOrCreateSessionId());
 
-    if (photo) {
-      const blob = await compressImage(photo);
-      if (blob.size > MAX_UPLOAD_BYTES) {
-        setError("That photo is too large even after compression — try a smaller image.");
+    let totalBytes = 0;
+    for (let i = 0; i < photoFiles.length; i++) {
+      const file = photoFiles[i];
+      const blob = await compressImage(file);
+      if (blob.size > MAX_PHOTO_BYTES) {
+        setError("A photo is too large even after compression — try a smaller image.");
+        setStatus("error");
+        return;
+      }
+      totalBytes += blob.size;
+      if (totalBytes > MAX_TOTAL_BYTES) {
+        setError("Those photos are too large combined — remove one or use smaller images.");
         setStatus("error");
         return;
       }
       // Name it .jpg when we re-encoded; otherwise keep the original name/type.
-      const isJpeg = blob.type === "image/jpeg" || blob !== photo;
-      out.set("photo", blob, isJpeg ? "evidence.jpg" : photo.name);
+      const isJpeg = blob.type === "image/jpeg" || blob !== file;
+      out.append("photo", blob, isJpeg ? `evidence-${i + 1}.jpg` : file.name);
     }
 
     try {
@@ -145,7 +156,7 @@ export default function SubmissionForm() {
       }
       setStatus("success");
       formRef.current?.reset();
-      setPhotoName(null);
+      setPhotoNames([]);
     } catch {
       setError("Network error — please try again.");
       setStatus("error");
@@ -312,8 +323,9 @@ export default function SubmissionForm() {
           Evidence <span className={styles.req}>required</span>
         </legend>
         <p className={styles["sub-form-hint"]}>
-          Add a link or attach a photo — at least one is required. A photo of the
-          old and new packaging side by side is the strongest evidence.
+          Add a link or attach a photo — at least one is required. You can attach
+          up to {MAX_PHOTOS} photos; a before &amp; after pair of the old and new
+          packaging is the strongest evidence.
         </p>
         <div className={styles["sub-form-field"]}>
           <label htmlFor="s-url">Link to evidence</label>
@@ -328,16 +340,21 @@ export default function SubmissionForm() {
           />
         </div>
         <div className={styles["sub-form-field"]}>
-          <label htmlFor="s-photo">Or attach a photo</label>
+          <label htmlFor="s-photo">Or attach photo(s)</label>
           <input
             id="s-photo"
             name="photo"
             type="file"
             accept="image/*"
+            multiple
             onChange={onPhotoChange}
           />
-          {photoName && (
-            <span className={styles["sub-form-filename"]}>{photoName}</span>
+          {photoNames.length > 0 && (
+            <ul className={styles["sub-form-filelist"]}>
+              {photoNames.map((n, i) => (
+                <li key={`${n}-${i}`}>{n}</li>
+              ))}
+            </ul>
           )}
         </div>
       </fieldset>
