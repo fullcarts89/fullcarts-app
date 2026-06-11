@@ -3,15 +3,28 @@
   "fps": 30,
   "durationSec": 58.87,
   "captions": [],
+  "camera": [
+    { "atSec": 0, "scale": 1.18 },
+    { "atSec": 1.6, "scale": 1.0 },
+    { "atSec": 16.9, "scale": 1.0 },
+    { "atSec": 17.1, "scale": 1.1 },
+    { "atSec": 17.5, "scale": 1.0 },
+    { "atSec": 37.3, "scale": 1.0 },
+    { "atSec": 37.7, "scale": 1.1 },
+    { "atSec": 58.87, "scale": 1.1 }
+  ],
   "overlays": [
     { "type": "caught", "fromSec": 0.9, "toSec": 3.4, "props": { "brand": "Folgers" } },
-    { "type": "stat", "fromSec": 8.4, "toSec": 11.6, "props": { "value": 40, "decimals": 0, "prefix": "−", "suffix": "%", "label": "Coffee, from its peak", "context": "…and your can never came back.", "accent": "red" } },
-    { "type": "kinetic", "fromSec": 14.1, "toSec": 16.3, "props": { "lines": ["*rationing scoops*", "to stretch the can?"], "accent": "red", "align": "center" } },
+    { "type": "hook", "fromSec": 4.4, "toSec": 8.0, "props": { "lines": ["they *shrank* your coffee", "and blamed *record prices*"], "zone": "above", "accent": "red" } },
+    { "type": "hook", "fromSec": 8.6, "toSec": 11.5, "props": { "lines": ["coffee *crashed ~40%*", "your can? *never came back*"], "zone": "above", "accent": "red" } },
+    { "type": "hook", "fromSec": 14.1, "toSec": 16.3, "props": { "lines": ["*rationing scoops*", "to stretch the can?"], "zone": "chin", "accent": "red" } },
+    { "type": "hook", "fromSec": 19.6, "toSec": 23.0, "props": { "lines": ["it's *not* you.", "*that's them.*"], "zone": "chin", "accent": "red" } },
     { "type": "shrinkreveal", "fromSec": 23.2, "toSec": 27.0, "props": { "imageSrc": "cutaways/folgers-before.jpg", "imagePosition": "left center", "beforeSize": 51, "afterSize": 43.5, "unit": "oz", "pctChange": 14.7 } },
     { "type": "source", "fromSec": 29.2, "toSec": 36.2, "props": { "sourceName": "ICE Arabica (KC)", "url": "tradingeconomics.com", "asOfDate": "Jun 2026", "headline": "Coffee: −39% from peak" } },
-    { "type": "kinetic", "fromSec": 37.5, "toSec": 41.6, "props": { "lines": ["your price *per pot* jumped.", "the shelf price *barely moved.*"], "accent": "red", "align": "center" } },
-    { "type": "kinetic", "fromSec": 42.3, "toSec": 47.1, "props": { "lines": ["*rockets* & *feathers*.", "up fast · down slow.", "or *never.*"], "accent": "red", "align": "center" } },
-    { "type": "kinetic", "fromSec": 48.0, "toSec": 52.2, "props": { "lines": ["the cost *left.*", "the shrink *stayed.*", "a *permanent raise.*"], "accent": "red", "align": "center" } }
+    { "type": "hook", "fromSec": 37.7, "toSec": 41.6, "props": { "lines": ["price *per pot* jumped.", "shelf price *barely moved.*"], "zone": "chin", "accent": "red" } },
+    { "type": "hook", "fromSec": 42.4, "toSec": 47.1, "props": { "lines": ["*rockets & feathers*", "up fast · down slow · *or never*"], "zone": "chin", "accent": "red" } },
+    { "type": "hook", "fromSec": 48.0, "toSec": 52.2, "props": { "lines": ["the cost *left.* the shrink *stayed.*", "a *permanent raise.*"], "zone": "chin", "accent": "red" } },
+    { "type": "hook", "fromSec": 53.0, "toSec": 56.8, "props": { "lines": ["follow → *fullcarts.org*"], "zone": "chin", "accent": "red" } }
   ],
   "cutaways": [
     { "src": "cutaways/folgers-before-after.png", "kind": "image", "fromSec": 27.0, "toSec": 29.0 },

@@ -21,9 +21,13 @@ import { SourceFrame } from "./SourceFrame";
 import { CaughtTitle } from "./CaughtTitle";
 import { KineticQuote } from "./KineticQuote";
 import { ShrinkReveal } from "./ShrinkReveal";
+import { HookText } from "./HookText";
 
 // ---- Timeline types (Model B: feed your film + this timeline → one finished MP4) ----
-type OverlayCue = { type: "caught" | "shrink" | "stat" | "rundown" | "source" | "kinetic" | "shrinkreveal"; fromSec: number; toSec: number; props: Record<string, unknown> };
+type OverlayCue = { type: "caught" | "shrink" | "stat" | "rundown" | "source" | "kinetic" | "shrinkreveal" | "hook"; fromSec: number; toSec: number; props: Record<string, unknown> };
+// Camera keyframes drive the film's scale/position over time — opening zoom, pattern
+// interrupts, and fake "angle change" rehooks from a single take.
+type CamKey = { atSec: number; scale: number; x?: number; y?: number };
 type CaptionCue = { text: string; fromSec: number; toSec: number }; // wrap a word in *asterisks* to red-highlight it
 type CutawayCue = { src: string; kind: "image" | "video"; fromSec: number; toSec: number; fit?: "cover" | "contain" };
 type SfxCue = { src: string; atSec: number; volume?: number };
@@ -37,6 +41,27 @@ export type FinalVideoProps = {
   cutaways?: CutawayCue[];
   sfx?: SfxCue[];
   music?: { src: string; volume?: number };
+  camera?: CamKey[];
+};
+
+// interpolate the film transform across camera keyframes
+const camAt = (keys: CamKey[] | undefined, t: number): { scale: number; x: number; y: number } => {
+  if (!keys || keys.length === 0) return { scale: 1, x: 0, y: 0 };
+  const k = [...keys].sort((a, b) => a.atSec - b.atSec);
+  if (t <= k[0].atSec) return { scale: k[0].scale, x: k[0].x ?? 0, y: k[0].y ?? 0 };
+  const last = k[k.length - 1];
+  if (t >= last.atSec) return { scale: last.scale, x: last.x ?? 0, y: last.y ?? 0 };
+  let a = k[0];
+  let b = k[k.length - 1];
+  for (let i = 0; i < k.length - 1; i++) {
+    if (t >= k[i].atSec && t <= k[i + 1].atSec) {
+      a = k[i];
+      b = k[i + 1];
+      break;
+    }
+  }
+  const f = (from: number, to: number) => interpolate(t, [a.atSec, b.atSec], [from, to], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  return { scale: f(a.scale, b.scale), x: f(a.x ?? 0, b.x ?? 0), y: f(a.y ?? 0, b.y ?? 0) };
 };
 
 export const calcFinalMeta = ({ props }: { props: FinalVideoProps }) => ({
@@ -125,7 +150,20 @@ const renderOverlay = (o: OverlayCue) => {
       return <KineticQuote {...(o.props as React.ComponentProps<typeof KineticQuote>)} />;
     case "shrinkreveal":
       return <ShrinkReveal {...(o.props as React.ComponentProps<typeof ShrinkReveal>)} />;
+    case "hook":
+      return <HookText {...(o.props as React.ComponentProps<typeof HookText>)} />;
   }
+};
+
+const FilmLayer: React.FC<{ film?: string; camera?: CamKey[] }> = ({ film, camera }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const c = camAt(camera, frame / fps);
+  return (
+    <AbsoluteFill style={{ transform: `scale(${c.scale}) translate(${c.x}px, ${c.y}px)`, transformOrigin: "center center" }}>
+      {film ? <OffthreadVideo src={staticFile(film)} style={cover} /> : <PlaceholderBg />}
+    </AbsoluteFill>
+  );
 };
 
 const span = (fromSec: number, toSec: number, fps: number) => ({
@@ -133,9 +171,9 @@ const span = (fromSec: number, toSec: number, fps: number) => ({
   durationInFrames: Math.max(1, Math.round((toSec - fromSec) * fps)),
 });
 
-export const FinalVideo: React.FC<FinalVideoProps> = ({ film, fps, captions, overlays, cutaways = [], sfx = [], music }) => (
+export const FinalVideo: React.FC<FinalVideoProps> = ({ film, fps, captions, overlays, cutaways = [], sfx = [], music, camera }) => (
   <AbsoluteFill style={{ background: theme.color.bg }}>
-    {film ? <OffthreadVideo src={staticFile(film)} style={cover} /> : <PlaceholderBg />}
+    <FilmLayer film={film} camera={camera} />
 
     {cutaways.map((c, i) => (
       <Sequence key={`c${i}`} {...span(c.fromSec, c.toSec, fps)}>

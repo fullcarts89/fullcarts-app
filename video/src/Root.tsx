@@ -11,6 +11,8 @@ import { FinalVideo, calcFinalMeta, type FinalVideoProps } from "./compositions/
 import { BeforeAfter, beforeAfterSchema } from "./compositions/BeforeAfter";
 import { KineticQuote, kineticQuoteSchema } from "./compositions/KineticQuote";
 import { ShrinkReveal, shrinkRevealSchema } from "./compositions/ShrinkReveal";
+import { HookText, hookTextSchema } from "./compositions/HookText";
+import folgersCut from "./props/folgers-final.json";
 
 // 9:16 vertical, 30fps. Overlay comps have no background → render with alpha
 // (--codec=prores --prores-profile=4444). StatCard is full-frame → --codec=h264.
@@ -146,6 +148,18 @@ export const RemotionRoot: React.FC = () => {
         }
       />
 
+      {/* The current Folgers cut — click to watch the whole thing in Studio */}
+      <Composition
+        id="FolgersCut"
+        component={FinalVideo}
+        durationInFrames={1766}
+        fps={FPS}
+        width={W}
+        height={H}
+        calculateMetadata={calcFinalMeta}
+        defaultProps={folgersCut as unknown as FinalVideoProps}
+      />
+
       <Composition
         id="BeforeAfter"
         component={BeforeAfter}
@@ -165,6 +179,17 @@ export const RemotionRoot: React.FC = () => {
           afterPer: "59.5¢ / oz",
           deltaLabel: "−14.7% coffee",
         }}
+      />
+
+      <Composition
+        id="HookText"
+        component={HookText}
+        durationInFrames={60}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={hookTextSchema}
+        defaultProps={{ lines: ["they *shrank* your coffee", "and hoped you wouldn't *weigh it*"], zone: "above" as const, accent: "red" as const }}
       />
 
       <Composition
