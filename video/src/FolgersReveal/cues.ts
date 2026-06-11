@@ -1,7 +1,7 @@
 // Beat map for the Folgers reveal, LOCKED to the real Captions SRT
-// (captions_6FE033A0, 1:39.2 total). The SRT is paragraph-level (6 cues), so
-// in-cue moments below are word-proportional estimates within each cue —
-// expect ±0.5s; nudge in Remotion Studio while scrubbing against the VO.
+// (captions_6FE033A0). The SRT is paragraph-level (6 cues), so in-cue moments
+// below are word-proportional estimates within each cue -- expect ±0.5s;
+// nudge in Remotion Studio while scrubbing against the VO.
 //
 // SRT cue boundaries for reference:
 //   1  0.14 – 17.30   hook ("nineteen-month low" ~8.5s, "excuse is gone" ~12s)
@@ -17,6 +17,11 @@
 // shorter than the original SRT — the "Um," cut + tail trim compressed cue 6.
 // Silence-gap analysis showed cues 1-5 still align within ±0.25s; only cue 6's
 // end moved (99.22 → 97.66 in voiceover.srt, measured end of speech).
+//
+// 2026-06-11 v2 (founder feedback): evidence beats are now FULL-SCREEN
+// branded cutaways (the `cut*` windows) so ~40% of the runtime is off the
+// talking head. The Sam's Club listing was cut. Remotion captions removed —
+// the Captions app burns its own.
 
 export interface CueWindow {
   start: number;
@@ -26,20 +31,32 @@ export interface CueWindow {
 export const cues = {
   hookLowCallout: {start: 8.2, end: 12.0}, // "19-MONTH LOW" slam
   excuseGone: {start: 12.0, end: 16.2}, // "THE EXCUSE IS GONE"
-  dbOverview: {start: 20.9, end: 24.2}, // fullcarts.org homepage recording
-  dbFolgersPage: {start: 24.2, end: 27.4}, // the Folgers product page recording
-  listingThen: {start: 39.2, end: 43.6}, // delisted 51 oz Walmart listing
-  listingNow: {start: 43.6, end: 48.0}, // current 43.5 oz Walmart listing
-  listingSams: {start: 48.0, end: 52.2}, // current 43.5 oz Sam's Club listing
-  sizeStrike: {start: 42.0, end: 46.2}, // 51 -> 43.5 strike-through callout
-  pctCounter: {start: 46.2, end: 52.0}, // "-14.7%" counter
-  priceChart: {start: 53.3, end: 61.5}, // real futures chart screenshot
-  peakCallout: {start: 54.8, end: 58.0}, // "ALL-TIME HIGH — 2025"
-  dropCallout: {start: 58.0, end: 61.5}, // "DOWN ~40% SINCE"
-  rocketsFeathers: {start: 74.6, end: 83.0}, // kinetic typography metaphor
+
+  // Cutaway 1 — the database (credibility beat)
+  cutDb: {start: 20.9, end: 27.4},
+  dbOverview: {start: 0, end: 3.3}, // homepage recording (rel. to cutDb)
+  dbFolgersPage: {start: 3.3, end: 6.5}, // Folgers page recording (rel. to cutDb)
+
+  // Cutaway 2 — the reveal (both windows rel. to cutReveal)
+  cutReveal: {start: 39.2, end: 52.2},
+  listingThen: {start: 0, end: 4.4}, // delisted 51 oz Walmart listing
+  listingNow: {start: 4.4, end: 13.0}, // current 43.5 oz Walmart listing
+  sizeStrike: {start: 2.8, end: 7.0}, // 51 -> 43.5 strike-through callout
+  pctCounter: {start: 7.0, end: 13.0}, // "-14.7%" counter
+
+  // Cutaway 3 — the market (windows rel. to cutChart)
+  cutChart: {start: 53.3, end: 61.5},
+  peakDotSec: 1.5, // dot lands on "all-time high" (~54.8 abs)
+  fallArrowSec: 4.7, // arrow draws on "fallen almost forty percent" (~58 abs)
+  peakCallout: {start: 1.5, end: 4.7}, // "ALL-TIME HIGH — 2025"
+  dropCallout: {start: 4.7, end: 8.2}, // "DOWN ~40% SINCE"
+
+  // Cutaway 4 — the metaphor
+  cutRockets: {start: 74.6, end: 83.0},
+
   permanentRaise: {start: 85.6, end: 89.5}, // "A PERMANENT RAISE" slam
   endCard: {start: 93.6, end: 100.0}, // CTA card (runs to the end; ~2.3s hold past speech)
-} satisfies Record<string, CueWindow>;
+} as const;
 
 export const inWindow = (tSec: number, w: CueWindow): boolean =>
   tSec >= w.start && tSec < w.end;

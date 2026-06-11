@@ -8,24 +8,23 @@ import {
 } from 'remotion';
 import {loadFont as loadGrotesk} from '@remotion/google-fonts/SpaceGrotesk';
 import {loadFont as loadMono} from '@remotion/google-fonts/JetBrainsMono';
-import type {Caption} from '@remotion/captions';
 import {theme} from '../theme';
 import {cues, CueWindow} from './cues';
 import type {FolgersRevealProps} from './schema';
-import {Captions} from './Captions';
 import {PercentCounter, SizeStrike, SlamCallout} from './NumberCallout';
 import {EvidenceFrame} from './EvidenceFrame';
 import {RocketsFeathers} from './RocketsFeathers';
+import {CutawayPanel} from './Cutaway';
 import {EndCard} from './EndCard';
 import {Watermark} from './Watermark';
+import {PeakFallAnnotation} from './ChartAnnotation';
 
 loadGrotesk();
 loadMono();
 
 const MONO = '"JetBrains Mono", monospace';
 
-// Injected by calculateMetadata in Root.tsx after parsing the SRT.
-export type MainProps = FolgersRevealProps & {captions: Caption[]};
+export type MainProps = FolgersRevealProps;
 
 const CueSequence: React.FC<{
   window: CueWindow;
@@ -47,16 +46,19 @@ const RecordingFrame: React.FC<{
   src: string | null;
   sourceLabel: string;
   placeholder: string;
+  top?: number;
+  height?: number;
+  inset?: number;
   rotate?: number;
-}> = ({src, sourceLabel, placeholder, rotate = 1}) =>
+}> = ({src, sourceLabel, placeholder, top = 360, height = 560, inset = 40, rotate = 1}) =>
   src ? (
     <div
       style={{
         position: 'absolute',
-        top: 280,
-        left: 70,
-        right: 70,
-        height: 640,
+        top,
+        left: inset,
+        right: inset,
+        height,
         borderRadius: 18,
         overflow: 'hidden',
         border: `3px solid ${theme.bgElevated}`,
@@ -98,10 +100,14 @@ const RecordingFrame: React.FC<{
       src={null}
       sourceLabel={sourceLabel}
       placeholder={placeholder}
-      top={280}
-      height={640}
+      top={top}
+      height={height}
+      inset={inset}
     />
   );
+
+// Relative windows inside a cutaway panel reuse the same helper.
+const Rel = CueSequence;
 
 export const Main: React.FC<MainProps> = (props) => {
   const {fps} = useVideoConfig();
@@ -110,7 +116,8 @@ export const Main: React.FC<MainProps> = (props) => {
 
   return (
     <AbsoluteFill style={{background: theme.bg}}>
-      {/* Base layer: the Captions talking-head export. */}
+      {/* Base layer: the Captions talking-head export. NO caption rendering
+          here — the Captions app burns its own captions into the edit. */}
       {props.baseVideo ? (
         <OffthreadVideo
           src={staticFile(props.baseVideo)}
@@ -138,7 +145,7 @@ export const Main: React.FC<MainProps> = (props) => {
 
       <Watermark />
 
-      {/* Beat 1 — hook */}
+      {/* Beat 1 — hook (on the talking head) */}
       <CueSequence window={cues.hookLowCallout} fps={fps} name="19-month low">
         <SlamCallout text={props.lowLabel} sub="coffee futures, this week" />
       </CueSequence>
@@ -146,102 +153,133 @@ export const Main: React.FC<MainProps> = (props) => {
         <SlamCallout text="THE EXCUSE IS GONE" top={420} />
       </CueSequence>
 
-      {/* Beat 2 — credibility: real fullcarts.org screen recordings,
-          homepage first, then straight onto the Folgers page itself */}
-      <CueSequence window={cues.dbOverview} fps={fps} name="fullcarts overview">
-        <RecordingFrame
-          src={props.dbOverviewRecording}
-          sourceLabel="fullcarts.org — live database"
-          placeholder={'drop screen recording at\npublic/folgers/fullcarts-overview.mov'}
-        />
-      </CueSequence>
-      <CueSequence window={cues.dbFolgersPage} fps={fps} name="folgers page">
-        <RecordingFrame
-          src={props.dbFolgersRecording}
-          sourceLabel="fullcarts.org — the Folgers record"
-          placeholder={'drop screen recording at\npublic/folgers/folgers-page.mov'}
-          rotate={-1}
-        />
-      </CueSequence>
-
-      {/* Beat 3 — the reveal: delisted listing, current listing, the numbers.
-          Frame heights match each screenshot's aspect at 934px inner width. */}
-      <CueSequence window={cues.listingThen} fps={fps} name="51oz listing">
-        <EvidenceFrame
-          src={props.listingThenImage}
-          sourceLabel={props.listingThenSource}
-          placeholder={'drop delisted 51 oz listing at\npublic/folgers/listing-then.png'}
-          top={280}
-          height={522}
-          ring={{x: 46, y: 10, r: 8}}
-        />
-      </CueSequence>
-      <CueSequence window={cues.listingNow} fps={fps} name="43.5oz walmart">
-        <EvidenceFrame
-          src={props.listingNowImage}
-          sourceLabel={props.listingNowSource}
-          placeholder={'drop current 43.5 oz listing at\npublic/folgers/listing-now.png'}
-          top={280}
-          height={404}
-          rotate={1.5}
-          ring={{x: 36, y: 8, r: 7}}
-        />
-      </CueSequence>
-      <CueSequence window={cues.listingSams} fps={fps} name="43.5oz sams">
-        <EvidenceFrame
-          src={props.listingSamsImage}
-          sourceLabel={props.listingSamsSource}
-          placeholder={'drop second-retailer 43.5 oz listing at\npublic/folgers/listing-sams.png'}
-          top={280}
-          height={500}
-          rotate={-1.2}
-          ring={{x: 88, y: 31, r: 8}}
-        />
-      </CueSequence>
-      <CueSequence window={cues.sizeStrike} fps={fps} name="51 -> 43.5">
-        <SizeStrike
-          before={props.sizeBefore}
-          after={props.sizeAfter}
-          unit={props.sizeUnit}
-          top={900}
-        />
-      </CueSequence>
-      <CueSequence window={cues.pctCounter} fps={fps} name="-14.7%">
-        <PercentCounter toPct={pctDrop} label="of your coffee — gone" top={880} />
+      {/* Cutaway 1 — credibility: full-screen branded panel with the real
+          fullcarts.org screen recordings */}
+      <CueSequence window={cues.cutDb} fps={fps} name="CUT: database">
+        <CutawayPanel
+          kicker="THE DATABASE"
+          durSec={cues.cutDb.end - cues.cutDb.start}
+        >
+          <Rel window={cues.dbOverview} fps={fps} name="fullcarts overview">
+            <RecordingFrame
+              src={props.dbOverviewRecording}
+              sourceLabel="fullcarts.org — live database"
+              placeholder={'drop screen recording at\npublic/folgers/fullcarts-overview.mov'}
+            />
+          </Rel>
+          <Rel window={cues.dbFolgersPage} fps={fps} name="folgers page">
+            <RecordingFrame
+              src={props.dbFolgersRecording}
+              sourceLabel="fullcarts.org — the Folgers record"
+              placeholder={'drop screen recording at\npublic/folgers/folgers-page.mov'}
+              rotate={-1}
+            />
+          </Rel>
+        </CutawayPanel>
       </CueSequence>
 
-      {/* Beat 4 — real futures chart */}
-      <CueSequence window={cues.priceChart} fps={fps} name="price chart">
-        <EvidenceFrame
-          src={props.priceChartImage}
-          sourceLabel={props.priceChartSource}
-          placeholder={'drop real futures chart at\npublic/folgers/price-chart.png'}
-          top={280}
-          height={485}
-          zoomTo={1.06}
-          rotate={-1}
-          ring={{x: 93, y: 84, r: 6}}
-        />
-      </CueSequence>
-      <CueSequence window={cues.peakCallout} fps={fps} name="peak callout">
-        <SlamCallout text={props.peakLabel} top={950} />
-      </CueSequence>
-      <CueSequence window={cues.dropCallout} fps={fps} name="drop callout">
-        <SlamCallout text={props.dropLabel} top={950} />
+      {/* Cutaway 2 — the reveal: delisted listing, current listing, the
+          numbers. Frame heights match each screenshot's aspect at 994px
+          inner width so the highlight rings map 1:1 onto the pixels. */}
+      <CueSequence window={cues.cutReveal} fps={fps} name="CUT: the reveal">
+        <CutawayPanel
+          kicker="EXHIBIT — WALMART.COM"
+          durSec={cues.cutReveal.end - cues.cutReveal.start}
+        >
+          <Rel window={cues.listingThen} fps={fps} name="51oz listing">
+            <EvidenceFrame
+              src={props.listingThenImage}
+              sourceLabel={props.listingThenSource}
+              placeholder={'drop delisted 51 oz listing at\npublic/folgers/listing-then.png'}
+              top={300}
+              height={562}
+              inset={40}
+              zoomTo={1.05}
+              panX={-1}
+              panY={-1}
+              rotate={-1}
+              ring={{x: 78.5, y: 15.3, rx: 21, ry: 8.5}}
+            />
+          </Rel>
+          <Rel window={cues.listingNow} fps={fps} name="43.5oz walmart">
+            <EvidenceFrame
+              src={props.listingNowImage}
+              sourceLabel={props.listingNowSource}
+              placeholder={'drop current 43.5 oz listing at\npublic/folgers/listing-now.png'}
+              top={340}
+              height={436}
+              inset={40}
+              zoomTo={1.05}
+              panX={-1}
+              panY={-1}
+              rotate={1}
+              ring={{x: 60.2, y: 8.9, rx: 8.5, ry: 7.5}}
+            />
+          </Rel>
+          <Rel window={cues.sizeStrike} fps={fps} name="51 -> 43.5">
+            <SizeStrike
+              before={props.sizeBefore}
+              after={props.sizeAfter}
+              unit={props.sizeUnit}
+              top={1010}
+            />
+          </Rel>
+          <Rel window={cues.pctCounter} fps={fps} name="-14.7%">
+            <PercentCounter toPct={pctDrop} label="of your coffee — gone" top={990} />
+          </Rel>
+        </CutawayPanel>
       </CueSequence>
 
-      {/* Beat 5 — metaphor (typography only, never reads as data) */}
-      <CueSequence window={cues.rocketsFeathers} fps={fps} name="rockets & feathers">
-        <RocketsFeathers />
+      {/* Cutaway 3 — the market: real futures chart, dot on the all-time
+          high, arrow drawn down to the current price */}
+      <CueSequence window={cues.cutChart} fps={fps} name="CUT: the market">
+        <CutawayPanel
+          kicker="COFFEE FUTURES — 12 MO"
+          durSec={cues.cutChart.end - cues.cutChart.start}
+        >
+          <EvidenceFrame
+            src={props.priceChartImage}
+            sourceLabel={props.priceChartSource}
+            placeholder={'drop real futures chart at\npublic/folgers/price-chart.png'}
+            top={320}
+            height={522}
+            inset={40}
+            zoomTo={1}
+            panX={0}
+            panY={0}
+            rotate={0}
+          >
+            <PeakFallAnnotation
+              peak={{x: 40.0, y: 10.6}}
+              fallTo={{x: 89, y: 80}}
+              aspect={993 / 1913}
+              dotAtSec={cues.peakDotSec}
+              arrowAtSec={cues.fallArrowSec}
+            />
+          </EvidenceFrame>
+          <Rel window={cues.peakCallout} fps={fps} name="peak callout">
+            <SlamCallout text={props.peakLabel} top={1010} />
+          </Rel>
+          <Rel window={cues.dropCallout} fps={fps} name="drop callout">
+            <SlamCallout text={props.dropLabel} top={1010} />
+          </Rel>
+        </CutawayPanel>
       </CueSequence>
 
-      {/* Beat 6 — punchline */}
+      {/* Cutaway 4 — the metaphor (typography + strokes, never reads as data) */}
+      <CueSequence window={cues.cutRockets} fps={fps} name="CUT: rockets & feathers">
+        <CutawayPanel
+          kicker="THE PATTERN"
+          durSec={cues.cutRockets.end - cues.cutRockets.start}
+        >
+          <RocketsFeathers />
+        </CutawayPanel>
+      </CueSequence>
+
+      {/* Beat 6 — punchline (on the talking head) */}
       <CueSequence window={cues.permanentRaise} fps={fps} name="permanent raise">
         <SlamCallout text="A PERMANENT RAISE" sub="you paid for it" />
       </CueSequence>
-
-      {/* Captions ride above overlays, below the end card. */}
-      <Captions captions={props.captions} highlightWords={props.highlightWords} />
 
       {/* Beat 7 — CTA */}
       <CueSequence window={cues.endCard} fps={fps} name="end card">

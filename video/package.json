@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "remotion studio",
     "render": "remotion render FolgersReveal out/folgers-reveal.mp4",
+    "thumb": "remotion still FolgersThumb out/folgers-thumb.png",
     "still": "remotion still FolgersReveal out/preview.png --frame=120",
     "typecheck": "tsc --noEmit"
   },

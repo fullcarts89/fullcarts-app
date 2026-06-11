@@ -6,12 +6,11 @@ export const folgersRevealSchema = z.object({
   // Filenames under public/. null => labeled placeholder is rendered so the
   // comp previews before the media lands.
   baseVideo: z.string().nullable(), // Captions talking-head export (mp4)
-  srtFile: z.string(), // voiceover SRT (from Captions)
+  srtFile: z.string(), // voiceover SRT (from Captions) — drives comp duration
   dbOverviewRecording: z.string().nullable(), // fullcarts.org homepage recording
   dbFolgersRecording: z.string().nullable(), // fullcarts.org Folgers page recording
   listingThenImage: z.string().nullable(), // delisted 51 oz listing screenshot
   listingNowImage: z.string().nullable(), // current 43.5 oz listing screenshot
-  listingSamsImage: z.string().nullable(), // second-retailer 43.5 oz listing screenshot
   priceChartImage: z.string().nullable(), // real coffee futures chart screenshot
 
   brand: z.string(),
@@ -28,11 +27,7 @@ export const folgersRevealSchema = z.object({
   // visibly attributed).
   listingThenSource: z.string(),
   listingNowSource: z.string(),
-  listingSamsSource: z.string(),
   priceChartSource: z.string(),
-
-  // Words the caption renderer paints alert-red wherever they occur.
-  highlightWords: z.array(z.string()),
 });
 
 export type FolgersRevealProps = z.infer<typeof folgersRevealSchema>;
@@ -44,7 +39,6 @@ export const defaultProps: FolgersRevealProps = {
   dbFolgersRecording: 'folgers/folgers-page.mov',
   listingThenImage: 'folgers/listing-then.png',
   listingNowImage: 'folgers/listing-now.png',
-  listingSamsImage: 'folgers/listing-sams.png',
   priceChartImage: 'folgers/price-chart.png',
 
   brand: 'Folgers',
@@ -58,24 +52,5 @@ export const defaultProps: FolgersRevealProps = {
 
   listingThenSource: 'walmart.com — delisted 51 oz listing',
   listingNowSource: 'walmart.com — current listing, June 2026',
-  listingSamsSource: 'samsclub.com — current listing, June 2026',
   priceChartSource: 'ICE coffee futures (KC) — 12-month chart',
-
-  highlightWords: [
-    'smaller',
-    'crashed',
-    'nineteen-month',
-    'gone',
-    'small',
-    'fifty-one',
-    'forty-three',
-    'fifteen',
-    'forty',
-    'rockets',
-    'feathers',
-    'permanent',
-    'raise',
-    'shrinking',
-    'fullcarts.org',
-  ],
 };

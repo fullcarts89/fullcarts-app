@@ -11,7 +11,7 @@ Remotion only frames, pans, and annotates; it never fabricates evidence.
 | `voiceover.srt` | Real Captions SRT (6 paragraph-level cues — paginated to 6-word pages at runtime) | ✅ in repo (two text fixes: `fullcart.org`→`fullcarts.org`, dropped one "Um,"; cue-6 end retimed 99.22→97.66 to match the final export — see below) |
 | `listing-then.png` | Walmart **delisted** "OFFLINE-Folgers Classic Roast (51 oz.)" listing | ✅ in repo |
 | `listing-now.png` | Walmart current 43.5-Ounce listing ($25.89) | ✅ in repo |
-| `listing-sams.png` | Sam's Club current 43.5 oz listing ($17.88) — second-retailer receipt | ✅ in repo |
+| `listing-sams.png` | Sam's Club current 43.5 oz listing ($17.88) — second-retailer receipt | ⚠️ CUT from the edit (founder feedback 2026-06-11: third can shot read as repetitive). File stays in repo for reuse. |
 | `price-chart.png` | Real coffee futures 12-month chart (2025 peak ~440 → 251 now) | ✅ in repo |
 | `fullcarts-overview.mov` | fullcarts.org homepage screen recording (H.264) | ✅ in repo |
 | `folgers-page.mov` | fullcarts.org Folgers page screen recording (H.264) | ✅ in repo |
@@ -39,12 +39,26 @@ read "$11 → $26?!" and miss the point. The owner kept the screenshot as-is
 Burns crop tight on the size text. The highlight rings already target the
 sizes, not the prices.
 
-## Ring placement (eyeball in Studio, scrubbing the cue)
+## Annotation placement (MEASURED on the actual pixels, 2026-06-11 v2)
 
-- `listing-then.png`: ring at (46%, 10%) on "(51 oz.)" in the title
-- `listing-now.png`: ring at (36%, 8%) on "43.5-Ounce"
-- `listing-sams.png`: ring at (88%, 31%) on "43.5 oz." in the title
-- `price-chart.png`: ring at (93%, 84%) on the current-price marker
+- `listing-then.png` (1155×646): ellipse at (78.5%, 15.3%) rx21 ry8.5 around
+  the "(51 oz.)" line-wrap at the end of the title
+- `listing-now.png` (1298×561): ellipse at (60.2%, 8.9%) rx8.5 ry7.5 on
+  "43.5-Ounce" in the title
+- `price-chart.png` (1913×993): peak dot at (40.0%, 10.6%) on the all-time-high
+  spike; fall arrow drawn from the dot to the current-price marker at (89%, 80%)
+- The original eyeballed ring coords were wrong on screen (the 51 oz ring
+  pointed at dead space) — measure crops with ffmpeg before trusting %s.
+
+## Edit revision notes (founder feedback 2026-06-11)
+
+- Remotion caption layer REMOVED — the Captions app burns its own captions.
+  `voiceover.srt` stays as the comp's duration/timing source only.
+- Evidence beats are now full-screen branded cutaways (~40% of runtime off
+  the talking head): database, reveal, futures chart, rockets & feathers.
+- Rockets & feathers rebuilt as stroke-drawn streak/feather paths (still
+  axis-free / number-free so it can't read as data).
+- Cover image: `FolgersThumb` comp → `npm run thumb` → `out/folgers-thumb.png`.
 
 ## Reminders
 

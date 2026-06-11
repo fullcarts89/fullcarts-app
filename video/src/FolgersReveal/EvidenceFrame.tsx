@@ -16,8 +16,8 @@ const MONO = '"JetBrains Mono", monospace';
 // visible source citation). When `src` is null it renders a labeled drop slot
 // so the comp previews before captures land.
 //
-// Size `height` to the screenshot's aspect ratio at 934px inner width
-// (1080 - 2*70 margin - 2*3 border) so ring percentages map 1:1 onto the
+// Size `height` to the screenshot's aspect ratio at the inner width
+// (1080 - 2*inset - 2*3 border) so ring percentages map 1:1 onto the
 // image instead of onto a crop.
 export const EvidenceFrame: React.FC<{
   src: string | null;
@@ -25,14 +25,31 @@ export const EvidenceFrame: React.FC<{
   placeholder: string;
   top?: number;
   height?: number;
+  inset?: number;
   // Ken Burns drift, in % of frame size.
   panX?: number;
   panY?: number;
   zoomTo?: number;
-  // Optional highlight ring over the load-bearing number (% coordinates).
-  ring?: {x: number; y: number; r: number};
+  // Optional highlight ellipse over the load-bearing text (% coordinates:
+  // x/rx of width, y/ry of height).
+  ring?: {x: number; y: number; rx: number; ry: number};
   rotate?: number;
-}> = ({src, sourceLabel, placeholder, top = 240, height = 980, panX = -3, panY = -2, zoomTo = 1.12, ring, rotate = -1.5}) => {
+  // Extra annotation layers (e.g. chart peak/fall) rendered over the image.
+  children?: React.ReactNode;
+}> = ({
+  src,
+  sourceLabel,
+  placeholder,
+  top = 240,
+  height = 980,
+  inset = 70,
+  panX = -3,
+  panY = -2,
+  zoomTo = 1.12,
+  ring,
+  rotate = -1.5,
+  children,
+}) => {
   const frame = useCurrentFrame();
   const {fps, durationInFrames} = useVideoConfig();
 
@@ -48,8 +65,8 @@ export const EvidenceFrame: React.FC<{
       style={{
         position: 'absolute',
         top,
-        left: 70,
-        right: 70,
+        left: inset,
+        right: inset,
         height,
         opacity: enter,
         transform: `rotate(${rotate}deg) translateY(${interpolate(enter, [0, 1], [80, 0])}px)`,
@@ -95,11 +112,11 @@ export const EvidenceFrame: React.FC<{
           <div
             style={{
               position: 'absolute',
-              left: `${ring.x - ring.r}%`,
-              top: `${ring.y - ring.r}%`,
-              width: `${ring.r * 2}%`,
-              aspectRatio: '1',
-              border: `8px solid ${theme.red}`,
+              left: `${ring.x - ring.rx}%`,
+              top: `${ring.y - ring.ry}%`,
+              width: `${ring.rx * 2}%`,
+              height: `${ring.ry * 2}%`,
+              border: `7px solid ${theme.red}`,
               borderRadius: '50%',
               opacity: ringIn,
               transform: `scale(${interpolate(ringIn, [0, 1], [2.4, 1])})`,
@@ -107,6 +124,7 @@ export const EvidenceFrame: React.FC<{
             }}
           />
         ) : null}
+        {children}
       </div>
       <div
         style={{
