@@ -7,6 +7,7 @@ import { SourceFrame, sourceFrameSchema } from "./compositions/SourceFrame";
 import { CaughtTitle, caughtTitleSchema } from "./compositions/CaughtTitle";
 import { Thumbnail, thumbnailSchema } from "./compositions/Thumbnail";
 import { SafeZonePreview, safeZonePreviewSchema } from "./compositions/SafeZonePreview";
+import { FinalVideo, calcFinalMeta, type FinalVideoProps } from "./compositions/FinalVideo";
 
 // 9:16 vertical, 30fps. Overlay comps have no background → render with alpha
 // (--codec=prores --prores-profile=4444). StatCard is full-frame → --codec=h264.
@@ -126,6 +127,20 @@ export const RemotionRoot: React.FC = () => {
         height={H}
         schema={safeZonePreviewSchema}
         defaultProps={{ which: "shrink" as const, guide: true }}
+      />
+
+      {/* Model B — full programmatic assembly: your film + a timeline → one finished MP4 */}
+      <Composition
+        id="FinalVideo"
+        component={FinalVideo}
+        durationInFrames={1710}
+        fps={FPS}
+        width={W}
+        height={H}
+        calculateMetadata={calcFinalMeta}
+        defaultProps={
+          { fps: 30, durationSec: 57, captions: [], overlays: [] } satisfies FinalVideoProps
+        }
       />
     </>
   );

@@ -1,0 +1,34 @@
+{
+  "fps": 30,
+  "durationSec": 57,
+  "captions": [
+    { "text": "*Caught:* Folgers", "fromSec": 0.2, "toSec": 1.4 },
+    { "text": "they shrank your coffee", "fromSec": 1.5, "toSec": 3.4 },
+    { "text": "and blamed *record prices*", "fromSec": 3.4, "toSec": 5.4 },
+    { "text": "coffee's since *crashed ~40%*", "fromSec": 5.4, "toSec": 7.5 },
+    { "text": "your can *never came back*", "fromSec": 7.5, "toSec": 9.6 },
+    { "text": "ever *ration scoops* to stretch the can?", "fromSec": 9.8, "toSec": 12.0 },
+    { "text": "felt a little *pathetic*?", "fromSec": 12.0, "toSec": 14.0 },
+    { "text": "that's *not you being cheap*", "fromSec": 14.0, "toSec": 16.0 },
+    { "text": "*that's them*", "fromSec": 16.0, "toSec": 17.8 },
+    { "text": "*51 oz → 43.5 oz*", "fromSec": 18.0, "toSec": 20.4 },
+    { "text": "that's *14.7% less*", "fromSec": 20.4, "toSec": 22.5 },
+    { "text": "here's coffee's *real price*", "fromSec": 24.0, "toSec": 26.4 },
+    { "text": "record high, then *crashed*", "fromSec": 26.4, "toSec": 29.5 },
+    { "text": "price *per pot* jumped", "fromSec": 30.0, "toSec": 32.4 },
+    { "text": "shelf price *barely moved*", "fromSec": 32.4, "toSec": 35.0 },
+    { "text": "they call it", "fromSec": 35.0, "toSec": 37.0 },
+    { "text": "*rockets and feathers*", "fromSec": 37.0, "toSec": 40.0 },
+    { "text": "up fast, down *slow* — or *never*", "fromSec": 40.0, "toSec": 42.4 },
+    { "text": "the costs *left*", "fromSec": 42.5, "toSec": 44.8 },
+    { "text": "the shrink *stayed*", "fromSec": 44.8, "toSec": 47.0 },
+    { "text": "a *permanent raise* — for them", "fromSec": 47.0, "toSec": 50.0 },
+    { "text": "follow, I catch the *next one*", "fromSec": 50.5, "toSec": 53.0 },
+    { "text": "search yours → *fullcarts.org*", "fromSec": 53.0, "toSec": 56.5 }
+  ],
+  "overlays": [
+    { "type": "caught", "fromSec": 0.0, "toSec": 3.0, "props": { "brand": "Folgers" } },
+    { "type": "shrink", "fromSec": 17.5, "toSec": 24.0, "props": { "brand": "Folgers", "productName": "Coffee", "sizeBefore": 51, "sizeAfter": 43.5, "unit": "oz", "pctChange": 14.7, "source": "FullCarts · listing", "observedDate": "2022", "mode": "shrink" } },
+    { "type": "source", "fromSec": 24.0, "toSec": 30.0, "props": { "sourceName": "ICE Arabica (KC)", "url": "tradingeconomics.com", "asOfDate": "Jun 2026", "headline": "Coffee: −39% from peak" } }
+  ]
+}
