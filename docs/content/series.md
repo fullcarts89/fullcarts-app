@@ -49,6 +49,40 @@ PAYOFF:    "You didn't get worse at noticing. They got better at hiding it."
 CTA:       "Follow — I catch the next one. Search Cadbury at fullcarts.org. 🍫"
 ```
 
+**Worked example — "Caught: Folgers" (★ recommended channel DEBUT)** — big, US-iconic, emotionally
+charged, *under*-covered as shrinkflation, and the strongest story. (Cadbury is the strongest
+*newsjack*, not the strongest debut — open with coffee, save Cadbury for its next news spike.)
+```
+COLD-OPEN: "Caught: Folgers."
+HOOK/SNAP: "They shrank your coffee and blamed record prices. Coffee's since crashed almost 40% —
+            and your can never came back."
+LOCK-IN:   "If you've caught yourself rationing scoops to stretch the can to payday — and felt a
+            little pathetic about it — that's not you being cheap. That's them."
+PROOF:     "Folgers' big can went 51oz to 43.5 — 14.7% less. And here's coffee's real price:
+            record high early 2025, 19-month low now." [ShrinkOverlay folgers + SourceFrame on a REAL chart]
+TRICK:     "Price-per-pot quietly jumped while the shelf price barely moved. Economists call it
+            'rockets and feathers' — prices rocket up on bad news, feather down on good. Coffee
+            feathered down. Your can didn't move at all." [day-job signature]
+PAYOFF:    "The costs left. The shrink stayed. You got a permanent raise — for them."
+CTA:       "Follow — I catch the next one. Check your coffee at fullcarts.org. ☕"
+```
+*Coffee price verified Jun 2026: ~$4.40/lb peak (early 2025) → ~$2.70/lb (~−39%). Always read the
+exact figures off your own real chart screenshot (`coffee-chart.json` → SourceFrame). Never an AI chart.*
+
+**Worked example — "Caught: Gatorade"**
+```
+COLD-OPEN: "Caught: Gatorade."
+HOOK/SNAP: "Same bottle shape, same price as a couple years ago — but there's a full glass of
+            Gatorade missing."
+LOCK-IN:   "If you've grabbed one after a workout, told yourself you were just thirstier than
+            usual, then wondered if it shrank — you're not imagining it."
+PROOF:     "32oz down to 28 — 12.5%, documented. The small bottles got it worse: 20oz to 16.9."
+            [ShrinkOverlay gatorade]
+TRICK:     "Same silhouette, less liquid — your eye says 'same bottle,' the label says otherwise."
+PAYOFF:    "You didn't get thirstier. The bottle got smaller — old price, every single time."
+CTA:       "Follow — I catch the next one. Search Gatorade at fullcarts.org."
+```
+
 **Flagship pilot episodes (already in the data):**
 - **Caught: Cadbury** — Freddo 122→99g (−18.9%); Cadbury is also our #1 news brand (convergence).
 - **Caught: Folgers** — the coffee "rockets & feathers": 51→43.5oz, prices later crashed ~40%, the can never came back. *(Confirm the coffee % off a real chart — `SourceFrame` over a real ICE/FRED screenshot, never an AI chart.)*

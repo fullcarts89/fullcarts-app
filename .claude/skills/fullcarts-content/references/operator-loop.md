@@ -41,6 +41,10 @@ spikes in the news, or sits in the category a fresh CPI/USDA print just moved, r
 (it's newsjack-ready). Calendar moments (Halloween candy, back-to-school, Super Bowl, holiday
 baking) lift candidates in that category.
 
+**Dedup against what already shipped:** read `docs/content/content-log.md` and **drop any candidate
+whose `brand + product + change` is already logged as posted.** A *different* size-change for the same
+brand is a new episode, not a repeat — that's allowed.
+
 **Score** = base (magnitude, recency, evidence_count, image) × convergence (news/macro/calendar).
 Pick **3–5** with a spread across content buckets: ~2 educational, 1 newsjack, 1 reveal, rotate
 in 1 personal. Confirm a CPI/USDA print on the calendar this week → that's an automatic newsjack slot.
@@ -102,6 +106,9 @@ B-SIDE:      <Agent Opus brief, if a faceless variant is wanted; else "n/a">
 GATES:       5/5 ✓ · claims ✓ · evidence-buckets ✓
 ```
 
-## Step 7 — Hand off
+## Step 7 — Hand off + log
 Deliver the packets. The human films, assembles in Captions App, posts. You stop here.
-Log what shipped so next week's brief avoids repeats and can reference what performed.
+**When each clip goes live, append a row to `docs/content/content-log.md`** (date · series · brand ·
+product · change · platforms · hook · URL); backfill Views/Follows after a day or two. That log is
+what Step 2 dedups against, and what the **every-~10-posts follows-driven review** reads to decide
+what to double down on.

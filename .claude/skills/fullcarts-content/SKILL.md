@@ -45,12 +45,12 @@ human's face or a GUI app — and enforcing the rules so nothing ships off-brand
 ## The weekly loop (drive it in order)
 
 1. **Refresh the facts.** Re-pull the DB counts + this week's candidates → update the banner number.
-2. **Brief.** Rank candidates by convergence (FullCarts signal × external news/macro/calendar). Pick 3–5, and **assign each to a series** — default the primary **"Caught:"** series (keep the fixed `Caught: [Brand]` cold-open), or a future thread per `series.md`.
+2. **Brief.** Rank candidates by convergence (FullCarts signal × external news/macro/calendar). **First read `docs/content/content-log.md` and drop any candidate whose `brand + product + change` was already posted** (no repeats; a *different* change for the same brand is fine). Pick 3–5, and **assign each to a series** — default the primary **"Caught:"** series (keep the fixed `Caught: [Brand]` cold-open), or a future thread per `series.md`.
 3. **Script.** Draft each to the house template (cold-open → hook → **lock-in** → proof → trick → payoff → CTA). Pick an **angle + a contrarian take + a feeling** from `content-angles.md`, write the hook as **The Snap** and add the **Emotional Lock-In** beat ([references/hooks.md](references/hooks.md)); per-platform captions + hashtags. Never a vague open loop.
 4. **Gate.** Run all three gates on every script. A script that fails any gate does not proceed.
 5. **Assets.** Render the matching Remotion overlay(s); generate Bucket-2 Higgsfield b-roll if needed; note the real screenshots the human must grab.
 6. **Packet.** Emit a per-clip production packet (shot list, on-screen text + timing, overlay files, captions, hashtags, post time, and an Agent-Opus brief for any B-side clip).
-7. **Hand off + iterate.** The human films, assembles in Captions, posts. You stop at the packet. **Every ~10 posts, review by _follows-driven_ (not views)** — find the outlier, extract why it won (hook? series? brand?), and bias the next batch toward it.
+7. **Hand off + log + iterate.** The human films, assembles in Captions, posts. You stop at the packet. **When a clip goes live, append a row to `docs/content/content-log.md`** (date, series, brand, product, change, platforms, hook, URL). **Every ~10 posted rows, review by _follows-driven_ (not views)** — find the outlier, extract why it won (hook? series? brand? feeling?), and bias the next batch toward it.
 
 **Full step-by-step (with the exact SQL, render commands, and packet shape):**
 see [references/operator-loop.md](references/operator-loop.md).
