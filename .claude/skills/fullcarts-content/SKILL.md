@@ -18,6 +18,7 @@ human's face or a GUI app — and enforcing the rules so nothing ships off-brand
 - `docs/content/production-playbook.md` — the stack + the weekly rhythm
 - `docs/content/first-batch.md` — the repeatable script template + 5 worked examples
 - `docs/content/series.md` — the bingeability engine: the "Caught:" series + future-series backlog
+- `docs/content/carousel-formats.md` — the shelf of **repeatable carousel templates** (Guess the Cut, Monthly Shrink List, Tier List, CPI-vs-Reality, …): per-format spec + SQL + composition id + gate notes. Pick one off the shelf; don't improvise the structure.
 - `docs/content/content-angles.md` — what & how to talk: pillars, contrarian takes, the Emotional Lock-In bank
 - `docs/content/visual-identity.md` — signature style: fonts, color, red-highlight captions, illustration boundary
 - `references/hooks.md` — the Hook System (The Snap 3-beat + Emotional Lock-In + the 4-mistake fixes)
