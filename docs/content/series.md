@@ -111,12 +111,29 @@ TAG   (22–30s): "It's in the database. Free. Link in bio."
 ```
 
 ### 🧾 "Inflation Receipt" — Thu, 7–15s + poll
-> Newsjack the scheduled data drop (CPI monthly, USDA on a calendar) · 7–15s.
+> The signature "official inflation vs. the hidden cut" drumbeat · 7–15s. **Monthly trigger, weekly
+> slot:** BLS releases CPI once a month, but one print is a *basket* of category indexes — so stretch
+> the single report across the month, **one CPI food-at-home category per week**, same format each time.
+> Pulls the same category data as **Carousel Series #3 ("Official Inflation vs. Reality")** — one query,
+> two formats.
 ```
-HEADLINE (0–4s):  "CPI says food is up [X]% this year."
+HEADLINE (0–4s):  "CPI says [category] is up [X]% this year."
 COUNTER  (4–12s): "Here's what they don't count: [Product] lost [Y]% of its size. Same shelf price."
 POLL     (sticker): "Did your [category] shrink too? 👆 yes / 👇 no."
 ```
+**Monthly rotation (CPI food-at-home has 6 groups → enough for 4 weekly slots without repeating):**
+
+| Thu | Angle | Pairing |
+|---|---|---|
+| **Wk 1** (release week) | **the headline** | topline "food is up [X]% overall" — freshest newsjack punch |
+| **Wk 2** | **cereals & bakery** | official +[X]% **+** the hidden shrink on top |
+| **Wk 3** | **dairy & related** | official +[X]% **+** the box that also got smaller |
+| **Wk 4** | **meats/eggs** *or* **nonalcoholic beverages** | official +[X]% **+** the FullCarts receipt |
+
+> *Honesty note:* the **newsjack punch is strongest Wk 1** (headline is fresh); Wks 2–4 are evergreen
+> category receipts — same format, less "breaking" energy. That's fine — consistency beats novelty here.
+> Re-pull fresh numbers when the next print lands. Remaining groups (fruits & veg, "other food at home")
+> are spares for a 5-Thursday month or to swap by season.
 
 ### 🚨 "Breaking Shrink" — Fri (reactive ONLY — a trigger, not a calendar slot)
 > Rides a live news moment to prove the database is *ahead* of the headlines · 15–40s. If nothing
