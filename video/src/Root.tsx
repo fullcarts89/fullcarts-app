@@ -342,28 +342,27 @@ export const RemotionRoot: React.FC = () => {
         }}
       />
 
-      {/* Shrinkflation Tier List carousel (slide 0 = tiers, slide 1 = CTA). */}
+      {/* Shrinkflation Tier List — reveal carousel: cover → D…S (one per swipe) → full list last. */}
       <Composition
         id="TierList"
         component={TierList}
-        durationInFrames={2}
+        durationInFrames={7}
         fps={FPS}
         width={1080}
         height={1350}
         schema={tierListSchema}
         defaultProps={{
           title: ["shrinkflation", "*tier list*"],
-          subtitle: "the worst offenders, graded",
+          subtitle: "where does your brand rank?",
+          coverPrompt: "we start at the bottom. swipe",
           tiers: [
-            { tier: "S", color: "red" as const, brands: [{ name: "Cadbury", pct: 44 }, { name: "Mars", pct: 44 }, { name: "Quality St.", pct: 40 }] },
-            { tier: "A", color: "amber" as const, brands: [{ name: "Nestlé", pct: 38 }, { name: "McVitie's", pct: 34 }, { name: "Sainsbury's", pct: 33 }, { name: "Hershey", pct: 32 }] },
-            { tier: "B", color: "blue" as const, brands: [{ name: "Crest", pct: 27 }, { name: "Aquafresh", pct: 25 }, { name: "Kleenex", pct: 25 }] },
-            { tier: "C", color: "green" as const, brands: [{ name: "Chobani", pct: 24 }, { name: "Walkers", pct: 23 }, { name: "Folgers", pct: 21 }] },
-            { tier: "D", color: "gray" as const, brands: [{ name: "Gatorade", pct: 16 }] },
+            { tier: "S", color: "red" as const, label: "the worst offenders", brands: [{ name: "Cadbury", pct: 44 }, { name: "Mars", pct: 44 }, { name: "Quality St.", pct: 40 }] },
+            { tier: "A", color: "amber" as const, label: "brutal", brands: [{ name: "Nestlé", pct: 38 }, { name: "McVitie's", pct: 34 }, { name: "Sainsbury's", pct: 33 }, { name: "Hershey", pct: 32 }] },
+            { tier: "B", color: "blue" as const, label: "getting greedy", brands: [{ name: "Crest", pct: 27 }, { name: "Aquafresh", pct: 25 }, { name: "Kleenex", pct: 25 }] },
+            { tier: "C", color: "green" as const, label: "noticeable", brands: [{ name: "Chobani", pct: 24 }, { name: "Walkers", pct: 23 }, { name: "Folgers", pct: 21 }] },
+            { tier: "D", color: "gray" as const, label: "barely caught", brands: [{ name: "Gatorade", pct: 16 }] },
           ],
-          ctaHeadline: "agree with the *rankings?*",
-          ctaSub: "drop your worst in the *comments.*",
-          ctaPersona: "Every grade is a documented, source-cited shrink. Search any brand free at fullcarts.org — built by a tired dad sick of getting ripped off.",
+          ctaLine: "agree? comment your worst ↓",
         }}
       />
     </>
