@@ -32,15 +32,14 @@ export const sfxCues: SfxCue[] = [
   {at: 101.6, file: 'stamp.mp3', volume: 0.7}, // "a permanent raise" (biggest)
 
   // The zoom motif, distilled: thunks only on the highest-stakes punch-ins.
-  {at: 50.6, file: 'thunk.mp3', volume: 0.55}, // "on purpose" — the reference hit
-  {at: 99.1, file: 'thunk.mp3', volume: 0.45}, // "the shrink stayed" → sets up stamp #3
+  {at: 50.6, file: 'thunk.mp3', volume: 0.42}, // "on purpose" — under the line, never over it
 
   // Structure: transitions + the data reveals
   {at: 28.3, file: 'whoosh.mp3', volume: 0.3}, // → db cutaway
-  {at: 28.6, file: 'roll.mp3', volume: 0.15}, // 2,228 odometer
+  {at: 28.6, file: 'roll.mp3', volume: 0.08}, // 2,228 odometer (sustained reads hot — keep low)
   {at: 29.4, file: 'ding.mp3', volume: 0.3}, // counter lands
   {at: 53.4, file: 'whoosh.mp3', volume: 0.3}, // → reveal cutaway
-  {at: 57.3, file: 'deflate.mp3', volume: 0.4}, // after-bar shrinks ("43 and a half")
+  {at: 57.3, file: 'thunk.mp3', volume: 0.35}, // after-bar shrinks ("43 and a half") — founder swap: thunk, not deflate
   {at: 63.6, file: 'pop.mp3', volume: 0.45}, // −14.7% badge ("just gone")
   {at: 65.4, file: 'whoosh.mp3', volume: 0.3}, // → chart cutaway
   {at: 74.9, file: 'whoosh.mp3', volume: 0.3}, // → price-per-pot cutaway
@@ -90,7 +89,7 @@ export const SfxTrack: React.FC<{available: string[]}> = ({available}) => {
                 fps * DRONE_OUT_SEC,
                 durationInFrames,
               ],
-              [0, 0.075, 0.075, 0.018, 0.018, 0.075, 0.075, 0, 0],
+              [0, 0.06, 0.06, 0.014, 0.014, 0.06, 0.06, 0, 0],
               {extrapolateRight: 'clamp'},
             )
           }

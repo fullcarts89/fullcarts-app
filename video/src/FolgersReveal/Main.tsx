@@ -27,6 +27,7 @@ import {
   ShrinkOverlay,
   SourceHeader,
   StatCard,
+  ThoughtBubble,
 } from './Overlays';
 import {punchScale} from './punches';
 import {SfxTrack} from './Sfx';
@@ -236,6 +237,19 @@ export const Main: React.FC<MainProps> = (props) => {
         </CutawayPanel>
       </CueSequence>
 
+      {/* The wink gag — db cutaway exits just before so it lands on camera */}
+      <CueSequence window={cues.winkBubble} fps={fps} name="cringy dad wink">
+        <ThoughtBubble
+          text="cringy dad wink"
+          durSec={cues.winkBubble.end - cues.winkBubble.start}
+          top={250}
+          left={640}
+          width={380}
+          dot1={{top: 530, left: 680}}
+          dot2={{top: 600, left: 630}}
+        />
+      </CueSequence>
+
       {/* Cutaway 2 — the reveal: the Sam's Club then/now pair (same
           retailer). Frame heights match each screenshot's aspect at 994px
           inner width so the highlight rings map 1:1 onto the pixels. */}
@@ -317,6 +331,7 @@ export const Main: React.FC<MainProps> = (props) => {
               aspect={993 / 1913}
               dotAtSec={cues.peakDotSec}
               arrowAtSec={cues.fallArrowSec}
+              peakDateLabel="OCT 2025"
             />
           </EvidenceFrame>
           <Rel window={cues.peakCallout} fps={fps} name="peak callout">

@@ -20,11 +20,11 @@ export const EndCard: React.FC = () => {
   const line = (delaySec: number) =>
     spring({frame: frame - fps * delaySec, fps, config: {damping: 14}});
 
-  // Card enters at cue 93.6s; the url pops at +4.6s ≈ 98.2s, just as the VO
-  // says "fullcarts.org" (~99s).
+  // Card enters at cue 111.5s; the url pops at +3.3s ≈ 114.8s, landing with
+  // the VO's "fullcarts.org" (~1:55).
   const q = line(0.3);
   const follow = line(0.8);
-  const url = line(4.6);
+  const url = line(3.3);
 
   return (
     <div

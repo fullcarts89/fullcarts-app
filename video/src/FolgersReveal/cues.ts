@@ -21,11 +21,12 @@ export const cues = {
   seriesCard: {start: 16.8, end: 23.2}, // "new series... called Caught"
 
   // Cutaway 1 — the database ("biggest free shrinkflation database").
-  // ENDS at 33.8 so the wink (~34, after "and uh") lands on his face.
-  cutDb: {start: 28.3, end: 33.8},
-  dbOverview: {start: 0, end: 2.8}, // homepage recording (rel.)
-  dbFolgersPage: {start: 2.8, end: 5.5}, // Folgers page recording (rel.)
-  dbStat: {start: 0.3, end: 5.5}, // 2,228 StatCard (rel.)
+  // ENDS at 32.9 so the wink (~33) lands on his face, with the bubble.
+  cutDb: {start: 28.3, end: 32.9},
+  dbOverview: {start: 0, end: 2.4}, // homepage recording (rel.)
+  dbFolgersPage: {start: 2.4, end: 4.6}, // Folgers page recording (rel.)
+  dbStat: {start: 0.3, end: 4.6}, // 2,228 StatCard (rel.)
+  winkBubble: {start: 33.0, end: 36.0}, // "cringy dad wink" thought bubble
 
   // Cutaway 2 — the reveal (rel. to cutReveal)
   cutReveal: {start: 53.4, end: 64.7},

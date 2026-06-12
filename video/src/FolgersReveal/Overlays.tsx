@@ -370,7 +370,20 @@ export const SourceHeader: React.FC<{headline: string; top: number}> = ({headlin
 export const ThoughtBubble: React.FC<{
   text: string;
   durSec: number;
-}> = ({text, durSec}) => {
+  top?: number;
+  left?: number;
+  width?: number;
+  dot1?: {top: number; left: number};
+  dot2?: {top: number; left: number};
+}> = ({
+  text,
+  durSec,
+  top = 430,
+  left = 70,
+  width = 560,
+  dot1 = {top: 700, left: 580},
+  dot2 = {top: 770, left: 645},
+}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
 
@@ -391,9 +404,9 @@ export const ThoughtBubble: React.FC<{
       <div
         style={{
           position: 'absolute',
-          top: 430 + bob,
-          left: 70,
-          width: 560,
+          top: top + bob,
+          left,
+          width,
           padding: '46px 50px',
           background: cream,
           borderRadius: '48% 52% 50% 50% / 58% 55% 45% 42%',
@@ -416,8 +429,8 @@ export const ThoughtBubble: React.FC<{
       <div
         style={{
           position: 'absolute',
-          top: 700 + bob * 0.6,
-          left: 580,
+          top: dot1.top + bob * 0.6,
+          left: dot1.left,
           width: 44,
           height: 36,
           background: cream,
@@ -430,8 +443,8 @@ export const ThoughtBubble: React.FC<{
       <div
         style={{
           position: 'absolute',
-          top: 770 + bob * 0.3,
-          left: 645,
+          top: dot2.top + bob * 0.3,
+          left: dot2.left,
           width: 26,
           height: 21,
           background: cream,

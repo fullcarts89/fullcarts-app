@@ -20,7 +20,9 @@ export const PeakFallAnnotation: React.FC<{
   // Seconds (relative to the parent sequence) when each element lands.
   dotAtSec: number;
   arrowAtSec: number;
-}> = ({peak, fallTo, aspect, dotAtSec, arrowAtSec}) => {
+  // Optional date chip pinned next to the peak dot (read off the chart axis).
+  peakDateLabel?: string;
+}> = ({peak, fallTo, aspect, dotAtSec, arrowAtSec, peakDateLabel}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
 
@@ -79,6 +81,40 @@ export const PeakFallAnnotation: React.FC<{
         strokeWidth={0.35}
         style={{filter: 'drop-shadow(0 0 8px rgba(220,38,38,0.9))'}}
       />
+      {/* Date chip read off the chart's own axis */}
+      {peakDateLabel ? (
+        <g opacity={dotIn}>
+          <rect
+            x={px - 21.5}
+            y={py - 4.6}
+            width={16.5}
+            height={5.4}
+            rx={1.1}
+            fill="rgba(10,11,13,0.92)"
+            stroke={theme.red}
+            strokeWidth={0.25}
+          />
+          <text
+            x={px - 13.25}
+            y={py - 0.9}
+            textAnchor="middle"
+            fill="#f5f4f0"
+            fontFamily="'JetBrains Mono', monospace"
+            fontWeight={700}
+            fontSize={3}
+          >
+            {peakDateLabel}
+          </text>
+          <line
+            x1={px - 5}
+            y1={py - 1.9}
+            x2={px - 2}
+            y2={py - 0.6}
+            stroke={theme.red}
+            strokeWidth={0.3}
+          />
+        </g>
+      ) : null}
       {/* The fall: arrow drawn from peak toward the current price */}
       {arrowT > 0.01 ? (
         <>

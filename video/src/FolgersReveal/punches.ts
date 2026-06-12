@@ -18,13 +18,15 @@ export const punches: PunchSegment[] = [
   {from: 7.3, to: 9.8, kind: 'cut', fromScale: 1.1, toScale: 1.1}, // the mock quote
   {from: 11.3, to: 13.9, kind: 'cut', fromScale: 1.1, toScale: 1.1}, // "crashed to a 19-month low"
   {from: 24.95, to: 26.5, kind: 'cut', fromScale: 1.1, toScale: 1.1}, // "just a tired dad"
-  {from: 39.1, to: 45.4, kind: 'ramp', fromScale: 1.0, toScale: 1.06}, // kitchen-scoops creep
-  {from: 46.2, to: 48.0, kind: 'cut', fromScale: 1.12, toScale: 1.12}, // "no. that's not you"
+  // The long con: slow creep from the wink all the way to "nah" — then snap
+  // wide on "nah, that's not you", hold, and slam back in on "on purpose".
+  {from: 35.0, to: 46.2, kind: 'ramp', fromScale: 1.0, toScale: 1.1}, // kitchen-scoops creep
+  {from: 46.2, to: 46.8, kind: 'ramp', fromScale: 1.1, toScale: 1.0}, // zoom OUT — "nah"
   {from: 50.5, to: 52.3, kind: 'cut', fromScale: 1.18, toScale: 1.18}, // "on purpose" — hardest
   {from: 84.4, to: 86.0, kind: 'cut', fromScale: 1.1, toScale: 1.1}, // "not even making this up"
   {from: 98.0, to: 98.9, kind: 'cut', fromScale: 1.1, toScale: 1.1}, // "the cost left"
-  {from: 99.0, to: 103.2, kind: 'cut', fromScale: 1.14, toScale: 1.14}, // "shrink stayed" → raise
-  {from: 103.2, to: 103.9, kind: 'ramp', fromScale: 1.14, toScale: 1.0}, // punch OUT — "tell me"
+  {from: 99.0, to: 103.2, kind: 'cut', fromScale: 1.17, toScale: 1.17}, // "shrink stayed" → raise (sharp zoom, no thunk)
+  {from: 103.2, to: 103.9, kind: 'ramp', fromScale: 1.17, toScale: 1.0}, // punch OUT — "tell me"
 ];
 
 export const punchScale = (tSec: number): number => {
