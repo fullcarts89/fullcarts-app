@@ -250,11 +250,11 @@ export const Main: React.FC<MainProps> = (props) => {
               top={280}
               height={562}
               inset={40}
-              zoomTo={1.05}
-              panX={-1}
-              panY={-1}
+              zoomTo={1}
+              panX={0}
+              panY={0}
               rotate={-1}
-              ring={{x: 78.5, y: 15.3, rx: 21, ry: 8.5}}
+              ring={{x: 76, y: 15.5, rx: 23.5, ry: 12}}
             />
           </Rel>
           <Rel window={cues.listingNow} fps={fps} name="43.5oz walmart">

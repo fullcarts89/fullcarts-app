@@ -24,29 +24,36 @@ export interface SfxCue {
 }
 
 export const sfxCues: SfxCue[] = [
-  {at: 0.5, file: 'stamp.mp3', volume: 0.7}, // STAMP #1 — CAUGHT (sonic logo)
-  {at: 11.95, file: 'stamp.mp3', volume: 0.5}, // stamp #2 — EXCUSE IS GONE (lighter)
-  {at: 18.0, file: 'typing.mp3', volume: 0.18}, // "stare at numbers all day"
-  {at: 20.9, file: 'whoosh.mp3', volume: 0.35}, // → db cutaway
-  {at: 21.2, file: 'roll.mp3', volume: 0.45}, // 2,228 odometer
-  {at: 22.0, file: 'ding.mp3', volume: 0.4}, // counter lands
-  {at: 36.2, file: 'thunk.mp3', volume: 0.5}, // "on purpose"
-  {at: 39.2, file: 'whoosh.mp3', volume: 0.35}, // → reveal cutaway
-  {at: 39.9, file: 'tick.mp3', volume: 0.35}, // ring on (51 oz.)
-  {at: 41.8, file: 'tick.mp3', volume: 0.35}, // ring on 43.5-Ounce
-  {at: 44.5, file: 'deflate.mp3', volume: 0.5}, // after-bar shrinks
-  {at: 46.6, file: 'pop.mp3', volume: 0.55}, // −14.7% badge
-  {at: 53.3, file: 'whoosh.mp3', volume: 0.35}, // → chart cutaway
-  {at: 54.8, file: 'thunk.mp3', volume: 0.4}, // peak dot lands
-  {at: 58.0, file: 'slide.mp3', volume: 0.45}, // arrow draws down
-  {at: 59.0, file: 'tick.mp3', volume: 0.4}, // arrow lands
-  {at: 74.6, file: 'whoosh.mp3', volume: 0.35}, // → rockets cutaway
-  {at: 75.0, file: 'whoosh-up.mp3', volume: 0.4}, // rocket streak (NOT a riser)
+  // The three stamps — the sonic logo. Never more than three.
+  {at: 0.5, file: 'stamp.mp3', volume: 0.6}, // CAUGHT
+  {at: 11.95, file: 'stamp.mp3', volume: 0.45}, // EXCUSE IS GONE (lighter)
+  {at: 85.6, file: 'stamp.mp3', volume: 0.7}, // A PERMANENT RAISE (biggest)
+
+  // The zoom motif (founder 2026-06-12): every hard punch-in lands with the
+  // same low thunk at varying intensity — one consistent sound, not variety.
+  // Creep zooms (15.5, 67.5) and the punch-out (88.5) stay silent by design.
+  {at: 1.6, file: 'thunk.mp3', volume: 0.4}, // "got smaller"
+  {at: 7.6, file: 'thunk.mp3', volume: 0.4}, // "crashed"
+  {at: 28.0, file: 'thunk.mp3', volume: 0.4}, // "believe me"
+  {at: 36.2, file: 'thunk.mp3', volume: 0.55}, // "on purpose" — the reference hit
+  {at: 38.6, file: 'thunk.mp3', volume: 0.3}, // "look at this"
+  {at: 52.2, file: 'thunk.mp3', volume: 0.4}, // "actually gets me" jump-cut
+  {at: 54.8, file: 'thunk.mp3', volume: 0.3}, // peak dot lands (same motif)
+  {at: 83.5, file: 'thunk.mp3', volume: 0.35}, // "cost left"
+  {at: 84.2, file: 'thunk.mp3', volume: 0.45}, // "shrink stayed"
+  // (11.8 punch has no thunk — the 11.95 stamp owns that moment)
+
+  // Structure: transitions + the data reveals
+  {at: 20.9, file: 'whoosh.mp3', volume: 0.3}, // → db cutaway
+  {at: 21.2, file: 'roll.mp3', volume: 0.15}, // 2,228 odometer (was way hot)
+  {at: 22.0, file: 'ding.mp3', volume: 0.3}, // counter lands
+  {at: 39.2, file: 'whoosh.mp3', volume: 0.3}, // → reveal cutaway
+  {at: 44.5, file: 'deflate.mp3', volume: 0.4}, // after-bar shrinks
+  {at: 46.6, file: 'pop.mp3', volume: 0.45}, // −14.7% badge
+  {at: 53.3, file: 'whoosh.mp3', volume: 0.3}, // → chart cutaway
+  {at: 74.6, file: 'whoosh.mp3', volume: 0.3}, // → rockets cutaway
   // 77.9 feather: deliberate SILENCE — the quiet is the joke
-  {at: 79.4, file: 'tick.mp3', volume: 0.3}, // "rockets & feathers" chip
-  {at: 85.6, file: 'stamp.mp3', volume: 0.8}, // STAMP #3 — A PERMANENT RAISE
-  {at: 93.6, file: 'tap.mp3', volume: 0.35}, // end card in
-  {at: 97.4, file: 'ding.mp3', volume: 0.35}, // "fullcarts.org"
+  {at: 97.4, file: 'ding.mp3', volume: 0.3}, // "fullcarts.org"
 ];
 
 const DRONE_OUT_SEC = 93.6; // kill the underbed for the CTA
@@ -90,7 +97,7 @@ export const SfxTrack: React.FC<{available: string[]}> = ({available}) => {
                 fps * DRONE_OUT_SEC,
                 durationInFrames,
               ],
-              [0, 0.12, 0.12, 0.025, 0.025, 0.12, 0.12, 0, 0],
+              [0, 0.075, 0.075, 0.018, 0.018, 0.075, 0.075, 0, 0],
               {extrapolateRight: 'clamp'},
             )
           }
