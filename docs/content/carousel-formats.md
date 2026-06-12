@@ -30,6 +30,9 @@ npx remotion still <CompId> out/<slug>/slide-NN.png --frame=N --props=src/props/
 - **Swipe mechanic:** a per-product **Q→A open loop** — slide shows the *before* size with the *after*
   withheld behind a red "?"; the **next** slide reveals the −%. The answer is never on the same slide.
 - **Structure:** cover → for each item `[Q, A]` (ranked **ascending**, biggest cut last) → CTA.
+- **Images:** every Q/A slide reserves a right-hand **product-photo panel**. Set `item.image` to the
+  real `product_entities.image_url` (Bucket-1); absent → a labelled placeholder marks the reserved zone.
+  Photos fetch at render time (sandbox 403s them → render with images on a network-open machine).
 - **Bucket:** entertainment / gamified.
 - **Cover:** "Guess the cut — same price, less inside. Most people lowball every one. swipe →"
 - **🚩 Gate watch-out:** every `equiv` must be **arithmetic, not embellishment** — 32→28 fl oz is
