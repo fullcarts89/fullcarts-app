@@ -1,12 +1,12 @@
 import React from "react";
 import { z } from "zod";
-import { AbsoluteFill, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Img, staticFile, useCurrentFrame } from "remotion";
 import { theme } from "../lib/theme";
 import { headline, mono, body } from "../lib/fonts";
 import { GridTexture } from "../components/GridTexture";
 import { Brandmark } from "../components/Brandmark";
 
-const brand = z.object({ name: z.string(), pct: z.number() });
+const brand = z.object({ name: z.string(), pct: z.number(), logo: z.string().optional() });
 const tier = z.object({
   tier: z.string(),
   color: z.enum(["red", "amber", "blue", "green", "gray"]),
@@ -38,6 +38,32 @@ const Frame: React.FC<{ children: React.ReactNode }> = ({ children }) => (
     <GridTexture opacity={0.06} />
     {children}
   </AbsoluteFill>
+);
+
+// brand icon: real logo if provided (DB/Clearbit URL or local path), else a clean monogram chip
+const BrandIcon: React.FC<{ logo?: string; name: string; size: number }> = ({ logo, name, size }) => {
+  if (logo) {
+    const src = logo.startsWith("http") ? logo : staticFile(logo);
+    return (
+      <div style={{ width: size, height: size, borderRadius: size / 2, background: "#fff", overflow: "hidden", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Img src={src} style={{ width: "84%", height: "84%", objectFit: "contain" }} />
+      </div>
+    );
+  }
+  const initial = (name.match(/[A-Za-z0-9]/)?.[0] ?? "?").toUpperCase();
+  return (
+    <div style={{ width: size, height: size, borderRadius: size / 2, background: "rgba(245,244,240,0.10)", border: `1px solid ${theme.color.border}`, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <span style={{ fontFamily: headline, fontWeight: 700, fontSize: size * 0.48, color: theme.color.textPrimary }}>{initial}</span>
+    </div>
+  );
+};
+
+const BrandPill: React.FC<{ b: z.infer<typeof brand>; color: string; big?: boolean }> = ({ b, color, big }) => (
+  <div style={{ display: "flex", alignItems: "center", gap: big ? 14 : 10, background: theme.color.card, border: `1px solid ${theme.color.border}`, borderRadius: big ? 16 : 10, padding: big ? "12px 26px 12px 14px" : "8px 16px 8px 9px" }}>
+    <BrandIcon logo={b.logo} name={b.name} size={big ? 56 : 40} />
+    <span style={{ fontFamily: headline, fontWeight: 700, fontSize: big ? 46 : 32, color: theme.color.textPrimary }}>{b.name}</span>
+    <span style={{ fontFamily: mono, fontWeight: 700, fontSize: big ? 40 : 28, color }}>−{b.pct}%</span>
+  </div>
 );
 
 const TierBox: React.FC<{ t: Tier; size: number }> = ({ t, size }) => (
@@ -90,12 +116,7 @@ const RevealSlide: React.FC<{ order: Tier[]; idx: number }> = ({ order, idx }) =
           </div>
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 16, marginTop: 56 }}>
-          {t.brands.map((b, i) => (
-            <div key={i} style={{ display: "flex", alignItems: "baseline", gap: 14, background: theme.color.card, border: `1px solid ${theme.color.border}`, borderRadius: 14, padding: "16px 26px" }}>
-              <span style={{ fontFamily: headline, fontWeight: 700, fontSize: 46, color: theme.color.textPrimary }}>{b.name}</span>
-              <span style={{ fontFamily: mono, fontWeight: 700, fontSize: 40, color: c }}>−{b.pct}%</span>
-            </div>
-          ))}
+          {t.brands.map((b, i) => <BrandPill key={i} b={b} color={c} big />)}
         </div>
       </AbsoluteFill>
 
@@ -112,12 +133,7 @@ const Row: React.FC<{ t: Tier }> = ({ t }) => {
     <div style={{ display: "flex", alignItems: "stretch", gap: 16 }}>
       <TierBox t={t} size={108} />
       <div style={{ flex: 1, display: "flex", flexWrap: "wrap", alignContent: "center", gap: 12 }}>
-        {t.brands.map((b, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "baseline", gap: 10, background: theme.color.card, border: `1px solid ${theme.color.border}`, borderRadius: 10, padding: "10px 16px" }}>
-            <span style={{ fontFamily: headline, fontWeight: 700, fontSize: 32, color: theme.color.textPrimary }}>{b.name}</span>
-            <span style={{ fontFamily: mono, fontWeight: 700, fontSize: 28, color: c }}>−{b.pct}%</span>
-          </div>
-        ))}
+        {t.brands.map((b, i) => <BrandPill key={i} b={b} color={c} />)}
       </div>
     </div>
   );
