@@ -1,0 +1,10 @@
+{
+  "value": 6.1,
+  "decimals": 1,
+  "prefix": "+",
+  "suffix": "%",
+  "label": "Dairy prices · year over year",
+  "context": "And the official index barely counts the carton quietly getting smaller.",
+  "source": "U.S. BLS via FRED CPI · Apr 2026 · fred.stlouisfed.org",
+  "accent": "red"
+}

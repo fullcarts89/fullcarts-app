@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FullCarts — Signature Style Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0b0d; --card:#161719; --cream:#f5f4f0; --gray:#a0a0a5; --gray3:#80808a;
+    --red:#dc2626; --redb:#ef4444; --green:#10b981; --blue:#3b82f6; --amber:#f59e0b;
+    --head:'Space Grotesk',sans-serif; --body:'Inter',sans-serif; --mono:'JetBrains Mono',monospace;
+    --grid: repeating-linear-gradient(0deg,rgba(245,244,240,.06) 0 1px,transparent 1px 48px),
+            repeating-linear-gradient(90deg,rgba(245,244,240,.06) 0 1px,transparent 1px 48px);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--cream);font-family:var(--body);
+       -webkit-font-smoothing:antialiased;padding:48px 32px 80px}
+  h1{font-family:var(--head);font-weight:700;letter-spacing:-.02em;font-size:40px;margin:0}
+  h2{font-family:var(--head);font-weight:700;font-size:22px;margin:48px 0 18px;
+     border-left:5px solid var(--red);padding-left:14px}
+  .sub{color:var(--gray);max-width:760px;margin-top:8px}
+  .mono{font-family:var(--mono)}
+  .wrap{max-width:1180px;margin:0 auto}
+  .brandmark{display:flex;align-items:center;gap:10px}
+  .fc{width:44px;height:44px;border-radius:10px;background:var(--red);display:flex;
+      align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:20px}
+  .brandmark span{font-family:var(--head);font-weight:700;font-size:26px;letter-spacing:-.02em}
+
+  /* swatches */
+  .swatches{display:flex;flex-wrap:wrap;gap:14px}
+  .sw{width:150px;border:1px solid rgba(255,255,255,.12);border-radius:12px;overflow:hidden;background:var(--card)}
+  .sw .chip{height:64px}
+  .sw .meta{padding:10px 12px;font-size:12px}
+  .sw .meta b{font-family:var(--mono);display:block;font-size:13px}
+  .sw .meta small{color:var(--gray3)}
+
+  /* type */
+  .type{display:grid;gap:16px}
+  .type .row{background:var(--card);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:18px 22px}
+  .type .lbl{font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:8px}
+
+  /* phone gallery */
+  .gallery{display:flex;flex-wrap:wrap;gap:22px}
+  .phone{width:248px;height:441px;border-radius:22px;overflow:hidden;position:relative;
+         background:linear-gradient(160deg,#23252a,#0f1012);border:1px solid rgba(255,255,255,.12)}
+  .phone .grid{position:absolute;inset:0;background-image:var(--grid)}
+  .face{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+        color:#5a5c63;font-size:11px;font-family:var(--mono);letter-spacing:1px;
+        background:radial-gradient(80% 60% at 50% 35%,#2c2f36,#121317)}
+  .scrim{position:absolute;inset:0;background:linear-gradient(to top,var(--bg) 0%,transparent 42%)}
+  .cap{position:absolute;left:0;right:0;bottom:54px;text-align:center;padding:0 16px;
+       font-family:var(--head);font-weight:700;font-size:18px;line-height:1.15;
+       text-shadow:0 2px 0 #000,0 0 6px #000,2px 0 0 #000,-2px 0 0 #000}
+  .cap .hot{color:var(--red)}
+  .frametag{position:absolute;top:10px;left:12px;font-family:var(--mono);font-size:10px;
+            letter-spacing:1px;color:var(--gray3);text-transform:uppercase;z-index:5}
+
+  /* caught title */
+  .caught .label{position:absolute;top:74px;left:24px;font-family:var(--mono);font-size:13px;
+                 letter-spacing:7px;color:var(--red);text-transform:uppercase}
+  .caught .brand{position:absolute;top:96px;left:22px;font-family:var(--head);font-weight:700;
+                 font-size:46px;line-height:1;color:var(--cream)}
+  .caught .bar{position:absolute;top:158px;left:24px;height:8px;width:120px;background:var(--red);border-radius:4px}
+
+  /* shrink overlay */
+  .ov{position:absolute;left:18px;right:18px;bottom:96px;background:rgba(10,11,13,.92);
+      border:1px solid rgba(255,255,255,.12);border-left:5px solid var(--red);
+      border-radius:16px;padding:16px 16px;backdrop-filter:blur(6px)}
+  .ov .top{display:flex;justify-content:space-between;align-items:flex-start}
+  .ov .br{font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--red)}
+  .ov .pn{font-family:var(--head);font-weight:700;font-size:19px;margin-top:2px}
+  .ov .badge{background:var(--red);color:#fff;font-family:var(--mono);font-weight:700;font-size:22px;
+             border-radius:10px;padding:4px 10px;white-space:nowrap}
+  .ov .bars{margin-top:14px;display:flex;flex-direction:column;gap:10px}
+  .ov .b{display:flex;align-items:center;gap:10px}
+  .ov .b .bar{height:16px;border-radius:4px}
+  .ov .b .v{font-family:var(--mono);font-weight:700;font-size:16px}
+  .ov .src{margin-top:14px;display:flex;justify-content:space-between;align-items:center}
+  .ov .src .s{font-family:var(--mono);font-size:11px;color:var(--gray)}
+  .fcmini{display:flex;align-items:center;gap:6px}
+  .fcmini .b{width:24px;height:24px;border-radius:6px;background:var(--red);display:flex;align-items:center;
+             justify-content:center;font-family:var(--mono);font-weight:700;font-size:11px}
+  .fcmini span{font-family:var(--head);font-weight:700;font-size:14px}
+
+  /* statcard */
+  .stat{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+        background:radial-gradient(circle at 50% 38%,rgba(220,38,38,.16),transparent 55%)}
+  .stat .l{font-family:var(--mono);font-size:13px;letter-spacing:4px;text-transform:uppercase;color:var(--red)}
+  .stat .n{font-family:var(--mono);font-weight:700;font-size:96px;line-height:1;margin-top:6px;
+           text-shadow:0 0 40px rgba(220,38,38,.4)}
+  .stat .c{font-family:var(--head);font-weight:500;font-size:17px;color:var(--gray);text-align:center;
+           max-width:200px;margin-top:12px}
+
+  /* rundown chip */
+  .chip{position:absolute;left:16px;right:30px;bottom:120px;display:flex;align-items:center;gap:10px;
+        background:rgba(10,11,13,.92);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px}
+  .chip .rk{font-family:var(--mono);font-weight:700;font-size:40px;color:var(--red);min-width:46px;text-align:center}
+  .chip .br{font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gray)}
+  .chip .pn{font-family:var(--head);font-weight:700;font-size:16px;overflow-wrap:anywhere}
+  .chip .ch{font-family:var(--mono);font-size:13px;color:var(--gray);margin-top:2px}
+  .chip .bd{background:var(--red);color:#fff;font-family:var(--mono);font-weight:700;font-size:15px;border-radius:8px;padding:3px 7px;flex-shrink:0}
+
+  /* sourceframe */
+  .sf .head{position:absolute;top:60px;left:16px;right:16px;background:rgba(10,11,13,.92);
+            border-left:5px solid var(--red);border-radius:10px;padding:12px 14px}
+  .sf .head .e{font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--red)}
+  .sf .head .h{font-family:var(--head);font-weight:700;font-size:18px;margin-top:2px}
+  .sf .chart{position:absolute;top:128px;left:16px;right:16px;height:150px;border-radius:10px;
+             background:linear-gradient(#101216,#0b0c0f);border:1px dashed rgba(245,244,240,.18);
+             display:flex;align-items:center;justify-content:center;color:#5a5c63;font-family:var(--mono);font-size:11px;text-align:center}
+  .sf .cite{position:absolute;bottom:60px;left:16px;right:16px;background:rgba(10,11,13,.92);
+            border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
+  .sf .cite .n{font-family:var(--mono);font-weight:700;font-size:13px}
+  .sf .cite .u{font-family:var(--mono);font-size:11px;color:var(--gray)}
+
+  /* thumbnail */
+  .thumb .top{position:absolute;top:46px;left:18px}
+  .thumb .top .e{font-family:var(--mono);font-size:13px;letter-spacing:6px;text-transform:uppercase;color:var(--red)}
+  .thumb .top .b{font-family:var(--head);font-weight:700;font-size:44px;line-height:1}
+  .thumb .big{position:absolute;bottom:96px;left:18px;right:30px;font-family:var(--mono);font-weight:700;font-size:58px;
+              line-height:.9;color:var(--red);text-shadow:0 0 40px rgba(220,38,38,.5)}
+  .thumb .fcmini{position:absolute;bottom:54px;left:18px}
+
+  /* sound table */
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  th,td{text-align:left;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.09);font-size:14px;vertical-align:top}
+  th{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--red)}
+  td b{font-family:var(--head)}
+  .note{color:var(--gray3);font-size:13px;margin-top:10px}
+  .legend{color:var(--gray);font-size:13px;margin:-6px 0 10px}
+
+  /* --- smooth entrance motion (live preview; loops ~4.5s, same ease-out as the Remotion springs) --- */
+  :root{--ease:cubic-bezier(.16,1,.3,1)}
+  @keyframes riseIn{0%{opacity:0;transform:translateY(26px)}11%,100%{opacity:1;transform:translateY(0)}}
+  @keyframes popIn{0%{opacity:0;transform:scale(.62)}8%{opacity:1}13%,100%{opacity:1;transform:scale(1)}}
+  @keyframes wipeIn{0%{transform:scaleX(0)}11%,100%{transform:scaleX(1)}}
+  @keyframes slideIn{0%{opacity:0;transform:translateX(-24px)}11%,100%{opacity:1;transform:translateX(0)}}
+  @keyframes dropIn{0%{opacity:0;transform:translateY(-22px)}11%,100%{opacity:1;transform:translateY(0)}}
+  .ov{animation:riseIn 4.5s var(--ease) infinite}
+  .ov .badge{animation:popIn 4.5s var(--ease) .25s infinite}
+  .chip{animation:slideIn 4.5s var(--ease) infinite}
+  .chip .bd{animation:popIn 4.5s var(--ease) .3s infinite}
+  .caught .label{animation:slideIn 4.5s var(--ease) infinite}
+  .caught .brand{animation:popIn 4.5s var(--ease) .12s infinite}
+  .caught .bar{transform-origin:left center;animation:wipeIn 4.5s var(--ease) .26s infinite}
+  .stat .l{animation:riseIn 4.5s var(--ease) infinite}
+  .stat .n{animation:popIn 4.5s var(--ease) .14s infinite}
+  .stat .c{animation:riseIn 4.5s var(--ease) .34s infinite}
+  .sf .head{animation:dropIn 4.5s var(--ease) infinite}
+  .sf .cite{animation:riseIn 4.5s var(--ease) .2s infinite}
+  .thumb .top .b{animation:riseIn 4.5s var(--ease) infinite}
+  .thumb .big{animation:popIn 4.5s var(--ease) .2s infinite}
+  .cap{animation:riseIn 4.5s var(--ease) .2s infinite}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brandmark"><div class="fc">FC</div><span>FullCarts</span></div>
+  <h1 style="margin-top:14px">Signature Style Board</h1>
+  <p class="sub">Every signature element rendered in-brand — fonts, color, the data overlays, the
+  “Caught:” cold-open, thumbnail, the red-highlight caption, and the sound palette. The phone frames
+  show how each overlay sits over your face/footage (the grey area = your shot).</p>
+
+  <h2>Color</h2>
+  <div class="swatches">
+    <div class="sw"><div class="chip" style="background:#0a0b0d"></div><div class="meta"><b>#0a0b0d</b><small>graphite — base</small></div></div>
+    <div class="sw"><div class="chip" style="background:#161719"></div><div class="meta"><b>#161719</b><small>card</small></div></div>
+    <div class="sw"><div class="chip" style="background:#f5f4f0"></div><div class="meta"><b>#f5f4f0</b><small>cream — text</small></div></div>
+    <div class="sw"><div class="chip" style="background:#dc2626"></div><div class="meta"><b>#dc2626</b><small>alert red — the cut</small></div></div>
+    <div class="sw"><div class="chip" style="background:#10b981"></div><div class="meta"><b>#10b981</b><small>signal green — restored</small></div></div>
+    <div class="sw"><div class="chip" style="background:#3b82f6"></div><div class="meta"><b>#3b82f6</b><small>data blue — neutral</small></div></div>
+    <div class="sw"><div class="chip" style="background:#f59e0b"></div><div class="meta"><b>#f59e0b</b><small>amber — warning</small></div></div>
+  </div>
+
+  <h2>Typography</h2>
+  <div class="type">
+    <div class="row"><div class="lbl">Space Grotesk — headlines</div>
+      <div style="font-family:var(--head);font-weight:700;font-size:34px;letter-spacing:-.02em">They shrank your coffee.</div></div>
+    <div class="row"><div class="lbl">Inter — body</div>
+      <div style="font-size:17px;color:var(--gray)">Same price, less inside — and they’re banking on you not noticing.</div></div>
+    <div class="row"><div class="lbl">JetBrains Mono — every number (the signature move)</div>
+      <div class="mono" style="font-weight:700;font-size:30px">51oz → 43.5oz &nbsp; −14.7% &nbsp; 2,228 &nbsp; +6.1%</div></div>
+  </div>
+
+  <h2>The overlays, in context</h2>
+  <p class="legend">9:16 frames · grey = your face/footage · overlays render with transparency so your shot shows through.</p>
+  <div class="gallery">
+
+    <!-- Caught title -->
+    <div class="phone caught"><div class="face">▲ your hook (face)</div><div class="grid"></div>
+      <div class="frametag">CaughtTitle · cold-open</div>
+      <div class="label">Caught</div><div class="brand">Folgers</div><div class="bar"></div>
+    </div>
+
+    <!-- Shrink overlay -->
+    <div class="phone"><div class="face">▲ hands on the can</div>
+      <div class="frametag">ShrinkOverlay</div>
+      <div class="ov">
+        <div class="top"><div><div class="br">Folgers</div><div class="pn">Coffee</div></div><div class="badge">−14.7%</div></div>
+        <div class="bars">
+          <div class="b"><div class="bar" style="width:100%;background:#80808a;opacity:.45"></div><div class="v">51 oz</div></div>
+          <div class="b"><div class="bar" style="width:85%;background:var(--red)"></div><div class="v">43.5 oz</div></div>
+        </div>
+        <div class="src"><div class="s">FullCarts · listing · 2022</div><div class="fcmini"><div class="b">FC</div><span>FullCarts</span></div></div>
+      </div>
+    </div>
+
+    <!-- Stat card -->
+    <div class="phone stat"><div class="grid"></div>
+      <div class="frametag" style="color:#5a5c63">StatCard · full-frame</div>
+      <div class="l">Documented shrinks</div>
+      <div class="n">2,228</div>
+      <div class="c">size cuts logged — every one source-cited.</div>
+    </div>
+
+    <!-- Rundown chip -->
+    <div class="phone"><div class="face">▲ product b-roll</div>
+      <div class="frametag">RundownChip</div>
+      <div class="chip"><div class="rk">1</div><div style="flex:1"><div class="br">Cadbury</div>
+        <div class="pn">Freddo Faces</div><div class="ch">122 → 99 g</div></div><div class="bd">−18.9%</div></div>
+    </div>
+
+    <!-- Source frame -->
+    <div class="phone sf"><div class="grid"></div>
+      <div class="frametag" style="color:#5a5c63">SourceFrame · over a REAL chart</div>
+      <div class="head"><div class="e">Real source</div><div class="h">Coffee: −39% from peak</div></div>
+      <div class="chart">[ your real ICE / FRED<br>coffee-price screenshot ]</div>
+      <div class="cite"><div><div class="n">ICE Arabica (KC)</div><div class="u">tradingeconomics.com · Jun 2026</div></div>
+        <div class="fcmini"><div class="b">FC</div><span>FullCarts</span></div></div>
+    </div>
+
+    <!-- Thumbnail -->
+    <div class="phone thumb"><div class="face">▲ your cover frame</div><div class="grid" style="opacity:.6"></div>
+      <div class="scrim"></div>
+      <div class="frametag">Thumbnail · cover</div>
+      <div class="top"><div class="e">Caught</div><div class="b">Folgers</div></div>
+      <div class="big">−14.7%</div>
+      <div class="fcmini"><div class="b">FC</div><span>FullCarts</span></div>
+    </div>
+
+    <!-- Caption -->
+    <div class="phone"><div class="face">▲ talking to camera</div>
+      <div class="frametag">Caption · red highlight</div>
+      <div class="scrim"></div>
+      <div class="cap">they took <span class="hot">14.7%</span><br>and bet you’d <span class="hot">blame yourself</span></div>
+    </div>
+
+  </div>
+
+  <p class="note"><b style="color:var(--cream)">Safe zones:</b> overlays sit fully inside the frame —
+  never bleeding off-edge. Keep the −X% badge and key numbers clear of the right ~12% (the like/comment/share
+  rail) and the bottom ~15% (caption + handle), since the app draws its UI there.</p>
+
+  <h2>Sound palette — “a calm data terminal that slams down a receipt”</h2>
+  <p class="legend">Restrained, mechanical/digital, evidence-flavored. Punch comes from two accents (the CAUGHT stamp + the number land), not constant SFX. No glitter/sparkle — it undercuts credibility.</p>
+  <table>
+    <tr><th>Moment</th><th>Sound</th><th>Why</th></tr>
+    <tr><td><b>“Caught:” cold-open</b></td><td>a hard <b>stamp / shutter-thunk</b> (one, authoritative) as CAUGHT lands</td><td>your sonic logo — “caught red-handed.” Most recognizable cue.</td></tr>
+    <tr><td><b>Number reveal / count-up</b></td><td>fast <b>odometer/counter roll</b> → soft <b>ding/thunk</b> on stop</td><td>the data reveal; mono numbers made audible</td></tr>
+    <tr><td><b>Before→after bar shrinks</b></td><td>short <b>descending “deflate”</b> + a tight <b>pop</b> on the −X% badge</td><td>you hear the product get smaller</td></tr>
+    <tr><td><b>Data / typing moments</b></td><td>subtle <b>mechanical-keyboard typing</b> under “I do data for a living”</td><td>reinforces the data-brand; diegetic, not cartoon</td></tr>
+    <tr><td><b>Proof / “documented, sourced”</b></td><td><b>receipt-print</b> or a <b>stamp</b> tick</td><td>the receipts brand, audible</td></tr>
+    <tr><td><b>Cut / transition</b></td><td>clean low <b>whoosh</b> (sparse — every 2–4s cut doesn’t need one)</td><td>movement without noise</td></tr>
+    <tr><td><b>CTA</b></td><td>soft positive <b>UI tap / ding</b></td><td>gentle close, not salesy</td></tr>
+    <tr><td><b>Underbed</b></td><td>low, tense, minimal <b>drone/beat</b> — quiet under VO (duck −18 dB)</td><td>keeps authority; voice stays the star</td></tr>
+  </table>
+  <p class="note">AVOID: glitter/sparkle, riser “vine-booms,” meme SFX, busy stingers. SOURCE: generate custom ones in <b>ElevenLabs SFX</b> (text-to-SFX) for the CAUGHT stamp + counter, then Captions App’s library for the rest. Keep SFX at ~−12 to −18 dB under the voice.</p>
+
+  <p class="note" style="margin-top:30px">Reference only — the live versions render from the <code>video/</code> Remotion toolkit; full spec in <code>docs/content/visual-identity.md</code>.</p>
+</div>
+</body>
+</html>

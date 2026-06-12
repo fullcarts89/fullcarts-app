@@ -1,0 +1,95 @@
+# FullCarts Content Angles — What & How to Talk About It
+
+**Date:** June 11, 2026
+**Parent:** `docs/plans/2026-06-10-face-forward-content-strategy.md`
+**Purpose:** the *ideation + voice* source. The brief generator finds *which datapoint* to post
+(convergence); this doc decides *what angle and what feeling* to hit. Built on a 4-prompt framework
+(what to be known for · what I disagree with · what I've experienced · what my viewer feels but won't
+say). The 4th column is the **Emotional Lock-In** bank (see `hooks.md`).
+
+---
+
+## 0. The persona (the voice underneath everything — relatability + credibility in one)
+
+The through-line that makes the authority *land*: **a regular, tired dad who got sick of getting
+ripped off and did something about it.** It humanizes the credibility — not "I run a database"
+(distant), but "I'm one of you who got fed up and built the receipts" (relatable *and* credible).
+
+**The signature line (and variants):**
+> "I'm just a tired dad who's sick of getting ripped off — so I built the largest free, public
+> shrinkflation database I know of, so we can all be more informed with our purchases."
+
+- Shorter: *"Tired dad. Sick of getting ripped off. So I built the receipts."*
+- In bio: *"Tired dad building the receipts on shrinkflation. The largest free public database I know of."*
+
+**Why it works:** it's the everyman + the builder in one breath. It makes the database feel like a
+*public service from one of us*, not a flex; pairs with the "it's not you" advocacy; and keeps the
+"that I know of" hedge that makes the superlative safe. Use it as the **origin/credibility beat**
+(roughly the same ~1-in-4/5 cadence as the day-job line) and in bios/pinned posts.
+
+**The trust stack (now three anchors, use in combination):**
+1. **The database** — largest free, public (that I know of). The proof.
+2. **The day-job** — "I do data for a company billions have used" (insinuated, never named).
+3. **The persona** — *tired dad, sick of getting ripped off, building this for all of us.* The human.
+
+---
+
+## 1. What do I want to be known for? (the topic pillars)
+
+The 3–5 things that, over time, the channel *means*:
+1. **The receipts** — the largest free, public, sourced shrinkflation database. Proof, not vibes.
+2. **Decoding the trick** — the data-person who shows you *how* they hid it (price-per-unit, slack-fill).
+3. **"It's not you"** — the consumer advocate who takes the shame off you and puts it on the design.
+4. **The macro story** — the honest version of inflation (rockets & feathers, what CPI leaves out).
+5. **Accountability** — naming names ("Caught:"), backed by data so it's documentation, not a rant.
+
+*(Persona note: all five are voiced by the tired-dad-who-built-the-receipts — §0.)*
+
+## 2. What do I disagree with? (contrarian takes — these ARE hooks)
+
+Contrarian angles are pre-loaded Snaps (the "snap" is the disagreement):
+- "Inflation is the story." → **No — shrinkflation is the hidden half, and CPI barely measures it.**
+- "Prices went up because costs went up." → **Costs came back down. Your price and size didn't.**
+- "You're just bad with money." → **You're being robbed by design and blamed for it.**
+- "It's only a few products." → **2,200+ across 900+ brands. It's the whole store.**
+- "Nothing you can do about it." → **You can see it — price-per-unit — and that changes everything.**
+- "At least the price didn't go up." → **A smaller package at the same price IS a price hike, hidden.**
+
+## 3. What have I experienced? (personal — earns trust, fits the narrative meta)
+
+- **Origin (the tired-dad story):** "I'm just a tired dad who got sick of getting ripped off — the
+  cereal box felt lighter, my paycheck didn't, so I built the receipts so we could all shop smarter." (See §0.)
+- **The disbelief:** "I analyze data for a living and I *still* almost didn't believe how often it happens."
+- **The credibility scar:** early videos got flagged for AI-faked data visuals — so now it's *only*
+  real screenshots and real receipts. (A transparency story that doubles as proof of integrity.)
+- **The personal trigger:** the one product that genuinely set you off.
+
+## 4. What does my viewer feel — but won't say out loud? (the Emotional Lock-In bank)
+
+Shrinkflation is engineered to be invisible, so the victim blames *themselves*. These are the
+unspoken thoughts. Name one *for* them and they feel seen → locked in. Then resolve it with proof.
+
+| The unspoken thought (they won't say it) | The feeling |
+|---|---|
+| "Am I crazy? I swear this used to be bigger." | gaslit / self-doubt |
+| "I must just be bad with money." | shame / self-blame |
+| "I'm giving my kids less and I feel like I'm failing them." | parental guilt |
+| "I make more than ever and I'm somehow *behind*." | the silent squeeze / wounded pride |
+| "I feel pathetic doing math in the aisle / rationing the coffee." | eroded dignity |
+| "I'm a little embarrassed buying the cheaper version now." | status / identity |
+| "I stopped mentioning it — people act like I'm just complaining." | isolation |
+
+**The resolution spine (always end the lock-in here):**
+> "It's not you. You're not crazy, you're not bad with money, you're not failing your family.
+> You're being quietly robbed — and they built it so you'd blame yourself. Here are the receipts."
+
+> **Ethic:** the feeling must be *real* and we must *genuinely resolve it with data*. We agitate a
+> true shame and immediately lift it with proof — that's advocacy. We never manufacture insecurity.
+
+---
+
+## How the operator uses this
+- Pick the **datapoint** (convergence brief) → pick the **angle** (pillar + a contrarian take from §2)
+  → pick the **feeling** to name (§4) for the lock-in beat → write the hook as a **Snap** (`hooks.md`).
+- Bonus prompt from the framework: *"what do I hope they feel / do after watching?"* — for us:
+  *seen, less alone, a little angry, and armed (they'll check price-per-unit and search fullcarts.org).*

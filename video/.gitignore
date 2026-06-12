@@ -1,0 +1,8 @@
+node_modules/
+build/
+out/
+.DS_Store
+public/film/
+public/cutaways/
+src/props/folgers-test.json
+src/props/folgers-hooktest.json
