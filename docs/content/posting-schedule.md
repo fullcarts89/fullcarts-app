@@ -109,6 +109,54 @@ DB), a quick stat, "search any product → fullcarts.org," "how I verify a claim
 
 ---
 
+## Repeatable Series (Carousels)
+
+The "slice and dice" menu above covers the **ranked/data** formats (5 Stealth Shrinks, Worst Offenders,
+Before/After [Brand], Tier List, Biggest-shrinks-vs-CPI, By the Numbers) — all the *same engine* (query +
+render). The formats below are **net-new** and extend that menu with distinct *swipe mechanics*, not just new
+filters. Each runs on infinite DB fuel and clears the three gates.
+
+### 1. Guess the Cut (gamified — the quiz) ⭐
+- **Mechanic:** a per-product **Q→A open loop** — one slide shows the *before* size and asks "how much did
+  they cut?"; the **next** slide reveals the −%. The answer is never on the same slide, so the curiosity
+  *forces* the swipe.
+- **Structure:** cover (challenge) → Q/A pairs climbing to the worst → CTA ("you lowballed it too, didn't you?").
+- **Data:** high-magnitude, well-evidenced rows (`evidence_count ≥ ~15`), ordered **ascending** so the biggest
+  cut lands last (e.g. … → Sainsbury's Scottish Oats 1000→500 g, −50%).
+- **Gate watch-out:** every tangible equivalence must be **arithmetic, not embellishment** — 32→28 fl oz is
+  "half a cup," NOT "a full glass"; keep the lineup **category-coherent** or drop the cross-product analogy.
+- **Cover:** "Same price. Less inside. Guess how much each one shrank — I lowballed every one. swipe →"
+- **Cadence:** weekly. **Build:** new `GuessTheCut` composition (hidden-after → reveal layout).
+
+### 2. It's Not You (emotional cold open)
+- **Mechanic:** open on the **feeling**, not a number (Emotional Lock-In — `content-angles.md` §4) → name the
+  unspoken thought → receipts → the "it's not you" resolution. Swipe driver = emotional cliffhanger.
+- **Structure:** "You're not crazy — that box really did get smaller." → "you swore it was bigger, then felt
+  silly for noticing." → 3 documented receipts → "You're being quietly robbed, and they built it so you'd
+  blame yourself." → persona CTA.
+- **Data:** any well-evidenced reveal(s) paired with a §4 feeling. **Cadence:** as fits. **Build:** new
+  `ItsNotYou` composition (mostly type).
+
+### 3. Tier List — rotate the axis (this is what keeps it repeatable)
+The `TierList` template already ships; its **repeatability is the axis you slice on**, so it's never the same
+brands twice:
+- **By category (default):** chocolate, soda, cereal, chips, coffee, toothpaste, ice cream… (15+ clean buckets
+  in `brand_index.primary_category` — **normalize case** in the query; `snacks`/`Snacks` and `dairy`/`Dairies`
+  are currently split).
+- **By season (convergence overlay):** Halloween candy · back-to-school lunchbox · Super Bowl snacks · holiday
+  tins — run *over* the category default when the calendar lines up.
+- **By parent company:** "every brand Mondelez owns, ranked" (ties to `corporate_tree`).
+
+### 4. They Did It Again — the staircase *(benched)*
+- **Mechanic:** one product, its cuts **stacked across the years** — each swipe is another year ("…and again"),
+  ending on the **cumulative** loss. Timeline tension.
+- **⚠️ Benched until deduped:** `published_changes` re-records the *same* change at multiple dates (Gatorade
+  shows "12.5%" ×8 — one cut re-scraped, **not** a staircase). Needs a per-product pass to confirm a **clean
+  monotonic size sequence** (100→90→80→75) before it can render honestly. Candidates worth the pass: Crest,
+  Pringles, Cadbury Dairy Milk.
+
+---
+
 ## Brand-safety note
 Showing brand names/logos to identify the products you're *factually documenting* is standard
 editorial / nominative use in this genre. Keep the framing factual (the data does the indicting),
