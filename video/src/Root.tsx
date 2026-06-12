@@ -17,6 +17,7 @@ import { PriceJump, priceJumpSchema } from "./compositions/PriceJump";
 import { FewerCups, fewerCupsSchema } from "./compositions/FewerCups";
 import { OutroCard, outroCardSchema } from "./compositions/OutroCard";
 import { Carousel, carouselSchema } from "./compositions/Carousel";
+import { TierList, tierListSchema } from "./compositions/TierList";
 import folgersCut from "./props/folgers-final.json";
 import folgersCutV5 from "./props/folgers-final-v5.json";
 
@@ -338,6 +339,31 @@ export const RemotionRoot: React.FC = () => {
           ctaHeadline: "spot one you *buy?*",
           ctaSub: "search any product — *free* — at fullcarts.org",
           ctaPersona: "Built by a tired dad who got sick of getting ripped off: the largest free, public shrinkflation database I know of.",
+        }}
+      />
+
+      {/* Shrinkflation Tier List carousel (slide 0 = tiers, slide 1 = CTA). */}
+      <Composition
+        id="TierList"
+        component={TierList}
+        durationInFrames={2}
+        fps={FPS}
+        width={1080}
+        height={1350}
+        schema={tierListSchema}
+        defaultProps={{
+          title: ["shrinkflation", "*tier list*"],
+          subtitle: "the worst offenders, graded",
+          tiers: [
+            { tier: "S", color: "red" as const, brands: [{ name: "Cadbury", pct: 44 }, { name: "Mars", pct: 44 }, { name: "Quality St.", pct: 40 }] },
+            { tier: "A", color: "amber" as const, brands: [{ name: "Nestlé", pct: 38 }, { name: "McVitie's", pct: 34 }, { name: "Sainsbury's", pct: 33 }, { name: "Hershey", pct: 32 }] },
+            { tier: "B", color: "blue" as const, brands: [{ name: "Crest", pct: 27 }, { name: "Aquafresh", pct: 25 }, { name: "Kleenex", pct: 25 }] },
+            { tier: "C", color: "green" as const, brands: [{ name: "Chobani", pct: 24 }, { name: "Walkers", pct: 23 }, { name: "Folgers", pct: 21 }] },
+            { tier: "D", color: "gray" as const, brands: [{ name: "Gatorade", pct: 16 }] },
+          ],
+          ctaHeadline: "agree with the *rankings?*",
+          ctaSub: "drop your worst in the *comments.*",
+          ctaPersona: "Every grade is a documented, source-cited shrink. Search any brand free at fullcarts.org — built by a tired dad sick of getting ripped off.",
         }}
       />
     </>

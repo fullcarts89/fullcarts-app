@@ -1,6 +1,6 @@
 import React from "react";
 import { z } from "zod";
-import { AbsoluteFill, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Img, staticFile, useCurrentFrame } from "remotion";
 import { theme } from "../lib/theme";
 import { headline, mono, body } from "../lib/fonts";
 import { GridTexture } from "../components/GridTexture";
@@ -14,6 +14,8 @@ const item = z.object({
   after: z.number(),
   unit: z.string(),
   pct: z.number(),
+  image: z.string().optional(), // DB image_url (http…) or a local public/ path; falls back to bars
+  imagePos: z.string().optional(),
 });
 
 export const carouselSchema = z.object({
@@ -63,25 +65,35 @@ const Cover: React.FC<{ title: string[]; sub: string }> = ({ title, sub }) => (
 
 const ProductSlide: React.FC<{ it: Item }> = ({ it }) => {
   const max = Math.max(it.before, it.after);
+  const hasImg = !!it.image;
+  const src = it.image ? (it.image.startsWith("http") ? it.image : staticFile(it.image)) : null;
+  const rightInset = hasImg ? 480 : 80; // leave room for the product photo panel
+
   return (
     <Frame footer>
-      <div style={{ position: "absolute", top: 110, left: 80, right: 80 }}>
+      {hasImg && src && (
+        <div style={{ position: "absolute", right: 64, top: 300, width: 384, height: 620, background: "#fff", borderRadius: 22, overflow: "hidden" }}>
+          <Img src={src} style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: it.imagePos ?? "center" }} />
+        </div>
+      )}
+
+      <div style={{ position: "absolute", top: 110, left: 80, right: rightInset }}>
         <div style={{ display: "flex", alignItems: "baseline", gap: 24 }}>
           <span style={{ fontFamily: mono, fontWeight: 700, fontSize: 150, lineHeight: 0.9, color: theme.color.red }}>#{it.rank}</span>
           <div>
             <div style={{ fontFamily: mono, fontSize: 30, letterSpacing: 3, textTransform: "uppercase", color: theme.color.textSecondary }}>{it.brand}</div>
-            <div style={{ fontFamily: headline, fontWeight: 700, fontSize: 60, lineHeight: 1.02, color: theme.color.textPrimary, marginTop: 4 }}>{it.product}</div>
+            <div style={{ fontFamily: headline, fontWeight: 700, fontSize: 56, lineHeight: 1.02, color: theme.color.textPrimary, marginTop: 4 }}>{it.product}</div>
           </div>
         </div>
       </div>
 
-      <AbsoluteFill style={{ justifyContent: "center", padding: "0 80px" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 26 }}>
+      <AbsoluteFill style={{ justifyContent: "center", alignItems: "flex-start", paddingLeft: 80, paddingRight: rightInset }}>
+        <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 26 }}>
           <Bar label={`${it.before} ${it.unit}`} width={100} color={theme.color.textTertiary} faded />
           <Bar label={`${it.after} ${it.unit}`} width={(it.after / max) * 100} color={theme.color.red} />
         </div>
-        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 40 }}>
-          <div style={{ background: theme.color.red, color: theme.color.textPrimary, fontFamily: mono, fontWeight: 700, fontSize: 88, borderRadius: 18, padding: "10px 30px" }}>−{it.pct}%</div>
+        <div style={{ marginTop: 40 }}>
+          <div style={{ display: "inline-block", background: theme.color.red, color: theme.color.textPrimary, fontFamily: mono, fontWeight: 700, fontSize: 88, borderRadius: 18, padding: "10px 30px" }}>−{it.pct}%</div>
         </div>
       </AbsoluteFill>
     </Frame>
