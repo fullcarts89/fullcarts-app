@@ -86,6 +86,23 @@ The TierList does this (D→S→full list); the 5-Things counts down 5→1 to th
 - ⚠️ **Sandbox can't fetch image/logo hosts (403)** — product photos + logos render on a **network-open
   machine** (your laptop / the operator). In-sandbox previews show bars / monograms.
 
+### Repeatable series — Carousels (named, recurring formats)
+Five standing carousel series. Each runs on the same engine (query DB → render slides → queue);
+they differ only in the query + the cover hook. Fixed cadence so there's never a blank page.
+
+| # | Series | Cadence | Template | Swipe structure | Data | Cover line |
+|---|---|---|---|---|---|---|
+| 1 | **The Monthly Shrink List** — "5 Stealth Shrinks of [Month]" | Monthly (anchor to BLS CPI print) | `Carousel` | cover → count **down 5→1** to the worst → CTA | top 5 by `pct`, `observed_date` in last 30 days | "5 things that quietly got smaller in [Month] 👀 swipe →" |
+| 2 | **The Shrinkflation Tier List** — "[Category] graded S–D" | Bi-weekly (rotate category: snacks → beverages → cereal → household → candy) | `TierList` | cover → reveal **D→S bottom-up** (one tier/swipe, "it gets worse →") → **full list LAST** | category brands bucketed by worst `pct` (S = worst) | "I graded every [category] brand on shrinkflation. Swipe to the S-tier 🚩" |
+| 3 | **Official Inflation vs. Reality** — "CPI says +X%… the shelf says −Y%" | Monthly (CPI release day) | `Carousel` (vs-CPI) | cover (CPI number) → per-product official % vs. real shrink → CTA | `published_changes` × `fred_cpi_data` / `bls_shrinkflation` | "The government says groceries went up X%. Here's what actually happened to the box." |
+| 4 | **Worst Offenders Hall of Fame** — repeat shrinkers | Monthly | `TierList` or ranked `Carousel` | cover → climb the ranking → **#1 worst LAST** | brands ranked by **count of shrink events** (repeat behavior) | "These brands didn't shrink once. They keep doing it." |
+| 5 | **Caught Before/After** — single-product deep dive | Weekly (companion to the Wed *Caught:* video) | `Carousel` (Before/After) | cover ("notice anything?") → the size cut → per-oz price math → the receipt/source → CTA | one `product_entities` + its `published_changes` + `image_url` | "Same price. Same shelf. Smaller box. Here's [Brand]." |
+
+**Throughline:** all five are the slice-and-dice variants above, elevated into named recurring slots.
+Series 1/3 newsjack the scheduled CPI print; 2/4 are villain/ranking swipe-bait (worst revealed last);
+5 is the cross-format companion to that week's hero video. Every one engineers the swipe (cover hook →
+reveal/withhold → payoff last) and films nothing.
+
 ### Story templates (planned — same approach)
 Single branded slides: poll ("did your [product] get smaller? 👆/👇"), "is [X] shrinking?" (before/after from
 DB), a quick stat, "search any product → fullcarts.org," "how I verify a claim" BTS.
