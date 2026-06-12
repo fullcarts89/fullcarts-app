@@ -58,6 +58,7 @@ export const cues = {
   cutRockets: {start: 74.6, end: 83.0},
 
   permanentRaise: {start: 85.6, end: 89.5}, // "A PERMANENT RAISE" slam
+  dadBurp: {start: 90.0, end: 93.0}, // thought-bubble gag ("dad burp incoming...")
   endCard: {start: 93.6, end: 100.0}, // CTA card (runs to the end; ~2.3s hold past speech)
 } as const;
 

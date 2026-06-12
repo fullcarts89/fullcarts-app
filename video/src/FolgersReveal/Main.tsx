@@ -25,6 +25,7 @@ import {
   ShrinkOverlay,
   SourceHeader,
   StatCard,
+  ThoughtBubble,
 } from './Overlays';
 import {punchScale} from './punches';
 import {SfxTrack} from './Sfx';
@@ -345,6 +346,14 @@ export const Main: React.FC<MainProps> = (props) => {
       {/* Beat 6 — punchline (on the talking head) */}
       <CueSequence window={cues.permanentRaise} fps={fps} name="permanent raise">
         <SlamCallout text="A PERMANENT RAISE" sub="you paid for it" />
+      </CueSequence>
+
+      {/* The gag */}
+      <CueSequence window={cues.dadBurp} fps={fps} name="dad burp">
+        <ThoughtBubble
+          text="dad burp incoming…"
+          durSec={cues.dadBurp.end - cues.dadBurp.start}
+        />
       </CueSequence>
 
       {/* Beat 7 — CTA */}

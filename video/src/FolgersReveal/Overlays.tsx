@@ -365,3 +365,82 @@ export const SourceHeader: React.FC<{headline: string; top: number}> = ({headlin
     </div>
   );
 };
+
+// Comic thought bubble (cream cloud + trailing dots) for gag moments.
+export const ThoughtBubble: React.FC<{
+  text: string;
+  durSec: number;
+}> = ({text, durSec}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+
+  const enter = spring({frame, fps, config: {damping: 10, mass: 0.5}});
+  const exit = interpolate(
+    frame,
+    [Math.round(durSec * fps) - 12, Math.round(durSec * fps) - 1],
+    [1, 0],
+    {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'},
+  );
+  const bob = Math.sin(frame / 9) * 6;
+  const cream = '#f5f4f0';
+  const dotIn = (delay: number) =>
+    spring({frame: frame - delay, fps, config: {damping: 12, mass: 0.4}});
+
+  return (
+    <div style={{position: 'absolute', inset: 0, opacity: exit}}>
+      <div
+        style={{
+          position: 'absolute',
+          top: 430 + bob,
+          left: 70,
+          width: 560,
+          padding: '46px 50px',
+          background: cream,
+          borderRadius: '48% 52% 50% 50% / 58% 55% 45% 42%',
+          boxShadow: '0 16px 50px rgba(0,0,0,0.55)',
+          opacity: enter,
+          transform: `scale(${interpolate(enter, [0, 1], [0.5, 1])})`,
+          transformOrigin: '70% 110%',
+          textAlign: 'center',
+          fontFamily: GROTESK,
+          fontStyle: 'italic',
+          fontWeight: 700,
+          fontSize: 50,
+          lineHeight: 1.15,
+          color: theme.bg,
+        }}
+      >
+        {text}
+      </div>
+      {/* Trailing dots toward the mouth */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 700 + bob * 0.6,
+          left: 580,
+          width: 44,
+          height: 36,
+          background: cream,
+          borderRadius: '50%',
+          opacity: Math.min(dotIn(4), exit),
+          transform: `scale(${dotIn(4)})`,
+          boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          top: 770 + bob * 0.3,
+          left: 645,
+          width: 26,
+          height: 21,
+          background: cream,
+          borderRadius: '50%',
+          opacity: Math.min(dotIn(8), exit),
+          transform: `scale(${dotIn(8)})`,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+        }}
+      />
+    </div>
+  );
+};

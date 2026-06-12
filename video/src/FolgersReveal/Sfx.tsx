@@ -29,16 +29,14 @@ export const sfxCues: SfxCue[] = [
   {at: 11.95, file: 'stamp.mp3', volume: 0.45}, // EXCUSE IS GONE (lighter)
   {at: 85.6, file: 'stamp.mp3', volume: 0.7}, // A PERMANENT RAISE (biggest)
 
-  // The zoom motif (founder 2026-06-12): every hard punch-in lands with the
-  // same low thunk at varying intensity — one consistent sound, not variety.
+  // The zoom motif (founder 2026-06-12): hard punch-ins land with the same
+  // low thunk at varying intensity — but not ALL of them (founder trim pass:
+  // "believe me" 28.0, "look at this" 38.6, and the peak dot 54.8 dropped).
   // Creep zooms (15.5, 67.5) and the punch-out (88.5) stay silent by design.
   {at: 1.6, file: 'thunk.mp3', volume: 0.4}, // "got smaller"
   {at: 7.6, file: 'thunk.mp3', volume: 0.4}, // "crashed"
-  {at: 28.0, file: 'thunk.mp3', volume: 0.4}, // "believe me"
   {at: 36.2, file: 'thunk.mp3', volume: 0.55}, // "on purpose" — the reference hit
-  {at: 38.6, file: 'thunk.mp3', volume: 0.3}, // "look at this"
   {at: 52.2, file: 'thunk.mp3', volume: 0.4}, // "actually gets me" jump-cut
-  {at: 54.8, file: 'thunk.mp3', volume: 0.3}, // peak dot lands (same motif)
   {at: 83.5, file: 'thunk.mp3', volume: 0.35}, // "cost left"
   {at: 84.2, file: 'thunk.mp3', volume: 0.45}, // "shrink stayed"
   // (11.8 punch has no thunk — the 11.95 stamp owns that moment)

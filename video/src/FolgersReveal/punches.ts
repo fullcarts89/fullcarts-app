@@ -20,7 +20,7 @@ export const punches: PunchSegment[] = [
   {from: 15.5, to: 17.3, kind: 'ramp', fromScale: 1.0, toScale: 1.06}, // "stayed small" creep
   {from: 28.0, to: 29.6, kind: 'cut', fromScale: 1.1, toScale: 1.1}, // "believe me"
   {from: 36.2, to: 38.0, kind: 'cut', fromScale: 1.18, toScale: 1.18}, // "on purpose" — hardest
-  {from: 38.6, to: 39.2, kind: 'cut', fromScale: 1.1, toScale: 1.1}, // "look at this"
+  // ("look at this" 38.6 punch removed — founder: unnecessary before the whoosh)
   {from: 52.2, to: 53.3, kind: 'cut', fromScale: 1.12, toScale: 1.12}, // "actually gets me" breath
   {from: 62.5, to: 64.2, kind: 'ramp', fromScale: 1.04, toScale: 1.12}, // "genius move" push
   {from: 67.5, to: 70.2, kind: 'ramp', fromScale: 1.0, toScale: 1.06}, // "barely moved" creep
