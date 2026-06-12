@@ -67,6 +67,32 @@ npm run lint   # eslint
 
 Requires `web/.env.local` with `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY`.
 
+### Video (Remotion social content)
+
+```bash
+cd video
+npm install
+npm run dev    # Remotion Studio
+npm run render # out/folgers-reveal.mp4
+npm run thumb  # out/folgers-thumb.png  (cover image)
+```
+
+**Before touching any video work, read `docs/content/video-production-playbook.md`** —
+the full pipeline (Captions export → SRT verification → beat maps → stills →
+render), founder taste calibration (SFX restraint, cutaway fill, annotation
+discipline), and remote-render-box specifics (Chromium path +
+`--ignore-certificate-errors`; remotion.media and most CDNs are blocked).
+Supporting docs: `video/README.md` (commands/structure),
+`video/public/folgers/ASSETS.md` (per-video asset manifest pattern — copy for
+each new video), `docs/content/contentstyleboard.html` (signature style board,
+realised in `video/src/FolgersReveal/Overlays.tsx`),
+`docs/content/folgers-emphasis-map.md` (zoom/SFX beat map),
+`video/public/sfx/README.md` (named SFX slots). Policy: proof layer = real
+artifacts only, live-queried numbers only, no AI imagery or audio
+(`docs/plans/2026-06-08-social-content-strategy.md`). The comp is a
+schema-driven template — a new video is new props, new screenshots, and a
+re-locked beat map.
+
 ## Architecture
 
 ### Data flow
