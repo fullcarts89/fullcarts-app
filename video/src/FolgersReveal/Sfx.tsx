@@ -50,6 +50,9 @@ export const sfxCues: SfxCue[] = [
 ];
 
 const DRONE_OUT_SEC = 93.6; // kill the underbed for the CTA
+// The feather gag (77.9–79.3) reads funnier if the whole soundscape holds
+// its breath — dip the bed with it.
+const FEATHER_DIP = {from: 77.6, to: 79.4};
 
 export const SfxTrack: React.FC<{available: string[]}> = ({available}) => {
   const {fps, durationInFrames} = useVideoConfig();
@@ -76,8 +79,18 @@ export const SfxTrack: React.FC<{available: string[]}> = ({available}) => {
           volume={(f) =>
             interpolate(
               f,
-              [0, fps * 1.5, fps * (DRONE_OUT_SEC - 0.6), fps * DRONE_OUT_SEC, durationInFrames],
-              [0, 0.12, 0.12, 0, 0],
+              [
+                0,
+                fps * 1.5,
+                fps * (FEATHER_DIP.from - 0.4),
+                fps * FEATHER_DIP.from,
+                fps * FEATHER_DIP.to,
+                fps * (FEATHER_DIP.to + 0.6),
+                fps * (DRONE_OUT_SEC - 0.6),
+                fps * DRONE_OUT_SEC,
+                durationInFrames,
+              ],
+              [0, 0.12, 0.12, 0.025, 0.025, 0.12, 0.12, 0, 0],
               {extrapolateRight: 'clamp'},
             )
           }
