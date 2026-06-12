@@ -16,6 +16,7 @@ import { RocketsFeathers, rocketsFeathersSchema } from "./compositions/RocketsFe
 import { PriceJump, priceJumpSchema } from "./compositions/PriceJump";
 import { FewerCups, fewerCupsSchema } from "./compositions/FewerCups";
 import { OutroCard, outroCardSchema } from "./compositions/OutroCard";
+import { Carousel, carouselSchema } from "./compositions/Carousel";
 import folgersCut from "./props/folgers-final.json";
 import folgersCutV5 from "./props/folgers-final-v5.json";
 
@@ -312,6 +313,31 @@ export const RemotionRoot: React.FC = () => {
           afterSize: 43.5,
           unit: "oz",
           pctChange: 14.7,
+        }}
+      />
+
+      {/* Data-driven IG/TikTok carousel (4:5). One slide per frame: render stills 0..N+1. */}
+      <Composition
+        id="Carousel"
+        component={Carousel}
+        durationInFrames={7}
+        fps={FPS}
+        width={1080}
+        height={1350}
+        schema={carouselSchema}
+        defaultProps={{
+          coverTitle: ["5 stealth", "*shrinks*"],
+          coverSub: "same price. less product. all documented.",
+          items: [
+            { rank: "5", brand: "Gatorade", product: "Gatorade Sports Drink", before: 32, after: 28, unit: "fl oz", pct: 12.5 },
+            { rank: "4", brand: "Folgers", product: "Folgers Coffee (big can)", before: 51, after: 43.5, unit: "oz", pct: 14.7 },
+            { rank: "3", brand: "Chobani", product: "Chobani Flips", before: 5.3, after: 4.5, unit: "oz", pct: 15.1 },
+            { rank: "2", brand: "Cadbury", product: "Freddo Faces Egg", before: 122, after: 99, unit: "g", pct: 18.9 },
+            { rank: "1", brand: "Aquafresh", product: "Aquafresh Toothpaste", before: 100, after: 75, unit: "ml", pct: 25.0 },
+          ],
+          ctaHeadline: "spot one you *buy?*",
+          ctaSub: "search any product — *free* — at fullcarts.org",
+          ctaPersona: "Built by a tired dad who got sick of getting ripped off: the largest free, public shrinkflation database I know of.",
         }}
       />
     </>
