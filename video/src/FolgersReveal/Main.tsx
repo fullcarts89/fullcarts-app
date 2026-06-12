@@ -4,6 +4,7 @@ import {
   OffthreadVideo,
   Sequence,
   staticFile,
+  useCurrentFrame,
   useVideoConfig,
 } from 'remotion';
 import {loadFont as loadGrotesk} from '@remotion/google-fonts/SpaceGrotesk';
@@ -25,13 +26,16 @@ import {
   SourceHeader,
   StatCard,
 } from './Overlays';
+import {punchScale} from './punches';
+import {SfxTrack} from './Sfx';
 
 loadGrotesk();
 loadMono();
 
 const MONO = '"JetBrains Mono", monospace';
 
-export type MainProps = FolgersRevealProps;
+// sfxFiles is injected by calculateMetadata (probes which slots exist).
+export type MainProps = FolgersRevealProps & {sfxFiles: string[]};
 
 const CueSequence: React.FC<{
   window: CueWindow;
@@ -118,6 +122,9 @@ const Rel = CueSequence;
 
 export const Main: React.FC<MainProps> = (props) => {
   const {fps} = useVideoConfig();
+  const frame = useCurrentFrame();
+  // Punch-in map (face shots only — cutaways cover the base while zoomed)
+  const baseScale = punchScale(frame / fps);
 
   return (
     <AbsoluteFill style={{background: theme.bg}}>
@@ -126,7 +133,13 @@ export const Main: React.FC<MainProps> = (props) => {
       {props.baseVideo ? (
         <OffthreadVideo
           src={staticFile(props.baseVideo)}
-          style={{width: '100%', height: '100%', objectFit: 'cover'}}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            transform: `scale(${baseScale})`,
+            transformOrigin: '50% 38%',
+          }}
         />
       ) : (
         <AbsoluteFill
@@ -338,6 +351,9 @@ export const Main: React.FC<MainProps> = (props) => {
       <CueSequence window={cues.endCard} fps={fps} name="end card">
         <EndCard />
       </CueSequence>
+
+      {/* SFX layer (slots in public/sfx/ — missing files are skipped) */}
+      <SfxTrack available={props.sfxFiles} />
     </AbsoluteFill>
   );
 };

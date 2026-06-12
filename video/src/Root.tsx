@@ -10,6 +10,38 @@ import {cues} from './FolgersReveal/cues';
 const FPS = 30;
 const END_CARD_TAIL_SEC = 1; // hold past the last VO
 
+// Named SFX slots under public/sfx/ (see Sfx.tsx + the style board's sound
+// table). Probed at metadata time; missing slots render as silence.
+const SFX_SLOTS = [
+  'stamp.mp3',
+  'typing.mp3',
+  'whoosh.mp3',
+  'whoosh-up.mp3',
+  'roll.mp3',
+  'ding.mp3',
+  'tick.mp3',
+  'deflate.mp3',
+  'pop.mp3',
+  'thunk.mp3',
+  'slide.mp3',
+  'tap.mp3',
+  'drone.mp3',
+];
+
+const probeSfx = async (): Promise<string[]> => {
+  const checks = await Promise.all(
+    SFX_SLOTS.map(async (f) => {
+      try {
+        const res = await fetch(staticFile(`sfx/${f}`), {method: 'HEAD'});
+        return res.ok ? f : null;
+      } catch {
+        return null;
+      }
+    }),
+  );
+  return checks.filter((f): f is string => f !== null);
+};
+
 // Duration follows the voiceover: the base video's length when present,
 // otherwise the SRT's last cue / end card (+ tail). Captions themselves are
 // NOT rendered — the Captions app burns its own into the talking-head edit;
@@ -41,7 +73,7 @@ const calculateMetadata: CalculateMetadataFunction<MainProps> = async ({
 
   return {
     durationInFrames: Math.ceil(durationSec * FPS),
-    props,
+    props: {...props, sfxFiles: await probeSfx()},
   };
 };
 
@@ -55,7 +87,7 @@ export const RemotionRoot: React.FC = () => {
         height={1920}
         fps={FPS}
         schema={folgersRevealSchema}
-        defaultProps={defaultProps}
+        defaultProps={{...defaultProps, sfxFiles: [] as string[]}}
         calculateMetadata={calculateMetadata}
       />
       {/* Cover image — render with `npm run thumb` */}
