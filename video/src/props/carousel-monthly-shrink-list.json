@@ -1,0 +1,14 @@
+{
+  "coverTitle": ["5 stealth", "shrinks", "of *[month]*"],
+  "coverSub": "refresh monthly: top 5 by % with observed_date in the last ~30 days. swipe →",
+  "items": [
+    { "rank": "5", "brand": "Frito-Lay", "product": "Tostitos Scoops Party Size", "before": 18, "after": 15.5, "unit": "oz", "pct": 13.9 },
+    { "rank": "4", "brand": "Cottonelle", "product": "Ultra Clean Care Toilet Paper", "before": 340, "after": 312, "unit": "ct", "pct": 8.2 },
+    { "rank": "3", "brand": "Nestlé", "product": "Original Instant Coffee", "before": 100, "after": 90, "unit": "g", "pct": 10.0 },
+    { "rank": "2", "brand": "Tyson", "product": "Chicken Nuggets", "before": 29, "after": 20, "unit": "oz", "pct": 31.0 },
+    { "rank": "1", "brand": "Sainsbury's", "product": "Scottish Oats", "before": 1000, "after": 500, "unit": "g", "pct": 50.0 }
+  ],
+  "ctaHeadline": "spot one you *buy?*",
+  "ctaSub": "search any product — *free* — at fullcarts.org",
+  "ctaPersona": "Tired dad, sick of getting ripped off — so I built the receipts. 2,200+ documented cuts, no ads."
+}
