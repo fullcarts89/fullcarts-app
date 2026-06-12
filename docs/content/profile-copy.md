@@ -11,26 +11,26 @@ Handles are `[@handle-platform]` placeholders — drop in your real handle per p
 
 ### TikTok (~80 char limit — keep punchy)
 ```
-Largest free shrinkflation database 🛒 2,200+ size cuts, all sourced ↓
+Tired dad vs shrinkflation 🛒 largest free database, 2,200+ sourced cuts ↓
 ```
 *(Link field → fullcarts.org)*
 
 ### Instagram (~150 char)
 ```
-I built the largest free, public shrinkflation database.
-2,200+ size cuts · 900+ brands · all sourced (USDA/BLS/FRED).
-Data's my day job. Personal acct, views my own. ↓
+Just a tired dad sick of getting ripped off — so I built the largest free,
+public shrinkflation database. 2,200+ sourced cuts. Personal acct, views my own. ↓
 ```
 
 ### X / Twitter (~160 char)
 ```
-Largest free, public shrinkflation database — 2,200+ sourced size cuts,
-backed by USDA/BLS/FRED. I do data for a living. Personal acct, views my own.
+Tired dad, sick of getting ripped off, so I built the largest free public
+shrinkflation database I know of — 2,200+ sourced cuts. Personal acct, views my own.
 ```
 
 ### YouTube ("About" — long form)
 ```
-I run FullCarts — the largest free, public shrinkflation database I know of:
+I'm just a tired dad who got sick of getting ripped off — so I built FullCarts,
+the largest free, public shrinkflation database I know of:
 2,200+ documented product size cuts across 900+ brands, every one source-cited
 and backed by U.S. government data (USDA, BLS, and Federal Reserve / FRED CPI),
 built on 5M+ raw evidence points across nine data sources.

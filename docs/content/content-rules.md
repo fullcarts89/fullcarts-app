@@ -52,6 +52,11 @@ Go deeper than "you/your" when you can: name the **unspoken truth** the viewer w
 (self-blame, "am I crazy," parental guilt) and resolve it with proof — the **Emotional Lock-In**
 (`content-angles.md` §4 + `hooks.md`).
 
+Lean on the **persona** for relatability + credibility in one: *"I'm just a tired dad who's sick of
+getting ripped off, so I built the largest free public shrinkflation database I know of, so we can
+all shop smarter."* It makes the authority land as a public service from one of us, not a flex
+(`content-angles.md` §0). Use it on origin/credibility beats (~1-in-4/5) + in bios.
+
 ### 5. Reaction-evoking
 Engineered to pull a reaction — a comment, a share, a "send this to whoever buys the groceries." A kicker, an outrage beat, a direct question, a "tag someone who eats these."
 

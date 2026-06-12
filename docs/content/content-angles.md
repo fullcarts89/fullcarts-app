@@ -9,6 +9,31 @@ say). The 4th column is the **Emotional Lock-In** bank (see `hooks.md`).
 
 ---
 
+## 0. The persona (the voice underneath everything — relatability + credibility in one)
+
+The through-line that makes the authority *land*: **a regular, tired dad who got sick of getting
+ripped off and did something about it.** It humanizes the credibility — not "I run a database"
+(distant), but "I'm one of you who got fed up and built the receipts" (relatable *and* credible).
+
+**The signature line (and variants):**
+> "I'm just a tired dad who's sick of getting ripped off — so I built the largest free, public
+> shrinkflation database I know of, so we can all be more informed with our purchases."
+
+- Shorter: *"Tired dad. Sick of getting ripped off. So I built the receipts."*
+- In bio: *"Tired dad building the receipts on shrinkflation. The largest free public database I know of."*
+
+**Why it works:** it's the everyman + the builder in one breath. It makes the database feel like a
+*public service from one of us*, not a flex; pairs with the "it's not you" advocacy; and keeps the
+"that I know of" hedge that makes the superlative safe. Use it as the **origin/credibility beat**
+(roughly the same ~1-in-4/5 cadence as the day-job line) and in bios/pinned posts.
+
+**The trust stack (now three anchors, use in combination):**
+1. **The database** — largest free, public (that I know of). The proof.
+2. **The day-job** — "I do data for a company billions have used" (insinuated, never named).
+3. **The persona** — *tired dad, sick of getting ripped off, building this for all of us.* The human.
+
+---
+
 ## 1. What do I want to be known for? (the topic pillars)
 
 The 3–5 things that, over time, the channel *means*:
@@ -17,6 +42,8 @@ The 3–5 things that, over time, the channel *means*:
 3. **"It's not you"** — the consumer advocate who takes the shame off you and puts it on the design.
 4. **The macro story** — the honest version of inflation (rockets & feathers, what CPI leaves out).
 5. **Accountability** — naming names ("Caught:"), backed by data so it's documentation, not a rant.
+
+*(Persona note: all five are voiced by the tired-dad-who-built-the-receipts — §0.)*
 
 ## 2. What do I disagree with? (contrarian takes — these ARE hooks)
 
@@ -30,7 +57,8 @@ Contrarian angles are pre-loaded Snaps (the "snap" is the disagreement):
 
 ## 3. What have I experienced? (personal — earns trust, fits the narrative meta)
 
-- **Origin:** the cereal box felt lighter, so the data person went and built the receipts.
+- **Origin (the tired-dad story):** "I'm just a tired dad who got sick of getting ripped off — the
+  cereal box felt lighter, my paycheck didn't, so I built the receipts so we could all shop smarter." (See §0.)
 - **The disbelief:** "I analyze data for a living and I *still* almost didn't believe how often it happens."
 - **The credibility scar:** early videos got flagged for AI-faked data visuals — so now it's *only*
   real screenshots and real receipts. (A transparency story that doubles as proof of integrity.)

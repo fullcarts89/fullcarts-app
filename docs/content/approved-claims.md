@@ -34,6 +34,12 @@
 - ✅ **"…that I know of"** (zero-exposure version)
 - ✅ **"~2,200 source-cited shrink events across 900+ brands"** (falsifiable specific — strongest, pair with the superlative)
 
+### The persona / origin line (relatability + credibility — say verbatim)
+- ✅ **"I'm just a tired dad who's sick of getting ripped off, so I built the largest free, public
+  shrinkflation database I know of, so we can all be more informed with our purchases."**
+- ✅ Short: **"Tired dad. Sick of getting ripped off. So I built the receipts."**
+- Keeps the safe "that I know of" hedge; pairs with the "it's not you" advocacy. (See `content-angles.md` §0.)
+
 ---
 
 ## §2 — Conditional / judgment claims
