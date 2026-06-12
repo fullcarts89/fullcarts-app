@@ -95,6 +95,49 @@ CTA:       "Follow — I catch the next one. Search Gatorade at fullcarts.org."
 
 ---
 
+## WEEKLY REPEATABLE FORMATS (the locked slot templates)
+
+These are the **video formats** behind the weekly schedule (`posting-schedule.md`). The beats are
+**fixed**; only the `[bracketed variables]` change week to week — that's what keeps prep light and
+the series recognizable. "Caught:" (above) is the Wed hero. The four below fill the other slots.
+
+### ⚡ "Caught Slipping" — Mon, 30s reveal
+> Quick dopamine reveal · 25–35s · one take, one overlay. Every DB entry is a candidate → infinite supply.
+```
+BAIT  (0–4s):   hold product, casual — "This is [Product]. Looks totally normal, right?"
+LEAN  (4–10s):  "Except [N] years ago it was [before]. Now it's [after]."
+SNAP  (10–22s): drop −[X]% overlay + per-oz price — "Same price. More money for less."
+TAG   (22–30s): "It's in the database. Free. Link in bio."
+```
+
+### 🧾 "Inflation Receipt" — Thu, 7–15s + poll
+> Newsjack the scheduled data drop (CPI monthly, USDA on a calendar) · 7–15s.
+```
+HEADLINE (0–4s):  "CPI says food is up [X]% this year."
+COUNTER  (4–12s): "Here's what they don't count: [Product] lost [Y]% of its size. Same shelf price."
+POLL     (sticker): "Did your [category] shrink too? 👆 yes / 👇 no."
+```
+
+### 🚨 "Breaking Shrink" — Fri (reactive ONLY — a trigger, not a calendar slot)
+> Rides a live news moment to prove the database is *ahead* of the headlines · 15–40s. If nothing
+> breaks, Friday rests (no forced post).
+```
+TRIGGER (0–5s):  "This just hit the news —" (name the event/brand)
+RECEIPT (5–20s): "so I pulled our data." — what the DB already had on file
+TAKE    (20–40s): the opinion + "we documented this [N] months before it made headlines."
+```
+
+### 👨 "Why I Built This" — Sun, 1-min vlog (the persona — trust, NOT data)
+> The tired-dad credibility engine · 45–75s · talk-to-camera, minimal graphics. **Topic backlog of 52
+> in `vlog-ideas.md`** (one year of Sundays). Format is locked even though each topic is unique:
+```
+HUMAN MOMENT (0–15s): an opinion / confession / slice-of-life — NO stat
+MISSION      (15–45s): connect it to why this matters to a tired dad sick of getting ripped off
+SOFT CTA     (45–60s): "that's why it's free." → fullcarts.org
+```
+
+---
+
 ## FUTURE SERIES (backlog — spin these up once "Caught:" is established)
 
 Run these as recurring sub-threads or standalone series later. All infinite from the database.
