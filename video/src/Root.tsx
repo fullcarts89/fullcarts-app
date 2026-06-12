@@ -4,6 +4,7 @@ import {parseSrt} from '@remotion/captions';
 import {getVideoMetadata} from '@remotion/media-utils';
 import {Main, MainProps} from './FolgersReveal/Main';
 import {Thumbnail} from './FolgersReveal/Thumbnail';
+import {PotCostCard} from './FolgersReveal/Overlays';
 import {defaultProps, folgersRevealSchema} from './FolgersReveal/schema';
 import {cues} from './FolgersReveal/cues';
 
@@ -100,6 +101,28 @@ export const RemotionRoot: React.FC = () => {
         durationInFrames={1}
         schema={folgersRevealSchema}
         defaultProps={defaultProps}
+      />
+      {/* Component preview: the price-per-pot card (take-2 "watch what they
+          did" beat). Inputs: $17.88 Sam's Club listing + the 400-cup claim
+          printed on the 51 oz can (visible in listing-then.png). */}
+      <Composition
+        id="PotCostPreview"
+        component={() => (
+          <div style={{position: 'absolute', inset: 0, background: '#0a0b0d'}}>
+            <PotCostCard
+              price={17.88}
+              labelCups={400}
+              sizeBefore={51}
+              sizeAfter={43.5}
+              sourceLine={'at today’s $17.88 · 12-cup pots · 51 oz label: “up to 400 cups”'}
+              top={640}
+            />
+          </div>
+        )}
+        width={1080}
+        height={1920}
+        fps={FPS}
+        durationInFrames={90}
       />
     </>
   );

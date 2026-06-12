@@ -444,3 +444,90 @@ export const ThoughtBubble: React.FC<{
     </div>
   );
 };
+
+// "Price per pot" visualization — the stealth-increase math made visible.
+// Deliberately price-history-free: it applies TODAY's can price to both can
+// sizes ("even if the price never moved a cent"), so every input is either
+// on-screen evidence (price, label cups) or arithmetic. 12-cup pot standard.
+export const PotCostCard: React.FC<{
+  price: number; // today's can price (from the cited listing)
+  labelCups: number; // "makes up to" cups printed on the BEFORE can
+  sizeBefore: number;
+  sizeAfter: number;
+  potCups?: number;
+  sourceLine: string;
+  top: number;
+}> = ({price, labelCups, sizeBefore, sizeAfter, potCups = 12, sourceLine, top}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+
+  const potsBefore = labelCups / potCups;
+  const potsAfter = (labelCups * (sizeAfter / sizeBefore)) / potCups;
+  const centsBefore = Math.round((price / potsBefore) * 100);
+  const centsAfter = Math.round((price / potsAfter) * 100);
+  const pctUp = Math.round((centsAfter / centsBefore - 1) * 100);
+
+  const cardIn = spring({frame, fps, config: {damping: 18}});
+  const beforeIn = spring({frame: frame - fps * 0.35, fps, config: {damping: 200}, durationInFrames: Math.round(fps * 0.7)});
+  const afterIn = spring({frame: frame - fps * 1.0, fps, config: {damping: 200}, durationInFrames: Math.round(fps * 0.7)});
+  const badgeIn = spring({frame: frame - fps * 1.7, fps, config: {damping: 11, mass: 0.6}});
+
+  const row = (label: string, cents: number, maxCents: number, color: string, opacity: number, grow: number, sub: string) => (
+    <div style={{display: 'flex', alignItems: 'center', gap: 36}}>
+      <div style={{width: 260, fontFamily: MONO, fontSize: 36, color: theme.textSecondary}}>{sub}</div>
+      <div style={{flex: 1, height: 56, position: 'relative'}}>
+        <div
+          style={{
+            position: 'absolute', left: 0, top: 0, bottom: 0,
+            width: `${(cents / maxCents) * 100}%`,
+            background: color, opacity, borderRadius: 14,
+            transform: `scaleX(${grow})`, transformOrigin: 'left center',
+          }}
+        />
+      </div>
+      <div style={{fontFamily: MONO, fontWeight: 700, fontSize: 56, minWidth: 170}}>{label}</div>
+    </div>
+  );
+
+  return (
+    <div
+      style={{
+        position: 'absolute', top, left: 60, right: 140,
+        background: 'rgba(10,11,13,0.92)',
+        border: '1px solid rgba(255,255,255,0.12)',
+        borderLeft: `16px solid ${theme.red}`,
+        borderRadius: 36, padding: '56px 60px',
+        color: theme.text, opacity: cardIn,
+        transform: `translateY(${interpolate(cardIn, [0, 1], [110, 0])}px)`,
+      }}
+    >
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+        <div style={{fontFamily: MONO, fontSize: 44, letterSpacing: 8, textTransform: 'uppercase', color: theme.red}}>
+          Cost per pot
+        </div>
+        <div
+          style={{
+            background: theme.red, color: '#fff', fontFamily: MONO, fontWeight: 700,
+            fontSize: 78, borderRadius: 24, padding: '14px 36px', whiteSpace: 'nowrap',
+            opacity: badgeIn, transform: `scale(${interpolate(badgeIn, [0, 1], [0.62, 1])})`,
+          }}
+        >
+          +{pctUp}%
+        </div>
+      </div>
+      <div style={{fontFamily: GROTESK, fontWeight: 700, fontSize: 64, marginTop: 14}}>
+        same can price. fewer pots.
+      </div>
+      <div style={{marginTop: 52, display: 'flex', flexDirection: 'column', gap: 36}}>
+        {row(`${centsBefore}¢`, centsBefore, centsAfter, '#80808a', 0.45, beforeIn, `${sizeBefore} oz can`)}
+        {row(`${centsAfter}¢`, centsAfter, centsAfter, theme.red, 1, afterIn, `${sizeAfter} oz can`)}
+      </div>
+      <div style={{marginTop: 52, display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+        <div style={{fontFamily: MONO, fontSize: 30, color: theme.textSecondary, lineHeight: 1.5, maxWidth: 560}}>
+          {sourceLine}
+        </div>
+        <FCMini />
+      </div>
+    </div>
+  );
+};
