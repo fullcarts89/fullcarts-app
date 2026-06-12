@@ -14,7 +14,8 @@ data-driven shrinkflation videos with the Remotion pipeline we built.
 - `docs/content/content-rules.md` — the 5 non-negotiables + three-bucket evidence policy.
 - `docs/content/approved-claims.md` — verified claims registry (DB-checked; say "2,200+" not "3,000+").
 - `docs/content/content-angles.md` — pillars, contrarian takes, the **Emotional Lock-In** bank.
-- `docs/content/series.md` — the **"Caught:"** series + future threads (How They Hid It / Report Card / Same Price Less Stuff).
+- `docs/content/series.md` — the **"Caught:"** series + the **locked weekly slot formats** (*Caught Slipping* Mon / *Inflation Receipt* Thu / *Breaking Shrink* Fri / *Why I Built This* Sun) + future threads (How They Hid It / Report Card / Same Price Less Stuff).
+- `docs/content/vlog-ideas.md` — **52-topic backlog** for the Sunday "Why I Built This" vlog (one year, checkable).
 - `docs/content/production-playbook.md` — the stack + **the proven SRT-synced loop** (see below).
 - `docs/content/visual-identity.md` — fonts/color/captions + the **animation library** + safe zones + "cut away often" principle.
 - `docs/content/profile-copy.md` — per-platform bios + pinned posts.

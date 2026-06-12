@@ -39,6 +39,10 @@ story, engage.
 Only **Wed is a hero**; Mon/Sun are medium (mostly talk-to-camera); Tue/Thu/Sat/Fri + stories are light.
 Maps to the content mix (educational / newsjack / personal / entertainment) and every pillar gets a slot.
 
+> **Locked slot formats:** the repeatable video templates behind each slot — *Caught Slipping* (Mon),
+> *Caught:* (Wed hero), *Inflation Receipt* (Thu), *Breaking Shrink* (Fri reactive), *Why I Built This*
+> (Sun vlog) — are specced in `series.md`. The Sun vlog has a 52-topic backlog in `vlog-ideas.md`.
+
 ### Effort tiers
 - **Hero** (~2–3 hrs): the Wed *Caught:* — full pipeline (film + SRT + composite).
 - **Medium**: Mon reveal, Sun vlog — talk-to-camera, minimal/no graphics.
