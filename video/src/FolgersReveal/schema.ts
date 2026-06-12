@@ -21,6 +21,11 @@ export const folgersRevealSchema = z.object({
   sizeAfter: z.number(),
   sizeUnit: z.string(),
 
+  // Price-per-pot inputs (PotCostCard): today's can price from the cited
+  // listing + the "makes up to" cups printed on the BEFORE can.
+  potPrice: z.number(),
+  potLabelCups: z.number(),
+
   // Verified macro claims (verified 2026-06-11; see public/folgers/ASSETS.md)
   lowLabel: z.string(), // "19-MONTH LOW"
   peakLabel: z.string(), // "ALL-TIME HIGH — 2025"
@@ -41,11 +46,11 @@ export type FolgersRevealProps = z.infer<typeof folgersRevealSchema>;
 
 export const defaultProps: FolgersRevealProps = {
   baseVideo: null, // drop the Captions export at public/folgers/base.mp4 and set 'folgers/base.mp4'
-  srtFile: 'folgers/voiceover.srt',
+  srtFile: 'folgers/voiceover-take2.srt',
   dbOverviewRecording: 'folgers/fullcarts-overview.mov',
   dbFolgersRecording: 'folgers/folgers-page.mov',
-  listingThenImage: 'folgers/listing-then.png',
-  listingNowImage: 'folgers/listing-now.png',
+  listingThenImage: 'folgers/listing-then-sams.png',
+  listingNowImage: 'folgers/listing-now-sams.png',
   priceChartImage: 'folgers/price-chart.png',
   articleImage: null, // drop press screenshot at public/folgers/article.png and set 'folgers/article.png'
   coverImage: null, // extract a face frame to public/folgers/cover-face.png and set 'folgers/cover-face.png'
@@ -56,13 +61,16 @@ export const defaultProps: FolgersRevealProps = {
   sizeAfter: 43.5,
   sizeUnit: 'oz',
 
+  potPrice: 17.88, // samsclub.com current listing (sale; regular $18.98 — sale understates)
+  potLabelCups: 400, // printed on the 51 oz can, visible in the evidence
+
   lowLabel: '19-MONTH LOW',
   peakLabel: 'ALL-TIME HIGH — 2025',
   dropLabel: 'DOWN ~40% SINCE',
   dbCount: 2228,
 
-  listingThenSource: 'walmart.com — delisted 51 oz listing',
-  listingNowSource: 'walmart.com — current listing, June 2026',
+  listingThenSource: 'samsclub.com — delisted 51 oz listing',
+  listingNowSource: 'samsclub.com — current listing, June 2026',
   priceChartSource: 'ICE coffee futures (KC) — 12-month chart',
   articleHeadline: 'Coffee just hit a 19-month low',
   articleName: 'Barchart',

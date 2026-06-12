@@ -24,36 +24,35 @@ export interface SfxCue {
 }
 
 export const sfxCues: SfxCue[] = [
-  // The three stamps — the sonic logo. Never more than three.
-  {at: 0.5, file: 'stamp.mp3', volume: 0.6}, // CAUGHT
-  {at: 11.95, file: 'stamp.mp3', volume: 0.45}, // EXCUSE IS GONE (lighter)
-  {at: 85.6, file: 'stamp.mp3', volume: 0.7}, // A PERMANENT RAISE (biggest)
+  // The three stamps — the sonic logo. Never more than three. (Take 2:
+  // CAUGHT cold-open, "catch them in the act" on the series card, and the
+  // permanent-raise punchline.)
+  {at: 1.75, file: 'stamp.mp3', volume: 0.6}, // "caught" (spoken + title)
+  {at: 22.0, file: 'stamp.mp3', volume: 0.45}, // "catch them in the act" (lighter)
+  {at: 101.6, file: 'stamp.mp3', volume: 0.7}, // "a permanent raise" (biggest)
 
-  // The zoom motif, distilled to three (founder trim passes 2026-06-12):
-  // most punch-ins are silent — the thunk only marks the highest-stakes
-  // hits, so it stays an event instead of a tic. The hook leans on its two
-  // stamps; creep zooms and the punch-out are silent by design.
-  {at: 36.2, file: 'thunk.mp3', volume: 0.55}, // "on purpose" — the reference hit
-  {at: 52.2, file: 'thunk.mp3', volume: 0.4}, // "actually gets me" jump-cut
-  {at: 84.2, file: 'thunk.mp3', volume: 0.45}, // "shrink stayed" → sets up stamp #3
+  // The zoom motif, distilled: thunks only on the highest-stakes punch-ins.
+  {at: 50.6, file: 'thunk.mp3', volume: 0.55}, // "on purpose" — the reference hit
+  {at: 99.1, file: 'thunk.mp3', volume: 0.45}, // "the shrink stayed" → sets up stamp #3
 
   // Structure: transitions + the data reveals
-  {at: 20.9, file: 'whoosh.mp3', volume: 0.3}, // → db cutaway
-  {at: 21.2, file: 'roll.mp3', volume: 0.15}, // 2,228 odometer (was way hot)
-  {at: 22.0, file: 'ding.mp3', volume: 0.3}, // counter lands
-  {at: 39.2, file: 'whoosh.mp3', volume: 0.3}, // → reveal cutaway
-  {at: 44.5, file: 'deflate.mp3', volume: 0.4}, // after-bar shrinks
-  {at: 46.6, file: 'pop.mp3', volume: 0.45}, // −14.7% badge
-  {at: 53.3, file: 'whoosh.mp3', volume: 0.3}, // → chart cutaway
-  {at: 74.6, file: 'whoosh.mp3', volume: 0.3}, // → rockets cutaway
-  // 77.9 feather: deliberate SILENCE — the quiet is the joke
-  {at: 97.4, file: 'ding.mp3', volume: 0.3}, // "fullcarts.org"
+  {at: 28.3, file: 'whoosh.mp3', volume: 0.3}, // → db cutaway
+  {at: 28.6, file: 'roll.mp3', volume: 0.15}, // 2,228 odometer
+  {at: 29.4, file: 'ding.mp3', volume: 0.3}, // counter lands
+  {at: 53.4, file: 'whoosh.mp3', volume: 0.3}, // → reveal cutaway
+  {at: 57.3, file: 'deflate.mp3', volume: 0.4}, // after-bar shrinks ("43 and a half")
+  {at: 63.6, file: 'pop.mp3', volume: 0.45}, // −14.7% badge ("just gone")
+  {at: 65.4, file: 'whoosh.mp3', volume: 0.3}, // → chart cutaway
+  {at: 74.9, file: 'whoosh.mp3', volume: 0.3}, // → price-per-pot cutaway
+  {at: 86.0, file: 'whoosh.mp3', volume: 0.3}, // → rockets cutaway
+  // ~92.3 feather: deliberate SILENCE — the quiet is the joke
+  {at: 114.9, file: 'ding.mp3', volume: 0.3}, // "fullcarts.org"
 ];
 
-const DRONE_OUT_SEC = 93.6; // kill the underbed for the CTA
-// The feather gag (77.9–79.3) reads funnier if the whole soundscape holds
+const DRONE_OUT_SEC = 111.5; // kill the underbed for the CTA (end card in)
+// The feather gag (~92.3–94.8) reads funnier if the whole soundscape holds
 // its breath — dip the bed with it.
-const FEATHER_DIP = {from: 77.6, to: 79.4};
+const FEATHER_DIP = {from: 92.0, to: 94.9};
 
 export const SfxTrack: React.FC<{available: string[]}> = ({available}) => {
   const {fps, durationInFrames} = useVideoConfig();

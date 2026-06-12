@@ -22,10 +22,11 @@ import {PeakFallAnnotation} from './ChartAnnotation';
 import {
   CaughtTitle,
   CiteCard,
+  PotCostCard,
+  SeriesCard,
   ShrinkOverlay,
   SourceHeader,
   StatCard,
-  ThoughtBubble,
 } from './Overlays';
 import {punchScale} from './punches';
 import {SfxTrack} from './Sfx';
@@ -53,6 +54,9 @@ const CueSequence: React.FC<{
   </Sequence>
 );
 
+// Relative windows inside a cutaway panel reuse the same helper.
+const Rel = CueSequence;
+
 // Framed screen recording (same visual language as EvidenceFrame).
 const RecordingFrame: React.FC<{
   src: string | null;
@@ -62,7 +66,7 @@ const RecordingFrame: React.FC<{
   height?: number;
   inset?: number;
   rotate?: number;
-}> = ({src, sourceLabel, placeholder, top = 360, height = 560, inset = 40, rotate = 1}) =>
+}> = ({src, sourceLabel, placeholder, top = 300, height = 560, inset = 40, rotate = 1}) =>
   src ? (
     <div
       style={{
@@ -118,9 +122,6 @@ const RecordingFrame: React.FC<{
     />
   );
 
-// Relative windows inside a cutaway panel reuse the same helper.
-const Rel = CueSequence;
-
 export const Main: React.FC<MainProps> = (props) => {
   const {fps} = useVideoConfig();
   const frame = useCurrentFrame();
@@ -164,13 +165,13 @@ export const Main: React.FC<MainProps> = (props) => {
 
       <Watermark />
 
-      {/* Cold open — "Caught: Folgers" (the sonic-logo moment) */}
+      {/* Cold open — "Caught: Folgers" lands as he says "caught" */}
       <CueSequence window={cues.caughtTitle} fps={fps} name="caught: title">
         <CaughtTitle brand={props.brand} />
       </CueSequence>
 
-      {/* Beat 1 — hook. With a press screenshot: full SourceFrame cutaway.
-          Until it lands: the original slam over the talking head. */}
+      {/* Hook — 19-month low. With a press screenshot: full SourceFrame
+          cutaway. Until it lands: the slam over the talking head. */}
       <CueSequence window={cues.hookLowCallout} fps={fps} name="19-month low">
         {props.articleImage ? (
           <CutawayPanel
@@ -196,12 +197,14 @@ export const Main: React.FC<MainProps> = (props) => {
           <SlamCallout text={props.lowLabel} sub="coffee futures, this week" />
         )}
       </CueSequence>
-      <CueSequence window={cues.excuseGone} fps={fps} name="excuse gone">
-        <SlamCallout text="THE EXCUSE IS GONE" top={420} />
+
+      {/* Series announcement — "new series. It's called Caught." */}
+      <CueSequence window={cues.seriesCard} fps={fps} name="series: caught">
+        <SeriesCard episode="Ep. 01 — Folgers" />
       </CueSequence>
 
-      {/* Cutaway 1 — credibility: full-screen branded panel with the real
-          fullcarts.org screen recordings */}
+      {/* Cutaway 1 — credibility: the real fullcarts.org recordings + the
+          live count. Ends at 33.8 so the wink lands back on his face. */}
       <CueSequence window={cues.cutDb} fps={fps} name="CUT: database">
         <CutawayPanel
           kicker="THE DATABASE"
@@ -212,7 +215,6 @@ export const Main: React.FC<MainProps> = (props) => {
               src={props.dbOverviewRecording}
               sourceLabel="fullcarts.org — live database"
               placeholder={'drop screen recording at\npublic/folgers/fullcarts-overview.mov'}
-              top={300}
             />
           </Rel>
           <Rel window={cues.dbFolgersPage} fps={fps} name="folgers page">
@@ -220,7 +222,6 @@ export const Main: React.FC<MainProps> = (props) => {
               src={props.dbFolgersRecording}
               sourceLabel="fullcarts.org — the Folgers record"
               placeholder={'drop screen recording at\npublic/folgers/folgers-page.mov'}
-              top={300}
               rotate={-1}
             />
           </Rel>
@@ -235,47 +236,46 @@ export const Main: React.FC<MainProps> = (props) => {
         </CutawayPanel>
       </CueSequence>
 
-      {/* Cutaway 2 — the reveal: delisted listing, current listing, the
-          numbers. Frame heights match each screenshot's aspect at 994px
+      {/* Cutaway 2 — the reveal: the Sam's Club then/now pair (same
+          retailer). Frame heights match each screenshot's aspect at 994px
           inner width so the highlight rings map 1:1 onto the pixels. */}
       <CueSequence window={cues.cutReveal} fps={fps} name="CUT: the reveal">
         <CutawayPanel
-          kicker="EXHIBIT — WALMART.COM"
+          kicker="EXHIBIT — SAMSCLUB.COM"
           durSec={cues.cutReveal.end - cues.cutReveal.start}
         >
           <Rel window={cues.listingThen} fps={fps} name="51oz listing">
             <EvidenceFrame
               src={props.listingThenImage}
               sourceLabel={props.listingThenSource}
-              placeholder={'drop delisted 51 oz listing at\npublic/folgers/listing-then.png'}
+              placeholder={'drop delisted 51 oz listing at\npublic/folgers/listing-then-sams.png'}
               top={280}
-              height={562}
+              height={527}
               inset={40}
               zoomTo={1}
               panX={0}
               panY={0}
               rotate={-1}
-              ring={{x: 76, y: 15.5, rx: 23.5, ry: 12}}
+              ring={{x: 83.5, y: 28.5, rx: 19, ry: 10.5}}
             />
           </Rel>
-          <Rel window={cues.listingNow} fps={fps} name="43.5oz walmart">
+          <Rel window={cues.listingNow} fps={fps} name="43.5oz listing">
             <EvidenceFrame
               src={props.listingNowImage}
               sourceLabel={props.listingNowSource}
-              placeholder={'drop current 43.5 oz listing at\npublic/folgers/listing-now.png'}
-              top={340}
-              height={436}
+              placeholder={'drop current 43.5 oz listing at\npublic/folgers/listing-now-sams.png'}
+              top={300}
+              height={539}
               inset={40}
-              zoomTo={1.05}
-              panX={-1}
-              panY={-1}
+              zoomTo={1}
+              panX={0}
+              panY={0}
               rotate={1}
-              ring={{x: 60.2, y: 8.9, rx: 8.5, ry: 7.5}}
+              ring={{x: 84.5, y: 31, rx: 19, ry: 11}}
             />
           </Rel>
-          {/* The signature data card carries the numbers (style board:
-              ShrinkOverlay) — bars wipe on the VO, badge pops on "fifteen
-              percent" */}
+          {/* The signature data card carries the numbers — bars wipe on the
+              VO, badge pops on "just gone" */}
           <Rel window={cues.shrinkOverlay} fps={fps} name="shrink overlay">
             <ShrinkOverlay
               brand={props.brand}
@@ -283,7 +283,7 @@ export const Main: React.FC<MainProps> = (props) => {
               sizeBefore={props.sizeBefore}
               sizeAfter={props.sizeAfter}
               unit={props.sizeUnit}
-              sourceLine="walmart.com · Jun 2026"
+              sourceLine="samsclub.com · Jun 2026"
               top={980}
               afterAtSec={cues.shrinkAfterSec}
               badgeAtSec={cues.shrinkBadgeSec}
@@ -333,30 +333,45 @@ export const Main: React.FC<MainProps> = (props) => {
         </CutawayPanel>
       </CueSequence>
 
-      {/* Cutaway 4 — the metaphor (typography + strokes, never reads as data) */}
+      {/* Cutaway 4 — the stealth math: "so watch what they did" */}
+      <CueSequence window={cues.cutPotCost} fps={fps} name="CUT: cost per pot">
+        <CutawayPanel
+          kicker="THE MATH"
+          durSec={cues.cutPotCost.end - cues.cutPotCost.start}
+        >
+          <Rel window={cues.potCostCard} fps={fps} name="pot cost card">
+            <PotCostCard
+              price={props.potPrice}
+              labelCups={props.potLabelCups}
+              sizeBefore={props.sizeBefore}
+              sizeAfter={props.sizeAfter}
+              sourceLine={`at today’s $${props.potPrice.toFixed(2)} · 12-cup pots · 51 oz label: “up to ${props.potLabelCups} cups”`}
+              top={560}
+            />
+          </Rel>
+        </CutawayPanel>
+      </CueSequence>
+
+      {/* Cutaway 5 — the metaphor (typography + strokes, never reads as data) */}
       <CueSequence window={cues.cutRockets} fps={fps} name="CUT: rockets & feathers">
         <CutawayPanel
           kicker="THE PATTERN"
           durSec={cues.cutRockets.end - cues.cutRockets.start}
         >
-          <RocketsFeathers />
+          <RocketsFeathers
+            chipAtSec={cues.rocketsChipSec}
+            launchAtSec={cues.rocketsLaunchSec}
+            featherAtSec={cues.rocketsFeatherSec}
+          />
         </CutawayPanel>
       </CueSequence>
 
-      {/* Beat 6 — punchline (on the talking head) */}
+      {/* Punchline (on the talking head) */}
       <CueSequence window={cues.permanentRaise} fps={fps} name="permanent raise">
         <SlamCallout text="A PERMANENT RAISE" sub="you paid for it" />
       </CueSequence>
 
-      {/* The gag */}
-      <CueSequence window={cues.dadBurp} fps={fps} name="dad burp">
-        <ThoughtBubble
-          text="dad burp incoming…"
-          durSec={cues.dadBurp.end - cues.dadBurp.start}
-        />
-      </CueSequence>
-
-      {/* Beat 7 — CTA */}
+      {/* CTA */}
       <CueSequence window={cues.endCard} fps={fps} name="end card">
         <EndCard />
       </CueSequence>

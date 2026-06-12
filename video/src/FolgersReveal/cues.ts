@@ -1,27 +1,14 @@
-// Beat map for the Folgers reveal, LOCKED to the real Captions SRT
-// (captions_6FE033A0). The SRT is paragraph-level (6 cues), so in-cue moments
-// below are word-proportional estimates within each cue -- expect ±0.5s;
-// nudge in Remotion Studio while scrubbing against the VO.
+// Beat map for the Folgers reveal — TAKE 2, locked to the line-level SRT
+// (Folgers_SRT_6.12.26, 51 cues, film 1:56.82) and verified against the
+// actual audio via silence-gap analysis 2026-06-12 (gaps match SRT
+// boundaries within ±0.3–0.5s at −37dB; the soft-spoken asides sit below
+// −25dB, so use the gentler threshold when re-verifying).
 //
-// SRT cue boundaries for reference:
-//   1  0.14 – 17.30   hook ("nineteen-month low" ~8.5s, "excuse is gone" ~12s)
-//   2 17.62 – 37.54   credibility ("biggest free database" ~21–24s)
-//   3 38.36 – 52.40   the reveal ("fifty-one" ~42s, "forty-three and a half"
-//                     ~44–45s, "fifteen percent" ~46.5s)
-//   4 52.92 – 70.42   chart ("all-time high" ~55.5s, "forty percent" ~59s,
-//                     "price per pot crept up" ~65.5–70s)
-//   5 70.90 – 87.26   rockets & feathers (~75s), "permanent raise" ~86.6s
-//   6 87.94 – 97.66   CTA ("follow me" ~93.4s, "fullcarts.org" ~97.5s)
-//
-// 2026-06-11: the final Captions export (Captions_A80B95, 1:37.70) runs 1.5s
-// shorter than the original SRT — the "Um," cut + tail trim compressed cue 6.
-// Silence-gap analysis showed cues 1-5 still align within ±0.25s; only cue 6's
-// end moved (99.22 → 97.66 in voiceover.srt, measured end of speech).
-//
-// 2026-06-11 v2 (founder feedback): evidence beats are now FULL-SCREEN
-// branded cutaways (the `cut*` windows) so ~40% of the runtime is off the
-// talking head. The Sam's Club listing was cut. Remotion captions removed —
-// the Captions app burns its own.
+// Structure: cold open CAUGHT → mock quote → 19-month low → series card →
+// tired dad → DB cutaway (wink lands back on face at ~34) → kitchen creep →
+// ON PURPOSE → reveal cutaway → chart cutaway → price-per-pot cutaway →
+// rockets & feathers cutaway → permanent raise → CTA/end card.
+// Five full-screen cutaways ≈ 44s of 118s ≈ 37% off the talking head.
 
 export interface CueWindow {
   start: number;
@@ -29,37 +16,45 @@ export interface CueWindow {
 }
 
 export const cues = {
-  caughtTitle: {start: 0.4, end: 6.0}, // "Caught: Folgers" cold-open (style board)
-  hookLowCallout: {start: 8.2, end: 12.0}, // article cutaway (or slam fallback)
-  excuseGone: {start: 12.0, end: 16.2}, // "THE EXCUSE IS GONE"
+  caughtTitle: {start: 1.6, end: 7.0}, // pops as he says "caught" (~1.75)
+  hookLowCallout: {start: 11.2, end: 15.6}, // 19-month-low (article slot / slam)
+  seriesCard: {start: 16.8, end: 23.2}, // "new series... called Caught"
 
-  // Cutaway 1 — the database (credibility beat)
-  cutDb: {start: 20.9, end: 27.4},
-  dbOverview: {start: 0, end: 3.3}, // homepage recording (rel. to cutDb)
-  dbFolgersPage: {start: 3.3, end: 6.5}, // Folgers page recording (rel. to cutDb)
-  dbStat: {start: 0.3, end: 6.5}, // "2,228 documented shrinks" StatCard (rel.)
+  // Cutaway 1 — the database ("biggest free shrinkflation database").
+  // ENDS at 33.8 so the wink (~34, after "and uh") lands on his face.
+  cutDb: {start: 28.3, end: 33.8},
+  dbOverview: {start: 0, end: 2.8}, // homepage recording (rel.)
+  dbFolgersPage: {start: 2.8, end: 5.5}, // Folgers page recording (rel.)
+  dbStat: {start: 0.3, end: 5.5}, // 2,228 StatCard (rel.)
 
-  // Cutaway 2 — the reveal (windows rel. to cutReveal)
-  cutReveal: {start: 39.2, end: 52.2},
-  listingThen: {start: 0, end: 4.4}, // delisted 51 oz Walmart listing
-  listingNow: {start: 4.4, end: 13.0}, // current 43.5 oz Walmart listing
-  shrinkOverlay: {start: 2.8, end: 13.0}, // signature data card ("fifty-one" ~42 abs)
-  shrinkAfterSec: 2.5, // after-bar shrinks on "forty-three and a half" (~44.5 abs)
-  shrinkBadgeSec: 4.6, // −14.7% badge pops on "fifteen percent" (~46.6 abs)
+  // Cutaway 2 — the reveal (rel. to cutReveal)
+  cutReveal: {start: 53.4, end: 64.7},
+  listingThen: {start: 0, end: 3.6}, // 51 oz Sam's listing ("51 ounces" ~53.8)
+  listingNow: {start: 3.6, end: 11.3}, // 43.5 oz Sam's listing ("43 and a half" ~57)
+  shrinkOverlay: {start: 1.0, end: 11.3}, // signature data card
+  shrinkAfterSec: 3.1, // after-bar shrinks on "43 and a half" (~57.5 abs)
+  shrinkBadgeSec: 9.1, // −14.7% badge pops on "gone" (~63.5 abs)
 
-  // Cutaway 3 — the market (windows rel. to cutChart)
-  cutChart: {start: 53.3, end: 61.5},
-  peakDotSec: 1.5, // dot lands on "all-time high" (~54.8 abs)
-  fallArrowSec: 4.7, // arrow draws on "fallen almost forty percent" (~58 abs)
-  peakCallout: {start: 1.5, end: 4.7}, // "ALL-TIME HIGH — 2025"
-  dropCallout: {start: 4.7, end: 8.2}, // "DOWN ~40% SINCE"
+  // Cutaway 3 — the market (rel. to cutChart)
+  cutChart: {start: 65.4, end: 74.5},
+  peakDotSec: 2.1, // dot on "all time high" (~67.5 abs)
+  fallArrowSec: 5.8, // arrow on "dropped almost 40%" (~71.2 abs)
+  peakCallout: {start: 2.1, end: 5.8}, // "ALL-TIME HIGH — 2025"
+  dropCallout: {start: 5.8, end: 9.1}, // "DOWN ~40% SINCE"
 
-  // Cutaway 4 — the metaphor
-  cutRockets: {start: 74.6, end: 83.0},
+  // Cutaway 4 — the stealth math ("so watch what they did")
+  cutPotCost: {start: 74.9, end: 82.9},
+  potCostCard: {start: 0.3, end: 8.0}, // rel.
 
-  permanentRaise: {start: 85.6, end: 89.5}, // "A PERMANENT RAISE" slam
-  dadBurp: {start: 90.0, end: 93.0}, // thought-bubble gag ("dad burp incoming...")
-  endCard: {start: 93.6, end: 100.0}, // CTA card (runs to the end; ~2.3s hold past speech)
+  // Cutaway 5 — the metaphor. Card on face for "there's a name for this";
+  // cutaway enters on "economists call it rockets" (86.2).
+  cutRockets: {start: 86.0, end: 96.6},
+  rocketsChipSec: 0.4, // "rockets & feathers" named immediately (~86.4 abs)
+  rocketsLaunchSec: 4.2, // streak rips on "go up like a rocket" (~90.3 abs)
+  rocketsFeatherSec: 6.3, // feather on "come down like a feather" (~92.3 abs)
+
+  permanentRaise: {start: 101.3, end: 104.5}, // "...a permanent raise" slam
+  endCard: {start: 111.5, end: 117.8}, // CTA card from "follow..." to the end
 } as const;
 
 export const inWindow = (tSec: number, w: CueWindow): boolean =>

@@ -23,25 +23,29 @@ const FEATHER_PATH =
   'M 760 140 C 660 260, 520 300, 420 330 C 560 360, 680 420, 620 510 C 480 590, 400 610, 340 650 C 520 690, 660 760, 600 850 C 500 930, 420 950, 360 990';
 const FEATHER_LEN = 2200;
 
-export const RocketsFeathers: React.FC = () => {
+export const RocketsFeathers: React.FC<{
+  chipAtSec?: number;
+  launchAtSec?: number;
+  featherAtSec?: number;
+}> = ({chipAtSec = 4.6, launchAtSec = 0, featherAtSec = 2.4}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
 
   // Phase 1 — the rocket: fast, violent, overshooting spring.
-  const launch = spring({frame, fps, config: {damping: 14, mass: 0.5}, durationInFrames: Math.round(fps * 0.9)});
+  const launch = spring({frame: frame - fps * launchAtSec, fps, config: {damping: 14, mass: 0.5}, durationInFrames: Math.round(fps * 0.9)});
   const rocketDraw = interpolate(launch, [0, 1], [ROCKET_LEN, 0]);
-  const rocketsWordIn = spring({frame: frame - fps * 0.45, fps, config: {damping: 11, mass: 0.6}});
+  const rocketsWordIn = spring({frame: frame - fps * (launchAtSec + 0.45), fps, config: {damping: 11, mass: 0.6}});
 
-  // Phase 2 — the feather: starts on "...float down like a feather" (~2.4s),
+  // Phase 2 — the feather: starts on "...come down like a feather",
   // takes its time. Linear-ish draw so the descent reads slow and reluctant.
-  const featherT = interpolate(frame, [fps * 2.4, fps * 7.6], [0, 1], {
+  const featherT = interpolate(frame, [fps * featherAtSec, fps * (featherAtSec + 5.2)], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
   const featherDraw = FEATHER_LEN * (1 - featherT);
-  const feathersWordIn = spring({frame: frame - fps * 3.0, fps, config: {damping: 200}});
+  const feathersWordIn = spring({frame: frame - fps * (featherAtSec + 0.6), fps, config: {damping: 200}});
 
-  const chipIn = spring({frame: frame - fps * 4.6, fps, config: {damping: 16}});
+  const chipIn = spring({frame: frame - fps * chipAtSec, fps, config: {damping: 16}});
 
   return (
     <div style={{position: 'absolute', inset: 0}}>

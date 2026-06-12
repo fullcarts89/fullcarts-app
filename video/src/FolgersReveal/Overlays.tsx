@@ -531,3 +531,83 @@ export const PotCostCard: React.FC<{
     </div>
   );
 };
+
+// Series announcement card ("new series. It's called Caught.") — the
+// CaughtTitle language with an episode line, for the format launch beat.
+export const SeriesCard: React.FC<{episode: string}> = ({episode}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+
+  const labelIn = spring({frame, fps, config: {damping: 18}});
+  const brandIn = spring({frame: frame - fps * 0.15, fps, config: {damping: 11, mass: 0.6}});
+  const barIn = spring({frame: frame - fps * 0.3, fps, config: {damping: 16}});
+  const epIn = spring({frame: frame - fps * 0.5, fps, config: {damping: 200}});
+
+  return (
+    <div style={{position: 'absolute', inset: 0}}>
+      <div
+        style={{
+          position: 'absolute',
+          top: 300,
+          left: 105,
+          fontFamily: MONO,
+          fontSize: 44,
+          letterSpacing: 22,
+          textTransform: 'uppercase',
+          color: theme.red,
+          opacity: labelIn,
+          transform: `translateX(${interpolate(labelIn, [0, 1], [-100, 0])}px)`,
+          textShadow: '0 2px 12px rgba(0,0,0,0.9)',
+        }}
+      >
+        New series
+      </div>
+      <div
+        style={{
+          position: 'absolute',
+          top: 366,
+          left: 100,
+          fontFamily: GROTESK,
+          fontWeight: 700,
+          fontSize: 210,
+          lineHeight: 1,
+          color: theme.text,
+          opacity: brandIn,
+          transform: `scale(${interpolate(brandIn, [0, 1], [0.62, 1])})`,
+          transformOrigin: 'left center',
+          textShadow: '0 4px 0 #000, 0 0 26px rgba(0,0,0,0.9)',
+        }}
+      >
+        CAUGHT
+      </div>
+      <div
+        style={{
+          position: 'absolute',
+          top: 640,
+          left: 105,
+          width: 560,
+          height: 35,
+          borderRadius: 17,
+          background: theme.red,
+          transform: `scaleX(${barIn})`,
+          transformOrigin: 'left center',
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          top: 712,
+          left: 105,
+          fontFamily: MONO,
+          fontSize: 46,
+          color: theme.text,
+          opacity: epIn,
+          transform: `translateY(${interpolate(epIn, [0, 1], [20, 0])}px)`,
+          textShadow: '0 2px 12px rgba(0,0,0,0.9)',
+        }}
+      >
+        {episode}
+      </div>
+    </div>
+  );
+};
