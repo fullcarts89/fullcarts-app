@@ -120,6 +120,11 @@ Replaces the June 8 pillar split. Tuned for a credentialed data creator: educati
 
 ## Schedule (4–6 hrs/week, sustainable)
 
+> **Expanded into a standing operating plan:** `docs/content/posting-schedule.md` codifies the
+> day-by-day weekly schedule, effort tiers, the phased ramp (sustainable → daily), and the
+> carousel/story template system that auto-generates posts from the fullcarts.org database (zero
+> filming). Read it when planning a week's drop. The table below is the original sketch.
+
 You have **4–6 hrs/week**. That buys **one batch film day + reactive X presence**, producing **3–5 hero clips/week** cross-posted everywhere.
 
 | Day | TikTok | Reels / Shorts | X | Time |

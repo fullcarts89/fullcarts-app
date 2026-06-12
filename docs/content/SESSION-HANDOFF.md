@@ -10,6 +10,7 @@ data-driven shrinkflation videos with the Remotion pipeline we built.
 
 ### Strategy + rules (docs/)
 - `docs/plans/2026-06-10-face-forward-content-strategy.md` — master strategy (face-forward, "Caught:" series, TikTok-led, content mix, schedule).
+- `docs/content/posting-schedule.md` — **the standing weekly operating plan** + the carousel/story template system (1 film day + auto-generated DB carousels + light daily posting; weekly table; effort tiers; phased ramp; "slice-and-dice" variant menu; swipe-through principle; images/logos approach).
 - `docs/content/content-rules.md` — the 5 non-negotiables + three-bucket evidence policy.
 - `docs/content/approved-claims.md` — verified claims registry (DB-checked; say "2,200+" not "3,000+").
 - `docs/content/content-angles.md` — pillars, contrarian takes, the **Emotional Lock-In** bank.
@@ -28,6 +29,8 @@ Branded compositions (in `video/src/compositions/`):
 - `ShrinkReveal` — "watch it shrink" animation (real product scales down + ghost outline + ticking number).
 - `KineticQuote` — full-screen kinetic typography for punch lines.
 - `HookText` — **text in the negative space over the talking head** (above the head / under the chin).
+- `Carousel` (4:5, 1080×1350) — **data carousel, zero filming**: cover → ranked product slides (before/after bars, −X%, optional product image + brand logo) → CTA with the persona line. One slide per frame (render stills `0..N+1`). Default: "5 Stealth Shrinks." Driven by live DB queries.
+- `TierList` (4:5) — **swipe-reveal carousel**: cover → tiers bottom-up D…S (one per swipe, progress dots) → **full list as the payoff last slide**. Brand pills with logo/monogram icons. See `posting-schedule.md` for the variant menu (worst-this-month, by-category, vs-CPI, US-only, …).
 - `Thumbnail`, `SafeZonePreview` (dev), `BeforeAfter`.
 - Fonts are **embedded as base64** (`src/lib/fontsCss.ts`) so renders work offline. Safe zones in `src/lib/safezone.ts`.
 
