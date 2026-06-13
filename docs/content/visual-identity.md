@@ -41,6 +41,17 @@ Most people watch on mute, so captions are the primary read.
   **fixed lane every video** (don't let captions jump around). In Captions App: set this as the saved
   style + position. (Lane defined in `video/src/lib/safezone.ts` as `CAPTION`; preview it with `SafeZonePreview`.)
 
+## Dating (make every video self-evidently current) — audience feedback
+Viewers ask *"how old is this? date your videos"* on data content — undated claims read as stale or
+unverifiable. Kill the objection permanently by **dating every data beat**:
+- **On-screen:** stamp an `AS OF [MON YYYY]` (JetBrains Mono, secondary cream, small) on any beat
+  carrying a time-sensitive number — especially the `SourceFrame` citation bar (it already has an
+  `asOfDate` field — always fill it) and any price/commodity chart. Signal #1 already mandates mono
+  for dates; this makes it a *required* element on data beats, not optional.
+- **In the description/caption:** include the date + timeframe (see `profile-copy.md` → "Dating").
+- **Evergreen vs. dated:** restoration/"it's not you" beats are evergreen and need no stamp; anything
+  tied to a *current* price, CPI print, or "X-month low" must be dated and re-verified on posting day.
+
 ## Iconography
 `lucide-react` line icons (TrendingDown, AlertCircle, Package, Database, Shield…) in rounded
 red-tinted containers. Functional line icons — the default visual vocabulary.
