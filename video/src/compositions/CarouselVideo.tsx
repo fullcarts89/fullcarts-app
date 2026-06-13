@@ -34,6 +34,7 @@ const item = z.object({
   beforeImage: z.string().optional(), // explicit before/after pair
   afterImage: z.string().optional(),
   imagePos: z.string().optional(),
+  caught: z.string().optional(), // "first caught" stamp, e.g. "Reddit · Jun 2022"
 });
 
 export const carouselVideoSchema = z.object({
@@ -166,6 +167,17 @@ const PairColumn: React.FC<{ src: string; tag: string; size: string; accent: boo
   );
 };
 
+// "first caught" stamp — fades in after the badge lands
+const CaughtLine: React.FC<{ caught: string; in0: number }> = ({ caught, in0 }) => {
+  const f = useCurrentFrame();
+  const a = ramp(f, in0, in0 + 14);
+  return (
+    <div style={{ fontFamily: mono, fontSize: 28, color: theme.color.textTertiary, letterSpacing: 1, marginTop: 16, opacity: a }}>
+      ↳ first caught: {caught}
+    </div>
+  );
+};
+
 const ProductSlide: React.FC<{ it: Item }> = ({ it }) => {
   const before = resolve(it.beforeImage);
   const after = resolve(it.afterImage);
@@ -188,6 +200,7 @@ const ProductSlide: React.FC<{ it: Item }> = ({ it }) => {
           )}
         </div>
         <Badge it={it} in0={22} withRange />
+        {it.caught && <CaughtLine caught={it.caught} in0={40} />}
       </AbsoluteFill>
     );
   }
@@ -203,6 +216,7 @@ const ProductSlide: React.FC<{ it: Item }> = ({ it }) => {
           <Bar label={`${it.after} ${it.unit}`} target={(it.after / max) * 100} color={theme.color.red} in0={16} />
         </div>
         <Badge it={it} in0={24} />
+        {it.caught && <CaughtLine caught={it.caught} in0={42} />}
       </div>
     </AbsoluteFill>
   );
