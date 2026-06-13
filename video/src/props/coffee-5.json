@@ -3,11 +3,11 @@
   "coverSub": "I caught Folgers. turns out the whole aisle is in on it.",
   "coverPrompt": "▶ keep watching — #1 is the one you buy",
   "items": [
-    { "rank": "5", "brand": "Dunkin'", "product": "Original Blend", "before": 45, "after": 40, "unit": "oz", "pct": 11.1, "image": "coffee/dunkin.webp" },
-    { "rank": "4", "brand": "Peet's", "product": "French Roast", "before": 12, "after": 10.5, "unit": "oz", "pct": 12.5, "beforeImage": "coffee/peets-before.webp", "afterImage": "coffee/peets-after.webp" },
-    { "rank": "3", "brand": "Community Coffee", "product": "Café Special", "before": 46, "after": 40, "unit": "oz", "pct": 13.0, "image": "coffee/community.webp" },
-    { "rank": "2", "brand": "Eight O'Clock", "product": "The Original", "before": 21, "after": 18, "unit": "oz", "pct": 14.3, "image": "coffee/eight-oclock.webp" },
-    { "rank": "1", "brand": "Folgers", "product": "Classic Roast", "before": 11.3, "after": 9.6, "unit": "oz", "pct": 15.0, "image": "coffee/folgers.webp" }
+    { "rank": "5", "brand": "Dunkin'", "product": "Original Blend", "before": 45, "after": 40, "unit": "oz", "pct": 11.1, "image": "coffee/dunkin.webp", "caught": "Reddit · Jul 2025" },
+    { "rank": "4", "brand": "Peet's", "product": "French Roast", "before": 12, "after": 10.5, "unit": "oz", "pct": 12.5, "beforeImage": "coffee/peets-before.webp", "afterImage": "coffee/peets-after.webp", "caught": "Reddit · Nov 2025" },
+    { "rank": "3", "brand": "Community Coffee", "product": "Café Special", "before": 46, "after": 40, "unit": "oz", "pct": 13.0, "image": "coffee/community.webp", "caught": "Reddit · Apr 2025" },
+    { "rank": "2", "brand": "Eight O'Clock", "product": "The Original", "before": 21, "after": 18, "unit": "oz", "pct": 14.3, "image": "coffee/eight-oclock.webp", "caught": "Reddit · Dec 2025" },
+    { "rank": "1", "brand": "Folgers", "product": "Classic Roast", "before": 11.3, "after": 9.6, "unit": "oz", "pct": 15.0, "image": "coffee/folgers.webp", "caught": "Reddit · Jun 2022" }
   ],
   "ctaHeadline": "is your *coffee* on here?",
   "ctaSub": "search any brand — *free* — at fullcarts.org",

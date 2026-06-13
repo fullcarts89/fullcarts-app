@@ -18,6 +18,7 @@ const item = z.object({
   beforeImage: z.string().optional(), // explicit before/after pair (e.g. listing screenshot + your bag)
   afterImage: z.string().optional(),
   imagePos: z.string().optional(),
+  caught: z.string().optional(), // "first caught" stamp, e.g. "Reddit · Jun 2022"
 });
 
 export const carouselSchema = z.object({
@@ -87,11 +88,16 @@ const PhotoCard: React.FC<{ src: string; pos?: string }> = ({ src, pos }) => (
 );
 
 const DataRow: React.FC<{ it: Item }> = ({ it }) => (
-  <div style={{ position: "absolute", bottom: 150, left: 80, right: 80, display: "flex", alignItems: "center", gap: 28 }}>
-    <span style={{ fontFamily: mono, fontWeight: 700, fontSize: 48, color: theme.color.textPrimary }}>
-      {it.before} → {it.after} {it.unit}
-    </span>
-    <div style={{ background: theme.color.red, color: theme.color.textPrimary, fontFamily: mono, fontWeight: 700, fontSize: 64, borderRadius: 16, padding: "6px 24px" }}>−{it.pct}%</div>
+  <div style={{ position: "absolute", bottom: 140, left: 80, right: 80 }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 28 }}>
+      <span style={{ fontFamily: mono, fontWeight: 700, fontSize: 48, color: theme.color.textPrimary }}>
+        {it.before} → {it.after} {it.unit}
+      </span>
+      <div style={{ background: theme.color.red, color: theme.color.textPrimary, fontFamily: mono, fontWeight: 700, fontSize: 64, borderRadius: 16, padding: "6px 24px" }}>−{it.pct}%</div>
+    </div>
+    {it.caught && (
+      <div style={{ fontFamily: mono, fontSize: 30, color: theme.color.textTertiary, letterSpacing: 1, marginTop: 18 }}>↳ first caught: {it.caught}</div>
+    )}
   </div>
 );
 
