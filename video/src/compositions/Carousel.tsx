@@ -14,7 +14,9 @@ const item = z.object({
   after: z.number(),
   unit: z.string(),
   pct: z.number(),
-  image: z.string().optional(), // DB image_url (http…) or a local public/ path; falls back to bars
+  image: z.string().optional(), // single paired photo (shows before+after) — http or local public/ path
+  beforeImage: z.string().optional(), // explicit before/after pair (e.g. listing screenshot + your bag)
+  afterImage: z.string().optional(),
   imagePos: z.string().optional(),
 });
 
@@ -32,8 +34,11 @@ type Item = z.infer<typeof item>;
 
 // Data-driven IG/TikTok carousel. Each FRAME is one slide: render stills at frame
 // 0..(items+1). Slide 0 = cover, 1..N = products, N+1 = CTA. Built from real DB data.
+// Photo-forward when a real before/after photo is present; bars fallback otherwise.
 const hl = (text: string) =>
   text.split("*").map((s, i) => (i % 2 === 1 ? <span key={i} style={{ color: theme.color.red }}>{s}</span> : <React.Fragment key={i}>{s}</React.Fragment>));
+
+const resolve = (s?: string) => (s ? (s.startsWith("http") ? s : staticFile(s)) : null);
 
 const Frame: React.FC<{ children: React.ReactNode; footer?: boolean }> = ({ children, footer }) => (
   <AbsoluteFill style={{ background: theme.color.bg, fontFamily: body }}>
@@ -63,31 +68,81 @@ const Cover: React.FC<{ title: string[]; sub: string }> = ({ title, sub }) => (
   </Frame>
 );
 
-const ProductSlide: React.FC<{ it: Item }> = ({ it }) => {
-  const max = Math.max(it.before, it.after);
-  const hasImg = !!it.image;
-  const src = it.image ? (it.image.startsWith("http") ? it.image : staticFile(it.image)) : null;
-  const rightInset = hasImg ? 480 : 80; // leave room for the product photo panel
+const Header: React.FC<{ it: Item }> = ({ it }) => (
+  <div style={{ position: "absolute", top: 96, left: 80, right: 80 }}>
+    <div style={{ display: "flex", alignItems: "baseline", gap: 22 }}>
+      <span style={{ fontFamily: mono, fontWeight: 700, fontSize: 140, lineHeight: 0.9, color: theme.color.red }}>#{it.rank}</span>
+      <div>
+        <div style={{ fontFamily: mono, fontSize: 30, letterSpacing: 3, textTransform: "uppercase", color: theme.color.textSecondary }}>{it.brand}</div>
+        <div style={{ fontFamily: headline, fontWeight: 700, fontSize: 54, lineHeight: 1.02, color: theme.color.textPrimary, marginTop: 4 }}>{it.product}</div>
+      </div>
+    </div>
+  </div>
+);
 
+const PhotoCard: React.FC<{ src: string; pos?: string }> = ({ src, pos }) => (
+  <div style={{ width: "100%", height: "100%", background: "#fff", borderRadius: 20, overflow: "hidden" }}>
+    <Img src={src} style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: pos ?? "center" }} />
+  </div>
+);
+
+const DataRow: React.FC<{ it: Item }> = ({ it }) => (
+  <div style={{ position: "absolute", bottom: 150, left: 80, right: 80, display: "flex", alignItems: "center", gap: 28 }}>
+    <span style={{ fontFamily: mono, fontWeight: 700, fontSize: 48, color: theme.color.textPrimary }}>
+      {it.before} → {it.after} {it.unit}
+    </span>
+    <div style={{ background: theme.color.red, color: theme.color.textPrimary, fontFamily: mono, fontWeight: 700, fontSize: 64, borderRadius: 16, padding: "6px 24px" }}>−{it.pct}%</div>
+  </div>
+);
+
+const Bar: React.FC<{ label: string; width: number; color: string; faded?: boolean }> = ({ label, width, color, faded }) => (
+  <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
+    <div style={{ height: 44, width: `${width}%`, minWidth: 70, background: color, opacity: faded ? 0.45 : 1, borderRadius: 8 }} />
+    <span style={{ fontFamily: mono, fontWeight: 700, fontSize: 44, color: theme.color.textPrimary, whiteSpace: "nowrap" }}>{label}</span>
+  </div>
+);
+
+const ProductSlide: React.FC<{ it: Item }> = ({ it }) => {
+  const before = resolve(it.beforeImage);
+  const after = resolve(it.afterImage);
+  const single = resolve(it.image);
+  const pair = before && after;
+  const hasPhoto = pair || single;
+
+  // photo-forward layout: real before/after photo is the hero, data row beneath
+  if (hasPhoto) {
+    return (
+      <Frame footer>
+        <Header it={it} />
+        <div style={{ position: "absolute", top: 300, bottom: 320, left: 80, right: 80 }}>
+          {pair ? (
+            <div style={{ display: "flex", gap: 22, height: "100%" }}>
+              {[
+                { src: before as string, tag: "before", size: `${it.before} ${it.unit}`, accent: false },
+                { src: after as string, tag: "after", size: `${it.after} ${it.unit}`, accent: true },
+              ].map((c, i) => (
+                <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
+                  <div style={{ fontFamily: mono, fontSize: 26, letterSpacing: 3, textTransform: "uppercase", color: c.accent ? theme.color.red : theme.color.textSecondary, marginBottom: 10 }}>{c.tag}</div>
+                  <div style={{ flex: 1, minHeight: 0 }}><PhotoCard src={c.src} /></div>
+                  <div style={{ fontFamily: mono, fontWeight: 700, fontSize: 38, color: c.accent ? theme.color.red : theme.color.textPrimary, marginTop: 12 }}>{c.size}</div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <PhotoCard src={single as string} pos={it.imagePos} />
+          )}
+        </div>
+        <DataRow it={it} />
+      </Frame>
+    );
+  }
+
+  // bars fallback (no photo available)
+  const max = Math.max(it.before, it.after);
   return (
     <Frame footer>
-      {hasImg && src && (
-        <div style={{ position: "absolute", right: 64, top: 300, width: 384, height: 620, background: "#fff", borderRadius: 22, overflow: "hidden" }}>
-          <Img src={src} style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: it.imagePos ?? "center" }} />
-        </div>
-      )}
-
-      <div style={{ position: "absolute", top: 110, left: 80, right: rightInset }}>
-        <div style={{ display: "flex", alignItems: "baseline", gap: 24 }}>
-          <span style={{ fontFamily: mono, fontWeight: 700, fontSize: 150, lineHeight: 0.9, color: theme.color.red }}>#{it.rank}</span>
-          <div>
-            <div style={{ fontFamily: mono, fontSize: 30, letterSpacing: 3, textTransform: "uppercase", color: theme.color.textSecondary }}>{it.brand}</div>
-            <div style={{ fontFamily: headline, fontWeight: 700, fontSize: 56, lineHeight: 1.02, color: theme.color.textPrimary, marginTop: 4 }}>{it.product}</div>
-          </div>
-        </div>
-      </div>
-
-      <AbsoluteFill style={{ justifyContent: "center", alignItems: "flex-start", paddingLeft: 80, paddingRight: rightInset }}>
+      <Header it={it} />
+      <AbsoluteFill style={{ justifyContent: "center", alignItems: "flex-start", padding: "0 80px" }}>
         <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 26 }}>
           <Bar label={`${it.before} ${it.unit}`} width={100} color={theme.color.textTertiary} faded />
           <Bar label={`${it.after} ${it.unit}`} width={(it.after / max) * 100} color={theme.color.red} />
@@ -99,13 +154,6 @@ const ProductSlide: React.FC<{ it: Item }> = ({ it }) => {
     </Frame>
   );
 };
-
-const Bar: React.FC<{ label: string; width: number; color: string; faded?: boolean }> = ({ label, width, color, faded }) => (
-  <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-    <div style={{ height: 44, width: `${width}%`, minWidth: 70, background: color, opacity: faded ? 0.45 : 1, borderRadius: 8 }} />
-    <span style={{ fontFamily: mono, fontWeight: 700, fontSize: 44, color: theme.color.textPrimary, whiteSpace: "nowrap" }}>{label}</span>
-  </div>
-);
 
 const CTA: React.FC<{ headline: string; sub: string; persona: string }> = ({ headline: h, sub, persona }) => (
   <Frame>
