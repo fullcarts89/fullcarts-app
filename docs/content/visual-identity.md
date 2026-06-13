@@ -51,6 +51,10 @@ unverifiable. Kill the objection permanently by **dating every data beat**:
 - **In the description/caption:** include the date + timeframe (see `profile-copy.md` → "Dating").
 - **Evergreen vs. dated:** restoration/"it's not you" beats are evergreen and need no stamp; anything
   tied to a *current* price, CPI print, or "X-month low" must be dated and re-verified on posting day.
+- **Carousels — "first caught" stamp:** the `Carousel` / `CarouselVideo` `caught` field shows when a shrink
+  was *first documented* (e.g. `"Reddit · Jun 2022"`). Pull the earliest source date from
+  `event_evidence_summary` (`min((s->>'date')::timestamptz)` over `jsonb_array_elements(sources)`). Doubles as
+  proof the database was early — a Folgers "first caught Jun 2022, still shrunk" is a strong credibility beat.
 
 ## Iconography
 `lucide-react` line icons (TrendingDown, AlertCircle, Package, Database, Shield…) in rounded
@@ -146,6 +150,10 @@ constant SFX. This protects the credible/documentary tone — the opposite of bu
 | **Underbed** | low, tense, minimal **drone/beat**, ducked −18 dB under VO | authority; the voice stays the star |
 
 **Avoid:** glitter/sparkle, riser "vine-booms," meme SFX, busy stingers.
+
+**Carousel videos** can carry a **looped background bed** (`CarouselVideo` `music` prop → `<Audio loop>`),
+mixed low (~0.22) so a VO/captions sit on top — keep it tense/minimal, on the "calm data terminal" side.
+For **Shorts specifically**, adding trending audio *in-app* also boosts discovery, so a baked bed is optional.
 **Source:** generate the signature ones (CAUGHT stamp, counter) in **ElevenLabs SFX** (text-to-SFX);
 use Captions App's library for the rest. Keep SFX ~−12 to −18 dB under the voice.
 
