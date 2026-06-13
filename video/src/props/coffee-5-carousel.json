@@ -1,0 +1,14 @@
+{
+  "coverTitle": ["5 stealth", "coffee *shrinks*"],
+  "coverSub": "same can. same price. less coffee — all documented.",
+  "items": [
+    { "rank": "5", "brand": "Dunkin'", "product": "Original Blend", "before": 45, "after": 40, "unit": "oz", "pct": 11.1 },
+    { "rank": "4", "brand": "Peet's", "product": "French Roast", "before": 12, "after": 10.5, "unit": "oz", "pct": 12.5 },
+    { "rank": "3", "brand": "Community Coffee", "product": "Ground Coffee", "before": 46, "after": 40, "unit": "oz", "pct": 13.0 },
+    { "rank": "2", "brand": "Eight O'Clock", "product": "Coffee", "before": 21, "after": 18, "unit": "oz", "pct": 14.3 },
+    { "rank": "1", "brand": "Folgers", "product": "Classic Roast (big can)", "before": 51, "after": 43.5, "unit": "oz", "pct": 14.7 }
+  ],
+  "ctaHeadline": "is your *coffee* on here?",
+  "ctaSub": "search any brand — *free* — at fullcarts.org",
+  "ctaPersona": "Just a tired dad who got sick of getting ripped off — so I built the largest free, public shrinkflation database I know of."
+}
