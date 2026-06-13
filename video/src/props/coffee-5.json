@@ -11,5 +11,6 @@
   ],
   "ctaHeadline": "is your *coffee* on here?",
   "ctaSub": "search any brand — *free* — at fullcarts.org",
-  "ctaPersona": "Just a tired dad who got sick of getting ripped off — so I built the largest free, public shrinkflation database I know of."
+  "ctaPersona": "Just a tired dad who got sick of getting ripped off — so I built the largest free, public shrinkflation database I know of.",
+  "music": { "src": "audio/bg-loop.mp3", "volume": 0.22 }
 }

@@ -1,6 +1,7 @@
 import React from "react";
 import {
   AbsoluteFill,
+  Audio,
   Img,
   Sequence,
   staticFile,
@@ -48,6 +49,7 @@ export const carouselVideoSchema = z.object({
   coverSec: z.number().optional(),
   slideSec: z.number().optional(),
   ctaSec: z.number().optional(),
+  music: z.object({ src: z.string(), volume: z.number().optional() }).optional(), // looped background bed
 });
 
 type Props = z.infer<typeof carouselVideoSchema>;
@@ -276,6 +278,7 @@ export const CarouselVideo: React.FC<Props> = (props) => {
   return (
     <AbsoluteFill style={{ background: theme.color.bg, fontFamily: body }}>
       <GridTexture opacity={0.06} />
+      {props.music ? <Audio loop src={staticFile(props.music.src)} volume={props.music.volume ?? 0.22} /> : null}
 
       <div style={{ position: "absolute", top: 70, left: 80 }}><Brandmark scale={1.0} /></div>
       <ProgressBar />
