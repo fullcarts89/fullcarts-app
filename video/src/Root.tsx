@@ -19,6 +19,10 @@ import { OutroCard, outroCardSchema } from "./compositions/OutroCard";
 import { Carousel, carouselSchema } from "./compositions/Carousel";
 import { TierList, tierListSchema } from "./compositions/TierList";
 import { CarouselVideo, carouselVideoSchema, calcCarouselVideoMeta } from "./compositions/CarouselVideo";
+import { GuessTheCut, guessTheCutSchema } from "./compositions/GuessTheCut";
+import { ItsNotYou, itsNotYouSchema } from "./compositions/ItsNotYou";
+import { CPIvsReality, cpiVsRealitySchema } from "./compositions/CPIvsReality";
+import { CaughtBeforeAfter, caughtBeforeAfterSchema } from "./compositions/CaughtBeforeAfter";
 import folgersCut from "./props/folgers-final.json";
 import folgersCutV5 from "./props/folgers-final-v5.json";
 import coffee5 from "./props/coffee-5.json";
@@ -394,6 +398,95 @@ export const RemotionRoot: React.FC = () => {
         schema={carouselVideoSchema}
         calculateMetadata={calcCarouselVideoMeta}
         defaultProps={coffee5 as unknown as React.ComponentProps<typeof CarouselVideo>}
+      />
+
+      {/* Guess the Cut — gamified quiz: cover → Q/A pairs → CTA. Render stills 0..items*2+1. */}
+      <Composition
+        id="GuessTheCut"
+        component={GuessTheCut}
+        durationInFrames={12}
+        fps={FPS}
+        width={1080}
+        height={1350}
+        schema={guessTheCutSchema}
+        defaultProps={{
+          coverTitle: ["guess", "the *cut*"],
+          coverSub: "same price, less inside. most people lowball every one. swipe →",
+          items: [
+            { rank: "5", brand: "Gatorade", product: "Gatorade Sports Drink", before: 32, after: 28, unit: "fl oz", pct: 12.5, equiv: "half a cup, gone" },
+            { rank: "4", brand: "Gaviscon", product: "Gaviscon Double Action", before: 600, after: 500, unit: "ml", pct: 16.7, equiv: "a sixth of the bottle, gone" },
+            { rank: "3", brand: "Cadbury", product: "Freddo Faces Egg", before: 122, after: 99, unit: "g", pct: 18.9, equiv: "nearly a fifth of the egg" },
+            { rank: "2", brand: "Aquafresh", product: "Aquafresh Toothpaste", before: 100, after: 75, unit: "ml", pct: 25.0, equiv: "1 in every 4 tubes, vanished" },
+            { rank: "1", brand: "Sainsbury's", product: "Scottish Oats", before: 1000, after: 500, unit: "g", pct: 50.0, equiv: "half. the. bag." },
+          ],
+          ctaHeadline: "you lowballed it, *didn't you?*",
+          ctaSub: "search any product — *free* — at fullcarts.org",
+          ctaPersona: "Tired dad, sick of getting ripped off — so I built the receipts. 2,200+ documented cuts, no ads.",
+        }}
+      />
+
+      {/* It's Not You — emotional cold open → receipts → resolution. Stills 0..receipts+3. */}
+      <Composition
+        id="ItsNotYou"
+        component={ItsNotYou}
+        durationInFrames={7}
+        fps={FPS}
+        width={1080}
+        height={1350}
+        schema={itsNotYouSchema}
+        defaultProps={{
+          opener: ["You're not crazy.", "That box really did", "get *smaller*."],
+          feeling: "I swear this used to be bigger… then I felt silly for even noticing.",
+          receipts: [
+            { brand: "Cadbury", product: "Freddo Faces Egg", before: 122, after: 99, unit: "g", pct: 18.9 },
+            { brand: "Aquafresh", product: "Aquafresh Toothpaste", before: 100, after: 75, unit: "ml", pct: 25.0 },
+            { brand: "Sainsbury's", product: "Scottish Oats", before: 1000, after: 500, unit: "g", pct: 50.0 },
+          ],
+          resolution: ["It's not you.", "You're being quietly", "robbed — *by design*."],
+          ctaPersona: "Tired dad, sick of getting ripped off — so I built the receipts. 2,200+ documented cuts, no ads.",
+        }}
+      />
+
+      {/* CPI vs. Reality — macro newsjack (CPI day). STUB. Stills 0..items+1. */}
+      <Composition
+        id="CPIvsReality"
+        component={CPIvsReality}
+        durationInFrames={5}
+        fps={FPS}
+        width={1080}
+        height={1350}
+        schema={cpiVsRealitySchema}
+        defaultProps={{
+          cpiHeadline: "Groceries: +2.1% this year",
+          cpiSource: "BLS CPI · Food at Home · YoY",
+          items: [
+            { category: "Candy", cpiPct: 2.1, brand: "Cadbury", product: "Freddo Faces Egg", shelfPct: 18.9 },
+            { category: "Personal care", cpiPct: 2.1, brand: "Aquafresh", product: "Toothpaste", shelfPct: 25.0 },
+            { category: "Cereal", cpiPct: 2.1, brand: "Sainsbury's", product: "Scottish Oats", shelfPct: 50.0 },
+          ],
+          ctaHeadline: "Inflation counts the price.",
+          ctaSub: "It barely counts the box. We do — fullcarts.org",
+        }}
+      />
+
+      {/* Caught Before/After — single-product deep dive (video companion). STUB. Stills 0..4. */}
+      <Composition
+        id="CaughtBeforeAfter"
+        component={CaughtBeforeAfter}
+        durationInFrames={5}
+        fps={FPS}
+        width={1080}
+        height={1350}
+        schema={caughtBeforeAfterSchema}
+        defaultProps={{
+          brand: "Cadbury",
+          product: "Freddo Faces Easter Egg",
+          before: 122,
+          after: 99,
+          unit: "g",
+          pct: 18.9,
+          sourceLabel: "Reddit + retailer listing, observed 2023 — 72 pieces of evidence",
+        }}
       />
     </>
   );

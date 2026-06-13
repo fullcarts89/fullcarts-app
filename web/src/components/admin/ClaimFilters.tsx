@@ -25,6 +25,7 @@ const SOURCES: ReadonlyArray<{ value: string; label: string }> = [
   { value: "openfoodfacts", label: "Open Food Facts" },
   { value: "usda_size_change", label: "USDA" },
   { value: "kroger_change", label: "Kroger" },
+  { value: "community_tip", label: "Community" },
 ];
 
 const SORTS: ReadonlyArray<{ value: string; label: string }> = [

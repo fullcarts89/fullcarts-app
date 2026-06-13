@@ -1,5 +1,4 @@
 import SiteNav from "@/components/SiteNav";
-import TipForm from "./_components/TipForm";
 import Term, { GLOSSARY } from "../_components/Term";
 import styles from "./styles.module.css";
 
@@ -256,7 +255,9 @@ export default function AboutPage() {
           </p>
           <div className={styles["tip-card"]}>
             <div className={styles["tip-eyebrow"]}>Tip submission</div>
-            <TipForm />
+            <a href="/submit" className={styles["tip-cta"]}>
+              Submit a shrinkflation event &rarr;
+            </a>
             <div className={styles["tip-meta"]}>
               Prefer email? Send tips to{" "}
               <a
