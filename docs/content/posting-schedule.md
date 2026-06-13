@@ -24,6 +24,10 @@ story, engage.
 
 ---
 
+> **YouTube is a separate layer** with its own plan: `youtube-strategy.md`. Shorts cross-post here as
+> the discovery funnel; **add ≥1 long-form/month** (the searchable, evergreen authority piece — the DB
+> shines in YouTube search); carousels repurpose to the **Community tab** (image posts + polls).
+
 ## The weekly schedule (TikTok-led, cross-post Reels; IG for carousels/stories)
 
 | Day | Format | FullCarts content | Pillar | Effort |
