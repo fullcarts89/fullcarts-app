@@ -109,6 +109,14 @@ SLIDE 5: "Free. No ads. Nothing to sell. Search anything → fullcarts.org
 - Reveal posts: `Search this one yourself → fullcarts.org. What else swear got smaller? 👇`
 - Newsjack posts: `Full data + sources at fullcarts.org. Which category hit your cart hardest?`
 - Rundown posts: `Comment the product you swear shrank and I'll check the database for next month's 5.`
+- "It's just inflation" reply: `A price going up is visible — you can choose. A size going down at the same price is hidden — you can't. I just document the hidden part. It's all sourced at fullcarts.org.` (the signature comeback — see `content-angles.md` §2)
+
+## Dating (every post says when it's current) — audience feedback
+Viewers ask *"how old is this?"* on data content. Two standing rules so nothing reads as stale:
+- **Every description** with a time-sensitive number includes a date line, e.g.
+  `Current as of [Month YYYY] — full timeline + sources at fullcarts.org.`
+- **Re-verify** any "current" figure (a price, a CPI print, an "X-month low") against the live source
+  on posting day; update the number AND the date together. (On-screen stamp convention in `visual-identity.md` → "Dating".)
 
 ---
 

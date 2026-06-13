@@ -55,6 +55,15 @@ Contrarian angles are pre-loaded Snaps (the "snap" is the disagreement):
 - "Nothing you can do about it." → **You can see it — price-per-unit — and that changes everything.**
 - "At least the price didn't go up." → **A smaller package at the same price IS a price hike, hidden.**
 
+> **★ The signature comeback (the visible-vs-hidden line).** The most common objection — in comments
+> and in person — is *"it's just inflation."* This is the go-to answer, and it doubles as a hook:
+> > **"A price going up is visible — you see it and you can choose. A size going down at the same
+> > price is hidden — you can't. I just document the hidden part."**
+> Use it as a reply to the "it's just inflation" / "take an econ class" comment (stay factual, never
+> argue monetary policy or politics), as a *Caught:* / *Why I Built This* hook, and as a pinned-comment
+> template. It concedes the true thing (inflation is real) and pivots to the one thing you uniquely
+> prove (the hidden cut) — which is the whole channel in one sentence.
+
 ## 3. What have I experienced? (personal — earns trust, fits the narrative meta)
 
 - **Origin (the tired-dad story):** "I'm just a tired dad who got sick of getting ripped off — the
