@@ -18,8 +18,10 @@ import { FewerCups, fewerCupsSchema } from "./compositions/FewerCups";
 import { OutroCard, outroCardSchema } from "./compositions/OutroCard";
 import { Carousel, carouselSchema } from "./compositions/Carousel";
 import { TierList, tierListSchema } from "./compositions/TierList";
+import { CarouselVideo, carouselVideoSchema, calcCarouselVideoMeta } from "./compositions/CarouselVideo";
 import folgersCut from "./props/folgers-final.json";
 import folgersCutV5 from "./props/folgers-final-v5.json";
+import coffee5 from "./props/coffee-5.json";
 
 // 9:16 vertical, 30fps. Overlay comps have no background → render with alpha
 // (--codec=prores --prores-profile=4444). StatCard is full-frame → --codec=h264.
@@ -364,6 +366,34 @@ export const RemotionRoot: React.FC = () => {
           ],
           ctaLine: "agree? comment your worst ↓",
         }}
+      />
+
+      {/* Data carousel as a VIDEO (auto-advancing) — posts as a Reel/Short. Same component
+          renders both ratios; duration adapts to item count via calcCarouselVideoMeta.
+          Default = "5 Stealth Coffee Shrinks" (live DB data). Bars/monograms render offline;
+          product photos appear when rendered on a network-open machine (coffee-5-photos.json). */}
+      <Composition
+        id="CarouselVideo"
+        component={CarouselVideo}
+        durationInFrames={585}
+        fps={FPS}
+        width={1080}
+        height={1350}
+        schema={carouselVideoSchema}
+        calculateMetadata={calcCarouselVideoMeta}
+        defaultProps={coffee5 as unknown as React.ComponentProps<typeof CarouselVideo>}
+      />
+
+      <Composition
+        id="CarouselVideoVertical"
+        component={CarouselVideo}
+        durationInFrames={585}
+        fps={FPS}
+        width={1080}
+        height={1920}
+        schema={carouselVideoSchema}
+        calculateMetadata={calcCarouselVideoMeta}
+        defaultProps={coffee5 as unknown as React.ComponentProps<typeof CarouselVideo>}
       />
     </>
   );

@@ -1,0 +1,15 @@
+{
+  "coverTitle": ["5 stealth", "coffee *shrinks*"],
+  "coverSub": "I caught Folgers. turns out the whole aisle is in on it.",
+  "coverPrompt": "▶ keep watching — #1 is the one you buy",
+  "items": [
+    { "rank": "5", "brand": "Dunkin'", "product": "Original Blend", "before": 45, "after": 40, "unit": "oz", "pct": 11.1, "image": "https://ntyhbapphnzlariakgrw.supabase.co/storage/v1/object/public/claim-images/f51fa286-2a75-42d8-bcde-278d2880d604.webp" },
+    { "rank": "4", "brand": "Peet's", "product": "French Roast", "before": 12, "after": 10.5, "unit": "oz", "pct": 12.5, "image": "https://ntyhbapphnzlariakgrw.supabase.co/storage/v1/object/public/claim-images/314d605c-6ca7-4ef2-a788-1e5bd20460a0.webp" },
+    { "rank": "3", "brand": "Community Coffee", "product": "Ground Coffee", "before": 46, "after": 40, "unit": "oz", "pct": 13.0, "image": "https://ntyhbapphnzlariakgrw.supabase.co/storage/v1/object/public/claim-images/451792de-bb2e-4558-b1b4-d44dd5513a60.webp" },
+    { "rank": "2", "brand": "Eight O'Clock", "product": "Coffee", "before": 21, "after": 18, "unit": "oz", "pct": 14.3, "image": "https://ntyhbapphnzlariakgrw.supabase.co/storage/v1/object/public/claim-images/be35debb-6c2d-40a6-beb4-d3b7aba49fc0.webp" },
+    { "rank": "1", "brand": "Folgers", "product": "Classic Roast (big can)", "before": 51, "after": 43.5, "unit": "oz", "pct": 14.7, "image": "https://ntyhbapphnzlariakgrw.supabase.co/storage/v1/object/public/claim-images/33e2e99d-0d82-41a6-80da-b027e5358298.webp" }
+  ],
+  "ctaHeadline": "is your *coffee* on here?",
+  "ctaSub": "search any brand — *free* — at fullcarts.org",
+  "ctaPersona": "Just a tired dad who got sick of getting ripped off — so I built the largest free, public shrinkflation database I know of."
+}
