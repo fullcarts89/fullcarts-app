@@ -111,6 +111,11 @@ SLIDE 5: "Free. No ads. Nothing to sell. Search anything → fullcarts.org
 - Rundown posts: `Comment the product you swear shrank and I'll check the database for next month's 5.`
 - "It's just inflation" reply: `A price going up is visible — you can choose. A size going down at the same price is hidden — you can't. I just document the hidden part. It's all sourced at fullcarts.org.` (the signature comeback — see `content-angles.md` §2)
 
+## Hashtags per platform (match each platform's discovery behavior — don't copy-paste one stack)
+- **TikTok / Instagram:** the full stack *with* community/culture tags — `#shrinkflation #[brand] #coffee #groceries #inflation #shrinktok #consumer`. Stuffing is harmless here (extra tags are just ignored).
+- **YouTube (Shorts + long-form):** **topic/search tags only, ≤3–5** — `#shrinkflation #[brand] #shorts`. YouTube is a search engine; community tags like `#shrinktok` have ~no search volume there. **Hard rule:** >15 tags and YouTube ignores all of them. Put `#Shorts` in the first description line.
+- **Rule of thumb:** community/culture tags (`#shrinktok`) → TikTok/IG. Plain topic/search tags (`#shrinkflation`, `#[brand]`) → everywhere, especially YouTube. (Full YouTube plan: `youtube-strategy.md`.)
+
 ## Dating (every post says when it's current) — audience feedback
 Viewers ask *"how old is this?"* on data content. Two standing rules so nothing reads as stale:
 - **Every description** with a time-sensitive number includes a date line, e.g.
