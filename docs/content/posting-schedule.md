@@ -67,9 +67,18 @@ Maps to the content mix (educational / newsjack / personal / entertainment) and 
 Branded, data-driven Remotion compositions; the operator queries the DB → renders slides (PNG) → queue.
 
 ### Templates built (`video/src/compositions/`)
-- **`Carousel`** (4:5, 1080×1350) — multi-slide: cover → ranked product slides (before/after bars, −X%,
-  optional product image + brand logo) → CTA with the persona line. First set: **"5 Stealth Shrinks."**
-  One slide per frame: render stills `0..N+1`.
+- **`Carousel`** (4:5, 1080×1350) — still IG **swipe** carousel: cover → ranked product slides → CTA with
+  the persona line. **Photo-forward** when a real photo is present (the before/after photo is the hero +
+  a mono `before → after` + `−X%` data row); **bars fallback** otherwise. Supports a single paired photo
+  (`image`) OR an explicit `beforeImage`/`afterImage` pair (e.g. a listing screenshot + your own bag), and
+  an optional **`caught`** "first caught: Reddit · [Mon YYYY]" date stamp. One slide per frame: render stills `0..N+1`.
+- **`CarouselVideo`** / **`CarouselVideoVertical`** (NEW) — the **video** version of the same data carousel
+  (auto-advancing → posts as a Reel / Short / TikTok). Height-responsive: one component renders **4:5
+  (1080×1350)** and **9:16 (1080×1920)**; duration adapts to item count (`calcCarouselVideoMeta`). Folgers-style
+  **motion** (count-up % + badge pop, rank stamps in, staggered reveals, before/after slide in from the
+  sides, photo scale-in + slow Ken Burns), a top **progress bar**, the **`caught`** stamp, and an optional
+  looped **`music`** bed (`{src, volume}` → `<Audio loop>`, mixed low ~0.22 so VO/captions sit on top).
+  Renders **offline once photos are local** (`video/public/coffee/…`). First built set: **"5 Stealth Coffee Shrinks."**
 - **`TierList`** (4:5) — **swipe-reveal**: cover → tiers **bottom-up D…S** (one per swipe, progress dots +
   "it gets worse → swipe") → **the full list as the payoff LAST slide.** Brand pills with logo/monogram icons.
 
@@ -87,12 +96,21 @@ Branded, data-driven Remotion compositions; the operator queries the DB → rend
 The TierList does this (D→S→full list); the 5-Things counts down 5→1 to the worst.
 
 ### Images & logos
-- **Product images** — `product_entities.image_url` (clean `.webp`s) → the product photo on the slide.
-- **Brand logos** — pass a `logo` per brand (a curated transparent PNG in `video/public/logos/<brand>.png`,
-  recommended, or `logo.clearbit.com/<domain>`). **Monogram fallback** (brand initial) renders when absent —
-  a slide never breaks. *(DB `brand_index.thumbnail` is a product photo, not a logo — don't use it for icons.)*
-- ⚠️ **Sandbox can't fetch image/logo hosts (403)** — product photos + logos render on a **network-open
-  machine** (your laptop / the operator). In-sandbox previews show bars / monograms.
+- **Real before/after photos (best — Bucket-1 proof).** The founder's own side-by-side shots are the
+  strongest asset. Drop them in `video/public/<set>/` and reference local paths in the props: a single
+  paired shot → `image`, or a true pair (e.g. retailer listing + your bag) → `beforeImage`/`afterImage`.
+  Committed as repo assets so renders work **offline** (no egress needed). The coffee set lives in
+  `video/public/coffee/` with props `coffee-5.json` (video) + `coffee-5-carousel.json` (stills).
+- **Product images (fallback)** — `product_entities.image_url` (clean `.webp`s) → the product photo on the slide.
+- **Brand logos** (TierList) — pass a `logo` per brand (curated PNG in `video/public/logos/<brand>.png`, or
+  `logo.clearbit.com/<domain>`). **Monogram fallback** renders when absent. *(DB `brand_index.thumbnail` is a
+  product photo, not a logo.)*
+- ⚠️ **Sandbox can't fetch ANY remote host (403 egress allowlist)** — supabase/clearbit/fullcarts all blocked.
+  So: **get photos onto disk as local files** (the user **zips** them → they land in `/root/.claude/uploads/`,
+  unzip into `video/public/…`). Inline-pasted images are vision-only, NOT on disk. Once local, everything
+  renders in-sandbox. `http(s)` image URLs only work on a network-open machine.
+- **"First caught" date stamp** — set `caught` per item (e.g. `"Reddit · Jun 2022"`); pull the earliest
+  source date from `event_evidence_summary` (`min((s->>'date')::timestamptz)` over `jsonb_array_elements(sources)`).
 
 ### Repeatable series — Carousels (named, recurring formats)
 Five standing carousel series. Each runs on the same engine (query DB → render slides → queue);
