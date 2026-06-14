@@ -97,8 +97,44 @@ unspoken thoughts. Name one *for* them and they feel seen → locked in. Then re
 
 ---
 
+## 5. The Convergence Peg Library (run EVERY candidate through ALL of these)
+
+**This is a standing checklist, not a menu.** Every time we brainstorm video ideas — weekly shorts
+*and* the monthly long-form — run each candidate datapoint against **all** peg types below, not just
+the obvious one. The Folgers debut happened to be a *commodity* story; that's only one peg. A datapoint
+that lands on **two or more** pegs at once is the highest-convergence pick and goes first.
+
+> **Gate (read before using any peg):** the FullCarts **size figure** is the only thing pre-cleared
+> (it traces to `approved-claims.md` / a fresh DB pull). **Every external fact a peg leans on —
+> commodity prices, profits, CEO quotes, laws, tariffs, news timing — is NOT approved-claims.** It must
+> be traced to a real, current source and shown as a real screenshot (`SourceFrame`), never asserted
+> from memory and never an AI chart. Re-verify on render day (figures drift).
+
+| # | Peg | The hook shape | Where the data lives | Notes |
+|---|---|---|---|---|
+| **A** | **Commodity "rockets & feathers"** | "They shrank it, blamed record [cocoa/coffee/OJ]; the price fell, the size didn't." | external commodity chart (FRED/ICE) + DB size cut | the Folgers pattern. Strongest when the commodity has *come back down*. |
+| **B** | **Record profits / greedflation** | "Said it was inflation, then posted record profit." | earnings release (real screenshot) + DB cut | recurring quarterly newsjack. |
+| **C** | **Parent-company convergence** ("illusion of choice") | "One company shrank the whole aisle — you weren't even choosing." | `corporate_tree` view (distinct_brands, events) | ★ highest-share angle. Use real parents (PepsiCo/Mondelez/P&G), **not** institutional holders (BlackRock) — those are shareholders, not parents. |
+| **D** | **Tariffs / trade policy** (live macro story) | "Blaming tariffs now — but I logged this shrinking years before any tariff." | recent (2025–26) DB events + the news peg | counter-narrative; leans on our timestamps. |
+| **E** | **Legislation / labeling laws** | "France makes the store label it. America doesn't. So I built the label." | external policy source + the whole DB | pure authority; verify current bill/law status. |
+| **F** | **Cultural calendar / seasonal** | Halloween fun-size · holiday tins · Easter eggs · Super Bowl party-size · cookout buns · summer ice cream · back-to-school lunchbox | DB candidates in that category | bankable + schedulable ahead; **no external fact needed** (lowest gate risk). |
+| **G** | **CEO said the quiet part** | "Their own CEO said you'd accept a smaller pack — here's them being right." | earnings-call quote (real, sourced) + DB cut | trace the exact quote first. |
+| **H** | **Accountability — "it almost never comes back"** | "1 in 100 shrinks ever got restored. I keep the list of the 99." | DB restoration rate (~23 / 2,228) | strong standalone kicker; pairs with any episode. |
+| **I** | **Reactive newsjack** ("Breaking Shrink") | "This is blowing up today — I logged it [N] months ago. Here's the entry." | `news_brand_mentions` spike + the matching DB entry | trigger-only (no forced post); proves the DB is *ahead* of headlines. |
+
+*(Macro **CPI/USDA prints** are already a standing newsjack trigger in the operator brief — see
+`references/operator-loop.md` Step 2 — and feed the "Inflation Receipt" format in `series.md`.)*
+
+**Not yet data-ready:** *skimpflation / recipe-downgrade* ("didn't shrink it — cheapened it") is a real
+future peg, but `published_changes.skimp_score` is empty today. Don't build episodes on it until the
+`promote_skimpflation` path is populated.
+
+---
+
 ## How the operator uses this
-- Pick the **datapoint** (convergence brief) → pick the **angle** (pillar + a contrarian take from §2)
+- Pick the **datapoint** (convergence brief) → **run it through the full Convergence Peg Library (§5),
+  scoring every peg, not just commodity** → pick the **angle** (pillar + a contrarian take from §2)
   → pick the **feeling** to name (§4) for the lock-in beat → write the hook as a **Snap** (`hooks.md`).
+- **A candidate that hits ≥2 pegs ranks above a single-peg one** — that's what "convergence" means.
 - Bonus prompt from the framework: *"what do I hope they feel / do after watching?"* — for us:
   *seen, less alone, a little angry, and armed (they'll check price-per-unit and search fullcarts.org).*

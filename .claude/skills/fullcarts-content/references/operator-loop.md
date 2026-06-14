@@ -35,11 +35,15 @@ LIMIT 25;
 ```
 
 Convergence multiplier — does a candidate brand collide with the outside world this week?
-Cross-check `news_brand_mentions` (recent news/GDELT hits joined to our brands) and the macro
-tables (`fred_cpi_data`, `bls_shrinkflation`) for a scheduled print. A candidate that also
-spikes in the news, or sits in the category a fresh CPI/USDA print just moved, ranks first
-(it's newsjack-ready). Calendar moments (Halloween candy, back-to-school, Super Bowl, holiday
-baking) lift candidates in that category.
+**Run every candidate through the full Convergence Peg Library (`docs/content/content-angles.md` §5) —
+all peg types, not just commodity stories.** Cross-check `news_brand_mentions` (recent news/GDELT hits
+joined to our brands) and the macro tables (`fred_cpi_data`, `bls_shrinkflation`) for a scheduled print;
+also test the non-commodity pegs (record-profits, parent-company convergence via `corporate_tree`,
+tariffs, labeling laws, CEO quotes, accountability, reactive newsjack). A candidate that also spikes in
+the news, sits in the category a fresh CPI/USDA print just moved, or lands on **≥2 pegs at once** ranks
+first. Calendar moments (Halloween candy, back-to-school, Super Bowl, holiday baking, summer ice cream)
+lift candidates in that category. *External facts a peg leans on (prices, profits, quotes, laws) are
+NOT approved-claims — trace each to a real source and show it via `SourceFrame`; re-verify on render day.*
 
 **Dedup against what already shipped:** read `docs/content/content-log.md` and **drop any candidate
 whose `brand + product + change` is already logged as posted.** A *different* size-change for the same
