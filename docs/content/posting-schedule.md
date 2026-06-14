@@ -35,7 +35,7 @@ story, engage.
 | **Mon** | ≤25s reel | **Shrink Check** — short single-product spotlight, rotates 4 treatments (Guess the Cut / Do the Math / Then vs Now / Same Price, Less Stuff) | Reveal | Medium |
 | **Tue** | Carousel + Q&A stories | Data carousel (5 Stealth Shrinks / Before-After); stories: "comment a product, I'll check the DB" | Data + Engagement | Low-Med |
 | **Wed** | 1-min **signature series** | **THE flagship *Caught:* episode** (full SRT-synced composite) | Series anchor | **Hero** |
-| **Thu** | 7–15s reel + polls | **Rotating peg short** — a different peg each week (`content-angles.md` §5); CPI "Inflation Receipt" only on the print week | Newsjack | Low |
+| **Thu** | ~30–45s reel + polls | **The Take** — opinion/commentary sparked by a peg (`content-angles.md` §5–6); the rant / prediction / call. CPI read becomes the take on print weeks | Opinion | Low-Med |
 | **Fri** | 15–30s | **Receipt of the Week** — freshest notable new entry; falls back to an evidence-tag review (So Smol / Spot the Difference / …) on quiet weeks | Newsjack | Low |
 | **Sat** | Carousel | Tier List / Worst Offenders / By the Numbers | Rankings | Low-Med |
 | **Sun** | 1-min vlog-style | The **persona**: "tired dad" BTS, "how I verify a claim," why I built it | Personal | Medium |
@@ -44,10 +44,11 @@ Only **Wed is a hero**; Mon/Sun are medium (mostly talk-to-camera); Tue/Thu/Sat/
 Maps to the content mix (educational / newsjack / personal / entertainment) and every pillar gets a slot.
 
 > **Locked slot formats:** the repeatable video templates behind each slot — *Shrink Check* (Mon,
-> rotates 4 treatments), *Caught:* (Wed hero), *Rotating Peg Short* (Thu — *Inflation Receipt* on
-> CPI-print weeks), *Receipt of the Week* (Fri — evidence-tag review fallback), *Why I Built This*
-> (Sun vlog) — are specced in `series.md`. Genuine breaking news is a floating wildcard that can preempt
-> any day. The Sun vlog has a 52-topic backlog in `vlog-ideas.md`.
+> rotates 4 treatments), *Caught:* (Wed hero), *The Take* (Thu — opinion/commentary), *Receipt of the
+> Week* (Fri — evidence-tag review fallback), *Why I Built This* (Sun vlog) — are specced in `series.md`.
+> **Two channel-wide rules:** the Convergence Peg Library (`content-angles.md` §5) feeds *every* slot in
+> any length, and every video carries a POV beat (`content-angles.md` §6). Genuine breaking news is a
+> floating wildcard that can preempt any day. The Sun vlog has a 52-topic backlog in `vlog-ideas.md`.
 
 ### Effort tiers
 - **Hero** (~2–3 hrs): the Wed *Caught:* — full pipeline (film + SRT + composite).
