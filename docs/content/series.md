@@ -101,13 +101,39 @@ These are the **video formats** behind the weekly schedule (`posting-schedule.md
 **fixed**; only the `[bracketed variables]` change week to week — that's what keeps prep light and
 the series recognizable. "Caught:" (above) is the Wed hero. The four below fill the other slots.
 
-### ⚡ "Caught Slipping" — Mon, 30s reveal
-> Quick dopamine reveal · 25–35s · one take, one overlay. Every DB entry is a candidate → infinite supply.
+### ⚡ "Shrink Check" — Mon, short single-product spotlight (≤25s, **rotates 4 treatments**)
+> The fast counterpart to the Wed hero: **always one product, always short, but a different *treatment*
+> each week** so it never reads as a mini-*Caught:*. Where Wednesday tells the full story (brand on
+> trial + macro peg + the trick), Monday does one quick *job* — play, teach, or gut-punch. Rotate the
+> four below; every DB entry is fuel, so supply is infinite. *(Name is a placeholder — rename freely.)*
+
+**1) Guess the Cut** — the game (curiosity gap drives comments/duets)
 ```
-BAIT  (0–4s):   hold product, casual — "This is [Product]. Looks totally normal, right?"
-LEAN  (4–10s):  "Except [N] years ago it was [before]. Now it's [after]."
-SNAP  (10–22s): drop −[X]% overlay + per-oz price — "Same price. More money for less."
-TAG   (22–30s): "It's in the database. Free. Link in bio."
+BEFORE (0–5s):  hold product — "This was [before size]. Guess how much they cut it."
+GUESS  (5–10s): "Comment your guess. I lowballed it."
+REVEAL (10–20s): drop −[X]% overlay — "[after size]. Same price." → "Did you get it?"
+```
+**2) Do the Math** — the skill (the channel's useful-tool identity) · ★ **family-of-4 annual angle**
+> Don't just show one cut — **show the yearly damage.** Take a commonly-bought staple (or a basket of
+> them) that shrank, and compute what a **family of four overpays per year** because the box got smaller
+> at the same price. Concrete, shareable, rage-inducing in the best way.
+```
+SETUP  (0–6s):  "Your [product] shrank [X]%. Doesn't sound like much — watch this."
+MATH   (6–18s): per-unit price × a family-of-4's real annual usage → "$[N] a year, gone, on ONE item."
+STACK  (18–25s): "Now multiply that across your whole cart." → CTA
+```
+> ⚠️ **Gate:** the math must be **defensible arithmetic** — real shelf prices, a stated, reasonable
+> family-of-4 consumption assumption shown on screen, and per-unit (not vibes). Cite the size cut to the
+> DB; show the price source. If an assumption is rough, say so. Never inflate the annual number.
+
+**3) Then vs Now** — the nostalgia gut-punch (feeling-first, trending-audio friendly)
+```
+NOW   (0–6s):  "This is [product] today."
+THEN  (6–15s): "This is what it used to be." → before/after overlay + −[X]%  — let it land, minimal words
+```
+**4) Same Price, Less Stuff** — the pure stat-drop (fastest, snackable)
+```
+SNAP (0–12s): product → "[before] → [after], −[X]%, same price." → "It's in the database. Free."
 ```
 
 ### 🔄 "Rotating Peg Short" — Thu, 7–15s + poll  (*Inflation Receipt* on print weeks)
@@ -144,14 +170,30 @@ POLL     (sticker): "Did your [category] shrink too? 👆 yes / 👇 no."
 > when the next print lands. Remaining groups (fruits & veg, "other food at home") are spares for a
 > second CPI week or to swap by season.
 
-### 🚨 "Breaking Shrink" — Fri (reactive ONLY — a trigger, not a calendar slot)
-> Rides a live news moment to prove the database is *ahead* of the headlines · 15–40s. If nothing
-> breaks, Friday rests (no forced post).
+### 🧾 "Receipt of the Week" — Fri, 15–30s (with an evidence-tag review as the built-in fallback)
+> The reliable replacement for the old reactive-only *Breaking Shrink* slot. **Lead with the freshest
+> noteworthy entry added to the DB that week** — "here's the one that just landed." If the week's new
+> shrinks are unremarkable, **fall back to an evidence-tag review** (so Friday always has fuel and never
+> rests). Recency-driven, visually proof-rich (tagged claims are image-backed and admin-reviewed), and
+> independent of outside news.
 ```
-TRIGGER (0–5s):  "This just hit the news —" (name the event/brand)
-RECEIPT (5–20s): "so I pulled our data." — what the DB already had on file
-TAKE    (20–40s): the opinion + "we documented this [N] months before it made headlines."
+RECEIPT (0–6s):  "This week's receipt:" — the freshest/most notable new entry → before/after + −[X]%
+WHY     (6–18s): one line on what makes it notable (magnitude, brand, or the trick) + the source
+CTA     (18–28s): "New receipts every week. Search it free at fullcarts.org."
 ```
+**Fallback — Evidence-Tag Review** (run when no single shrink is noteworthy enough): pull the freshest
+claims under **one rotating tag** and rundown them (`RundownChip` ×N) with the real tagged photos. The
+tags (live counts; re-pull each batch): **So Smol** (218, extreme cuts) · **Spot the Difference** (150,
+before/after) · **Slack Fill** (185, air) · **Skimpflation** (128, recipe) · **Paper Thin** (49) ·
+**Stretchflation** (11, price up same size). Source: `claims.evidence_tags`, `status='evidence'` only.
+```
+THEME  (0–5s):  "This week in [So Smol / Slack Fill / …]:" — name the tag + what it means
+RUNDOWN (5–22s): 3–4 fresh tagged finds, photo + −[X]% each
+CTA    (22–28s): "Caught one in the wild? Tag me. fullcarts.org"
+```
+> **Genuine breaking news still wins:** if a real story hits a brand we cover, it can **preempt any
+> day's slot** with the "we documented this [N] months before the headline" receipt — it's now a
+> floating wildcard, not a scheduled slot that sits empty.
 
 ### 👨 "Why I Built This" — Sun, 1-min vlog (the persona — trust, NOT data)
 > The tired-dad credibility engine · 45–75s · talk-to-camera, minimal graphics. **Topic backlog of 52
