@@ -21,6 +21,7 @@ human's face or a GUI app — and enforcing the rules so nothing ships off-brand
 - `docs/content/carousel-formats.md` — the shelf of **repeatable carousel templates** (Guess the Cut, Monthly Shrink List, Tier List, CPI-vs-Reality, …): per-format spec + SQL + composition id + gate notes. Pick one off the shelf; don't improvise the structure.
 - `docs/content/content-angles.md` — what & how to talk: pillars, contrarian takes, the Emotional Lock-In bank
 - `docs/content/visual-identity.md` — signature style: fonts, color, red-highlight captions, illustration boundary
+- `docs/content/music-beds.md` — the six-lane royalty-free **soundboard** mapped to every slot + carousel series, plus the copyright rules for a brand that cross-posts. Assign a lane per pick in the packet; royalty-free bed on the master, trending sound is a native per-platform discovery add-on only.
 - `references/hooks.md` — the Hook System (The Snap 3-beat + Emotional Lock-In + the 4-mistake fixes)
 - `docs/content/profile-copy.md` — bios + pinned posts
 

@@ -154,6 +154,13 @@ constant SFX. This protects the credible/documentary tone — the opposite of bu
 **Carousel videos** can carry a **looped background bed** (`CarouselVideo` `music` prop → `<Audio loop>`),
 mixed low (~0.22) so a VO/captions sit on top — keep it tense/minimal, on the "calm data terminal" side.
 For **Shorts specifically**, adding trending audio *in-app* also boosts discovery, so a baked bed is optional.
+
+> **Which bed, and the copyright rules:** `music-beds.md` — a six-lane royalty-free soundboard mapped to
+> every weekly slot + carousel series. The talking-head *Caught:* hero stays on original audio + the
+> signature SFX above (with at most a low lane-1/6 underbed, −18 dB); the mood lanes (upbeat / emotional /
+> sadder / lo-fi) carry the carousels, vlog, and entertainment cuts. Beds are royalty-free + licensed so
+> the cross-posted master is legal everywhere (incl. X + ads); trending songs are a native per-platform
+> discovery add-on only — their in-app license does not survive a cross-post.
 **Source:** generate the signature ones (CAUGHT stamp, counter) in **ElevenLabs SFX** (text-to-SFX);
 use Captions App's library for the rest. Keep SFX ~−12 to −18 dB under the voice.
 
