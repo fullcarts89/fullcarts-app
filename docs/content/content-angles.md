@@ -121,13 +121,27 @@ that lands on **two or more** pegs at once is the highest-convergence pick and g
 | **G** | **CEO said the quiet part** | "Their own CEO said you'd accept a smaller pack — here's them being right." | earnings-call quote (real, sourced) + DB cut | trace the exact quote first. |
 | **H** | **Accountability — "it almost never comes back"** | "1 in 100 shrinks ever got restored. I keep the list of the 99." | DB restoration rate (~23 / 2,228) | strong standalone kicker; pairs with any episode. |
 | **I** | **Reactive newsjack** ("Breaking Shrink") | "This is blowing up today — I logged it [N] months ago. Here's the entry." | `news_brand_mentions` spike + the matching DB entry | trigger-only (no forced post); proves the DB is *ahead* of headlines. |
+| **J** | **Skimpflation / recipe downgrade** | "Didn't shrink it — cheapened it. Same box, worse inside." | `claims.evidence_tags = 'Skimpflation'` (128 tagged) — see taxonomy note below | image-backed, recent; use **status='evidence'** rows (admin-reviewed), skip `pending`. The recipe/size fact traces to the claim + its raw_item photo (Bucket-1). |
 
 *(Macro **CPI/USDA prints** are already a standing newsjack trigger in the operator brief — see
 `references/operator-loop.md` Step 2 — and feed the "Inflation Receipt" format in `series.md`.)*
 
-**Not yet data-ready:** *skimpflation / recipe-downgrade* ("didn't shrink it — cheapened it") is a real
-future peg, but `published_changes.skimp_score` is empty today. Don't build episodes on it until the
-`promote_skimpflation` path is populated.
+**The evidence-tag taxonomy is a whole content seam** (set at claim review, lives in `claims.evidence_tags`,
+surfaced on the `/admin/claims` Evidence tab). Each tag is a ready-made angle and maps cleanly onto the
+**"How They Hid It"** series in `series.md`:
+
+| Tag | Claims | Angle / "How They Hid It" technique |
+|---|---|---|
+| So Smol | 218 | extreme shrink reveal |
+| Slack Fill | 185 | "same box, less inside" (air/slack-fill) |
+| Spot the Difference | 150 | before/after side-by-side |
+| **Skimpflation** | 128 | recipe downgrade (peg **J**) |
+| Paper Thin | 49 | thinner / lighter (sheets, bars) |
+| Not as Advertised | 13 | claim/label mismatch |
+| Stretchflation | 11 | price up, same size |
+
+> **Note:** `published_changes.skimp_score` is a *separate, unpopulated* column — skimpflation is **not**
+> tracked there. The live signal is `claims.evidence_tags`. (Re-pull tag counts each batch; they grow.)
 
 ---
 
