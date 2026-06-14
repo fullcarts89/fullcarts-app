@@ -232,3 +232,5 @@ fallback/filler that still stays on-brand. Least differentiated, so secondary to
 - **Gates:** the three gates still apply to every episode (rules / claims / evidence).
 - **Operator:** the `fullcarts-content` skill assigns each weekly pick to a series and keeps the
   cold-open + structure consistent.
+- **Music:** the operator also assigns a **music lane** per slot/series from `music-beds.md` (royalty-free
+  bed for the cross-posted master; trending sound is a native per-platform discovery add-on only).

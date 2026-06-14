@@ -30,15 +30,20 @@ story, engage.
 
 ## The weekly schedule (TikTok-led, cross-post Reels; IG for carousels/stories)
 
-| Day | Format | FullCarts content | Pillar | Effort |
-|---|---|---|---|---|
-| **Mon** | ≤25s reel | **Shrink Check** — short single-product spotlight, rotates 4 treatments (Guess the Cut / Do the Math / Then vs Now / Same Price, Less Stuff) | Reveal | Medium |
-| **Tue** | Carousel + Q&A stories | Data carousel (5 Stealth Shrinks / Before-After); stories: "comment a product, I'll check the DB" | Data + Engagement | Low-Med |
-| **Wed** | 1-min **signature series** | **THE flagship *Caught:* episode** (full SRT-synced composite) | Series anchor | **Hero** |
-| **Thu** | ~30–45s reel + polls | **The Take** — opinion/commentary sparked by a peg (`content-angles.md` §5–6); the rant / prediction / call. CPI read becomes the take on print weeks | Opinion | Low-Med |
-| **Fri** | 15–30s | **Receipt of the Week** — freshest notable new entry; falls back to an evidence-tag review (So Smol / Spot the Difference / …) on quiet weeks | Newsjack | Low |
-| **Sat** | Carousel | Tier List / Worst Offenders / By the Numbers | Rankings | Low-Med |
-| **Sun** | 1-min vlog-style | The **persona**: "tired dad" BTS, "how I verify a claim," why I built it | Personal | Medium |
+| Day | Format | FullCarts content | Pillar | Effort | Music bed |
+|---|---|---|---|---|---|
+| **Mon** | ≤25s reel | **Shrink Check** — short single-product spotlight, rotates 4 treatments (Guess the Cut / Do the Math / Then vs Now / Same Price, Less Stuff) | Reveal | Medium | Lane 1 / 3 (per treatment) |
+| **Tue** | Carousel + Q&A stories | Data carousel (5 Stealth Shrinks / Before-After); stories: "comment a product, I'll check the DB" | Data + Engagement | Low-Med | Lane 1 / 3 (per series) |
+| **Wed** | 1-min **signature series** | **THE flagship *Caught:* episode** (full SRT-synced composite) | Series anchor | **Hero** | Original audio + SFX (low 1/6 underbed) |
+| **Thu** | ~30–45s reel + polls | **The Take** — opinion/commentary sparked by a peg (`content-angles.md` §5–6); the rant / prediction / call. CPI read becomes the take on print weeks | Opinion | Low-Med | Lane 6 Newsjack |
+| **Fri** | 15–30s | **Receipt of the Week** — freshest notable new entry; falls back to an evidence-tag review (So Smol / Spot the Difference / …) on quiet weeks | Newsjack | Low | Lane 6 Newsjack |
+| **Sat** | Carousel | Tier List / Worst Offenders / By the Numbers | Rankings | Low-Med | Lane 1 / 6 (per series) |
+| **Sun** | 1-min vlog-style | The **persona**: "tired dad" BTS, "how I verify a claim," why I built it | Personal | Medium | Lane 5 Day in the life |
+
+> **Music beds + copyright** are specced in `music-beds.md` — a six-lane royalty-free soundboard mapped
+> to every slot above + the carousel series, plus the rules for a *brand* account that cross-posts (the
+> in-app trending-sound license does **not** survive a cross-post; the master always uses a royalty-free
+> bed we license once). The "Music bed" column references those lanes.
 
 Only **Wed is a hero**; Mon/Sun are medium (mostly talk-to-camera); Tue/Thu/Sat/Fri + stories are light.
 Maps to the content mix (educational / newsjack / personal / entertainment) and every pillar gets a slot.
