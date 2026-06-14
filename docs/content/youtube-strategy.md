@@ -47,7 +47,10 @@ Start with **#1** — lowest effort (screen-record + VO), highest search compoun
 
 **Cadence:** 1/month to start (sustainable with a day job). Pick the brand/category off the same
 convergence brief that feeds the Wed *Caught:* — so the long-form is the *deep* version of a topic the
-Shorts already teased. Scale toward 2×/month only if retention holds.
+Shorts already teased. **Run the long-form pick through the full Convergence Peg Library
+(`content-angles.md` §5) too** — all peg types, not just commodity; the deep-dive is the perfect place
+to stack multiple pegs (e.g. parent-company convergence + record profits + the macro chart). Scale
+toward 2×/month only if retention holds.
 
 ---
 
