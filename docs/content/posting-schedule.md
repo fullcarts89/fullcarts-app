@@ -32,29 +32,30 @@ story, engage.
 
 | Day | Format | FullCarts content | Pillar | Effort |
 |---|---|---|---|---|
-| **Mon** | 30s reel | A *Caught:* reveal — one product, the Snap + a quick overlay | Reveal | Medium |
+| **Mon** | ≤25s reel | **Shrink Check** — short single-product spotlight, rotates 4 treatments (Guess the Cut / Do the Math / Then vs Now / Same Price, Less Stuff) | Reveal | Medium |
 | **Tue** | Carousel + Q&A stories | Data carousel (5 Stealth Shrinks / Before-After); stories: "comment a product, I'll check the DB" | Data + Engagement | Low-Med |
 | **Wed** | 1-min **signature series** | **THE flagship *Caught:* episode** (full SRT-synced composite) | Series anchor | **Hero** |
 | **Thu** | 7–15s reel + polls | **Rotating peg short** — a different peg each week (`content-angles.md` §5); CPI "Inflation Receipt" only on the print week | Newsjack | Low |
-| **Fri** | Break / short | Rest, or a reactive newsjack if news breaks | Newsjack | Low/None |
+| **Fri** | 15–30s | **Receipt of the Week** — freshest notable new entry; falls back to an evidence-tag review (So Smol / Spot the Difference / …) on quiet weeks | Newsjack | Low |
 | **Sat** | Carousel | Tier List / Worst Offenders / By the Numbers | Rankings | Low-Med |
 | **Sun** | 1-min vlog-style | The **persona**: "tired dad" BTS, "how I verify a claim," why I built it | Personal | Medium |
 
 Only **Wed is a hero**; Mon/Sun are medium (mostly talk-to-camera); Tue/Thu/Sat/Fri + stories are light.
 Maps to the content mix (educational / newsjack / personal / entertainment) and every pillar gets a slot.
 
-> **Locked slot formats:** the repeatable video templates behind each slot — *Caught Slipping* (Mon),
-> *Caught:* (Wed hero), *Rotating Peg Short* (Thu — *Inflation Receipt* on CPI-print weeks),
-> *Breaking Shrink* (Fri reactive), *Why I Built This* (Sun vlog) — are specced in `series.md`. The Sun
-> vlog has a 52-topic backlog in `vlog-ideas.md`.
+> **Locked slot formats:** the repeatable video templates behind each slot — *Shrink Check* (Mon,
+> rotates 4 treatments), *Caught:* (Wed hero), *Rotating Peg Short* (Thu — *Inflation Receipt* on
+> CPI-print weeks), *Receipt of the Week* (Fri — evidence-tag review fallback), *Why I Built This*
+> (Sun vlog) — are specced in `series.md`. Genuine breaking news is a floating wildcard that can preempt
+> any day. The Sun vlog has a 52-topic backlog in `vlog-ideas.md`.
 
 ### Effort tiers
 - **Hero** (~2–3 hrs): the Wed *Caught:* — full pipeline (film + SRT + composite).
-- **Medium**: Mon reveal, Sun vlog — talk-to-camera, minimal/no graphics.
+- **Medium**: Mon *Shrink Check*, Sun vlog — talk-to-camera, minimal/no graphics.
 - **Light** (auto/instant): carousels (operator-rendered from DB), hot-takes (talk + in-app captions), stories (native).
 
 ### Phased ramp (don't start at 7 days)
-- **Phase 1 (sustainable):** Wed hero + Mon reveal + Sun vlog + one carousel (Tue *or* Sat) + stories when you can.
+- **Phase 1 (sustainable):** Wed hero + Mon *Shrink Check* + Sun vlog + one carousel (Tue *or* Sat) + stories when you can.
 - **Phase 2 (daily):** add Thu hot-takes, the 2nd carousel, daily stories, trial reels for hook-testing.
 
 ### Stories (the low-effort glue, IG-led)
