@@ -110,18 +110,25 @@ SNAP  (10–22s): drop −[X]% overlay + per-oz price — "Same price. More mone
 TAG   (22–30s): "It's in the database. Free. Link in bio."
 ```
 
-### 🧾 "Inflation Receipt" — Thu, 7–15s + poll
-> The signature "official inflation vs. the hidden cut" drumbeat · 7–15s. **Monthly trigger, weekly
-> slot:** BLS releases CPI once a month, but one print is a *basket* of category indexes — so stretch
-> the single report across the month, **one CPI food-at-home category per week**, same format each time.
-> Pulls the same category data as **Carousel Series #3 ("Official Inflation vs. Reality")** — one query,
-> two formats.
+### 🔄 "Rotating Peg Short" — Thu, 7–15s + poll  (*Inflation Receipt* on print weeks)
+> **Thursday rotates a different peg every week** (`content-angles.md` §5) so the slot never fatigues —
+> one week a parent-company convergence, the next a CEO-quote, then record-profits, skimpflation,
+> tariffs, etc. Pick the freshest/highest-convergence peg that week and cut it to 7–15s. **A weekly CPI
+> receipt gets old fast** (the headline is only "breaking" on print day), so **reserve the *Inflation
+> Receipt* format below for the actual CPI print week** — or for a deliberate "this is in the news right
+> now" episode. The pegs are simply more interesting than a monthly index, so they carry the other weeks.
+
+#### The *Inflation Receipt* (CPI-print-week variant)
+> The signature "official inflation vs. the hidden cut" beat · 7–15s. **Run it the week the BLS CPI
+> print lands** (freshest newsjack punch). One print is a *basket* of category indexes; if you want a
+> second CPI-flavored week, pick a different food-at-home category. Pulls the same category data as
+> **Carousel Series #3 ("Official Inflation vs. Reality")** — one query, two formats.
 ```
 HEADLINE (0–4s):  "CPI says [category] is up [X]% this year."
 COUNTER  (4–12s): "Here's what they don't count: [Product] lost [Y]% of its size. Same shelf price."
 POLL     (sticker): "Did your [category] shrink too? 👆 yes / 👇 no."
 ```
-**Monthly rotation (CPI food-at-home has 6 groups → enough for 4 weekly slots without repeating):**
+**CPI category rotation (for whichever weeks you choose to run an Inflation Receipt — CPI food-at-home has 6 groups):**
 
 | Thu | Angle | Pairing |
 |---|---|---|
@@ -130,10 +137,12 @@ POLL     (sticker): "Did your [category] shrink too? 👆 yes / 👇 no."
 | **Wk 3** | **dairy & related** | official +[X]% **+** the box that also got smaller |
 | **Wk 4** | **meats/eggs** *or* **nonalcoholic beverages** | official +[X]% **+** the FullCarts receipt |
 
-> *Honesty note:* the **newsjack punch is strongest Wk 1** (headline is fresh); Wks 2–4 are evergreen
-> category receipts — same format, less "breaking" energy. That's fine — consistency beats novelty here.
-> Re-pull fresh numbers when the next print lands. Remaining groups (fruits & veg, "other food at home")
-> are spares for a 5-Thursday month or to swap by season.
+> *Honesty note:* the **newsjack punch is strongest Wk 1** (headline is fresh); later-week category
+> receipts are evergreen but carry less "breaking" energy — **which is exactly why the Thursday slot
+> now rotates pegs instead of running CPI every week.** Run the Inflation Receipt on the print week (and
+> optionally one follow-up category week), and let the peg library fill the rest. Re-pull fresh numbers
+> when the next print lands. Remaining groups (fruits & veg, "other food at home") are spares for a
+> second CPI week or to swap by season.
 
 ### 🚨 "Breaking Shrink" — Fri (reactive ONLY — a trigger, not a calendar slot)
 > Rides a live news moment to prove the database is *ahead* of the headlines · 15–40s. If nothing
