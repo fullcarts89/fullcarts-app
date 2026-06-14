@@ -35,7 +35,7 @@ story, engage.
 | **Mon** | 30s reel | A *Caught:* reveal — one product, the Snap + a quick overlay | Reveal | Medium |
 | **Tue** | Carousel + Q&A stories | Data carousel (5 Stealth Shrinks / Before-After); stories: "comment a product, I'll check the DB" | Data + Engagement | Low-Med |
 | **Wed** | 1-min **signature series** | **THE flagship *Caught:* episode** (full SRT-synced composite) | Series anchor | **Hero** |
-| **Thu** | 7–15s reel + polls | Quick hot-take/newsjack; polls ("did your box shrink? Y/N") | Newsjack | Low |
+| **Thu** | 7–15s reel + polls | **Rotating peg short** — a different peg each week (`content-angles.md` §5); CPI "Inflation Receipt" only on the print week | Newsjack | Low |
 | **Fri** | Break / short | Rest, or a reactive newsjack if news breaks | Newsjack | Low/None |
 | **Sat** | Carousel | Tier List / Worst Offenders / By the Numbers | Rankings | Low-Med |
 | **Sun** | 1-min vlog-style | The **persona**: "tired dad" BTS, "how I verify a claim," why I built it | Personal | Medium |
@@ -44,8 +44,9 @@ Only **Wed is a hero**; Mon/Sun are medium (mostly talk-to-camera); Tue/Thu/Sat/
 Maps to the content mix (educational / newsjack / personal / entertainment) and every pillar gets a slot.
 
 > **Locked slot formats:** the repeatable video templates behind each slot — *Caught Slipping* (Mon),
-> *Caught:* (Wed hero), *Inflation Receipt* (Thu), *Breaking Shrink* (Fri reactive), *Why I Built This*
-> (Sun vlog) — are specced in `series.md`. The Sun vlog has a 52-topic backlog in `vlog-ideas.md`.
+> *Caught:* (Wed hero), *Rotating Peg Short* (Thu — *Inflation Receipt* on CPI-print weeks),
+> *Breaking Shrink* (Fri reactive), *Why I Built This* (Sun vlog) — are specced in `series.md`. The Sun
+> vlog has a 52-topic backlog in `vlog-ideas.md`.
 
 ### Effort tiers
 - **Hero** (~2–3 hrs): the Wed *Caught:* — full pipeline (film + SRT + composite).
