@@ -101,6 +101,11 @@ These are the **video formats** behind the weekly schedule (`posting-schedule.md
 **fixed**; only the `[bracketed variables]` change week to week — that's what keeps prep light and
 the series recognizable. "Caught:" (above) is the Wed hero. The four below fill the other slots.
 
+> **Two rules across ALL series:** (1) the **Convergence Peg Library** (`content-angles.md` §5) is the
+> idea engine for every slot — any peg, any length; (2) **every video carries a POV/"so-what" beat**
+> (`content-angles.md` §6) — factual on the data, opinionated on the behavior. In *Caught:* that's the
+> payoff/kicker; in *Shrink Check* the closing line; in *The Take* it's the whole point.
+
 ### ⚡ "Shrink Check" — Mon, short single-product spotlight (≤25s, **rotates 4 treatments**)
 > The fast counterpart to the Wed hero: **always one product, always short, but a different *treatment*
 > each week** so it never reads as a mini-*Caught:*. Where Wednesday tells the full story (brand on
@@ -136,39 +141,24 @@ THEN  (6–15s): "This is what it used to be." → before/after overlay + −[X]
 SNAP (0–12s): product → "[before] → [after], −[X]%, same price." → "It's in the database. Free."
 ```
 
-### 🔄 "Rotating Peg Short" — Thu, 7–15s + poll  (*Inflation Receipt* on print weeks)
-> **Thursday rotates a different peg every week** (`content-angles.md` §5) so the slot never fatigues —
-> one week a parent-company convergence, the next a CEO-quote, then record-profits, skimpflation,
-> tariffs, etc. Pick the freshest/highest-convergence peg that week and cut it to 7–15s. **A weekly CPI
-> receipt gets old fast** (the headline is only "breaking" on print day), so **reserve the *Inflation
-> Receipt* format below for the actual CPI print week** — or for a deliberate "this is in the news right
-> now" episode. The pegs are simply more interesting than a monthly index, so they carry the other weeks.
-
-#### The *Inflation Receipt* (CPI-print-week variant)
-> The signature "official inflation vs. the hidden cut" beat · 7–15s. **Run it the week the BLS CPI
-> print lands** (freshest newsjack punch). One print is a *basket* of category indexes; if you want a
-> second CPI-flavored week, pick a different food-at-home category. Pulls the same category data as
-> **Carousel Series #3 ("Official Inflation vs. Reality")** — one query, two formats.
+### 🎙️ "The Take" — Thu, ~30–45s (the opinion/commentary slot — the moat)
+> **Information is cheap; the take is the moat** (`content-angles.md` §6). A **peg** (`content-angles.md`
+> §5) is the springboard, but this piece is your *perspective* — the rant, the prediction, the call —
+> not just the receipt. It runs a touch longer than the other shorts because **opinion needs room to
+> breathe.** The data still anchors it (always show the receipt), but the *job* is your read on what it
+> means. *(Pegs fuel every slot now, in any length — this is just the slot where opinion leads.)*
 ```
-HEADLINE (0–4s):  "CPI says [category] is up [X]% this year."
-COUNTER  (4–12s): "Here's what they don't count: [Product] lost [Y]% of its size. Same shelf price."
-POLL     (sticker): "Did your [category] shrink too? 👆 yes / 👇 no."
+HOOK   (0–5s):   the take, stated flat — "The 'New Look!' sticker is the biggest tell in the store."
+RECEIPT(5–18s):  the data that earns the take — a real DB entry / source screenshot (anchor it)
+TAKE   (18–38s): your perspective — why it matters, who they're betting on, what you'd do
+CTA    (38–45s): "Agree? 👇 Follow for the take they won't give you. fullcarts.org"
 ```
-**CPI category rotation (for whichever weeks you choose to run an Inflation Receipt — CPI food-at-home has 6 groups):**
-
-| Thu | Angle | Pairing |
-|---|---|---|
-| **Wk 1** (release week) | **the headline** | topline "food is up [X]% overall" — freshest newsjack punch |
-| **Wk 2** | **cereals & bakery** | official +[X]% **+** the hidden shrink on top |
-| **Wk 3** | **dairy & related** | official +[X]% **+** the box that also got smaller |
-| **Wk 4** | **meats/eggs** *or* **nonalcoholic beverages** | official +[X]% **+** the FullCarts receipt |
-
-> *Honesty note:* the **newsjack punch is strongest Wk 1** (headline is fresh); later-week category
-> receipts are evergreen but carry less "breaking" energy — **which is exactly why the Thursday slot
-> now rotates pegs instead of running CPI every week.** Run the Inflation Receipt on the print week (and
-> optionally one follow-up category week), and let the peg library fill the rest. Re-pull fresh numbers
-> when the next print lands. Remaining groups (fruits & veg, "other food at home") are spares for a
-> second CPI week or to swap by season.
+**Rotates through opinion-first angles** (§6): the **Take/rant** · **Predictions** ("who shrinks next, and
+why") · **The Defense / The Call** ("this one's actually fine" / "this is the worst kind") · the **§2
+contrarian comebacks** (esp. visible-vs-hidden). On a **CPI print week**, the macro read becomes the
+take ("groceries 'only' rose X% — here's what that number hides," over a real FRED screenshot).
+> ⚠️ **Guardrail (§6):** factual on the numbers, opinionated on the *behavior* — corporate tactics +
+> consumer advocacy ("it's not you"). **Never** partisan politics or monetary-policy lectures.
 
 ### 🧾 "Receipt of the Week" — Fri, 15–30s (with an evidence-tag review as the built-in fallback)
 > The reliable replacement for the old reactive-only *Breaking Shrink* slot. **Lead with the freshest

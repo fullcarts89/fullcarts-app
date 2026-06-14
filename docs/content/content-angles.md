@@ -99,10 +99,12 @@ unspoken thoughts. Name one *for* them and they feel seen → locked in. Then re
 
 ## 5. The Convergence Peg Library (run EVERY candidate through ALL of these)
 
-**This is a standing checklist, not a menu.** Every time we brainstorm video ideas — weekly shorts
-*and* the monthly long-form — run each candidate datapoint against **all** peg types below, not just
-the obvious one. The Folgers debut happened to be a *commodity* story; that's only one peg. A datapoint
-that lands on **two or more** pegs at once is the highest-convergence pick and goes first.
+**This is the ideation engine for the WHOLE channel, not a single slot.** The pegs fuel **every series
+and format** — *Caught:* heroes, *Shrink Check* shorts, *The Take* opinion pieces, carousels, long-form
+— and the same peg can be delivered at whatever length fits (a 12s stat-drop or a 60s episode). Every
+time we brainstorm, run each candidate datapoint against **all** peg types below, not just the obvious
+one. The Folgers debut happened to be a *commodity* story; that's only one peg. A datapoint that lands
+on **two or more** pegs at once is the highest-convergence pick and goes first.
 
 > **Gate (read before using any peg):** the FullCarts **size figure** is the only thing pre-cleared
 > (it traces to `approved-claims.md` / a fresh DB pull). **Every external fact a peg leans on —
@@ -123,8 +125,10 @@ that lands on **two or more** pegs at once is the highest-convergence pick and g
 | **I** | **Reactive newsjack** ("Breaking Shrink") | "This is blowing up today — I logged it [N] months ago. Here's the entry." | `news_brand_mentions` spike + the matching DB entry | trigger-only (no forced post); proves the DB is *ahead* of headlines. |
 | **J** | **Skimpflation / recipe downgrade** | "Didn't shrink it — cheapened it. Same box, worse inside." | `claims.evidence_tags = 'Skimpflation'` (128 tagged) — see taxonomy note below | image-backed, recent; use **status='evidence'** rows (admin-reviewed), skip `pending`. The recipe/size fact traces to the claim + its raw_item photo (Bucket-1). |
 
-*(Macro **CPI/USDA prints** are already a standing newsjack trigger in the operator brief — see
-`references/operator-loop.md` Step 2 — and feed the "Inflation Receipt" format in `series.md`.)*
+*(Macro **CPI/USDA prints** are a standing newsjack trigger — see `references/operator-loop.md` Step 2.
+On a print week the CPI angle (the old "Inflation Receipt") is just another peg: drop it into whatever
+slot fits that week — a *Shrink Check* "Do the Math," a *Caught:* hero, or *The Take* — rather than a
+dedicated format.)*
 
 **The evidence-tag taxonomy is a whole content seam** (set at claim review, lives in `claims.evidence_tags`,
 surfaced on the `/admin/claims` Evidence tab). Each tag is a ready-made angle and maps cleanly onto the
@@ -145,10 +149,39 @@ surfaced on the `/admin/claims` Evidence tab). Each tag is a ready-made angle an
 
 ---
 
+## 6. The Opinion Layer (POV) — the moat
+
+**Information is cheap; the opinion is the moat.** Anyone can scrape a size cut. No one can copy *your
+read* on it. So the strategy is a deliberate arc:
+
+> **Data earns the trust. Opinion builds the relationship.** Lead with receipts so no one can dismiss
+> you — then layer in takes so people follow *you*, not just "a shrinkflation account." Over time the
+> data becomes the *backing* for the opinion they came for.
+
+**The standard POV / "so-what" beat (bake into EVERY series).** After the receipt, never stop at the
+number — add one line of *judgment*. Not "it shrank 12%," but *"…and this is the sneakiest kind, because
+they redesigned the bottle so your eye can't catch it."* In `series.md` this is the **payoff/kicker**
+beat in *Caught:*, the closing line in *Shrink Check*, and the whole point of *The Take*.
+
+**Opinion-first formats (the home is Thursday's *The Take*, but they can run anywhere):**
+- **The Take / rant** — "The 'New Look!' sticker is the #1 tell — here's why."
+- **Predictions** — "Who I think shrinks next, and why." (A forecast brings people back to check you were right.)
+- **The Defense / The Call** — "This one's actually fine" / "This is the worst kind there is." Judgment is shareable.
+- **The contrarian comebacks in §2** are pre-loaded opinions — use them as hooks (esp. the visible-vs-hidden line).
+
+> **★ The one guardrail — be factual on the numbers, opinionated on the behavior.** Your takes are about
+> *corporate tactics* and *consumer advocacy* (the "it's not you" spine, §4). **Never** partisan politics
+> or monetary-policy lectures (§2) — that torches the credibility the data buys you. The data stays
+> three-bucket clean; the *interpretation* is where the personality lives.
+
+---
+
 ## How the operator uses this
 - Pick the **datapoint** (convergence brief) → **run it through the full Convergence Peg Library (§5),
   scoring every peg, not just commodity** → pick the **angle** (pillar + a contrarian take from §2)
-  → pick the **feeling** to name (§4) for the lock-in beat → write the hook as a **Snap** (`hooks.md`).
+  → pick the **feeling** to name (§4) for the lock-in beat → **add the POV/so-what beat (§6)** →
+  write the hook as a **Snap** (`hooks.md`).
 - **A candidate that hits ≥2 pegs ranks above a single-peg one** — that's what "convergence" means.
+- **Every video carries a take** (§6): factual on the data, opinionated on the behavior.
 - Bonus prompt from the framework: *"what do I hope they feel / do after watching?"* — for us:
   *seen, less alone, a little angry, and armed (they'll check price-per-unit and search fullcarts.org).*
