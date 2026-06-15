@@ -12,5 +12,5 @@
   "source": "BLS R-CPI-SC · FRED food CPI",
   "startDelay": 6,
   "sweepFrames": 80,
-  "music": { "src": "audio/bg-loop.mp3", "volume": 0.33 }
+  "music": { "src": "audio/bg-loop.mp3", "volume": 0.165 }
 }

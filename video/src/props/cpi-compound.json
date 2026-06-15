@@ -13,5 +13,5 @@
   "accent": "red",
   "startDelay": 6,
   "sweepFrames": 82,
-  "music": { "src": "audio/bg-loop.mp3", "volume": 0.33 }
+  "music": { "src": "audio/bg-loop.mp3", "volume": 0.165 }
 }
