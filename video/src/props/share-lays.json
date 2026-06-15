@@ -7,5 +7,6 @@
   "unit": "g",
   "pctChange": 38.3,
   "mode": "shrink",
-  "showBrand": false
+  "showBrand": false,
+  "holdSeconds": 12.4
 }

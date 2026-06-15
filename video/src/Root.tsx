@@ -2,7 +2,7 @@ import React from "react";
 import { Composition } from "remotion";
 import { ShrinkOverlay, shrinkOverlaySchema } from "./compositions/ShrinkOverlay";
 import { StatCard, statCardSchema } from "./compositions/StatCard";
-import { RundownChip, rundownChipSchema } from "./compositions/RundownChip";
+import { RundownChip, rundownChipSchema, calcRundownChipMeta } from "./compositions/RundownChip";
 import { SourceFrame, sourceFrameSchema } from "./compositions/SourceFrame";
 import { CaughtTitle, caughtTitleSchema } from "./compositions/CaughtTitle";
 import { Thumbnail, thumbnailSchema } from "./compositions/Thumbnail";
@@ -85,6 +85,7 @@ export const RemotionRoot: React.FC = () => {
         width={W}
         height={H}
         schema={rundownChipSchema}
+        calculateMetadata={calcRundownChipMeta}
         defaultProps={{
           rank: 1,
           brand: "Cadbury",

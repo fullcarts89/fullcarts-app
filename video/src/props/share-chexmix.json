@@ -7,5 +7,6 @@
   "unit": "oz",
   "pctChange": 10,
   "mode": "shrink",
-  "showBrand": false
+  "showBrand": false,
+  "holdSeconds": 7.0
 }

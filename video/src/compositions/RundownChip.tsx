@@ -17,9 +17,17 @@ export const rundownChipSchema = z.object({
   mode: z.enum(["shrink", "restoration"]).default("shrink"),
   // Off for the green-screen review cut — the product photo behind already shows the brand.
   showBrand: z.boolean().default(true),
+  // How long the chip holds on screen (seconds). Set per item to match the VO beat so the
+  // rendered .mov is exactly the right length on the timeline. Omitted → 4s default.
+  holdSeconds: z.number().optional(),
 });
 
 type Props = z.infer<typeof rundownChipSchema>;
+
+// Render each chip to its exact on-screen beat (from the SRT) so it drops straight onto the cut.
+export const calcRundownChipMeta = ({ props }: { props: Props }) => ({
+  durationInFrames: Math.round((props.holdSeconds ?? 4) * 30),
+});
 
 // Compact ranked chip for the "5 things that shrank" rundown. Transparent → render
 // with alpha, one per item, drop each over its product b-roll beat in Captions.
