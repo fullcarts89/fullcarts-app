@@ -7,5 +7,21 @@
     { "src": "cuts/cpi-who.mp4", "kind": "video", "fromSec": 87.5, "toSec": 101, "fit": "cover" },
     { "src": "cuts/cpi-take.mp4", "kind": "video", "fromSec": 109, "toSec": 125, "fit": "cover" },
     { "src": "cuts/cpi-cta.mp4", "kind": "video", "fromSec": 135, "toSec": 149, "fit": "cover" }
+  ],
+  "sfx": [
+    { "src": "audio/sfx/reverse-cymbal-riser.mp3", "atSec": 15.96, "volume": 0.6 },
+    { "src": "audio/sfx/impact.mp3", "atSec": 24.6, "volume": 0.4 },
+    { "src": "audio/sfx/whoosh.mp3", "atSec": 21, "volume": 0.35 },
+    { "src": "audio/sfx/whoosh.mp3", "atSec": 32, "volume": 0.35 },
+    { "src": "audio/sfx/whoosh.mp3", "atSec": 38, "volume": 0.35 },
+    { "src": "audio/sfx/whoosh.mp3", "atSec": 49, "volume": 0.35 },
+    { "src": "audio/sfx/whoosh.mp3", "atSec": 55.5, "volume": 0.35 },
+    { "src": "audio/sfx/whoosh.mp3", "atSec": 78, "volume": 0.35 },
+    { "src": "audio/sfx/whoosh.mp3", "atSec": 87.5, "volume": 0.35 },
+    { "src": "audio/sfx/whoosh.mp3", "atSec": 101, "volume": 0.35 },
+    { "src": "audio/sfx/whoosh.mp3", "atSec": 109, "volume": 0.35 },
+    { "src": "audio/sfx/impact.mp3", "atSec": 116, "volume": 0.45 },
+    { "src": "audio/sfx/whoosh.mp3", "atSec": 125, "volume": 0.35 },
+    { "src": "audio/sfx/whoosh.mp3", "atSec": 135, "volume": 0.35 }
   ]
 }
