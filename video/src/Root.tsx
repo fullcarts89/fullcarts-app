@@ -515,7 +515,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="CpiMechanic"
         component={CpiMechanic}
-        durationInFrames={180}
+        durationInFrames={240}
         fps={FPS}
         width={W}
         height={H}
@@ -527,7 +527,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="CompoundChart"
         component={CompoundChart}
-        durationInFrames={200}
+        durationInFrames={540}
         fps={FPS}
         width={W}
         height={H}
@@ -539,7 +539,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="BudgetShareBars"
         component={BudgetShareBars}
-        durationInFrames={170}
+        durationInFrames={200}
         fps={FPS}
         width={W}
         height={H}

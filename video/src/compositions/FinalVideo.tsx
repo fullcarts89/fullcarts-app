@@ -33,7 +33,7 @@ type OverlayCue = { type: "caught" | "shrink" | "stat" | "rundown" | "source" | 
 // interrupts, and fake "angle change" rehooks from a single take.
 type CamKey = { atSec: number; scale: number; x?: number; y?: number };
 type CaptionCue = { text: string; fromSec: number; toSec: number }; // wrap a word in *asterisks* to red-highlight it
-type CutawayCue = { src: string; kind: "image" | "video"; fromSec: number; toSec: number; fit?: "cover" | "contain" };
+type CutawayCue = { src: string; kind: "image" | "video"; fromSec: number; toSec: number; fit?: "cover" | "contain"; zoom?: number };
 type SfxCue = { src: string; atSec: number; volume?: number };
 
 export type FinalVideoProps = {
@@ -183,6 +183,19 @@ const span = (fromSec: number, toSec: number, fps: number) => ({
   durationInFrames: Math.max(1, Math.round((toSec - fromSec) * fps)),
 });
 
+// Image cutaway with an optional slow Ken Burns zoom (scale 1 → `zoom`) across
+// the cutaway's own duration. Sits on a graphite bg so a contain-fit screenshot
+// (e.g. the CNBC article) letterboxes cleanly instead of cropping the headline.
+const CutawayImage: React.FC<{ src: string; fit: "cover" | "contain"; zoom?: number; durationInFrames: number }> = ({ src, fit, zoom, durationInFrames }) => {
+  const frame = useCurrentFrame();
+  const scale = zoom ? interpolate(frame, [0, durationInFrames], [1, zoom], { extrapolateRight: "clamp" }) : 1;
+  return (
+    <AbsoluteFill style={{ background: theme.color.bg }}>
+      <Img src={staticFile(src)} style={{ ...cover, objectFit: fit, transform: `scale(${scale})` }} />
+    </AbsoluteFill>
+  );
+};
+
 export const FinalVideo: React.FC<FinalVideoProps> = ({ film, fps, captions, overlays, cutaways = [], sfx = [], music, camera }) => (
   <AbsoluteFill style={{ background: theme.color.bg }}>
     <FilmLayer film={film} camera={camera} />
@@ -190,9 +203,7 @@ export const FinalVideo: React.FC<FinalVideoProps> = ({ film, fps, captions, ove
     {cutaways.map((c, i) => (
       <Sequence key={`c${i}`} {...span(c.fromSec, c.toSec, fps)}>
         {c.kind === "image" ? (
-          <AbsoluteFill style={{ background: theme.color.bg }}>
-            <Img src={staticFile(c.src)} style={{ ...cover, objectFit: c.fit ?? "cover" }} />
-          </AbsoluteFill>
+          <CutawayImage src={c.src} fit={c.fit ?? "cover"} zoom={c.zoom} durationInFrames={span(c.fromSec, c.toSec, fps).durationInFrames} />
         ) : (
           <OffthreadVideo src={staticFile(c.src)} style={{ ...cover, objectFit: c.fit ?? "cover" }} />
         )}

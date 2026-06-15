@@ -1,6 +1,7 @@
 {
   "eyebrow": "THE CEILING YOU WON’T CROSS",
-  "ceilingLabel": "$15 box — you’ll never accept it",
+  "ceiling": 20,
+  "ceilingLabel": "$20 box — you’ll never accept it",
   "deflectLabel": "so they shrink the box instead",
   "punch": "shrinkflation is the pressure-release valve",
   "source": "FullCarts · the mechanism",

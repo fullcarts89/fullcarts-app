@@ -1,9 +1,6 @@
 {
   "eyebrow": "WHY THE NUMBER LIES",
-  "price": "SAME PRICE",
-  "shrinkPct": 15,
-  "punch": "the hidden hike the index never sees",
-  "source": "same price · less product = more per ounce",
-  "startDelay": 6,
+  "price": 5.0, "ozBefore": 20, "shrinkPct": 15,
+  "startDelay": 6, "shrinkDelay": 90, "shrinkFrames": 55,
   "music": { "src": "audio/bg-loop.mp3", "volume": 0.165 }
 }
