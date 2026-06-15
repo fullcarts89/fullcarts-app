@@ -94,6 +94,7 @@ export const RemotionRoot: React.FC = () => {
           unit: "g",
           pctChange: 18.9,
           mode: "shrink" as const,
+          showBrand: true,
         }}
       />
 

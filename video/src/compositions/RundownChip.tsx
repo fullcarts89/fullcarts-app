@@ -15,13 +15,15 @@ export const rundownChipSchema = z.object({
   unit: z.string(),
   pctChange: z.number(),
   mode: z.enum(["shrink", "restoration"]).default("shrink"),
+  // Off for the green-screen review cut — the product photo behind already shows the brand.
+  showBrand: z.boolean().default(true),
 });
 
 type Props = z.infer<typeof rundownChipSchema>;
 
 // Compact ranked chip for the "5 things that shrank" rundown. Transparent → render
 // with alpha, one per item, drop each over its product b-roll beat in Captions.
-export const RundownChip: React.FC<Props> = ({ rank, brand, productName, sizeBefore, sizeAfter, unit, pctChange, mode }) => {
+export const RundownChip: React.FC<Props> = ({ rank, brand, productName, sizeBefore, sizeAfter, unit, pctChange, mode, showBrand }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const accent = accentFor(mode);
@@ -63,9 +65,11 @@ export const RundownChip: React.FC<Props> = ({ rank, brand, productName, sizeBef
           {rank}
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: mono, fontSize: 24, letterSpacing: 2, textTransform: "uppercase", color: theme.color.textSecondary }}>
-            {brand}
-          </div>
+          {showBrand && (
+            <div style={{ fontFamily: mono, fontSize: 24, letterSpacing: 2, textTransform: "uppercase", color: theme.color.textSecondary }}>
+              {brand}
+            </div>
+          )}
           <div style={{ fontFamily: headline, fontWeight: 700, fontSize: 44, color: theme.color.textPrimary }}>
             {productName}
           </div>

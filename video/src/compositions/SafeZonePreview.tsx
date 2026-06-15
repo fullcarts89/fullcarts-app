@@ -48,7 +48,7 @@ const Overlay: React.FC<{ which: Props["which"] }> = ({ which }) => {
     case "rundown":
       return (
         <RundownChip rank={1} brand="Cadbury" productName="Freddo Faces" sizeBefore={122} sizeAfter={99}
-          unit="g" pctChange={18.9} mode="shrink" />
+          unit="g" pctChange={18.9} mode="shrink" showBrand={true} />
       );
     case "source":
       return <SourceFrame sourceName="ICE Arabica (KC)" url="tradingeconomics.com" asOfDate="Jun 2026" headline="Coffee: −39% from peak" />;

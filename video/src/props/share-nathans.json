@@ -6,5 +6,6 @@
   "sizeAfter": 43,
   "unit": "g",
   "pctChange": 23.2,
-  "mode": "shrink"
+  "mode": "shrink",
+  "showBrand": false
 }

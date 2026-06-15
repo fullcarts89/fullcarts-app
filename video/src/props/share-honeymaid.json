@@ -6,5 +6,6 @@
   "sizeAfter": 19.2,
   "unit": "oz",
   "pctChange": 25,
-  "mode": "shrink"
+  "mode": "shrink",
+  "showBrand": false
 }
