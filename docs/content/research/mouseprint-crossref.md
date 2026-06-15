@@ -194,6 +194,25 @@ Skimpflation channel**, not size events. Verify independently before any write.
 
 ---
 
+## SEEDED 2026-06-15 — 49 pending claims written
+
+The 2024–2026 numeric gaps (49 cases) were seeded as **pending claims** per the go-ahead, each with a
+`raw_items` anchor. They ride the normal approve → promote pipeline but **still need real FullCarts
+evidence to survive review** — mouseprint is a lead, not a citable source. Tagging for identification:
+
+- `claims.extractor_version = 'mouseprint-census-v1'` · `status='pending'` · `confidence={"overall":0.5,"origin":"mouseprint_census"}`
+- `raw_items.source_type='community_tip'` (allowlist-constrained) · `scraper_version='mouseprint-census-v1'` · `raw_payload->>'origin'='mouseprint_census'`
+
+These appear in `/admin/claims` under the pending queue (Community badge). The 2020–2023 gaps were
+**not** seeded (held back as lower-priority). The 12 skimpflation candidates were **not** seeded
+(no clean size pair).
+
+**One-line full reversal** (if you want them gone):
+```sql
+DELETE FROM claims WHERE extractor_version='mouseprint-census-v1';
+DELETE FROM raw_items WHERE scraper_version='mouseprint-census-v1';
+```
+
 ## Claim creation — how (pending go-ahead)
 
 If we green-light creating claims for the gaps, the clean path (no schema change) is the same one the
