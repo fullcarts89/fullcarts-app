@@ -1,0 +1,6 @@
+order,file,in_timecode,in_seconds,hold_seconds,out_timecode,on_screen,change,badge,vo_cue
+1,01_chexmix.png,0:10.80,10.80,7.0,0:17.80,Bold Party Blend,15->13.5 oz,-10%,"15 ounces down to thirteen and a half"
+2,02_tostitos.png,0:20.00,20.00,5.8,0:25.80,Hint of Lime,13->11 oz,-15.4%,"Tostitos hint of lime was 13 ounces"
+3,03_nathans.png,0:27.60,27.60,9.9,0:37.50,Beef Franks (each),56->43 g,-23.2%,"Nathan's Franks still 8 dogs"
+4,04_honeymaid.png,0:39.20,39.20,10.0,0:49.20,Graham Crackers,25.6->19.2 oz,-25%,"Honey Maid graham crackers"
+5,05_lays.png,0:50.20,50.20,12.4,1:02.60,Lay's Classic,235->145 g,-38.3%,"look at this - Lays 235 grams"
