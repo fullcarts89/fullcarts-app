@@ -1,0 +1,10 @@
+{
+  "eyebrow": "WHO A FOOD TAX HITS",
+  "lowLabel": "Lowest-income fifth", "lowPct": 31,
+  "highLabel": "Highest-income fifth", "highPct": 8,
+  "axisMax": 40,
+  "punch": "a hidden food tax isn’t flat — it’s regressive",
+  "source": "Share of income spent on food · BLS CES / USDA ERS (verify on build)",
+  "startDelay": 6,
+  "music": { "src": "audio/bg-loop.mp3", "volume": 0.165 }
+}

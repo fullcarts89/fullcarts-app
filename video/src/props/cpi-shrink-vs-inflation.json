@@ -1,0 +1,16 @@
+{
+  "eyebrow": "SHRINKFLATION TRACKS INFLATION",
+  "data": [
+    { "year": 2020, "downsizings": 157, "inflation": 3.4 },
+    { "year": 2021, "downsizings": 166, "inflation": 3.9 },
+    { "year": 2022, "downsizings": 349, "inflation": 9.9 },
+    { "year": 2023, "downsizings": 344, "inflation": 5.8 },
+    { "year": 2024, "downsizings": 334, "inflation": 2.3 },
+    { "year": 2025, "downsizings": 174, "inflation": 2.8 }
+  ],
+  "caption": "every food-inflation spike → a jump in downsizings",
+  "source": "BLS R-CPI-SC · FRED food CPI",
+  "startDelay": 6,
+  "sweepFrames": 80,
+  "music": { "src": "audio/bg-loop.mp3", "volume": 0.165 }
+}
