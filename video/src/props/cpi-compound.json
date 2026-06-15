@@ -1,0 +1,16 @@
+{
+  "eyebrow": "SAME CART, COMPOUNDED",
+  "base": 1300,
+  "ratePct": 4.2,
+  "years": 10,
+  "prefix": "$",
+  "suffix": "/mo",
+  "rateLabel": "@ 4.2% headline CPI",
+  "baseNote": "avg US family of 4 · today",
+  "extraNote": "+ ~$7,940 / yr — same food",
+  "bait": "that’s the average — what’s yours? ↓ comment it",
+  "source": "USDA Moderate-Cost Food Plan · 4.2% = headline rate",
+  "accent": "red",
+  "startDelay": 6,
+  "sweepFrames": 82
+}

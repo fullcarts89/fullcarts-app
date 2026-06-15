@@ -23,6 +23,11 @@ import { GuessTheCut, guessTheCutSchema } from "./compositions/GuessTheCut";
 import { ItsNotYou, itsNotYouSchema } from "./compositions/ItsNotYou";
 import { CPIvsReality, cpiVsRealitySchema } from "./compositions/CPIvsReality";
 import { CaughtBeforeAfter, caughtBeforeAfterSchema } from "./compositions/CaughtBeforeAfter";
+import { ShrinkVsInflationChart, shrinkVsInflationSchema } from "./compositions/ShrinkVsInflationChart";
+import { CompoundChart, compoundChartSchema } from "./compositions/CompoundChart";
+import { CpiMechanic, cpiMechanicSchema } from "./compositions/CpiMechanic";
+import { BudgetShareBars, budgetShareSchema } from "./compositions/BudgetShareBars";
+import { PriceCeiling, priceCeilingSchema } from "./compositions/PriceCeiling";
 import folgersCut from "./props/folgers-final.json";
 import folgersCutV5 from "./props/folgers-final-v5.json";
 import coffee5 from "./props/coffee-5.json";
@@ -487,6 +492,71 @@ export const RemotionRoot: React.FC = () => {
           pct: 18.9,
           sourceLabel: "Reddit + retailer listing, observed 2023 — 72 pieces of evidence",
         }}
+      />
+
+      {/* ── CPI Take (The Take, newsjack) — animated data assets ──────────────
+          Full-frame opaque → render h264 (.mp4). Each has a `startDelay` (frames)
+          to nudge the reveal onto the VO/SRT, and a `sweepFrames` where the data
+          climbs so the count-up lands on the spoken number. */}
+
+      {/* ① HOOK — the precedent: BLS downsizings vs food inflation, 2022 flagged */}
+      <Composition
+        id="ShrinkVsInflationChart"
+        component={ShrinkVsInflationChart}
+        durationInFrames={180}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={shrinkVsInflationSchema}
+        defaultProps={shrinkVsInflationSchema.parse({})}
+      />
+
+      {/* ② RECEIPT — why CPI misses it: same price, smaller box, +%/oz */}
+      <Composition
+        id="CpiMechanic"
+        component={CpiMechanic}
+        durationInFrames={180}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={cpiMechanicSchema}
+        defaultProps={cpiMechanicSchema.parse({})}
+      />
+
+      {/* ③ COMPOUND — family-of-4 grocery bill compounded @4.2% + comment bait */}
+      <Composition
+        id="CompoundChart"
+        component={CompoundChart}
+        durationInFrames={200}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={compoundChartSchema}
+        defaultProps={compoundChartSchema.parse({})}
+      />
+
+      {/* ④ WHO IT HITS — food as a share of income, bottom vs top (regressive) */}
+      <Composition
+        id="BudgetShareBars"
+        component={BudgetShareBars}
+        durationInFrames={170}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={budgetShareSchema}
+        defaultProps={budgetShareSchema.parse({})}
+      />
+
+      {/* ⑤ TAKE — price climbs to a ceiling it won't cross, deflects to a shrink */}
+      <Composition
+        id="PriceCeiling"
+        component={PriceCeiling}
+        durationInFrames={190}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={priceCeilingSchema}
+        defaultProps={priceCeilingSchema.parse({})}
       />
     </>
   );
