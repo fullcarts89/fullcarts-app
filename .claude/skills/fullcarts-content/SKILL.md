@@ -22,7 +22,7 @@ human's face or a GUI app — and enforcing the rules so nothing ships off-brand
 - `docs/content/content-angles.md` — what & how to talk: pillars, contrarian takes, the Emotional Lock-In bank
 - `docs/content/visual-identity.md` — signature style: fonts, color, red-highlight captions, illustration boundary
 - `docs/content/music-beds.md` — the six-lane royalty-free **soundboard** mapped to every slot + carousel series, plus the copyright rules for a brand that cross-posts. Assign a lane per pick in the packet; royalty-free bed on the master, trending sound is a native per-platform discovery add-on only.
-- `references/hooks.md` — the Hook System (The Snap 3-beat + Emotional Lock-In + the 4-mistake fixes)
+- `references/hooks.md` — the Hook System (The Snap 3-beat + Emotional Lock-In + the 4-mistake fixes); its applied layer is `references/hook-engine.md` — the frame bank that binds 10 proven viral hook frames to real DB fields → ranked, gate-passing candidates
 - `docs/content/profile-copy.md` — bios + pinned posts
 
 ## The automation boundary (what you do vs. what the human does)

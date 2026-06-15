@@ -24,7 +24,7 @@ The whole stack below is just this principle applied tool by tool.
 | Stage | Tool | Role | Notes |
 |---|---|---|---|
 | **Ideation** | **Claude** (via the `fullcarts-content` skill) | Run the brief generator; rank ideas; pull data from the FullCarts DB (Supabase) | Ideation only — never writes the finished post. The convergence detector + 5-rule scorer. |
-| **Scripting** | **Claude** | Draft the full hybrid script (hook→proof→context→payoff→CTA), captions, hashtags per platform | You edit to your voice. Claude proposes; you approve. |
+| **Scripting** | **Claude** | Draft the full hybrid script (hook→proof→context→payoff→CTA), captions, hashtags per platform. Hook is generated with the **Hook Engine** (`references/hook-engine.md`) → ranked candidates + A/B bank | You edit to your voice. Claude proposes; you approve. |
 | **Filming** | **Your phone** | Film the hook + explainer (face, to camera) | The proof is shown as **real before/after image cutaways**, not a held product. Authentic > polished. |
 | **Data viz** | **Remotion** (the `video/` toolkit; Claude renders) | On-brand data overlays: the −12.5%, "32oz → 28oz," the FullCarts step-chart, lower-thirds | The moat, custom and reusable. Template built once (`video/`); feed it data forever. |
 | **Atmosphere b-roll** | **Higgsfield** (MCP) | Bucket-2 connective shots ONLY — abstract intros, mood, metaphor | NEVER fake packaging/charts (Bucket 3). Toggle the AI label. Use `virality_predictor` to gut-check a cut. |

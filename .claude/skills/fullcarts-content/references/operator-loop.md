@@ -58,6 +58,11 @@ in 1 personal. Confirm a CPI/USDA print on the calendar this week → that's an 
 For each pick, draft to the template in `docs/content/first-batch.md`:
 `HOOK (face, 0–3s) → PROOF (real product + FullCarts/source screenshot) → CONTEXT (+ overlay,
 day-job signature on ~1-in-5) → PAYOFF (kicker) → CTA`. Write per-platform captions + 4–6 hashtags.
+
+**Write the hook with the Hook Engine** (`references/hook-engine.md`): fill the slot tokens from the
+brief row, pick lead frames off the selection matrix (signature × peg), bind every blank, snap-check,
+and gate each. Keep the top candidate as the spoken hook and bank the rest as caption hooks + Agent
+Opus A/B variants. A frame that stays a vague open loop after binding is killed, not shipped.
 Read it back as the creator would say it at the store; cut anything stiff.
 
 ## Step 4 — Gate
