@@ -194,18 +194,27 @@ Skimpflation channel**, not size events. Verify independently before any write.
 
 ---
 
-## SEEDED 2026-06-15 — 49 pending claims written
+## SEEDED 2026-06-15 — 99 pending claims written
 
-The 2024–2026 numeric gaps (49 cases) were seeded as **pending claims** per the go-ahead, each with a
-`raw_items` anchor. They ride the normal approve → promote pipeline but **still need real FullCarts
-evidence to survive review** — mouseprint is a lead, not a citable source. Tagging for identification:
+All numeric gaps across the **2020–2026** window (99 cases: 49 from 2024–2026 + 50 from 2020–2023)
+were seeded as **pending claims**, each with a `raw_items` anchor. They ride the normal approve →
+promote pipeline but **still need real FullCarts evidence to survive review** — mouseprint is a lead,
+not a citable source. Tagging for identification:
 
 - `claims.extractor_version = 'mouseprint-census-v1'` · `status='pending'` · `confidence={"overall":0.5,"origin":"mouseprint_census"}`
 - `raw_items.source_type='community_tip'` (allowlist-constrained) · `scraper_version='mouseprint-census-v1'` · `raw_payload->>'origin'='mouseprint_census'`
 
-These appear in `/admin/claims` under the pending queue (Community badge). The 2020–2023 gaps were
-**not** seeded (held back as lower-priority). The 12 skimpflation candidates were **not** seeded
-(no clean size pair).
+**Observed-date rule (per founder):** dates are normalized to the **first month of the post's season**
+using a quarter map — Spring→Jan, Summer→Apr, Fall→Jul, Winter & Year-End→Oct (year from the post
+title; standalone posts bucketed by publish month). Winter-2026 posts are clamped to Jan-2026 to avoid
+future-dating. Result: every `observed_date` lands on a Jan/Apr/Jul/Oct first-of-month, none in the
+future. (`raw_payload.observed_date_rule='season-quarter-map'`.)
+
+These appear in `/admin/claims` under the pending queue (Community badge). A handful of mouseprint
+cases were **excluded** as already-tracked near-matches (e.g. Suave 30→22.5 ≈ our 30→22.7,
+Charmin Super Mega 396→366, Cottonelle Soft 284→268, Dove BW 24→22, Earth's Best 8→7, Kirkland PT
+160→140, Natural Balance 26→24, Quaker oatmeal 10→8, Sparkle 116→110, Twinings 25→20). The 12
+skimpflation candidates were **not** seeded (no clean size pair).
 
 **One-line full reversal** (if you want them gone):
 ```sql
