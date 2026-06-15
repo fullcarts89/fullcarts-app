@@ -1,92 +1,101 @@
 {
   "film": "film/4thjuly.mov",
   "fps": 30,
-  "durationSec": 80.2,
+  "durationSec": 82,
   "captions": [],
   "overlays": [
     {
-      "type": "rundown",
-      "fromSec": 10.8,
+      "type": "hook",
+      "fromSec": 1.6,
+      "toSec": 8.6,
+      "props": {
+        "lines": [
+          "\u2018Party Size\u2019",
+          "is a *lie*"
+        ],
+        "zone": "above",
+        "accent": "red"
+      }
+    },
+    {
+      "type": "shrinkcut",
+      "fromSec": 8.8,
       "toSec": 17.8,
       "props": {
-        "rank": 5,
         "brand": "Chex Mix",
         "productName": "Bold Party Blend",
         "sizeBefore": 15,
         "sizeAfter": 13.5,
         "unit": "oz",
         "pctChange": 10,
-        "mode": "shrink",
-        "showBrand": false,
-        "atTop": true
+        "mode": "shrink"
       }
     },
     {
-      "type": "rundown",
-      "fromSec": 20.0,
+      "type": "shrinkcut",
+      "fromSec": 17.8,
       "toSec": 25.8,
       "props": {
-        "rank": 4,
         "brand": "Tostitos",
         "productName": "Hint of Lime",
         "sizeBefore": 13,
         "sizeAfter": 11,
         "unit": "oz",
         "pctChange": 15.4,
-        "mode": "shrink",
-        "showBrand": false,
-        "atTop": true
+        "mode": "shrink"
       }
     },
     {
-      "type": "rundown",
-      "fromSec": 27.6,
+      "type": "shrinkcut",
+      "fromSec": 25.8,
       "toSec": 37.5,
       "props": {
-        "rank": 3,
         "brand": "Nathan's",
         "productName": "Beef Franks (each)",
         "sizeBefore": 56,
         "sizeAfter": 43,
         "unit": "g",
         "pctChange": 23.2,
-        "mode": "shrink",
-        "showBrand": false,
-        "atTop": true
+        "mode": "shrink"
       }
     },
     {
-      "type": "rundown",
-      "fromSec": 39.2,
+      "type": "shrinkcut",
+      "fromSec": 37.5,
       "toSec": 49.2,
       "props": {
-        "rank": 2,
         "brand": "Honey Maid",
         "productName": "Graham Crackers",
         "sizeBefore": 25.6,
         "sizeAfter": 19.2,
         "unit": "oz",
         "pctChange": 25,
-        "mode": "shrink",
-        "showBrand": false,
-        "atTop": true
+        "mode": "shrink"
       }
     },
     {
-      "type": "rundown",
-      "fromSec": 50.2,
+      "type": "shrinkcut",
+      "fromSec": 49.2,
       "toSec": 62.6,
       "props": {
-        "rank": 1,
         "brand": "Lay's",
-        "productName": "Lay's Classic",
+        "productName": "Classic",
         "sizeBefore": 235,
         "sizeAfter": 145,
         "unit": "g",
         "pctChange": 38.3,
-        "mode": "shrink",
-        "showBrand": false,
-        "atTop": true
+        "mode": "shrink"
+      }
+    },
+    {
+      "type": "outro",
+      "fromSec": 76.9,
+      "toSec": 82,
+      "props": {
+        "tagline": "Same price.\n*Less party.*",
+        "followLine": "follow \u2014 I catch the next one",
+        "url": "fullcarts.org",
+        "statLine": "2,200+ documented shrinks \u00b7 every one source-cited"
       }
     }
   ]
