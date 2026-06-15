@@ -210,8 +210,14 @@ title; standalone posts bucketed by publish month). Winter-2026 posts are clampe
 future-dating. Result: every `observed_date` lands on a Jan/Apr/Jul/Oct first-of-month, none in the
 future. (`raw_payload.observed_date_rule='season-quarter-map'`.)
 
-These appear in `/admin/claims` under the pending queue (Community badge). A handful of mouseprint
-cases were **excluded** as already-tracked near-matches (e.g. Suave 30→22.5 ≈ our 30→22.7,
+These appear in `/admin/claims` under the pending queue (Community badge). **Image:** each anchor's
+`raw_payload.url` is set to the matching mouseprint before/after comparison image
+(`…/wp-content/avert/<slug>mp.jpg`), so the admin card thumbnail **hotlinks** it (96/99 have one; Tyson
+Patties, Hershey Kisses 12→10, Nathan's Pretzel Dogs had no product-specific image on the page). These
+are mouseprint's own photos shown for admin reference only — if a claim is ever promoted public it
+should carry our own/archived evidence, and the pipeline image-archiver can later copy these into the
+`claim-images` bucket (`image_storage_path` then takes precedence; the mouseprint URL stays as fallback
+per `ClaimImage`). A handful of mouseprint cases were **excluded** as already-tracked near-matches (e.g. Suave 30→22.5 ≈ our 30→22.7,
 Charmin Super Mega 396→366, Cottonelle Soft 284→268, Dove BW 24→22, Earth's Best 8→7, Kirkland PT
 160→140, Natural Balance 26→24, Quaker oatmeal 10→8, Sparkle 116→110, Twinings 25→20). The 12
 skimpflation candidates were **not** seeded (no clean size pair).
