@@ -6,6 +6,7 @@ import { headline, body, mono } from "../lib/fonts";
 import { enter, countUp } from "../lib/anim";
 import { INSET, safe } from "../lib/safezone";
 import { Brandmark } from "../components/Brandmark";
+import { MusicBed } from "../components/MusicBed";
 
 // WHO IT HITS beat — the regressive point, as data. Two horizontal bars: the
 // share of income each group spends on food. The low-income bar sweeps out long
@@ -22,11 +23,12 @@ export const budgetShareSchema = z.object({
   punch: z.string().default("a hidden food tax isn’t flat — it’s regressive"),
   source: z.string().default("Share of income spent on food · BLS CES / USDA ERS (verify on build)"),
   startDelay: z.number().default(6),
+  music: z.object({ src: z.string().default("bg-loop.mp3"), volume: z.number().default(0.33) }).default({}),
 });
 
 type Props = z.infer<typeof budgetShareSchema>;
 
-export const BudgetShareBars: React.FC<Props> = ({ eyebrow, lowLabel, lowPct, highLabel, highPct, punch, source, startDelay }) => {
+export const BudgetShareBars: React.FC<Props> = ({ eyebrow, lowLabel, lowPct, highLabel, highPct, punch, source, startDelay, music }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const lf = frame - startDelay;
@@ -60,6 +62,7 @@ export const BudgetShareBars: React.FC<Props> = ({ eyebrow, lowLabel, lowPct, hi
 
   return (
     <AbsoluteFill style={{ background: theme.color.bg, fontFamily: body }}>
+      <MusicBed src={music.src} volume={music.volume} />
       <AbsoluteFill style={{ background: `radial-gradient(circle at 50% 32%, ${theme.color.red}1f 0%, transparent 55%)` }} />
       <div style={{ position: "absolute", top: TOP, left: 0, right: 0, display: "flex", justifyContent: "center" }}>
         <Brandmark scale={1.0} />

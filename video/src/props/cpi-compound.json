@@ -12,5 +12,6 @@
   "source": "USDA Moderate-Cost Food Plan · 4.2% = headline rate",
   "accent": "red",
   "startDelay": 6,
-  "sweepFrames": 82
+  "sweepFrames": 82,
+  "music": { "src": "bg-loop.mp3", "volume": 0.33 }
 }

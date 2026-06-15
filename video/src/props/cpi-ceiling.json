@@ -4,5 +4,6 @@
   "deflectLabel": "so they shrink the box instead",
   "punch": "shrinkflation is the pressure-release valve",
   "source": "FullCarts · the mechanism",
-  "startDelay": 6
+  "startDelay": 6,
+  "music": { "src": "bg-loop.mp3", "volume": 0.33 }
 }

@@ -6,6 +6,7 @@ import { headline, body, mono } from "../lib/fonts";
 import { enter } from "../lib/anim";
 import { INSET, safe } from "../lib/safezone";
 import { Brandmark } from "../components/Brandmark";
+import { MusicBed } from "../components/MusicBed";
 
 // RECEIPT beat — why the index misses shrinkflation. A package shrinks while the
 // shelf price holds; the two readouts contrast "CPI reads +0.0%" (it tracks price)
@@ -19,11 +20,12 @@ export const cpiMechanicSchema = z.object({
   punch: z.string().default("the hidden hike the index never sees"),
   source: z.string().default("same price · less product = more per ounce"),
   startDelay: z.number().default(6),
+  music: z.object({ src: z.string().default("bg-loop.mp3"), volume: z.number().default(0.33) }).default({}),
 });
 
 type Props = z.infer<typeof cpiMechanicSchema>;
 
-export const CpiMechanic: React.FC<Props> = ({ eyebrow, price, shrinkPct, punch, source, startDelay }) => {
+export const CpiMechanic: React.FC<Props> = ({ eyebrow, price, shrinkPct, punch, source, startDelay, music }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const lf = frame - startDelay;
@@ -46,6 +48,7 @@ export const CpiMechanic: React.FC<Props> = ({ eyebrow, price, shrinkPct, punch,
 
   return (
     <AbsoluteFill style={{ background: theme.color.bg, fontFamily: body }}>
+      <MusicBed src={music.src} volume={music.volume} />
       <AbsoluteFill style={{ background: `radial-gradient(circle at 50% 30%, ${theme.color.red}1f 0%, transparent 55%)` }} />
       <div style={{ position: "absolute", top: TOP, left: 0, right: 0, display: "flex", justifyContent: "center" }}>
         <Brandmark scale={1.0} />

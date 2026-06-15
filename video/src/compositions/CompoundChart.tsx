@@ -6,6 +6,7 @@ import { headline, body, mono } from "../lib/fonts";
 import { enter, fmt } from "../lib/anim";
 import { INSET, safe } from "../lib/safezone";
 import { Brandmark } from "../components/Brandmark";
+import { MusicBed } from "../components/MusicBed";
 
 // COMPOUND beat — the average family-of-4 grocery bill compounded forward.
 // Bars climb year 0→N as a left→right sweep; the big $ readout counts up ALONG
@@ -29,13 +30,14 @@ export const compoundChartSchema = z.object({
   accent: z.enum(["red", "green", "blue", "amber"]).default("red"),
   startDelay: z.number().default(6),
   sweepFrames: z.number().default(82),
+  music: z.object({ src: z.string().default("bg-loop.mp3"), volume: z.number().default(0.33) }).default({}),
 });
 
 type Props = z.infer<typeof compoundChartSchema>;
 
 export const CompoundChart: React.FC<Props> = ({
   eyebrow, base, ratePct, years, prefix, suffix, rateLabel, baseNote,
-  extraNote, bait, source, accent, startDelay, sweepFrames,
+  extraNote, bait, source, accent, startDelay, sweepFrames, music,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -60,6 +62,7 @@ export const CompoundChart: React.FC<Props> = ({
 
   return (
     <AbsoluteFill style={{ background: theme.color.bg, fontFamily: body }}>
+      <MusicBed src={music.src} volume={music.volume} />
       <AbsoluteFill style={{ background: `radial-gradient(circle at 50% 30%, ${accentColor}22 0%, transparent 55%)` }} />
       <div style={{ position: "absolute", top: TOP, left: 0, right: 0, display: "flex", justifyContent: "center" }}>
         <Brandmark scale={1.0} />

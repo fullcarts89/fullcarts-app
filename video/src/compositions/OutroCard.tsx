@@ -6,6 +6,7 @@ import { headline, mono } from "../lib/fonts";
 import { enter } from "../lib/anim";
 import { Brandmark } from "../components/Brandmark";
 import { GridTexture } from "../components/GridTexture";
+import { MusicBed } from "../components/MusicBed";
 import { INSET, safe } from "../lib/safezone";
 
 export const outroCardSchema = z.object({
@@ -13,6 +14,8 @@ export const outroCardSchema = z.object({
   followLine: z.string().default("follow — I catch the next one"),
   url: z.string().default("fullcarts.org"),
   statLine: z.string().default("2,200+ documented shrinks · every one source-cited"),
+  // Off by default so other uses of this shared card stay silent; set src to add a bed.
+  music: z.object({ src: z.string().default(""), volume: z.number().default(0.33) }).default({}),
 });
 
 // z.input → defaulted fields stay optional; FinalVideo cues pass props without zod parsing
@@ -37,6 +40,7 @@ export const OutroCard: React.FC<Props> = ({
   followLine = "follow — I catch the next one",
   url = "fullcarts.org",
   statLine = "2,200+ documented shrinks · every one source-cited",
+  music = { src: "", volume: 0.33 },
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -49,6 +53,7 @@ export const OutroCard: React.FC<Props> = ({
 
   return (
     <AbsoluteFill style={{ background: theme.color.bg }}>
+      <MusicBed src={music?.src} volume={music?.volume} />
       <GridTexture opacity={0.06} />
       <AbsoluteFill
         style={{ background: `radial-gradient(circle at 50% 42%, ${theme.color.red}1e 0%, transparent 55%)` }}

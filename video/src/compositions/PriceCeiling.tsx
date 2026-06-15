@@ -6,6 +6,7 @@ import { headline, body, mono } from "../lib/fonts";
 import { enter } from "../lib/anim";
 import { INSET, safe } from "../lib/safezone";
 import { Brandmark } from "../components/Brandmark";
+import { MusicBed } from "../components/MusicBed";
 
 // TAKE beat — the thesis as one motion. A price line climbs (amber) toward a
 // dashed ceiling labelled "$15 — you’ll never accept it"; instead of crossing,
@@ -18,11 +19,12 @@ export const priceCeilingSchema = z.object({
   punch: z.string().default("shrinkflation is the pressure-release valve"),
   source: z.string().default("FullCarts · the mechanism"),
   startDelay: z.number().default(6),
+  music: z.object({ src: z.string().default("bg-loop.mp3"), volume: z.number().default(0.33) }).default({}),
 });
 
 type Props = z.infer<typeof priceCeilingSchema>;
 
-export const PriceCeiling: React.FC<Props> = ({ eyebrow, ceilingLabel, deflectLabel, punch, source, startDelay }) => {
+export const PriceCeiling: React.FC<Props> = ({ eyebrow, ceilingLabel, deflectLabel, punch, source, startDelay, music }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const lf = frame - startDelay;
@@ -49,6 +51,7 @@ export const PriceCeiling: React.FC<Props> = ({ eyebrow, ceilingLabel, deflectLa
 
   return (
     <AbsoluteFill style={{ background: theme.color.bg, fontFamily: body }}>
+      <MusicBed src={music.src} volume={music.volume} />
       <AbsoluteFill style={{ background: `radial-gradient(circle at 50% 28%, ${theme.color.red}1f 0%, transparent 55%)` }} />
       <div style={{ position: "absolute", top: TOP, left: 0, right: 0, display: "flex", justifyContent: "center" }}>
         <Brandmark scale={1.0} />

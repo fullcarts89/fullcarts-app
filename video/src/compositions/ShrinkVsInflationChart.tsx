@@ -6,6 +6,7 @@ import { headline, body, mono } from "../lib/fonts";
 import { enter } from "../lib/anim";
 import { INSET, safe } from "../lib/safezone";
 import { Brandmark } from "../components/Brandmark";
+import { MusicBed } from "../components/MusicBed";
 
 // HOOK beat — the precedent. BLS "All food" package downsizings (bars, left
 // axis) vs food-price inflation YoY% (line, right axis), by year. A left→right
@@ -28,6 +29,7 @@ export const shrinkVsInflationSchema = z.object({
   source: z.string().default("BLS R-CPI-SC · FRED food CPI"),
   startDelay: z.number().default(6),
   sweepFrames: z.number().default(80),
+  music: z.object({ src: z.string().default("bg-loop.mp3"), volume: z.number().default(0.33) }).default({}),
 });
 
 type Props = z.infer<typeof shrinkVsInflationSchema>;
@@ -38,7 +40,7 @@ const niceTop = (vals: number[], ticks = 5) => {
   return step * (ticks - 1);
 };
 
-export const ShrinkVsInflationChart: React.FC<Props> = ({ eyebrow, data, caption, source, startDelay, sweepFrames }) => {
+export const ShrinkVsInflationChart: React.FC<Props> = ({ eyebrow, data, caption, source, startDelay, sweepFrames, music }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const lf = frame - startDelay;
@@ -77,6 +79,7 @@ export const ShrinkVsInflationChart: React.FC<Props> = ({ eyebrow, data, caption
 
   return (
     <AbsoluteFill style={{ background: theme.color.bg, fontFamily: body }}>
+      <MusicBed src={music.src} volume={music.volume} />
       <AbsoluteFill style={{ background: `radial-gradient(circle at 50% 28%, ${theme.color.red}1f 0%, transparent 55%)` }} />
       <div style={{ position: "absolute", top: TOP, left: 0, right: 0, display: "flex", justifyContent: "center" }}>
         <Brandmark scale={1.0} />
