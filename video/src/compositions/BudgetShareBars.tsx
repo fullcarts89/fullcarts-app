@@ -23,7 +23,7 @@ export const budgetShareSchema = z.object({
   punch: z.string().default("a hidden food tax isn’t flat — it’s regressive"),
   source: z.string().default("Share of income spent on food · BLS CES / USDA ERS (verify on build)"),
   startDelay: z.number().default(6),
-  music: z.object({ src: z.string().default("bg-loop.mp3"), volume: z.number().default(0.33) }).default({}),
+  music: z.object({ src: z.string().default("audio/bg-loop.mp3"), volume: z.number().default(0.33) }).default({}),
 });
 
 type Props = z.infer<typeof budgetShareSchema>;

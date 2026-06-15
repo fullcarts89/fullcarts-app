@@ -29,7 +29,7 @@ export const shrinkVsInflationSchema = z.object({
   source: z.string().default("BLS R-CPI-SC · FRED food CPI"),
   startDelay: z.number().default(6),
   sweepFrames: z.number().default(80),
-  music: z.object({ src: z.string().default("bg-loop.mp3"), volume: z.number().default(0.33) }).default({}),
+  music: z.object({ src: z.string().default("audio/bg-loop.mp3"), volume: z.number().default(0.33) }).default({}),
 });
 
 type Props = z.infer<typeof shrinkVsInflationSchema>;

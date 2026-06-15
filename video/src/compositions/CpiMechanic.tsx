@@ -20,7 +20,7 @@ export const cpiMechanicSchema = z.object({
   punch: z.string().default("the hidden hike the index never sees"),
   source: z.string().default("same price · less product = more per ounce"),
   startDelay: z.number().default(6),
-  music: z.object({ src: z.string().default("bg-loop.mp3"), volume: z.number().default(0.33) }).default({}),
+  music: z.object({ src: z.string().default("audio/bg-loop.mp3"), volume: z.number().default(0.33) }).default({}),
 });
 
 type Props = z.infer<typeof cpiMechanicSchema>;

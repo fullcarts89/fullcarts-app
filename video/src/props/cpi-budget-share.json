@@ -7,5 +7,5 @@
   "punch": "a hidden food tax isn’t flat — it’s regressive",
   "source": "Share of income spent on food · BLS CES / USDA ERS (verify on build)",
   "startDelay": 6,
-  "music": { "src": "bg-loop.mp3", "volume": 0.33 }
+  "music": { "src": "audio/bg-loop.mp3", "volume": 0.33 }
 }

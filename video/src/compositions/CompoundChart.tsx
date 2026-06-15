@@ -30,7 +30,7 @@ export const compoundChartSchema = z.object({
   accent: z.enum(["red", "green", "blue", "amber"]).default("red"),
   startDelay: z.number().default(6),
   sweepFrames: z.number().default(82),
-  music: z.object({ src: z.string().default("bg-loop.mp3"), volume: z.number().default(0.33) }).default({}),
+  music: z.object({ src: z.string().default("audio/bg-loop.mp3"), volume: z.number().default(0.33) }).default({}),
 });
 
 type Props = z.infer<typeof compoundChartSchema>;
