@@ -17,7 +17,8 @@ DATA SOURCE:  [FullCarts entry or macro event — the real artifact on screen]
 LENGTH:       30–60s · 9:16
 
 HOOK (0–3s)      FACE + bold text overlay. Clarity first, then CONTRAST (same price / less),
-                 written to "you". Never a vague "guess how much" open loop. → see hooks.md
+                 written to "you". Never a vague "guess how much" open loop.
+                 → generate it with the Hook Engine (references/hook-engine.md); law in hooks.md
 PROOF (3–15s)    real before/after (side-by-side) image + FullCarts entry / source chart
                  (you source the image — you usually won't have the physical product)
 CONTEXT (15–40s) you explaining the "trick" + Remotion data-viz overlay [credibility signature if 1-in-5 slot]

@@ -180,7 +180,8 @@ beat in *Caught:*, the closing line in *Shrink Check*, and the whole point of *T
 - Pick the **datapoint** (convergence brief) → **run it through the full Convergence Peg Library (§5),
   scoring every peg, not just commodity** → pick the **angle** (pillar + a contrarian take from §2)
   → pick the **feeling** to name (§4) for the lock-in beat → **add the POV/so-what beat (§6)** →
-  write the hook as a **Snap** (`hooks.md`).
+  write the hook with the **Hook Engine** (`references/hook-engine.md`) — it takes the datapoint +
+  peg + feeling and binds them into ranked Snap-shaped candidates (law: `hooks.md`).
 - **A candidate that hits ≥2 pegs ranks above a single-peg one** — that's what "convergence" means.
 - **Every video carries a take** (§6): factual on the data, opinionated on the behavior.
 - Bonus prompt from the framework: *"what do I hope they feel / do after watching?"* — for us:
