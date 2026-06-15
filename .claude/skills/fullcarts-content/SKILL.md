@@ -2,7 +2,7 @@
 name: fullcarts-content
 description: "Use when producing FullCarts social content — the face-forward, data-driven shrinkflation videos for TikTok/Reels/Shorts/X. Trigger phrases: 'make this week's content', 'weekly content batch', 'content brief', 'what should I film', 'shrinkflation video', 'shrinkflation script', 'fullcarts post', 'new reveal', 'rundown video', 'newsjack the CPI print', 'render the overlay', 'production packet'. This skill is the ACTIVE OPERATOR for the weekly batch loop: it pulls a data-backed brief from the FullCarts database, drafts scripts to the house template, enforces the content rules + approved-claims + evidence gates, renders the Remotion overlays, generates Higgsfield b-roll, and hands over a film-ready packet. For generic social strategy see social; for video tooling see video; for Remotion specifics see remotion."
 metadata:
-  version: 1.0.0
+  version: 1.1.0
 ---
 
 # FullCarts Content — Weekly Production Operator
@@ -16,6 +16,7 @@ human's face or a GUI app — and enforcing the rules so nothing ships off-brand
 - `docs/content/content-rules.md` — the 5 non-negotiables + three-bucket evidence policy
 - `docs/content/approved-claims.md` — the ONLY claims allowed on camera (refresh each batch)
 - `docs/content/production-playbook.md` — the stack + the weekly rhythm
+- `docs/content/video-production-sop.md` — **idea→MP4 pipeline + the DECIDE-UPFRONT checklist + the render commands.** Read before any talking-head + Remotion-overlay video.
 - `docs/content/first-batch.md` — the repeatable script template + 5 worked examples
 - `docs/content/series.md` — the bingeability engine: the "Caught:" series + future-series backlog
 - `docs/content/carousel-formats.md` — the shelf of **repeatable carousel templates** (Guess the Cut, Monthly Shrink List, Tier List, CPI-vs-Reality, …): per-format spec + SQL + composition id + gate notes. Pick one off the shelf; don't improvise the structure.
@@ -24,6 +25,21 @@ human's face or a GUI app — and enforcing the rules so nothing ships off-brand
 - `docs/content/music-beds.md` — the six-lane royalty-free **soundboard** mapped to every slot + carousel series, plus the copyright rules for a brand that cross-posts. Assign a lane per pick in the packet; royalty-free bed on the master, trending sound is a native per-platform discovery add-on only.
 - `references/hooks.md` — the Hook System (The Snap 3-beat + Emotional Lock-In + the 4-mistake fixes)
 - `docs/content/profile-copy.md` — bios + pinned posts
+
+## Production defaults — ENFORCE on every video (locked from the CPI Take retro)
+
+These are defaults, not suggestions. State them back in the brief and don't proceed past one without it settled:
+
+1. **Length ≤ 60s, hook-first.** Default target is **≤60 seconds** unless the human explicitly asks for long-form. Write tight; cut everything that isn't the hook, the proof, or the payoff.
+2. **Lock THE HOOK before anything else.** Approve the Snap hook (`references/hooks.md`) before scripting the rest or filming. No vague open loops.
+3. **Beat map up front** — mark each line FACE vs VISUAL cutaway, and what each visual shows, before assets.
+4. **Read the numbers back** — every on-camera figure traces to `approved-claims.md` §1 (or a fresh DB pull, cited as documented). Confirm wording so there's no VO flub.
+5. **Film export rule (tell the human every time):** **1080×1920, H.264, 30fps, NO burned-in captions.** Captions are added last. (A captioned source film = a wasted re-shoot.)
+6. **Charts:** every chart gets **labelled X/Y axes + value ticks**, brand tokens (`video/src/lib/theme.ts`), keep text in clear zones. No fake/AI charts (three-bucket).
+7. **SFX:** use the real library in `video/public/audio/sfx/` (never synth placeholders). Default rhythm: riser into the hook (low, ~0.15 under VO), **whoosh only on the cut INTO a graphic** (not back to face), music bed ~0.15–0.2.
+8. **Renders:** `--scale 0.6` for review cuts, full-res only on the approved final. **NEVER kill a running render** to make a change — let it finish, batch tweaks, then re-render. Deliver via attachment + GitHub raw link; log the post in `content-log.md`.
+
+Full pipeline + exact commands: `docs/content/video-production-sop.md`.
 
 ## The automation boundary (what you do vs. what the human does)
 
