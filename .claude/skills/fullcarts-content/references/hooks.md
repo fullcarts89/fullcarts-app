@@ -136,3 +136,10 @@ Clarity and contrast can collapse into one line when it's tight enough.
 [ ] 2-Q TEST   context immediately clear? + curiosity induced? — both yes
 ```
 A hook that misses CONTRAST or CLARITY is the most common failure — fix those first.
+
+## Applying this at scale — the Hook Engine
+
+This file is the *law*. To turn a brief row into a ranked set of gate-passing candidates, run the
+**Hook Engine** ([hook-engine.md](hook-engine.md)) — a template bank that binds 10 proven viral
+frames to real DB fields. It produces a spoken hook + a bank of A/B variants; every frame still has
+to clear the checklist above, and any frame that stays a vague open loop after binding is killed.
