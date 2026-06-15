@@ -21,7 +21,7 @@
     { "src": "cuts/cpi-cta.mp4", "kind": "video", "fromSec": 135, "toSec": 149, "fit": "cover" }
   ],
   "sfx": [
-    { "src": "audio/sfx/reverse-cymbal-riser.mp3", "atSec": 2.8, "volume": 0.4 },
+    { "src": "audio/sfx/reverse-cymbal-riser.mp3", "atSec": 2.8, "volume": 0.15 },
     { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 10, "volume": 0.55 },
     { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 21, "volume": 0.55 },
     { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 47, "volume": 0.55 },
