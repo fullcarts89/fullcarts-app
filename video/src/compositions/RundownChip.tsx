@@ -20,6 +20,9 @@ export const rundownChipSchema = z.object({
   // How long the chip holds on screen (seconds). Set per item to match the VO beat so the
   // rendered .mov is exactly the right length on the timeline. Omitted → 4s default.
   holdSeconds: z.number().optional(),
+  // Anchor to the TOP of frame instead of the lower-third — use when the footage already has
+  // burned-in captions in the lower band, so the chip doesn't collide with them.
+  atTop: z.boolean().optional(),
 });
 
 type Props = z.infer<typeof rundownChipSchema>;
@@ -31,7 +34,7 @@ export const calcRundownChipMeta = ({ props }: { props: Props }) => ({
 
 // Compact ranked chip for the "5 things that shrank" rundown. Transparent → render
 // with alpha, one per item, drop each over its product b-roll beat in Captions.
-export const RundownChip: React.FC<Props> = ({ rank, brand, productName, sizeBefore, sizeAfter, unit, pctChange, mode, showBrand }) => {
+export const RundownChip: React.FC<Props> = ({ rank, brand, productName, sizeBefore, sizeAfter, unit, pctChange, mode, showBrand, atTop }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const accent = accentFor(mode);
@@ -46,7 +49,7 @@ export const RundownChip: React.FC<Props> = ({ rank, brand, productName, sizeBef
           position: "absolute",
           left: safe.left,
           right: INSET.right, // clear the right action-rail
-          bottom: INSET.bottom, // sit above the caption/handle zone
+          ...(atTop ? { top: INSET.top } : { bottom: INSET.bottom }), // top-anchor clears burned-in captions
           opacity: chipIn,
           transform: `translateX(${x}px)`,
           display: "flex",
