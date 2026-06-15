@@ -17,11 +17,6 @@ const PT = z.object({ year: z.number(), downsizings: z.number(), inflation: z.nu
 export const shrinkVsInflationSchema = z.object({
   eyebrow: z.string().default("SHRINKFLATION TRACKS INFLATION"),
   data: z.array(PT).default([
-    { year: 2015, downsizings: 621, inflation: 1.9 },
-    { year: 2016, downsizings: 394, inflation: 0.3 },
-    { year: 2017, downsizings: 321, inflation: 0.9 },
-    { year: 2018, downsizings: 394, inflation: 1.4 },
-    { year: 2019, downsizings: 373, inflation: 1.9 },
     { year: 2020, downsizings: 157, inflation: 3.4 },
     { year: 2021, downsizings: 166, inflation: 3.9 },
     { year: 2022, downsizings: 349, inflation: 9.9 },

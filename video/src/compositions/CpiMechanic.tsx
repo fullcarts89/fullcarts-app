@@ -8,13 +8,13 @@ import { INSET, safe } from "../lib/safezone";
 import { Brandmark } from "../components/Brandmark";
 
 // RECEIPT beat — why the index misses shrinkflation. A package shrinks while the
-// price tag holds at $4.99; the two readouts contrast "CPI reads +0.0%" (it tracks
-// price) against the real "+X% per ounce" the shrink actually costs you. The
-// per-ounce figure is exact arithmetic from the shrink %: 1/(1−s) − 1.
+// shelf price holds; the two readouts contrast "CPI reads +0.0%" (it tracks price)
+// against the real "+X% per ounce" the shrink actually costs you. The per-ounce
+// figure is exact arithmetic from the shrink %: 1/(1−s) − 1.
 // Full-frame, opaque → render h264. Retime via `startDelay`.
 export const cpiMechanicSchema = z.object({
   eyebrow: z.string().default("WHY THE NUMBER LIES"),
-  price: z.string().default("$4.99"),
+  price: z.string().default("SAME PRICE"),
   shrinkPct: z.number().default(15),
   punch: z.string().default("the hidden hike the index never sees"),
   source: z.string().default("same price · less product = more per ounce"),
@@ -66,8 +66,8 @@ export const CpiMechanic: React.FC<Props> = ({ eyebrow, price, shrinkPct, punch,
 
       {/* price tag — stays put, counter-scaled so it never distorts */}
       <div style={{ position: "absolute", left: boxLeft + boxW - 40, top: TOP + 150, transform: "rotate(-6deg)" }}>
-        <div style={{ background: theme.color.amber, color: theme.color.bg, fontFamily: mono, fontWeight: 700, fontSize: 40, padding: "10px 18px", borderRadius: 8, boxShadow: "0 8px 30px rgba(0,0,0,.5)" }}>{price}</div>
-        <div style={{ fontFamily: mono, fontSize: 18, color: theme.color.textTertiary, textTransform: "uppercase", letterSpacing: 2, marginTop: 8, textAlign: "center" }}>same price</div>
+        <div style={{ background: theme.color.amber, color: theme.color.bg, fontFamily: mono, fontWeight: 700, fontSize: 32, padding: "10px 18px", borderRadius: 8, boxShadow: "0 8px 30px rgba(0,0,0,.5)", whiteSpace: "nowrap" }}>{price}</div>
+        <div style={{ fontFamily: mono, fontSize: 18, color: theme.color.textTertiary, textTransform: "uppercase", letterSpacing: 2, marginTop: 8, textAlign: "center" }}>on the shelf</div>
       </div>
 
       {/* two contrasting readouts */}
