@@ -10,7 +10,7 @@
       "toSec": 8.6,
       "props": {
         "lines": [
-          "\u2018Party Size\u2019",
+          "‘Party Size’",
           "is a *lie*"
         ],
         "zone": "above",
@@ -28,7 +28,13 @@
         "sizeAfter": 13.5,
         "unit": "oz",
         "pctChange": 10,
-        "mode": "shrink"
+        "mode": "shrink",
+        "shots": [
+          {
+            "src": "cutaways/chexmix.jpg",
+            "caption": "same price · less product"
+          }
+        ]
       }
     },
     {
@@ -42,7 +48,17 @@
         "sizeAfter": 11,
         "unit": "oz",
         "pctChange": 15.4,
-        "mode": "shrink"
+        "mode": "shrink",
+        "shots": [
+          {
+            "src": "cutaways/tostitos.jpg",
+            "tag": "before · 13 oz"
+          },
+          {
+            "src": "cutaways/tostitos2.jpg",
+            "tag": "now · 11 oz"
+          }
+        ]
       }
     },
     {
@@ -51,12 +67,22 @@
       "toSec": 37.5,
       "props": {
         "brand": "Nathan's",
-        "productName": "Beef Franks (each)",
+        "productName": "Beef Franks (per frank)",
         "sizeBefore": 56,
         "sizeAfter": 43,
         "unit": "g",
         "pctChange": 23.2,
-        "mode": "shrink"
+        "mode": "shrink",
+        "shots": [
+          {
+            "src": "cutaways/nathans.jpg",
+            "tag": "before · 56 g"
+          },
+          {
+            "src": "cutaways/nathans2.jpg",
+            "tag": "now · 43 g"
+          }
+        ]
       }
     },
     {
@@ -70,7 +96,17 @@
         "sizeAfter": 19.2,
         "unit": "oz",
         "pctChange": 25,
-        "mode": "shrink"
+        "mode": "shrink",
+        "shots": [
+          {
+            "src": "cutaways/honeymaid.jpg",
+            "tag": "family size"
+          },
+          {
+            "src": "cutaways/honeymaid2.jpg",
+            "tag": "same shelf price"
+          }
+        ]
       }
     },
     {
@@ -84,7 +120,13 @@
         "sizeAfter": 145,
         "unit": "g",
         "pctChange": 38.3,
-        "mode": "shrink"
+        "mode": "shrink",
+        "shots": [
+          {
+            "src": "cutaways/lays.jpg",
+            "caption": "235 g → 145 g · same shelf"
+          }
+        ]
       }
     },
     {
@@ -93,9 +135,9 @@
       "toSec": 82,
       "props": {
         "tagline": "Same price.\n*Less party.*",
-        "followLine": "follow \u2014 I catch the next one",
+        "followLine": "follow — I catch the next one",
         "url": "fullcarts.org",
-        "statLine": "2,200+ documented shrinks \u00b7 every one source-cited"
+        "statLine": "2,200+ documented shrinks · every one source-cited"
       }
     }
   ]

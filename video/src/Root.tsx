@@ -116,6 +116,8 @@ export const RemotionRoot: React.FC = () => {
           unit: "g",
           pctChange: 38.3,
           mode: "shrink" as const,
+          shots: [{ src: "cutaways/lays.jpg" }],
+          guide: false,
         }}
       />
 
