@@ -127,8 +127,6 @@ export const CompoundChart: React.FC<Props> = ({
             ) : null
           ))}
         </svg>
-        {/* axis titles */}
-        <div style={{ position: "absolute", left: 0, top: -2, fontFamily: mono, fontSize: 18, color: theme.color.textTertiary }}>$ / month</div>
       </div>
 
       {/* kicker */}

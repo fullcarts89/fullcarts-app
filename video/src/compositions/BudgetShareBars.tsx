@@ -52,9 +52,9 @@ export const BudgetShareBars: React.FC<Props> = ({ eyebrow, lowLabel, lowPct, hi
 
   const Row = ({ y, label, pct, grow, n, color, muted }: { y: number; label: string; pct: number; grow: number; n: number; color: string; muted?: boolean }) => (
     <>
-      <div style={{ position: "absolute", left: 0, top: y - 34, width: CW, display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-        <span style={{ fontFamily: headline, fontWeight: 600, fontSize: 30, color: theme.color.textPrimary }}>{label}</span>
-        <span style={{ fontFamily: mono, fontWeight: 700, fontSize: 40, color }}>{Math.round(n)}%</span>
+      <div style={{ position: "absolute", left: 0, top: y - 54, width: CW, display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+        <span style={{ fontFamily: headline, fontWeight: 600, fontSize: 28, color: theme.color.textPrimary }}>{label}</span>
+        <span style={{ fontFamily: mono, fontWeight: 700, fontSize: 38, color }}>{Math.round(n)}%</span>
       </div>
       <div style={{ position: "absolute", left: 0, top: y, width: CW, height: 56, background: theme.color.card, borderRadius: 8, overflow: "hidden" }}>
         <div style={{ width: xOf(pct) * grow, height: "100%", background: color, opacity: muted ? 0.5 : 0.95, borderRadius: 8, boxShadow: muted ? undefined : `0 0 24px ${color}55` }} />

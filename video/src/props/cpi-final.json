@@ -1,7 +1,18 @@
 {
-  "film": "cpi-film.mov", "fps": 30, "durationSec": 149, "overlays": [ { "type": "hook", "fromSec": 5, "toSec": 10, "props": { "lines": ["new shrinkflation wave", "*incoming*"], "zone": "above", "accent": "red" } } ], "captions": [],
+  "film": "cpi-film.mov", "fps": 30, "durationSec": 149,
+  "overlays": [
+    { "type": "hook", "fromSec": 5, "toSec": 10, "props": { "lines": ["new shrinkflation wave", "*incoming*"], "zone": "above", "accent": "red" } }
+  ],
+  "captions": [],
+  "camera": [
+    { "atSec": 0, "scale": 1 },
+    { "atSec": 7.4, "scale": 1 },
+    { "atSec": 8.2, "scale": 1.22 },
+    { "atSec": 10, "scale": 1.22 },
+    { "atSec": 14.6, "scale": 1 }
+  ],
   "cutaways": [
-    { "src": "cnbc-cpi.png", "kind": "image", "fromSec": 10, "toSec": 18.5, "fit": "contain", "zoom": 1.18 },
+    { "src": "cnbc-cpi.png", "kind": "image", "fromSec": 10, "toSec": 15, "fit": "contain", "zoom": 1.18 },
     { "src": "cuts/cpi-hook-chart.mp4", "kind": "video", "fromSec": 21, "toSec": 36, "fit": "cover" },
     { "src": "cuts/cpi-receipt.mp4", "kind": "video", "fromSec": 47, "toSec": 55.5, "fit": "cover" },
     { "src": "cuts/cpi-compound.mp4", "kind": "video", "fromSec": 55.5, "toSec": 78, "fit": "cover" },
@@ -10,21 +21,18 @@
     { "src": "cuts/cpi-cta.mp4", "kind": "video", "fromSec": 135, "toSec": 149, "fit": "cover" }
   ],
   "sfx": [
-    { "src": "audio/sfx/reverse-cymbal-riser.mp3", "atSec": 4.8, "volume": 0.8 },
-    { "src": "audio/sfx/impact.mp3", "atSec": 10, "volume": 0.7 },
-    { "src": "audio/sfx/whoosh.mp3", "atSec": 10, "volume": 0.55 },
-    { "src": "audio/sfx/whoosh.mp3", "atSec": 18.5, "volume": 0.55 },
-    { "src": "audio/sfx/whoosh.mp3", "atSec": 21, "volume": 0.55 },
-    { "src": "audio/sfx/impact.mp3", "atSec": 22.6, "volume": 0.6 },
-    { "src": "audio/sfx/whoosh.mp3", "atSec": 36, "volume": 0.55 },
-    { "src": "audio/sfx/whoosh.mp3", "atSec": 47, "volume": 0.55 },
-    { "src": "audio/sfx/whoosh.mp3", "atSec": 55.5, "volume": 0.5 },
-    { "src": "audio/sfx/whoosh.mp3", "atSec": 78, "volume": 0.55 },
-    { "src": "audio/sfx/whoosh.mp3", "atSec": 88, "volume": 0.55 },
-    { "src": "audio/sfx/whoosh.mp3", "atSec": 100, "volume": 0.55 },
-    { "src": "audio/sfx/whoosh.mp3", "atSec": 110, "volume": 0.55 },
-    { "src": "audio/sfx/impact.mp3", "atSec": 112.6, "volume": 0.6 },
-    { "src": "audio/sfx/whoosh.mp3", "atSec": 125, "volume": 0.55 },
-    { "src": "audio/sfx/whoosh.mp3", "atSec": 135, "volume": 0.55 }
+    { "src": "audio/sfx/reverse-cymbal-riser.mp3", "atSec": 2.8, "volume": 0.4 },
+    { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 10, "volume": 0.55 },
+    { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 15, "volume": 0.55 },
+    { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 21, "volume": 0.55 },
+    { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 36, "volume": 0.55 },
+    { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 47, "volume": 0.55 },
+    { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 55.5, "volume": 0.5 },
+    { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 78, "volume": 0.55 },
+    { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 88, "volume": 0.55 },
+    { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 100, "volume": 0.55 },
+    { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 110, "volume": 0.55 },
+    { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 125, "volume": 0.55 },
+    { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 135, "volume": 0.55 }
   ]
 }
