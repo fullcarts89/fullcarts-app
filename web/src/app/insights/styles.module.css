@@ -67,6 +67,19 @@
 .chart-area.events { fill: rgba(220,38,38,.06); }
 .chart-x-axis { display: flex; justify-content: space-between; padding-left: 56px; padding-right: 56px; margin-top: 12px; font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; }
 
+/* SHRINKFLATION-TRACKS-INFLATION CHART (annual bars + inflation line) */
+.svi-bar { fill: var(--blue-base); opacity: 0.55; }
+.svi-bar-hot { fill: var(--red-base); opacity: 0.9; }
+.svi-bar-partial { opacity: 0.28; }
+.svi-inflation-line { fill: none; stroke: var(--amber-base); stroke-width: 2.5; }
+.svi-x-axis { display: flex; padding-left: 56px; padding-right: 56px; margin-top: 12px; font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.1em; }
+.svi-x-axis > span { flex: 1 1 0; text-align: center; }
+.svi-annotations { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.svi-annot { flex: 1 1 280px; font-family: var(--font-sans); font-size: 13px; color: var(--text-secondary); line-height: 1.5; padding: 12px 14px; background: var(--bg-primary); border: 1px solid var(--border-subtle); border-left: 2px solid var(--amber-base); }
+.svi-annot.hot { border-left-color: var(--red-base); }
+.svi-annot strong { color: var(--text-primary); font-weight: 700; }
+.svi-annot-year { font-family: var(--font-mono); font-weight: 700; color: var(--text-primary); margin-right: 8px; letter-spacing: 0.04em; }
+
 /* CATEGORIES BAR LIST */
 .cat-list { display: flex; flex-direction: column; gap: 0; border-top: 1px solid var(--border-subtle); }
 .cat-row { display: grid; grid-template-columns: 220px 1fr 80px 80px; gap: 24px; padding: 16px 0; border-bottom: 1px solid var(--border-subtle); align-items: center; }

@@ -132,6 +132,17 @@ export interface GoogleTrendsRow {
   value: string | number | null;
 }
 
+/** One year in the "shrinkflation tracks inflation" chart: BLS "All
+ *  food" downsizing count for the calendar year (bar) and FRED food-CPI
+ *  YoY% (line). `partial` flags a year BLS hasn't fully reported yet so
+ *  the bar is visibly marked rather than silently undercounting. */
+export interface ShrinkInflationYear {
+  year: number;
+  downsizings: number | null;
+  inflationPct: number | null;
+  partial: boolean;
+}
+
 /** One manufacturer entry from the corporate_tree view (migration 056).
  *  top_brands is a JSONB array of up to three brand entries with their
  *  thumbnails, biggest single-shrink %, and event count. */

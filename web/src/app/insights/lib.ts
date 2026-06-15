@@ -7,6 +7,7 @@ import type {
   EventWithSources,
   FredCpiRow,
   GoogleTrendsRow,
+  ShrinkInflationYear,
 } from "./types";
 
 export function num(s: string | number | null | undefined): number {
@@ -260,6 +261,68 @@ export function buildChart(
     }
   }
   return points;
+}
+
+/** Annual series for the "shrinkflation tracks inflation" chart.
+ *  Bars = BLS "All food" downsizings summed per calendar year; line =
+ *  FRED food-CPI year-over-year %. A year is `partial` when BLS hasn't
+ *  reported all 12 months yet (flagged in the UI, not silently short),
+ *  and any year with fewer than 6 months of BLS data is dropped — too
+ *  early to chart honestly. `fred` should reach one year before
+ *  `startYear` so the first YoY% can be computed. */
+export function buildShrinkVsInflation(
+  blsAllFood: BlsRow[],
+  fred: FredCpiRow[],
+  startYear: number = 2015,
+): ShrinkInflationYear[] {
+  // BLS downsizings per calendar year + which months reported.
+  const dzByYear = new Map<number, number>();
+  const monthsByYear = new Map<number, Set<string>>();
+  for (const r of blsAllFood) {
+    const day = isoDay(r.period);
+    if (!day || r.downsizing_count == null) continue;
+    const year = parseInt(day.slice(0, 4), 10);
+    if (!Number.isFinite(year)) continue;
+    dzByYear.set(year, (dzByYear.get(year) || 0) + r.downsizing_count);
+    const months = monthsByYear.get(year) || new Set<string>();
+    months.add(day.slice(0, 7));
+    monthsByYear.set(year, months);
+  }
+
+  // FRED food CPI → annual average index, then YoY%.
+  const idxSum = new Map<number, number>();
+  const idxCount = new Map<number, number>();
+  for (const r of fred) {
+    const day = isoDay(r.observation_date);
+    const v = num(r.value);
+    if (!day || v <= 0) continue;
+    const year = parseInt(day.slice(0, 4), 10);
+    if (!Number.isFinite(year)) continue;
+    idxSum.set(year, (idxSum.get(year) || 0) + v);
+    idxCount.set(year, (idxCount.get(year) || 0) + 1);
+  }
+  const avgIdx = new Map<number, number>();
+  for (const [year, sum] of idxSum) avgIdx.set(year, sum / (idxCount.get(year) || 1));
+
+  const years = Array.from(dzByYear.keys())
+    .filter((y) => y >= startYear)
+    .sort((a, b) => a - b);
+  const out: ShrinkInflationYear[] = [];
+  for (const year of years) {
+    const months = monthsByYear.get(year)?.size ?? 0;
+    if (months < 6) continue; // too early in the year to chart honestly
+    const idx = avgIdx.get(year);
+    const prev = avgIdx.get(year - 1);
+    const inflationPct =
+      idx != null && prev != null && prev > 0 ? ((idx - prev) / prev) * 100 : null;
+    out.push({
+      year,
+      downsizings: dzByYear.get(year) ?? null,
+      inflationPct,
+      partial: months < 12,
+    });
+  }
+  return out;
 }
 
 /** Round a number range outward to a tick-friendly axis. Returns

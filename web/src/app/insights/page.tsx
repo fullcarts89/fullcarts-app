@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import SiteNav from "@/components/SiteNav";
 import InsightsHero from "./_components/InsightsHero";
 import BlsHeadline from "./_components/BlsHeadline";
+import ShrinkVsInflation from "./_components/ShrinkVsInflation";
 import ThreeLineChart from "./_components/ThreeLineChart";
 import CategoryBars from "./_components/CategoryBars";
 import SkimpflationLeaderboard from "./_components/SkimpflationLeaderboard";
@@ -15,6 +16,7 @@ import Term, { GLOSSARY } from "../_components/Term";
 import {
   buildCartBasket,
   buildChart,
+  buildShrinkVsInflation,
   headlineBls,
   imageFromRawPayload,
   isFreeOutlet,
@@ -84,6 +86,8 @@ async function loadInsights() {
     spotDiffClaimsRes,
     corporateRes,
     trendsRes,
+    blsAllFoodRes,
+    fredHistRes,
   ] = await Promise.all([
     sb.rpc("dashboard_stats"),
     sb
@@ -176,6 +180,25 @@ async function loadInsights() {
       .eq("keyword", "shrinkflation")
       .order("observation_date", { ascending: false })
       .limit(120),
+    // Full "All food" BLS downsizing history (~12 rows/yr since 2015)
+    // for the annual shrink-vs-inflation chart. The headline/three-line
+    // chart's 400-row recent window doesn't reach back to 2015, so this
+    // is a dedicated fetch of just the parent series.
+    sb
+      .from("bls_shrinkflation")
+      .select("series, period, downsizing_count, upsizing_count")
+      .ilike("series", "all food%")
+      .order("period", { ascending: true })
+      .limit(200),
+    // FRED food CPI back to 2014 so the annual YoY% line has a base year
+    // for 2015. Monthly; the helper averages to annual then computes YoY.
+    sb
+      .from("fred_cpi_data")
+      .select("observation_date, value")
+      .eq("series_id", "CPIUFDNS")
+      .gte("observation_date", "2014-01-01")
+      .order("observation_date", { ascending: true })
+      .limit(200),
   ]);
   // corporate_tree only exists after migration 056 is applied; treat
   // a missing-view error as an empty list rather than a page failure.
@@ -390,6 +413,8 @@ async function loadInsights() {
     stats,
     bls: (blsRes.data ?? []) as BlsRow[],
     fred: (fredRes.data ?? []) as FredCpiRow[],
+    blsAllFood: (blsAllFoodRes.data ?? []) as BlsRow[],
+    fredHist: (fredHistRes.data ?? []) as FredCpiRow[],
     trends,
     events: (eventsRes.data ?? []) as EventWithSources[],
     categories: (categoriesRes.data ?? []) as CategoryRow[],
@@ -406,6 +431,7 @@ async function loadInsights() {
 export default async function InsightsPage() {
   const data = await loadInsights();
   const chart = buildChart(data.events, data.bls, data.fred, data.trends);
+  const shrinkVsInflation = buildShrinkVsInflation(data.blsAllFood, data.fredHist);
   const headline = headlineBls(data.bls);
 
   const today = new Date().toISOString();
@@ -423,6 +449,7 @@ export default async function InsightsPage() {
   // straight to the chart or to "Who actually owns these brands?"
   // without scrolling past 10 full sections.
   const sectionNav = [
+    { id: "tracks-inflation", label: "Tracks inflation" },
     { id: "trade-off", label: "Trade-off chart" },
     { id: "cart", label: "Dollars-to-air" },
     { id: "categories", label: "Categories" },
@@ -453,6 +480,32 @@ export default async function InsightsPage() {
             </a>
           ))}
         </nav>
+
+        <section id="tracks-inflation" className={styles.block}>
+          <div className={styles["section-head"]}>
+            <h2>Shrinkflation tracks inflation</h2>
+            <div className={styles.meta}>
+              BLS R-CPI-SC · FRED food CPI
+              {blsLatestPeriod && ` · BLS latest ${blsLatestPeriod.slice(0, 7)}`}
+            </div>
+          </div>
+          <p className={styles["section-lede"]}>
+            The single clearest pattern in the data: <strong>when food prices
+            spike, packages shrink.</strong> When grocery inflation jumped to
+            roughly 10% in 2022, the government&apos;s own count of food package{" "}
+            <Term label="downsizings" define={GLOSSARY["R-CPI-SC"]} /> more than
+            doubled versus the year before — then receded as inflation cooled.
+            It&apos;s why a fresh inflation print isn&apos;t just a number: it
+            tends to be the starting gun for the next wave of smaller boxes.
+          </p>
+          <ShrinkVsInflation data={shrinkVsInflation} />
+          <div className={styles.caveat}>
+            Not a perfect 1:1 — 2020–21 (pandemic supply shocks) and 2015 are
+            noisy — but every major food-inflation spike since 2015 shows up as
+            a jump in downsizings. Bars = BLS &ldquo;All food&rdquo; downsizings
+            per year; * = year still in progress
+          </div>
+        </section>
 
         <section id="trade-off" className={styles.block}>
           <div className={styles["section-head"]}>
