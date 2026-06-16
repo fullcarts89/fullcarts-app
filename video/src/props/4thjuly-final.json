@@ -24,6 +24,14 @@
       }
     },
     {
+      "type": "footnote",
+      "fromSec": 2.6,
+      "toSec": 5.6,
+      "props": {
+        "text": "*actually 5"
+      }
+    },
+    {
       "type": "shrinkcut",
       "fromSec": 8.8,
       "toSec": 17.8,
