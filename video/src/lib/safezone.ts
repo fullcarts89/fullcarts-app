@@ -8,7 +8,9 @@
 //  left   — small device/caption margin
 export const FRAME = { w: 1080, h: 1920 } as const;
 
-export const INSET = { top: 240, bottom: 450, left: 60, right: 170 } as const;
+// `top` raised from 240 → 530 (+~15% of frame height) — the platform top chrome was
+// clipping the overlay headers; this drops all overlay content ~15% to clear it.
+export const INSET = { top: 530, bottom: 450, left: 60, right: 170 } as const;
 
 // Burned-in caption lane (mute-first). Centered, sits BELOW the face and ABOVE the
 // lower-third overlays + platform UI — the natural eyes-rest band for sound-off viewing.
