@@ -18,6 +18,7 @@ import { ShrinkOverlay } from "./ShrinkOverlay";
 import { StatCard } from "./StatCard";
 import { RundownChip } from "./RundownChip";
 import { ShrinkCutaway } from "./ShrinkCutaway";
+import { Brandmark } from "../components/Brandmark";
 import { SourceFrame } from "./SourceFrame";
 import { CaughtTitle } from "./CaughtTitle";
 import { KineticQuote } from "./KineticQuote";
@@ -29,7 +30,7 @@ import { FewerCups } from "./FewerCups";
 import { OutroCard } from "./OutroCard";
 
 // ---- Timeline types (Model B: feed your film + this timeline → one finished MP4) ----
-type OverlayCue = { type: "caught" | "shrink" | "shrinkcut" | "stat" | "rundown" | "source" | "kinetic" | "shrinkreveal" | "hook" | "rockets" | "pricejump" | "fewercups" | "outro"; fromSec: number; toSec: number; props: Record<string, unknown> };
+type OverlayCue = { type: "caught" | "shrink" | "shrinkcut" | "stat" | "rundown" | "source" | "kinetic" | "shrinkreveal" | "hook" | "brandmark" | "rockets" | "pricejump" | "fewercups" | "outro"; fromSec: number; toSec: number; props: Record<string, unknown> };
 // Camera keyframes drive the film's scale/position over time — opening zoom, pattern
 // interrupts, and fake "angle change" rehooks from a single take.
 type CamKey = { atSec: number; scale: number; x?: number; y?: number };
@@ -139,6 +140,20 @@ const CaptionLine: React.FC<{ text: string }> = ({ text }) => {
   );
 };
 
+// FullCarts logo in the upper-left, inside the platform safe zone (clear of the status bar).
+const CornerLogo: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const p = enter(frame, fps, { durationInFrames: 12 });
+  return (
+    <AbsoluteFill>
+      <div style={{ position: "absolute", top: 250, left: 60, opacity: p, transform: `translateY(${interpolate(p, [0, 1], [-14, 0])}px)` }}>
+        <Brandmark scale={1.2} />
+      </div>
+    </AbsoluteFill>
+  );
+};
+
 const renderOverlay = (o: OverlayCue) => {
   switch (o.type) {
     case "caught":
@@ -159,6 +174,8 @@ const renderOverlay = (o: OverlayCue) => {
       return <ShrinkReveal {...(o.props as React.ComponentProps<typeof ShrinkReveal>)} />;
     case "hook":
       return <HookText {...(o.props as React.ComponentProps<typeof HookText>)} />;
+    case "brandmark":
+      return <CornerLogo />;
     case "rockets":
       return <RocketsFeathers {...(o.props as React.ComponentProps<typeof RocketsFeathers>)} />;
     case "pricejump":
