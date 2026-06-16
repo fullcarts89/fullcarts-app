@@ -86,7 +86,7 @@ CTA:       "Follow — I catch the next one. Search Gatorade at fullcarts.org."
 **Flagship pilot episodes (already in the data):**
 - **Caught: Cadbury** — Freddo 122→99g (−18.9%); Cadbury is also our #1 news brand (convergence).
 - **Caught: Folgers** — the coffee "rockets & feathers": 51→43.5oz, prices later crashed ~40%, the can never came back. *(Confirm the coffee % off a real chart — `SourceFrame` over a real ICE/FRED screenshot, never an AI chart.)*
-- **Caught: Gatorade** — 32→28oz (−12.5%); the small bottles got it worse.
+- ~~**Caught: Gatorade** — 32→28oz (−12.5%); the small bottles got it worse.~~ **❌ DO NOT USE / DO NOT RECOMMEND.** Founder's standing call: Gatorade shrinkflation is overdone across the genre — it does nothing for reach. Removed from the queue. Don't resurface it in briefs, batches, or the operator's convergence picks. (See `content-rules.md` → "Do-not-use brands.")
 
 **Bingeability mechanics to layer in:**
 - End-screen tease: "Tomorrow — Caught: [next brand], and it's worse." (forces the next view)

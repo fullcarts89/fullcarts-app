@@ -13,7 +13,7 @@ Every post — TikTok, Reel, Short, X post, carousel — must hit **all five**. 
 ### 1. Data-driven
 Anchored to a **specific FullCarts datapoint** *or* a **credible macroeconomic event**. There is always a real number on screen, and that number is always sourced.
 
-- ✅ "Gatorade went 32oz → 28oz. That's a 12.5% cut at the same shelf price." (FullCarts entry)
+- ✅ "Cadbury Freddo Faces went 122g → 99g. That's an 18.9% cut at the same shelf price." (FullCarts entry)
 - ✅ "CPI for groceries just printed +X% — here's the category that actually got smaller, not just pricier." (BLS event)
 - ❌ "Brands are shrinking everything lately." (no number, no source)
 
@@ -66,6 +66,18 @@ Engineered to pull a reaction — a comment, a share, a "send this to whoever bu
 
 ---
 
+## Do-not-use brands / topics (founder veto — hard gate)
+
+Some datapoints are accurate but **banned for content reasons** (overdone in the genre, no reach upside, founder preference). The brief generator and the operator MUST exclude these from convergence picks, briefs, and batches — even if they score well on data/convergence. **Do not recommend them.**
+
+| Brand / topic | Reason | Status |
+|---|---|---|
+| **Gatorade** (any size: 32→28oz, 20→16.9oz, etc.) | Overdone across the shrinkflation genre — saturated, does nothing for reach. | ❌ Vetoed (2026-06-16) |
+
+> This is the enforcement point for the standing list. When the founder vetoes a brand/angle, add a row here so it stops resurfacing across threads. (Mirrored in `series.md` where the episode was queued.)
+
+---
+
 ## The pre-publish checklist
 
 Run this on every draft before it goes in the queue. **5/5 required.**
@@ -96,13 +108,13 @@ Platform hygiene:
 The brief generator (and you, by hand, when needed) produces ideas in this shape. Every brief is pre-scored against the 5 non-negotiables so a passing brief becomes a passing post.
 
 ```
-IDEA:        Gatorade 32oz → 28oz (-12.5%), same shelf price
-WHY NOW:     PepsiCo beverage price hikes trending in news_brand_mentions (4 hits this week);
-             summer = peak sports-drink season (seasonal calendar)
+IDEA:        Cadbury Freddo Faces 122g → 99g (-18.9%), same shelf price
+WHY NOW:     Cadbury = #1 news brand in news_brand_mentions (fresh hits this week);
+             also top DB candidate by evidence count (news × data convergence)
 PROOF:       2 source URLs (retailer listing + receipt), observed 2026-05, image ✓, FullCarts entry ✓
-HOOK:        "Same bottle. Same price. One's missing a full glass of Gatorade."
+HOOK:        "Same price as two years ago — minus almost a fifth of the chocolate."
 CREDIBILITY: database lead; day-job signature OPTIONAL this video (not the 1-in-5 slot)
-RELATABLE:   "if you grab one after a workout, you're paying the old price for less"
+RELATABLE:   "if you grab one at the till, you're paying the old price for less chocolate"
 REACTION:    "Would you still buy it? 🛒/💀"
 SUGGESTED:   TikTok Reveal + X receipt post (Entertainment + Newsjack)
 SCORE:       91   (data 65 × convergence 1.4)   |   5/5 non-negotiables ✓
