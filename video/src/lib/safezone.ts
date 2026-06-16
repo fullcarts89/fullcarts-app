@@ -2,6 +2,9 @@
 // across TikTok, Instagram Reels, and YouTube Shorts, so one clip is safe on all three.
 // Keep critical content (numbers, badges, brand, burned-in captions) inside `safe`.
 //
+// GREEN = safe (content survives) / RED = danger (covered by app UI). Canonical reference
+// screenshots: docs/content/assets/safe-zone-{green-safe,red-danger}.png; doc: visual-identity.md.
+//
 //  top    — platform tabs / search bar (Reels & Shorts top chrome)
 //  bottom — caption + @handle + music ticker + nav (TikTok is the deepest)
 //  right  — like / comment / share / save action rail (Reels is the widest)
