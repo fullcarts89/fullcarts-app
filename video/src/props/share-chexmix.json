@@ -1,0 +1,12 @@
+{
+  "rank": 5,
+  "brand": "Chex Mix",
+  "productName": "Bold Party Blend",
+  "sizeBefore": 15,
+  "sizeAfter": 13.5,
+  "unit": "oz",
+  "pctChange": 10,
+  "mode": "shrink",
+  "showBrand": false,
+  "holdSeconds": 7.0
+}

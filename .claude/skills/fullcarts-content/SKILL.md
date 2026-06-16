@@ -52,6 +52,13 @@ Full pipeline + exact commands: `docs/content/video-production-sop.md`.
 | Emit the per-clip **production packet** | Approves voice + final cut |
 | (Optional) ElevenLabs VO via env-var API key, for faceless clips | |
 
+**In the cloud sandbox you can go past overlays and hand over the *fully-assembled cut*.** Remotion
+renders here (`--browser-executable=…/chromium_headless_shell-*/chrome-linux/headless_shell`; ffmpeg via
+`pip install imageio-ffmpeg`), so deliver a finished MP4 via the `FinalVideo` + `ShrinkCutaway` recipe in
+`video/README.md` + `docs/content/production-playbook.md`. **Non-negotiables:** every cutaway shows the
+creator's REAL product photo(s) (a number graphic alone isn't trusted); evidence fills the top 2/3, the
+bottom 1/3 is left clean for their talking head + captions; cutaways sync to the SRT.
+
 **Hard truths to state plainly, never paper over:**
 - **Captions App and Agent Opus have no API** you can drive. You prepare inputs; the human runs them.
 - **Agent Opus is NOT you.** It's the AI-UGC web app at opus.pro/agent. Its AI-avatar output is for the

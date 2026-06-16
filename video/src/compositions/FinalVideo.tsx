@@ -17,6 +17,7 @@ import { CAPTION } from "../lib/safezone";
 import { ShrinkOverlay } from "./ShrinkOverlay";
 import { StatCard } from "./StatCard";
 import { RundownChip } from "./RundownChip";
+import { ShrinkCutaway } from "./ShrinkCutaway";
 import { SourceFrame } from "./SourceFrame";
 import { CaughtTitle } from "./CaughtTitle";
 import { KineticQuote } from "./KineticQuote";
@@ -28,7 +29,7 @@ import { FewerCups } from "./FewerCups";
 import { OutroCard } from "./OutroCard";
 
 // ---- Timeline types (Model B: feed your film + this timeline → one finished MP4) ----
-type OverlayCue = { type: "caught" | "shrink" | "stat" | "rundown" | "source" | "kinetic" | "shrinkreveal" | "hook" | "rockets" | "pricejump" | "fewercups" | "outro"; fromSec: number; toSec: number; props: Record<string, unknown> };
+type OverlayCue = { type: "caught" | "shrink" | "shrinkcut" | "stat" | "rundown" | "source" | "kinetic" | "shrinkreveal" | "hook" | "rockets" | "pricejump" | "fewercups" | "outro"; fromSec: number; toSec: number; props: Record<string, unknown> };
 // Camera keyframes drive the film's scale/position over time — opening zoom, pattern
 // interrupts, and fake "angle change" rehooks from a single take.
 type CamKey = { atSec: number; scale: number; x?: number; y?: number };
@@ -144,6 +145,8 @@ const renderOverlay = (o: OverlayCue) => {
       return <CaughtTitle {...(o.props as React.ComponentProps<typeof CaughtTitle>)} />;
     case "shrink":
       return <ShrinkOverlay {...(o.props as React.ComponentProps<typeof ShrinkOverlay>)} />;
+    case "shrinkcut":
+      return <ShrinkCutaway {...(o.props as React.ComponentProps<typeof ShrinkCutaway>)} />;
     case "stat":
       return <StatCard {...(o.props as React.ComponentProps<typeof StatCard>)} />;
     case "rundown":

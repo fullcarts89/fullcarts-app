@@ -2,7 +2,8 @@ import React from "react";
 import { Composition } from "remotion";
 import { ShrinkOverlay, shrinkOverlaySchema } from "./compositions/ShrinkOverlay";
 import { StatCard, statCardSchema } from "./compositions/StatCard";
-import { RundownChip, rundownChipSchema } from "./compositions/RundownChip";
+import { RundownChip, rundownChipSchema, calcRundownChipMeta } from "./compositions/RundownChip";
+import { ShrinkCutaway, shrinkCutawaySchema } from "./compositions/ShrinkCutaway";
 import { SourceFrame, sourceFrameSchema } from "./compositions/SourceFrame";
 import { CaughtTitle, caughtTitleSchema } from "./compositions/CaughtTitle";
 import { Thumbnail, thumbnailSchema } from "./compositions/Thumbnail";
@@ -90,6 +91,7 @@ export const RemotionRoot: React.FC = () => {
         width={W}
         height={H}
         schema={rundownChipSchema}
+        calculateMetadata={calcRundownChipMeta}
         defaultProps={{
           rank: 1,
           brand: "Cadbury",
@@ -99,6 +101,28 @@ export const RemotionRoot: React.FC = () => {
           unit: "g",
           pctChange: 18.9,
           mode: "shrink" as const,
+          showBrand: true,
+        }}
+      />
+
+      <Composition
+        id="ShrinkCutaway"
+        component={ShrinkCutaway}
+        durationInFrames={150}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={shrinkCutawaySchema}
+        defaultProps={{
+          brand: "Lay's",
+          productName: "Classic",
+          sizeBefore: 235,
+          sizeAfter: 145,
+          unit: "g",
+          pctChange: 38.3,
+          mode: "shrink" as const,
+          shots: [{ src: "cutaways/lays.jpg" }],
+          guide: false,
         }}
       />
 

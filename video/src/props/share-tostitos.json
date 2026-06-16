@@ -1,0 +1,12 @@
+{
+  "rank": 4,
+  "brand": "Tostitos",
+  "productName": "Hint of Lime",
+  "sizeBefore": 13,
+  "sizeAfter": 11,
+  "unit": "oz",
+  "pctChange": 15.4,
+  "mode": "shrink",
+  "showBrand": false,
+  "holdSeconds": 5.8
+}

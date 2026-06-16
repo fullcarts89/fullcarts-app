@@ -1,0 +1,12 @@
+{
+  "rank": 3,
+  "brand": "Nathan's",
+  "productName": "Beef Franks (each)",
+  "sizeBefore": 56,
+  "sizeAfter": 43,
+  "unit": "g",
+  "pctChange": 23.2,
+  "mode": "shrink",
+  "showBrand": false,
+  "holdSeconds": 9.9
+}

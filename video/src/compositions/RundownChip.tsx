@@ -15,13 +15,26 @@ export const rundownChipSchema = z.object({
   unit: z.string(),
   pctChange: z.number(),
   mode: z.enum(["shrink", "restoration"]).default("shrink"),
+  // Off for the green-screen review cut — the product photo behind already shows the brand.
+  showBrand: z.boolean().default(true),
+  // How long the chip holds on screen (seconds). Set per item to match the VO beat so the
+  // rendered .mov is exactly the right length on the timeline. Omitted → 4s default.
+  holdSeconds: z.number().optional(),
+  // Anchor to the TOP of frame instead of the lower-third — use when the footage already has
+  // burned-in captions in the lower band, so the chip doesn't collide with them.
+  atTop: z.boolean().optional(),
 });
 
 type Props = z.infer<typeof rundownChipSchema>;
 
+// Render each chip to its exact on-screen beat (from the SRT) so it drops straight onto the cut.
+export const calcRundownChipMeta = ({ props }: { props: Props }) => ({
+  durationInFrames: Math.round((props.holdSeconds ?? 4) * 30),
+});
+
 // Compact ranked chip for the "5 things that shrank" rundown. Transparent → render
 // with alpha, one per item, drop each over its product b-roll beat in Captions.
-export const RundownChip: React.FC<Props> = ({ rank, brand, productName, sizeBefore, sizeAfter, unit, pctChange, mode }) => {
+export const RundownChip: React.FC<Props> = ({ rank, brand, productName, sizeBefore, sizeAfter, unit, pctChange, mode, showBrand, atTop }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const accent = accentFor(mode);
@@ -36,7 +49,7 @@ export const RundownChip: React.FC<Props> = ({ rank, brand, productName, sizeBef
           position: "absolute",
           left: safe.left,
           right: INSET.right, // clear the right action-rail
-          bottom: INSET.bottom, // sit above the caption/handle zone
+          ...(atTop ? { top: INSET.top } : { bottom: INSET.bottom }), // top-anchor clears burned-in captions
           opacity: chipIn,
           transform: `translateX(${x}px)`,
           display: "flex",
@@ -63,9 +76,11 @@ export const RundownChip: React.FC<Props> = ({ rank, brand, productName, sizeBef
           {rank}
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: mono, fontSize: 24, letterSpacing: 2, textTransform: "uppercase", color: theme.color.textSecondary }}>
-            {brand}
-          </div>
+          {showBrand && (
+            <div style={{ fontFamily: mono, fontSize: 24, letterSpacing: 2, textTransform: "uppercase", color: theme.color.textSecondary }}>
+              {brand}
+            </div>
+          )}
           <div style={{ fontFamily: headline, fontWeight: 700, fontSize: 44, color: theme.color.textPrimary }}>
             {productName}
           </div>

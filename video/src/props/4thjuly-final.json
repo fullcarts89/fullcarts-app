@@ -1,0 +1,144 @@
+{
+  "film": "film/4thjuly.mov",
+  "fps": 30,
+  "durationSec": 82,
+  "captions": [],
+  "overlays": [
+    {
+      "type": "hook",
+      "fromSec": 1.6,
+      "toSec": 8.6,
+      "props": {
+        "lines": [
+          "‘Party Size’",
+          "is a *lie*"
+        ],
+        "zone": "above",
+        "accent": "red"
+      }
+    },
+    {
+      "type": "shrinkcut",
+      "fromSec": 8.8,
+      "toSec": 17.8,
+      "props": {
+        "brand": "Chex Mix",
+        "productName": "Bold Party Blend",
+        "sizeBefore": 15,
+        "sizeAfter": 13.5,
+        "unit": "oz",
+        "pctChange": 10,
+        "mode": "shrink",
+        "shots": [
+          {
+            "src": "cutaways/chexmix.jpg",
+            "caption": "same price · less product"
+          }
+        ]
+      }
+    },
+    {
+      "type": "shrinkcut",
+      "fromSec": 17.8,
+      "toSec": 25.8,
+      "props": {
+        "brand": "Tostitos",
+        "productName": "Hint of Lime",
+        "sizeBefore": 13,
+        "sizeAfter": 11,
+        "unit": "oz",
+        "pctChange": 15.4,
+        "mode": "shrink",
+        "shots": [
+          {
+            "src": "cutaways/tostitos.jpg",
+            "tag": "before · 13 oz"
+          },
+          {
+            "src": "cutaways/tostitos2.jpg",
+            "tag": "now · 11 oz"
+          }
+        ]
+      }
+    },
+    {
+      "type": "shrinkcut",
+      "fromSec": 25.8,
+      "toSec": 37.5,
+      "props": {
+        "brand": "Nathan's",
+        "productName": "Beef Franks (per frank)",
+        "sizeBefore": 56,
+        "sizeAfter": 43,
+        "unit": "g",
+        "pctChange": 23.2,
+        "mode": "shrink",
+        "shots": [
+          {
+            "src": "cutaways/nathans.jpg",
+            "tag": "before · 56 g"
+          },
+          {
+            "src": "cutaways/nathans2.jpg",
+            "tag": "now · 43 g"
+          }
+        ]
+      }
+    },
+    {
+      "type": "shrinkcut",
+      "fromSec": 37.5,
+      "toSec": 49.2,
+      "props": {
+        "brand": "Honey Maid",
+        "productName": "Graham Crackers",
+        "sizeBefore": 25.6,
+        "sizeAfter": 19.2,
+        "unit": "oz",
+        "pctChange": 25,
+        "mode": "shrink",
+        "shots": [
+          {
+            "src": "cutaways/honeymaid.jpg",
+            "tag": "family size"
+          },
+          {
+            "src": "cutaways/honeymaid2.jpg",
+            "tag": "same shelf price"
+          }
+        ]
+      }
+    },
+    {
+      "type": "shrinkcut",
+      "fromSec": 49.2,
+      "toSec": 62.6,
+      "props": {
+        "brand": "Lay's",
+        "productName": "Classic",
+        "sizeBefore": 235,
+        "sizeAfter": 145,
+        "unit": "g",
+        "pctChange": 38.3,
+        "mode": "shrink",
+        "shots": [
+          {
+            "src": "cutaways/lays.jpg",
+            "caption": "235 g → 145 g · same shelf"
+          }
+        ]
+      }
+    },
+    {
+      "type": "outro",
+      "fromSec": 76.9,
+      "toSec": 82,
+      "props": {
+        "tagline": "Same price.\n*Less party.*",
+        "followLine": "follow — I catch the next one",
+        "url": "fullcarts.org",
+        "statLine": "2,200+ documented shrinks · every one source-cited"
+      }
+    }
+  ]
+}

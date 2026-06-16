@@ -1,0 +1,12 @@
+{
+  "rank": 1,
+  "brand": "Lay's",
+  "productName": "Lay's Classic",
+  "sizeBefore": 235,
+  "sizeAfter": 145,
+  "unit": "g",
+  "pctChange": 38.3,
+  "mode": "shrink",
+  "showBrand": false,
+  "holdSeconds": 12.4
+}
