@@ -72,13 +72,24 @@ never cartoonish or stocky.
 > viewer mistake this for evidence?* If yes → real, not illustrated. Label AI-made visuals.
 > Source illustration via Higgsfield (labeled) or an illustrator; the `video/` toolkit doesn't make it.
 
-## Safe zones (overlays never bleed off-frame)
-Overlays sit **fully inside** the frame — they don't run off-edge or fly in from outside. The apps
-cover parts of the screen with their own UI, so critical content (the **−X%**, numbers, brand,
-burned-in captions) stays inside the safe rectangle. Values are the **union** of all three platforms
-(1080×1920), encoded in `video/src/lib/safezone.ts`:
+## Safe zones vs. danger zones (overlays never bleed off-frame) — LOCKED REFERENCE
+**Green = safe zone (content survives). Red = danger zone (covered by the app's own UI).** This is the
+ground-truth map for *anything Remotion renders* — every number, badge, brand mark, and burned-in
+caption must live inside the green. The platform chrome (top status/search bar, the right-side
+like/comment/share/save **action rail**, and the bottom @handle + caption + music ticker + nav) sits
+*on top of* your video, so anything placed in the red gets clipped, covered, or thumb-blocked.
 
-| Inset | px | What's there |
+The committed reference screenshots are the canonical picture — diff any new layout against them:
+
+| | |
+|---|---|
+| ![Safe zone — green](./assets/safe-zone-green-safe.png) | ![Danger zone — red](./assets/safe-zone-red-danger.png) |
+| **GREEN = safe.** Keep all critical content here. | **RED = danger.** App UI lands here — never put content you need read here. |
+
+Values are the **union (worst case)** of all three platforms (1080×1920), encoded in
+`video/src/lib/safezone.ts` — these insets are exactly the green/red boundary above:
+
+| Inset | px | Danger-zone chrome that lives there |
 |---|---|---|
 | **Top** | 240 | platform tabs / search (Reels & Shorts top chrome) |
 | **Bottom** | 450 | caption + @handle + music ticker + nav (TikTok deepest) |
@@ -88,7 +99,8 @@ burned-in captions) stays inside the safe rectangle. Values are the **union** of
 → **Safe area = x: 60 → 910, y: 240 → 1470.** Lower-thirds sit with their bottom on y=1470 (above the
 caption); the title card sits at y=240; centered content (StatCard) keeps `maxWidth ≤ 740` so it
 clears the rail on the right. All toolkit comps are positioned to this; verify new ones with the
-`SafeZonePreview` composition (renders the overlay over a mock of the TikTok/Reels/Shorts UI).
+`SafeZonePreview` composition (renders the overlay over a mock of the TikTok/Reels/Shorts UI) and
+eyeball them against the two reference shots above before rendering.
 
 ## Texture & motion
 - **Data-grid texture** (`GridTexture`, ~6–8% opacity) behind title cards / thumbnails / stat cards.
