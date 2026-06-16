@@ -5,12 +5,18 @@
   "captions": [],
   "overlays": [
     {
+      "type": "brandmark",
+      "fromSec": 0.4,
+      "toSec": 8.6,
+      "props": {}
+    },
+    {
       "type": "hook",
       "fromSec": 1.6,
       "toSec": 8.6,
       "props": {
         "lines": [
-          "‘Party Size’",
+          "‘Party size’",
           "is a *lie*"
         ],
         "zone": "above",
