@@ -72,3 +72,32 @@ areas show your video through; the `.mp4` card is a full-screen beat.
    see `docs/content/approved-claims.md`).
 2. Render with the matching composition id.
 3. That's it — no code edits. The `fullcarts-content` skill automates this step each week.
+
+## Assembled cut (`FinalVideo`) — face-forward house recipe
+
+For a full piece, render the **whole edit in one pass** (film + animated cutaways + outro), not just
+overlays. Engine: the `FinalVideo` composition + a timeline JSON (`src/props/<brand>-final.json`).
+
+- **Sequence:** face + one hook line ("'X' is a lie") → back-to-back **full-frame animated evidence
+  cutaways**, one per product, *no face between them* → face take → `OutroCard` follow-close.
+- **Cutaways = `ShrinkCutaway`:** real product photo(s) (1–2; two = before/after) + before→after numbers
+  + −%. **Always the real photos — a number graphic alone isn't trustworthy.** For paired photos the
+  creator says which is *before*.
+- **Layout law:** evidence fills the **top 2/3**; the **bottom 1/3 stays clean** for the creator's
+  talking head + captions (they overlay both in their app).
+- Overlay cues sync to the SRT word timings (evidence appears only when the product is named).
+
+### Rendering in the cloud sandbox
+
+Remotion *does* run in the cloud sandbox — point it at the pre-installed headless-shell binary (the plain
+chrome binary fails: "old headless removed"):
+
+```bash
+npx remotion render FinalVideo out/<brand>-final.mp4 \
+  --browser-executable=/opt/pw-browsers/chromium_headless_shell-*/chrome-linux/headless_shell \
+  --props=src/props/<brand>-final.json --crf 23
+```
+
+ffmpeg (frame grabs, compression) is available via `pip install imageio-ffmpeg`
+(`imageio_ffmpeg.get_ffmpeg_exe()`). So the operator can deliver the **finished MP4 in-session**, not
+just overlays.

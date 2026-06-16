@@ -134,6 +134,28 @@ a slideshow interrupting you (we saw this on the first attempt). With it, eviden
 word. The engine is the `FinalVideo` composition (`video/`); the SRT timings drive a timeline JSON
 (`src/props/<brand>-final.json`).
 
+## Cutaway layout + evidence — LOCKED (from the 4th-of-July build)
+
+Hard-won on the 4th-of-July "Generosity Tax" cut (cost a lot of back-and-forth). Bake these in so the
+operator nails it on the first pass:
+
+- **Every evidence cutaway shows the creator's REAL product photo(s).** A branded number graphic with
+  no bag on screen is *not* trustworthy — viewers won't believe a size shrink they can't see. Use 1–2
+  photos per item (two = before/after; one = a shot that already shows both). Numbers stay photo-verified.
+- **For paired photos, the creator tags which is BEFORE vs NOW** — the operator often can't tell from the
+  image. Put it in the zip filenames or the handoff note.
+- **Layout law — evidence fills the TOP 2/3; the BOTTOM 1/3 stays clean** for the creator's (minimized)
+  talking head + burned-in captions, which they overlay in their app. The operator renders the top-2/3
+  plate and never fills the bottom third.
+- **Sequence:** open on the face + ONE hook line ("'Party size' is a lie") → **back-to-back full-frame
+  animated evidence cutaways**, one per product, *no cut back to face between them* → return to the face
+  for the take → close on the `OutroCard` "follow" animation (same as past cuts).
+- **The operator delivers the finished MP4 in-session.** Remotion renders in the cloud sandbox — point it
+  at the headless-shell binary (plain chrome fails with "old headless removed"):
+  `--browser-executable=/opt/pw-browsers/chromium_headless_shell-*/chrome-linux/headless_shell`; ffmpeg
+  via `pip install imageio-ffmpeg`. Engine = the `ShrinkCutaway` composition inside `FinalVideo`; the
+  SRT timings drive `src/props/<brand>-final.json`. Full recipe in `video/README.md`.
+
 ## Tool-by-tool cheat notes
 
 - **Claude** (the `fullcarts-content` skill) — your creative director + data analyst + operator. It reads the DB, ranks ideas, drafts scripts, renders the Remotion overlays, generates Higgsfield b-roll, runs the gates, and writes platform captions. It stops at *film-ready packet* — you film and approve.
