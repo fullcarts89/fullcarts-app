@@ -73,7 +73,7 @@
       "toSec": 37.5,
       "props": {
         "brand": "Nathan's",
-        "productName": "Beef Franks (per frank)",
+        "productName": "Beef Franks",
         "sizeBefore": 56,
         "sizeAfter": 43,
         "unit": "g",
@@ -82,11 +82,11 @@
         "shots": [
           {
             "src": "cutaways/nathans.jpg",
-            "tag": "before · 56 g"
+            "tag": "before · 56 g each"
           },
           {
             "src": "cutaways/nathans2.jpg",
-            "tag": "now · 43 g"
+            "tag": "now · 43 g each"
           }
         ]
       }
