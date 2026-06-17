@@ -30,6 +30,8 @@ import { CompoundChart, compoundChartSchema } from "./compositions/CompoundChart
 import { CpiMechanic, cpiMechanicSchema } from "./compositions/CpiMechanic";
 import { BudgetShareBars, budgetShareSchema } from "./compositions/BudgetShareBars";
 import { PriceCeiling, priceCeilingSchema } from "./compositions/PriceCeiling";
+import { SpotTheSkimp, spotTheSkimpSchema, calcSpotMeta } from "./compositions/SpotTheSkimp";
+import spotSkimp from "./props/spot-skimp.json";
 import folgersCut from "./props/folgers-final.json";
 import folgersCutV5 from "./props/folgers-final-v5.json";
 import coffee5 from "./props/coffee-5.json";
@@ -543,6 +545,22 @@ export const RemotionRoot: React.FC = () => {
           Full-frame opaque → render h264 (.mp4). Each has a `startDelay` (frames)
           to nudge the reveal onto the VO/SRT, and a `sweepFrames` where the data
           climbs so the count-up lands on the spoken number. */}
+
+      {/* ── Spot the Skimp (Easy → Impossible) — full-frame BACKGROUND b-roll.
+          Creator embeds their own talking head + captions on top; bottom ~1/3
+          is left clean. Panels are SRT-timed; reveals are observational (no
+          fabricated measurements). Duration adapts to durationSec via props. */}
+      <Composition
+        id="SpotTheSkimp"
+        component={SpotTheSkimp}
+        durationInFrames={2367}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={spotTheSkimpSchema}
+        calculateMetadata={calcSpotMeta}
+        defaultProps={spotSkimp as unknown as React.ComponentProps<typeof SpotTheSkimp>}
+      />
 
       {/* ① HOOK — the precedent: BLS downsizings vs food inflation, 2022 flagged */}
       <Composition
