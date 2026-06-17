@@ -31,6 +31,7 @@ import { CpiMechanic, cpiMechanicSchema } from "./compositions/CpiMechanic";
 import { BudgetShareBars, budgetShareSchema } from "./compositions/BudgetShareBars";
 import { PriceCeiling, priceCeilingSchema } from "./compositions/PriceCeiling";
 import { SpotTheSkimp, spotTheSkimpSchema, calcSpotMeta } from "./compositions/SpotTheSkimp";
+import { SpotThumbnail, spotThumbnailSchema } from "./compositions/SpotThumbnail";
 import spotSkimp from "./props/spot-skimp.json";
 import folgersCut from "./props/folgers-final.json";
 import folgersCutV5 from "./props/folgers-final-v5.json";
@@ -560,6 +561,30 @@ export const RemotionRoot: React.FC = () => {
         schema={spotTheSkimpSchema}
         calculateMetadata={calcSpotMeta}
         defaultProps={spotSkimp as unknown as React.ComponentProps<typeof SpotTheSkimp>}
+      />
+
+      {/* Spot the Skimp — self-contained cover (render as a still PNG) */}
+      <Composition
+        id="SpotThumbnail"
+        component={SpotThumbnail}
+        durationInFrames={30}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={spotThumbnailSchema}
+        defaultProps={{
+          titleLines: ["Spot", "the Skimp"],
+          sub: "Easy → Impossible",
+          hook: "Can you spot all *6?*",
+          images: [
+            "spotskimp/natures.jpg",
+            "spotskimp/mars.jpg",
+            "spotskimp/charmin.jpg",
+            "spotskimp/listerine.jpg",
+            "spotskimp/fries.jpg",
+            "spotskimp/cheezit.jpg",
+          ],
+        }}
       />
 
       {/* ① HOOK — the precedent: BLS downsizings vs food inflation, 2022 flagged */}

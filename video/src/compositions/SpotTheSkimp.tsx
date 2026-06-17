@@ -14,6 +14,7 @@ import { headline, body, mono } from "../lib/fonts";
 import { enter } from "../lib/anim";
 import { GridTexture } from "../components/GridTexture";
 import { Brandmark } from "../components/Brandmark";
+import { OutroCard } from "./OutroCard";
 
 // ──────────────────────────────────────────────────────────────────────────
 // "Spot the Skimp: Easy → Impossible" — full-frame BACKGROUND b-roll track.
@@ -70,6 +71,17 @@ export const spotTheSkimpSchema = z.object({
     scoreLine: z.string(),
     fromSec: z.number(),
   }),
+  // The branded follow / fullcarts.org end card (house OutroCard). Plays AFTER the
+  // film ends, so no talking head is needed under it — the one full-brand beat.
+  cta: z
+    .object({
+      fromSec: z.number(),
+      tagline: z.string(),
+      followLine: z.string(),
+      url: z.string(),
+      statLine: z.string(),
+    })
+    .optional(),
 });
 
 type Props = z.infer<typeof spotTheSkimpSchema>;
@@ -336,9 +348,10 @@ export const calcSpotMeta = ({ props }: { props: Props }) => ({
   height: 1920,
 });
 
-export const SpotTheSkimp: React.FC<Props> = ({ hook, rounds, outro }) => {
+export const SpotTheSkimp: React.FC<Props> = ({ hook, rounds, outro, cta }) => {
   const { fps } = useVideoConfig();
   const total = rounds.length;
+  const recapEnd = cta ? cta.fromSec : undefined;
   return (
     <AbsoluteFill style={{ background: theme.color.bg }}>
       <Sequence {...span(0, hook.toSec, fps)}>
@@ -349,9 +362,17 @@ export const SpotTheSkimp: React.FC<Props> = ({ hook, rounds, outro }) => {
           <RoundPanel r={r} idx={i + 1} total={total} />
         </Sequence>
       ))}
-      <Sequence from={Math.round(outro.fromSec * fps)}>
+      <Sequence
+        from={Math.round(outro.fromSec * fps)}
+        durationInFrames={recapEnd ? Math.max(1, Math.round((recapEnd - outro.fromSec) * fps)) : undefined}
+      >
         <OutroPanel outro={outro} />
       </Sequence>
+      {cta ? (
+        <Sequence from={Math.round(cta.fromSec * fps)}>
+          <OutroCard tagline={cta.tagline} followLine={cta.followLine} url={cta.url} statLine={cta.statLine} />
+        </Sequence>
+      ) : null}
     </AbsoluteFill>
   );
 };

@@ -1,5 +1,5 @@
 {
-  "durationSec": 78.9,
+  "durationSec": 84.0,
   "reservedTop": 1320,
   "hook": {
     "titleLines": ["Spot the", "Skimp"],
@@ -13,7 +13,7 @@
       "spotskimp/fries.jpg",
       "spotskimp/cheezit.jpg"
     ],
-    "toSec": 8.0
+    "toSec": 8.4
   },
   "rounds": [
     {
@@ -26,9 +26,9 @@
       "question": "Both say 2 oz. *Spot it?*",
       "reveal": "Same 2 oz — one bar's *shorter*.",
       "chip": "Same 2 oz",
-      "fromSec": 8.0,
-      "toSec": 15.05,
-      "revealAtSec": 13.566
+      "fromSec": 8.4,
+      "toSec": 17.7,
+      "revealAtSec": 15.0
     },
     {
       "level": "Round 2",
@@ -40,9 +40,9 @@
       "question": "Mars Bar. *Spot it?*",
       "reveal": "*Shorter* bar — same wrapper.",
       "chip": "Same wrapper",
-      "fromSec": 15.05,
-      "toSec": 21.45,
-      "revealAtSec": 19.6
+      "fromSec": 17.7,
+      "toSec": 23.7,
+      "revealAtSec": 21.0
     },
     {
       "level": "Round 3",
@@ -54,9 +54,9 @@
       "question": "Same sheet count. *Spot it?*",
       "reveal": "*Shorter* roll than the old core.",
       "chip": "Same sheet count",
-      "fromSec": 21.45,
-      "toSec": 31.2,
-      "revealAtSec": 27.733
+      "fromSec": 23.7,
+      "toSec": 31.433,
+      "revealAtSec": 29.0
     },
     {
       "level": "Level 4",
@@ -68,9 +68,9 @@
       "question": "Both 24 count. *Spot it?*",
       "reveal": "*Thinner* strips.",
       "chip": "Both 24 ct",
-      "fromSec": 31.2,
-      "toSec": 38.83,
-      "revealAtSec": 37.266
+      "fromSec": 31.433,
+      "toSec": 41.5,
+      "revealAtSec": 39.0
     },
     {
       "level": "Level 5",
@@ -82,9 +82,9 @@
       "question": "Both “Large Fries.” *Spot it?*",
       "reveal": "Carton → bag. *Way* less fries.",
       "chip": "Both “Large”",
-      "fromSec": 38.83,
-      "toSec": 50.45,
-      "revealAtSec": 45.566
+      "fromSec": 41.5,
+      "toSec": 50.233,
+      "revealAtSec": 999
     },
     {
       "level": "Final Boss",
@@ -97,9 +97,9 @@
       "reveal": "Both are *12.4 oz*.",
       "trick": true,
       "trickTags": ["12.4 oz = 12.4 oz", "“75% MORE” than a box you can't see", "Marketing skimp"],
-      "fromSec": 50.45,
-      "toSec": 73.6,
-      "revealAtSec": 57.3
+      "fromSec": 50.233,
+      "toSec": 73.7,
+      "revealAtSec": 56.0
     }
   ],
   "outro": {
@@ -114,6 +114,13 @@
     ],
     "followLine": "Follow for Pt 2",
     "scoreLine": "Comment your score /6",
-    "fromSec": 73.6
+    "fromSec": 73.7
+  },
+  "cta": {
+    "fromSec": 78.7,
+    "tagline": "You spotted the skimp.\nNow *spot the rest.*",
+    "followLine": "comment your score /6 ↓",
+    "url": "fullcarts.org",
+    "statLine": "@full_carts_ · 2,200+ documented shrinks · every one source-cited"
   }
 }
