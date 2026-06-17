@@ -7,6 +7,7 @@ import { ShrinkCutaway, shrinkCutawaySchema } from "./compositions/ShrinkCutaway
 import { SourceFrame, sourceFrameSchema } from "./compositions/SourceFrame";
 import { CaughtTitle, caughtTitleSchema } from "./compositions/CaughtTitle";
 import { Thumbnail, thumbnailSchema } from "./compositions/Thumbnail";
+import { CoverCard, coverCardSchema } from "./compositions/CoverCard";
 import { SafeZonePreview, safeZonePreviewSchema } from "./compositions/SafeZonePreview";
 import { FinalVideo, calcFinalMeta, type FinalVideoProps } from "./compositions/FinalVideo";
 import { BeforeAfter, beforeAfterSchema } from "./compositions/BeforeAfter";
@@ -162,6 +163,26 @@ export const RemotionRoot: React.FC = () => {
         height={H}
         schema={thumbnailSchema}
         defaultProps={{ brand: "Folgers", pctChange: 14.7, mode: "shrink" as const }}
+      />
+
+      <Composition
+        id="CoverCard"
+        component={CoverCard}
+        durationInFrames={30}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={coverCardSchema}
+        defaultProps={{
+          faceSrc: "img/cover-face.png",
+          eyebrow: "SHRINKFLATION · CAUGHT",
+          headline: ["“NEW & IMPROVED”", "IS A *LIE*"],
+          sub: "3 cleaning shrinks. one company.",
+          url: "fullcarts.org",
+          focusY: 22,
+          zoom: 1.14,
+          cardTop: 1200,
+        }}
       />
 
       {/* Preview only — overlay + mock platform UI to verify safe zones. Not for export. */}

@@ -85,16 +85,16 @@ export const ShrinkCutaway: React.FC<Props> = ({ brand, productName, sizeBefore,
         )}
       </div>
 
-      {/* before → after data strip */}
-      <div style={{ position: "absolute", top: 1050, left: LEFT, right: RIGHT, textAlign: "center", opacity: stripIn, transform: `translateY(${interpolate(stripIn, [0, 1], [12, 0])}px)` }}>
-        <span style={{ fontFamily: mono, fontWeight: 700, fontSize: 50, color: theme.color.textTertiary }}>{fmt(sizeBefore)} {unit}</span>
-        <span style={{ fontFamily: mono, fontSize: 50, color: theme.color.textSecondary, margin: "0 22px" }}>→</span>
-        <span style={{ fontFamily: mono, fontWeight: 700, fontSize: 50, color: accent }}>{fmt(sizeAfter)} {unit}</span>
-        <span style={{ fontFamily: mono, fontSize: 30, letterSpacing: 4, color: theme.color.textTertiary, marginLeft: 24, textTransform: "uppercase" }}>· same price</span>
+      {/* before → after data strip (one line — never wrap onto the footer) */}
+      <div style={{ position: "absolute", top: 1040, left: LEFT, right: RIGHT, textAlign: "center", whiteSpace: "nowrap", opacity: stripIn, transform: `translateY(${interpolate(stripIn, [0, 1], [12, 0])}px)` }}>
+        <span style={{ fontFamily: mono, fontWeight: 700, fontSize: 46, color: theme.color.textTertiary }}>{fmt(sizeBefore)} {unit}</span>
+        <span style={{ fontFamily: mono, fontSize: 46, color: theme.color.textSecondary, margin: "0 18px" }}>→</span>
+        <span style={{ fontFamily: mono, fontWeight: 700, fontSize: 46, color: accent }}>{fmt(sizeAfter)} {unit}</span>
+        <span style={{ fontFamily: mono, fontSize: 27, letterSpacing: 3, color: theme.color.textTertiary, marginLeft: 18, textTransform: "uppercase" }}>· same price</span>
       </div>
 
-      {/* footer */}
-      <div style={{ position: "absolute", top: 1120, left: LEFT, right: RIGHT, display: "flex", justifyContent: "space-between", alignItems: "center", opacity: stripIn }}>
+      {/* footer (pushed clear of the strip) */}
+      <div style={{ position: "absolute", top: 1160, left: LEFT, right: RIGHT, display: "flex", justifyContent: "space-between", alignItems: "center", opacity: stripIn }}>
         <span style={{ fontFamily: mono, fontSize: 24, color: theme.color.textSecondary }}>documented · sourced · fullcarts.org</span>
         <Brandmark scale={1.0} />
       </div>

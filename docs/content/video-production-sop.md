@@ -16,6 +16,7 @@ Lock these *before* filming or rendering — most of the CPI Take rounds came fr
 - [ ] **Numbers** — every on-camera stat traced to `approved-claims.md` §1 or a fresh DB pull. Read them back so there's **no VO flub** (e.g. the "$13 vs $1,300" miss).
 - [ ] **SFX intent** — what sound on what cut (riser? whoosh on cut-IN only? impact?). Use real files in `video/public/audio/sfx/`, not synths.
 - [ ] **Film export rules** — **1080×1920, H.264, 30fps, and NO burned-in captions** (captions are added last, after the cut). This single rule saved a full re-render.
+- [ ] **File handover is pre-agreed (§5)** — films live at `~/Documents/Social Videos/<batch>/<clip>/Film_no captions.mov`; chunk with the canned `split` one-liner. Never re-ask where the file is or re-derive the command.
 
 ## 1. Brief (data) — operator
 - Refresh banner counts; pull candidates (`references/operator-loop.md` SQL); dedup against `content-log.md`; run the 3 gates.
@@ -31,13 +32,32 @@ Lock these *before* filming or rendering — most of the CPI Take rounds came fr
 ## 4. Film — human
 - Shoot the locked script in one continuous take (2–3 takes). Export per the rules in §0. Send the **SRT** (gives exact reveal timings).
 
-## 5. Get the film to the operator (chunked upload)
-The film is ~200MB; GitHub/chat caps are smaller. Split it:
-```bash
-cd ~/Documents/"Social Videos/<folder>"
-split -b 24m "YOUR_FILM.mov" "CHUNK_"     # → CHUNK_aa, ab, …
+## 5. Get the film to the operator (chunked upload) — DO NOT re-derive this every time
+
+**Canonical local layout (this is where the files always live — assume it, don't ask):**
 ```
-Upload all chunks; operator reassembles: `cat CHUNK_* > film.mov`.
+~/Documents/Social Videos/<Batch e.g. "Jun 26">/<Clip slug e.g. "Spring Cleaning">/
+    Film_no captions.mov          ← the caption-free film (per §0 export rules)
+    <slug> Viral VFX script.pdf   ← the shooting script
+    SRT file <slug>/              ← the .srt (exact reveal timings)
+    SFX/                          ← any per-clip sound effects
+```
+The upload cap is **30 MB**, the film is ~150–200 MB. **One-shot command — paste as-is**, only swap the
+two bracketed folder names to match the batch/clip:
+```bash
+cd ~/Documents/"Social Videos"/"Jun 26"/"Spring Cleaning" && split -b 25m "Film_no captions.mov" film_chunk_ && ls -lh film_chunk_* && shasum -a 256 "Film_no captions.mov"
+```
+- Quote each path segment with spaces (`"Jun 26"`, `"Spring Cleaning"`) — that's the bug that ate three rounds.
+- `-b 25m` keeps every chunk safely under the 30 MB cap; `shasum` lets the operator verify the rebuild.
+- **Path unknown / folder renamed?** Path-agnostic fallback (finds it anywhere under Documents):
+  ```bash
+  f=$(find ~/Documents -name "Film_no captions.mov" -print -quit) && cd "$(dirname "$f")" && split -b 25m "Film_no captions.mov" film_chunk_ && ls -lh film_chunk_*
+  ```
+
+Upload all `film_chunk_*` files + paste the `shasum` line. **Operator reassembles + verifies:**
+```bash
+cat film_chunk_* > "Film_no captions.mov" && shasum -a 256 "Film_no captions.mov"   # hash must match
+```
 
 ## 6. Render pipeline (operator — the technical part, repeatable)
 The remote env blocks Remotion's headless-shell download, so point it at the Playwright Chromium:
@@ -75,3 +95,18 @@ npx remotion render FinalVideo out/final.mp4 --props=src/props/cpi-final.json --
 5. **Killed a render mid-job to add a tweak** → wasted ~12 min. Never again; batch tweaks, let jobs finish.
 6. **Chart polish rounds (axes, overlaps)** → bake the "axes + labels + clear text zones" rule into every chart up front.
 7. **Full-res every iteration** → use `--scale 0.6` for reviews, full-res only on the approved final.
+8. **Re-deriving the chunked-upload path/command every single video** (this happened *again* Jun 2026, ~5 rounds) → §5 is now the canned, copy-paste answer with the real path convention. Never re-ask where the film is or rebuild the `split` line from scratch.
+9. **Revised on-screen numbers silently contradicting the recorded VO.** When the creator changes figures mid-edit (Swiffer 28→32 ct, Febreze 8.8→16.9 oz), the *filmed voiceover still says the old numbers*. **Flag the mismatch the moment numbers change** — never ship visuals that contradict the audio. (These were a different DB product than the VO cited: Swiffer *Wet Cloths* 32→24 vs *Dusters* 28→24; Febreze *Fabric* 500→438 ml vs *Air Mist* 8.8→8.1 oz — verify which entry the new figure is.)
+
+## Fixing the VO without a re-record (cloned-voice dub)
+When numbers change but the creator won't re-record, you can dub corrected lines **only under full-frame cutaways** (face hidden → **no lip-sync problem**). Proven path (Jun 2026):
+- **Clone the voice via Vidiq `vidiq_voiceover_clone_start` (YouTube URL).** The raw-audio clone (`vidiq_voiceover_clone`) is **not usable from here** — it needs the sample inlined as base64, and a 60s clip is ~520K chars (too large for a tool call). The URL variant has Vidiq fetch the audio, so size is a non-issue.
+- **Source quality matters:** a **Short** gave a weak clone that drifted to a generic British accent. Prefer a **longer, clean, music-free** source (a 1–3 min talking video, or the creator's own clean VO uploaded unlisted).
+- **Generate** the corrected lines (`vidiq_voiceover_generate`), then **level-match** to the film VO with `volumedetect` (target the film's mean dB; this batch: −5 dB / −1.2 dB) and splice with ffmpeg: `volume=0:enable='between(t,A,B)'` to mute the stale region + `adelay` to place the clip, `amix ...:normalize=0`. Keep the dub **inside the cutaway window only**; the real voice carries every face beat.
+
+## Environment toolchain prep (install on demand)
+- **webp images:** the bundled ffmpeg can't decode webp → `pip install pillow` and convert with PIL.
+- **PDF text:** pypdf's cffi backend is broken here → `pip install pymupdf` (`fitz`).
+- **Frame-accurate re-encode trims** (libx264): `pip install imageio-ffmpeg`; its binary handles `trim/concat` + `libx264`. (Remotion's own ffmpeg is for probe/extract, not re-encode.)
+- **Filenames with spaces** break the `remotion ffmpeg` wrapper ("No such file") → rename before use.
+- **Long signed URLs** (S3 voiceover downloads): copy exactly inside single quotes — a stray break corrupts the signature.

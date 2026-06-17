@@ -28,9 +28,12 @@ import { RocketsFeathers } from "./RocketsFeathers";
 import { PriceJump } from "./PriceJump";
 import { FewerCups } from "./FewerCups";
 import { OutroCard } from "./OutroCard";
+import { HookChart } from "./HookChart";
+import { InsetVideo } from "./InsetVideo";
+import { LogoReveal } from "./LogoReveal";
 
 // ---- Timeline types (Model B: feed your film + this timeline → one finished MP4) ----
-type OverlayCue = { type: "caught" | "shrink" | "shrinkcut" | "stat" | "rundown" | "source" | "kinetic" | "shrinkreveal" | "hook" | "brandmark" | "footnote" | "rockets" | "pricejump" | "fewercups" | "outro"; fromSec: number; toSec: number; props: Record<string, unknown> };
+type OverlayCue = { type: "caught" | "shrink" | "shrinkcut" | "stat" | "rundown" | "source" | "kinetic" | "shrinkreveal" | "hook" | "brandmark" | "footnote" | "rockets" | "pricejump" | "fewercups" | "outro" | "hookchart" | "insetvideo" | "logoreveal"; fromSec: number; toSec: number; props: Record<string, unknown> };
 // Camera keyframes drive the film's scale/position over time — opening zoom, pattern
 // interrupts, and fake "angle change" rehooks from a single take.
 type CamKey = { atSec: number; scale: number; x?: number; y?: number };
@@ -141,14 +144,15 @@ const CaptionLine: React.FC<{ text: string }> = ({ text }) => {
 };
 
 // Self-aware "*actually 5" correction that pops in when the VO slips and says "six".
-const Footnote: React.FC<{ text: string }> = ({ text }) => {
+// Also used as a small comedic annotation box (e.g. "awkward data pose").
+const Footnote: React.FC<{ text: string; top?: number }> = ({ text, top = 580 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const p = enter(frame, fps, { durationInFrames: 9 });
   const tilt = interpolate(Math.sin(frame / 5), [-1, 1], [-3, 3]);
   return (
     <AbsoluteFill>
-      <div style={{ position: "absolute", top: 580, left: 0, right: 0, display: "flex", justifyContent: "center", opacity: p, transform: `translateY(${interpolate(p, [0, 1], [12, 0])}px) scale(${interpolate(p, [0, 1], [0.6, 1])}) rotate(${tilt}deg)` }}>
+      <div style={{ position: "absolute", top, left: 0, right: 0, display: "flex", justifyContent: "center", opacity: p, transform: `translateY(${interpolate(p, [0, 1], [12, 0])}px) scale(${interpolate(p, [0, 1], [0.6, 1])}) rotate(${tilt}deg)` }}>
         <span style={{ fontFamily: mono, fontWeight: 700, fontSize: 46, color: theme.color.textPrimary, background: "rgba(10,11,13,0.85)", border: `1px solid ${theme.color.border}`, borderRadius: 12, padding: "10px 20px", textShadow: "0 2px 0 #000" }}>
           <span style={{ color: theme.color.red }}>*</span>
           {text.replace(/^\*/, "")}
@@ -195,7 +199,7 @@ const renderOverlay = (o: OverlayCue) => {
     case "brandmark":
       return <CornerLogo />;
     case "footnote":
-      return <Footnote text={(o.props as { text: string }).text} />;
+      return <Footnote text={(o.props as { text: string; top?: number }).text} top={(o.props as { text: string; top?: number }).top} />;
     case "rockets":
       return <RocketsFeathers {...(o.props as React.ComponentProps<typeof RocketsFeathers>)} />;
     case "pricejump":
@@ -204,6 +208,12 @@ const renderOverlay = (o: OverlayCue) => {
       return <FewerCups {...(o.props as React.ComponentProps<typeof FewerCups>)} />;
     case "outro":
       return <OutroCard {...(o.props as React.ComponentProps<typeof OutroCard>)} />;
+    case "hookchart":
+      return <HookChart {...(o.props as React.ComponentProps<typeof HookChart>)} />;
+    case "insetvideo":
+      return <InsetVideo {...(o.props as React.ComponentProps<typeof InsetVideo>)} />;
+    case "logoreveal":
+      return <LogoReveal {...(o.props as React.ComponentProps<typeof LogoReveal>)} />;
   }
 };
 
