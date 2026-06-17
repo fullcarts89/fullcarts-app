@@ -23,6 +23,19 @@
 
 These require live DB access (Supabase MCP authed, or `SUPABASE_URL`+`SUPABASE_KEY` env). **Do not write Phase 1 view code until V1/V2/V3 results are recorded in this plan.** Each gate has a decision rule + fallback.
 
+### ✅ PHASE 0 RESULTS (recorded 2026-06-17, via service_role REST + local compute)
+
+| Gate | Finding | Verdict |
+|---|---|---|
+| **V1 — FullCarts Index** | 15,498 obs / **3,288 priced**; 1,434 priced variants but only **56 with ≥2 distinct months**. Consecutive-month basket overlap is **0 before 2026-04**, then **49 / 53 / 51** for Apr/May/Jun 2026 — i.e. Kroger price ingestion (`kroger_api`, 588 rows) began ~Apr 2026; everything earlier is one-shot `claim_before`/`claim_after` points, not a panel. | **FALLBACK.** No historical YoY panel yet. Ship **"Tracked Basket"** = price-per-unit on the ~50-SKU consecutive panel (since Apr 2026), labeled honestly ("tracked basket of N products"). It **matures into the real FullCarts Index** as the panel accrues (~12 mo). Recommend growing Kroger/Walmart price coverage to widen the basket. |
+| **V2 — Illusion of Choice** | `corporate_tree` = **48 parents, 24 with ≥3 brands** (fields: `manufacturer, distinct_brands, total_shrinkflation_events, worst_delta_pct, top_brands`). | **BUILD.** Strong. |
+| **V3 — Consumer Reports** | `consumer_reports_findings` = **0 rows**. | **DEFER** (drop from v1). |
+| **V3 — Google Trends** | `google_trends_data` = **61 rows** (existing `/insights` macro series). | **INCLUDE as a macro spark only** (not per-brand). Verify column names at build. |
+| **V3 — USDA history** | `usda_product_history` rich: `gtin_upc, parsed_size, parsed_size_unit, release_date, brand_name`, 7 releases. (Earlier 500 was a `count` timeout, not missing data.) | **INCLUDE** — "USDA confirms" via `gtin_upc` ↔ `pack_variants.upc`. |
+| **Serial Shrinkers** | **189 entities** with ≥2 live events (of 1,968 with events). | **BUILD.** Headline-strong. |
+
+**Adjusted v1 anchors:** lead with **Serial Shrinkers (189)** + **Illusion of Choice (48 parents)** as the headline cuts; **Tracked Basket** as the honest Index-precursor; **USDA confirms** for credibility; **Google Trends** macro spark. **Consumer Reports deferred** (empty). The `fullcarts_index` view in Task 1.1 ships as `tracked_basket_ppu` per the fallback.
+
 ### Task 0.1: Dump real schemas for the tables in question
 
 **Step 1:** Run (MCP `list_tables` verbose, or SQL):
