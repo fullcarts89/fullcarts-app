@@ -1,0 +1,8 @@
+# HyperFrames render output (regenerated via `npm run render`)
+renders/
+
+# Deps (project uses npx; nothing should land here, but just in case)
+node_modules/
+
+# Large demo binaries bundled inside the installed agent skills (not needed in repo)
+.agents/skills/*/examples/assets/*.mp4
