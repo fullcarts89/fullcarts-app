@@ -30,6 +30,7 @@ import { CompoundChart, compoundChartSchema } from "./compositions/CompoundChart
 import { CpiMechanic, cpiMechanicSchema } from "./compositions/CpiMechanic";
 import { BudgetShareBars, budgetShareSchema } from "./compositions/BudgetShareBars";
 import { PriceCeiling, priceCeilingSchema } from "./compositions/PriceCeiling";
+import { NetWeightZoom, netWeightZoomSchema } from "./compositions/NetWeightZoom";
 import folgersCut from "./props/folgers-final.json";
 import folgersCutV5 from "./props/folgers-final-v5.json";
 import coffee5 from "./props/coffee-5.json";
@@ -590,6 +591,90 @@ export const RemotionRoot: React.FC = () => {
         height={H}
         schema={budgetShareSchema}
         defaultProps={budgetShareSchema.parse({})}
+      />
+
+      {/* ── "General Mills — Too Dumb to Notice" (Cinnamon Toast Crunch 12→10oz) ──
+          Green-screen BACKGROUND clips, one per storyboard beat. 1080×1920, full-frame,
+          NO captions / NO SFX baked in (creator composites face + adds those in CapCut).
+          All numbers DB-verified: 12→10oz (−16.7%), 28 GM events, 2,300+ total. */}
+
+      {/* HOOK (0–3s) — push into the real net-weight corner, ring the "12 OZ" */}
+      <Composition
+        id="GMHook"
+        component={NetWeightZoom}
+        durationInFrames={90}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={netWeightZoomSchema}
+        defaultProps={{
+          src: "ctc_corner.jpg",
+          mode: "hook" as const,
+          eyebrow: "THE CORNER THEY HOPE YOU MISS",
+          ringCx: 0.55,
+          ringCy: 0.88,
+          ringRx: 0.09,
+          ringRy: 0.22,
+        }}
+      />
+
+      {/* PROOF (3–10s) — both real boxes, same shelf, −16.7% badge + before→after strip */}
+      <Composition
+        id="GMProof"
+        component={ShrinkCutaway}
+        durationInFrames={210}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={shrinkCutawaySchema}
+        defaultProps={{
+          brand: "General Mills",
+          productName: "Cinnamon Toast Crunch",
+          sizeBefore: 12,
+          sizeAfter: 10,
+          unit: "oz",
+          pctChange: 16.7,
+          mode: "shrink" as const,
+          shots: [{ src: "ctc_evidence.jpg", caption: "same shelf · same price" }],
+          guide: false,
+        }}
+      />
+
+      {/* TACTIC (10–18s) — full close-up of the net weight, zoom pulse ("they count on this") */}
+      <Composition
+        id="GMTactic"
+        component={NetWeightZoom}
+        durationInFrames={240}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={netWeightZoomSchema}
+        defaultProps={{
+          src: "ctc_corner.jpg",
+          mode: "tactic" as const,
+          eyebrow: "NET WEIGHT · THEY COUNT ON THIS",
+          ringCx: 0.55,
+          ringCy: 0.88,
+          ringRx: 0.09,
+          ringRy: 0.22,
+        }}
+      />
+
+      {/* CTA (25–30s) — end card: pantry check, @full_carts_, comment LABELS, 2,300+ */}
+      <Composition
+        id="GMcta"
+        component={OutroCard}
+        durationInFrames={150}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={outroCardSchema}
+        defaultProps={{
+          tagline: "Check your pantry.\n*Then check mine.*",
+          followLine: "comment LABELS for the worst offenders",
+          url: "fullcarts.org",
+          statLine: "@full_carts_ · 2,300+ documented shrinks · every one source-cited",
+        }}
       />
 
       {/* ⑤ TAKE — price climbs to a ceiling it won't cross, deflects to a shrink */}
