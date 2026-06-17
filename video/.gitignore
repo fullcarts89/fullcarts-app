@@ -5,6 +5,8 @@ in/
 .DS_Store
 public/film/
 public/cutaways/
+public/clips/
+public/img/
 src/props/folgers-test.json
 src/props/folgers-hooktest.json
 public/cpi-film.*
