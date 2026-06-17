@@ -31,6 +31,7 @@ import { CpiMechanic, cpiMechanicSchema } from "./compositions/CpiMechanic";
 import { BudgetShareBars, budgetShareSchema } from "./compositions/BudgetShareBars";
 import { PriceCeiling, priceCeilingSchema } from "./compositions/PriceCeiling";
 import { NetWeightZoom, netWeightZoomSchema } from "./compositions/NetWeightZoom";
+import { GMThumb, gmThumbSchema } from "./compositions/GMThumb";
 import folgersCut from "./props/folgers-final.json";
 import folgersCutV5 from "./props/folgers-final-v5.json";
 import coffee5 from "./props/coffee-5.json";
@@ -657,6 +658,26 @@ export const RemotionRoot: React.FC = () => {
           ringCy: 0.88,
           ringRx: 0.115,
           ringRy: 0.27,
+        }}
+      />
+
+      {/* THUMBNAIL / cover (9:16) — real boxes + Caught framing + −16.7% badge */}
+      <Composition
+        id="GMThumb"
+        component={GMThumb}
+        durationInFrames={30}
+        fps={FPS}
+        width={W}
+        height={H}
+        schema={gmThumbSchema}
+        defaultProps={{
+          src: "ctc_evidence.jpg",
+          brand: "GENERAL MILLS",
+          product: "Cinnamon Toast Crunch",
+          pct: "−16.7%",
+          before: "12 OZ",
+          after: "10 OZ",
+          kicker: "SAME PRICE.",
         }}
       />
 
