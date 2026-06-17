@@ -611,10 +611,10 @@ export const RemotionRoot: React.FC = () => {
           src: "ctc_corner.jpg",
           mode: "hook" as const,
           eyebrow: "THE CORNER THEY HOPE YOU MISS",
-          ringCx: 0.55,
+          ringCx: 0.52,
           ringCy: 0.88,
-          ringRx: 0.09,
-          ringRy: 0.22,
+          ringRx: 0.115,
+          ringRy: 0.27,
         }}
       />
 
@@ -653,10 +653,10 @@ export const RemotionRoot: React.FC = () => {
           src: "ctc_corner.jpg",
           mode: "tactic" as const,
           eyebrow: "NET WEIGHT · THEY COUNT ON THIS",
-          ringCx: 0.55,
+          ringCx: 0.52,
           ringCy: 0.88,
-          ringRx: 0.09,
-          ringRy: 0.22,
+          ringRx: 0.115,
+          ringRy: 0.27,
         }}
       />
 
