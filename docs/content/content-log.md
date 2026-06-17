@@ -24,6 +24,7 @@ Views), find the outlier, and bias the next batch toward what won (hook? series?
 | # | Posted | Series | Brand | Product | Change (dedup key) | Platforms | Hook (Snap one-liner) | URL | Views | Follows | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | _ex_ | 2026-06-12 | Caught: | Folgers | Coffee | 51→43.5oz (−14.7%) | TT/RE/SH | "blamed record prices… coffee crashed 40%, your can never came back" | _link_ | — | — | debut · coffee-chart real screenshot |
+| 1 | 2026-06-17 | Caught: | General Mills | Cinnamon Toast Crunch | 12→10oz (−16.7%) | YT/IG | "General Mills hopes you never see this number" | _add URL_ | — | — | net-weight corner ring + real-boxes proof · green-screen comp in CapCut · CTA keyword=LABELS (not CAUGHT) |
 
 > Delete the `_ex_` example row once your first real post is logged. Keep rows append-only;
 > don't overwrite history (the audit trail is the point).
