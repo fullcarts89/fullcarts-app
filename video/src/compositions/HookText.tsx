@@ -11,6 +11,8 @@ export const hookTextSchema = z.object({
   accent: z.enum(["red", "green"]).default("red"),
   top: z.number().optional(), // explicit y override (e.g. 270 = just under the top danger zone, clears the eyes)
   fontSize: z.number().default(66),
+  left: z.number().default(60),
+  right: z.number().default(170),
 });
 
 type Props = z.infer<typeof hookTextSchema>;
@@ -29,7 +31,7 @@ const parse = (text: string, color: string) =>
 // Transparent text overlay that floats in the negative space AROUND the talking head
 // (above the head or under the chin) — graphics without cutting away. Scrim + outline
 // keep it readable over a busy room. Zones avoid the face band (~y 740–1190).
-export const HookText: React.FC<Props> = ({ lines, zone, accent, top: topOverride, fontSize }) => {
+export const HookText: React.FC<Props> = ({ lines, zone, accent, top: topOverride, fontSize, left, right }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const color = theme.color[accent];
@@ -37,7 +39,7 @@ export const HookText: React.FC<Props> = ({ lines, zone, accent, top: topOverrid
 
   return (
     <AbsoluteFill>
-      <div style={{ position: "absolute", top, left: 60, right: 170, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+      <div style={{ position: "absolute", top, left, right, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
         {lines.map((line, i) => {
           const p = enter(frame, fps, { delay: i * 5, durationInFrames: 10 });
           return (
