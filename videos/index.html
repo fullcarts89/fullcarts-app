@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Hyperframes — Intro</title>
+
+    <!--
+      Hyperframes cinematic intro (12s, single paused GSAP timeline).
+
+      Concept: clean, high-end brand reveal that hands off to a product
+      b-roll showcase, then returns to the lockup.
+
+        0.0 – 3.2s   Brand reveal: glow blooms, logo pops in, "Hyperframes"
+                      wordmark rises, "Prompt. Animate. Render." staggers in.
+        3.2 – 3.9s   Lockup lifts away; compact brand bar slides in top-left.
+        3.9 – 9.4s   Showcase: Dawn / Febreze / Swiffer cross-fade with a
+                      slow ken-burns push + size-delta captions.
+        9.4 – 12.0s  Lockup returns to center, glow pulse, gentle breathing.
+
+      Assets are local (deterministic, no network). GSAP is vendored.
+    -->
+
+    <script src="vendor/gsap.min.js"></script>
+
+    <style>
+      :root {
+        --teal: #14e0c8;
+        --green: #5ee06a;
+        --ink: #f4f7fa;
+        --muted: rgba(244, 247, 250, 0.55);
+        --red: #ff5a5f;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #04060a;
+        font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+        color: var(--ink);
+      }
+      .stage {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+
+      /* ---------- Background ---------- */
+      .bg-base {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          circle at 50% 42%,
+          #0c1016 0%,
+          #06080d 55%,
+          #020305 100%
+        );
+      }
+      .glow {
+        position: absolute;
+        width: 1180px;
+        height: 1180px;
+        border-radius: 50%;
+        filter: blur(150px);
+        mix-blend-mode: screen;
+        will-change: transform, opacity;
+      }
+      .glow-teal {
+        top: -240px;
+        left: 120px;
+        background: radial-gradient(circle, rgba(20, 224, 200, 0.55), transparent 68%);
+      }
+      .glow-green {
+        bottom: -300px;
+        right: 100px;
+        background: radial-gradient(circle, rgba(94, 224, 106, 0.5), transparent 68%);
+      }
+      .vignette {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(
+           circle at 50% 48%,
+          transparent 45%,
+          rgba(0, 0, 0, 0.55) 100%
+        );
+      }
+      .grain {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.045;
+        mix-blend-mode: overlay;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        background-size: 200px 200px;
+      }
+
+      /* ---------- Hero lockup ---------- */
+      .hero-lockup {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 34px;
+        will-change: transform, opacity;
+      }
+      .logo-wrap {
+        position: relative;
+        width: 240px;
+        height: 240px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        will-change: transform, opacity;
+      }
+      .logo-glow {
+        position: absolute;
+        width: 420px;
+        height: 420px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(40, 230, 190, 0.45), transparent 62%);
+        filter: blur(36px);
+        will-change: transform, opacity;
+      }
+      .logo {
+        position: relative;
+        width: 240px;
+        height: 240px;
+        display: block;
+      }
+      .wordmark {
+        font-size: 96px;
+        font-weight: 600;
+        letter-spacing: -2px;
+        color: var(--ink);
+        line-height: 1;
+        will-change: transform, opacity;
+      }
+      .tagline {
+        display: flex;
+        gap: 18px;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 25px;
+        letter-spacing: 7px;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .tw {
+        will-change: transform, opacity;
+      }
+
+      /* ---------- Top brand bar (showcase) ---------- */
+      .brandbar {
+        position: absolute;
+        top: 58px;
+        left: 72px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        will-change: transform, opacity;
+      }
+      .brandbar-logo {
+        width: 54px;
+        height: 54px;
+        display: block;
+      }
+      .brandbar-name {
+        font-size: 32px;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+        color: var(--ink);
+      }
+
+      /* ---------- Showcase cards ---------- */
+      .showcase {
+        position: absolute;
+        inset: 0;
+      }
+      .card {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 30px;
+        will-change: opacity;
+      }
+      .frame {
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        box-shadow:
+          0 50px 130px rgba(0, 0, 0, 0.65),
+          0 0 70px rgba(20, 224, 200, 0.1);
+        background: #090c10;
+      }
+      .shot {
+        display: block;
+        max-height: 600px;
+        max-width: 1080px;
+        will-change: transform;
+      }
+      .cap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        will-change: transform, opacity;
+      }
+      .cap-brand {
+        font-size: 36px;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+        color: var(--ink);
+      }
+      .cap-delta {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 26px;
+      }
+      .cap-delta .old {
+        color: rgba(244, 247, 250, 0.4);
+        text-decoration: line-through;
+      }
+      .cap-delta .arr {
+        color: rgba(244, 247, 250, 0.5);
+      }
+      .cap-delta .new {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .chip {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--red);
+        background: rgba(255, 90, 95, 0.14);
+        border: 1px solid rgba(255, 90, 95, 0.42);
+        border-radius: 999px;
+        padding: 5px 14px;
+        letter-spacing: 0.5px;
+      }
+
+      /* ---------- Initial (seek-safe) hidden states ---------- */
+      #glowTeal,
+      #glowGreen,
+      #logoWrap,
+      #logoGlow,
+      #wordmark,
+      #brandbar,
+      .tw,
+      .card {
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="12"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div
+        class="stage clip"
+        data-start="0"
+        data-duration="12"
+        data-track-index="1"
+        id="stage"
+      >
+        <!-- Background -->
+        <div class="bg-base"></div>
+        <div class="glow glow-teal" id="glowTeal" data-layout-allow-overflow></div>
+        <div class="glow glow-green" id="glowGreen" data-layout-allow-overflow></div>
+
+        <!-- Hero lockup -->
+        <div class="hero-lockup" id="heroLockup" data-layout-allow-overlap>
+          <div class="logo-wrap" id="logoWrap">
+            <div class="logo-glow" id="logoGlow"></div>
+            <img class="logo" src="assets/logo-hyperframes.png" alt="Hyperframes" />
+          </div>
+          <div class="wordmark" id="wordmark">Hyperframes</div>
+          <div class="tagline">
+            <span class="tw">Prompt.</span>
+            <span class="tw">Animate.</span>
+            <span class="tw">Render.</span>
+          </div>
+        </div>
+
+        <!-- Compact brand bar (during showcase) -->
+        <div class="brandbar" id="brandbar">
+          <img class="brandbar-logo" src="assets/logo-mark.png" alt="" />
+          <span class="brandbar-name">Hyperframes</span>
+        </div>
+
+        <!-- Product b-roll showcase -->
+        <div class="showcase">
+          <div class="card" id="card1" data-layout-allow-overlap>
+            <div class="frame" data-layout-allow-overflow><img class="shot" src="assets/dawn.webp" alt="" /></div>
+            <div class="cap">
+              <div class="cap-brand">Dawn Platinum</div>
+              <div class="cap-delta">
+                <span class="old">967 mL</span>
+                <span class="arr">&rarr;</span>
+                <span class="new">887 mL</span>
+                <span class="chip">&minus;8%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" id="card2" data-layout-allow-overlap>
+            <div class="frame" data-layout-allow-overflow><img class="shot" src="assets/febreze.webp" alt="" /></div>
+            <div class="cap">
+              <div class="cap-brand">Febreze Fabric</div>
+              <div class="cap-delta">
+                <span class="old">500 mL</span>
+                <span class="arr">&rarr;</span>
+                <span class="new">438 mL</span>
+                <span class="chip">&minus;12%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" id="card3" data-layout-allow-overlap>
+            <div class="frame" data-layout-allow-overflow><img class="shot" src="assets/swiffer.webp" alt="" /></div>
+            <div class="cap">
+              <div class="cap-brand">Swiffer Wet Cloths</div>
+              <div class="cap-delta">
+                <span class="old">32 cloths</span>
+                <span class="arr">&rarr;</span>
+                <span class="new">24 cloths</span>
+                <span class="chip">&minus;25%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cinematic overlays -->
+        <div class="vignette"></div>
+        <div class="grain"></div>
+      </div>
+    </div>
+
+    <script>
+      const TOTAL = 12.0;
+
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      window.__timelines["main"] = tl;
+
+      /* ============================================================
+         PHASE 1 — Brand reveal (0.0 - 3.2s)
+         ============================================================ */
+      tl.fromTo(
+        "#glowTeal",
+        { opacity: 0, x: -70, y: -30 },
+        { opacity: 0.9, x: 0, y: 0, duration: 1.6, ease: "power2.out" },
+        0,
+      );
+      tl.fromTo(
+        "#glowGreen",
+        { opacity: 0, x: 70, y: 30 },
+        { opacity: 0.8, x: 0, y: 0, duration: 1.6, ease: "power2.out" },
+        0.1,
+      );
+
+      tl.fromTo(
+        "#logoWrap",
+        { opacity: 0, scale: 0.72 },
+        { opacity: 1, scale: 1, duration: 1.0, ease: "back.out(1.5)" },
+        0.3,
+      );
+      tl.fromTo(
+        "#logoGlow",
+        { opacity: 0, scale: 0.6 },
+        { opacity: 1, scale: 1, duration: 1.2, ease: "power2.out" },
+        0.4,
+      );
+
+      tl.fromTo(
+        "#wordmark",
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
+        1.0,
+      );
+
+      tl.fromTo(
+        ".tw",
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.6, stagger: 0.14, ease: "power3.out" },
+        1.6,
+      );
+
+      /* ============================================================
+         PHASE 2 — Hand-off to showcase (3.2 - 3.9s)
+         ============================================================ */
+      tl.to(
+        "#heroLockup",
+        { opacity: 0, scale: 0.9, y: -44, duration: 0.7, ease: "power2.inOut" },
+        3.2,
+      );
+      tl.fromTo(
+        "#brandbar",
+        { opacity: 0, x: -24 },
+        { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" },
+        3.6,
+      );
+
+      /* ============================================================
+         PHASE 3 — Product showcase (3.9 - 9.4s)
+         Each card: cross-fade in, slow ken-burns push, caption rise,
+         then cross-fade to the next.
+         ============================================================ */
+      function showcaseCard(id, tin, tout) {
+        const vis = tout - tin;
+        tl.fromTo(
+          id,
+          { opacity: 0, scale: 0.985 },
+          { opacity: 1, scale: 1, duration: 0.55, ease: "power2.out" },
+          tin,
+        );
+        tl.fromTo(
+          id + " .shot",
+          { scale: 1.06 },
+          { scale: 1.0, duration: vis + 0.5, ease: "none" },
+          tin,
+        );
+        tl.fromTo(
+          id + " .cap",
+          { opacity: 0, y: 24 },
+          { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" },
+          tin + 0.25,
+        );
+        tl.to(id, { opacity: 0, duration: 0.5, ease: "power2.in" }, tout);
+      }
+      showcaseCard("#card1", 3.9, 5.8);
+      showcaseCard("#card2", 5.8, 7.5);
+      showcaseCard("#card3", 7.5, 9.4);
+
+      /* ============================================================
+         PHASE 4 — Outro lockup (9.4 - 12.0s)
+         ============================================================ */
+      tl.to("#brandbar", { opacity: 0, duration: 0.5, ease: "power2.in" }, 9.4);
+
+      tl.fromTo(
+        "#heroLockup",
+        { opacity: 0, scale: 0.94, y: 22 },
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          duration: 0.9,
+          ease: "power2.out",
+          immediateRender: false, // heroLockup is visible in Phase 1; don't stamp the "from" state at build
+        },
+        9.7,
+      );
+
+      // Glow pulse on return (.to, not fromTo — avoids an immediateRender clobber of the resting glow)
+      tl.to(
+        "#logoGlow",
+        { scale: 1.18, duration: 0.5, ease: "power2.out" },
+        10.0,
+      );
+      tl.to(
+        "#logoGlow",
+        { scale: 1, opacity: 0.85, duration: 0.7, ease: "sine.inOut" },
+        10.5,
+      );
+
+      // Gentle breathing — onUpdate multiplies onto the logo's resting scale.
+      const logoWrapEl = document.querySelector("#logoWrap");
+      const BREATH_START = 10.6;
+      const PERIOD = 2.2;
+      const AMP = 0.02;
+      tl.to(
+        { tick: 0 },
+        {
+          tick: 1,
+          duration: TOTAL - BREATH_START,
+          ease: "none",
+          onUpdate: function () {
+            const t = Math.max(0, tl.time() - BREATH_START);
+            const omega = (t / PERIOD) * Math.PI * 2;
+            gsap.set(logoWrapEl, { scale: 1 + Math.sin(omega) * AMP });
+          },
+        },
+        BREATH_START,
+      );
+    </script>
+  </body>
+</html>
