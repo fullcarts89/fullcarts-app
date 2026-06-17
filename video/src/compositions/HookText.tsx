@@ -9,6 +9,7 @@ export const hookTextSchema = z.object({
   lines: z.array(z.string()), // wrap words in *asterisks* to red-highlight
   zone: z.enum(["above", "chin"]).default("above"), // above the head / under the chin
   accent: z.enum(["red", "green"]).default("red"),
+  top: z.number().optional(), // explicit y override (e.g. 270 = just under the top danger zone, clears the eyes)
 });
 
 type Props = z.infer<typeof hookTextSchema>;
@@ -27,11 +28,11 @@ const parse = (text: string, color: string) =>
 // Transparent text overlay that floats in the negative space AROUND the talking head
 // (above the head or under the chin) — graphics without cutting away. Scrim + outline
 // keep it readable over a busy room. Zones avoid the face band (~y 740–1190).
-export const HookText: React.FC<Props> = ({ lines, zone, accent }) => {
+export const HookText: React.FC<Props> = ({ lines, zone, accent, top: topOverride }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const color = theme.color[accent];
-  const top = zone === "above" ? 360 : 1230;
+  const top = topOverride ?? (zone === "above" ? 360 : 1230);
 
   return (
     <AbsoluteFill>
