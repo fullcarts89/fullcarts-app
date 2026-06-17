@@ -106,9 +106,13 @@ SLIDE 5: "Free. No ads. Nothing to sell. Search anything → fullcarts.org
 ```
 
 ## First-comment templates (pin a comment to drive engagement)
-- Reveal posts: `Search this one yourself → fullcarts.org. What else swear got smaller? 👇`
-- Newsjack posts: `Full data + sources at fullcarts.org. Which category hit your cart hardest?`
-- Rundown posts: `Comment the product you swear shrank and I'll check the database for next month's 5.`
+**Default (pin on every video) — primes the standard CAUGHT keyword CTA** (`content-rules.md` §5; the auto-DM runs on ManyChat for IG/FB + TikTok where enabled, pinned link on YouTube Shorts):
+- `Comment CAUGHT and I'll send you the receipts on this one — free. 👇`
+
+Per-format kickers (layer on top of the CAUGHT pin, don't replace it):
+- Reveal posts: `Comment CAUGHT for this one's receipt → free. What else swear got smaller? 👇`
+- Newsjack posts: `Comment CAUGHT for the full data + sources → free. Which category hit your cart hardest?`
+- Rundown posts: `Comment the product you swear shrank and I'll check the database for next month's 5. (Comment CAUGHT for the list → free.)`
 - "It's just inflation" reply: `A price going up is visible — you can choose. A size going down at the same price is hidden — you can't. I just document the hidden part. It's all sourced at fullcarts.org.` (the signature comeback — see `content-angles.md` §2)
 
 ## Hashtags per platform (match each platform's discovery behavior — don't copy-paste one stack)

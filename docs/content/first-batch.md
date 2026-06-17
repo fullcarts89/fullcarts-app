@@ -23,7 +23,8 @@ PROOF (3–15s)    real before/after (side-by-side) image + FullCarts entry / so
                  (you source the image — you usually won't have the physical product)
 CONTEXT (15–40s) you explaining the "trick" + Remotion data-viz overlay [credibility signature if 1-in-5 slot]
 PAYOFF (40–55s)  the kicker — restate the most outrageous comparison
-CTA (final 3–5s) follow + "search any product on fullcarts.org"
+CTA (final 3–5s) the standard keyword CTA: "Comment CAUGHT and I'll send you the
+                 [brand] receipts — free. Follow, I catch the next one." (see content-rules.md §5)
 
 NON-NEGOTIABLES: ① data ② interesting ③ credible ④ relatable ⑤ reaction
 PRODUCTION:      Remotion overlay needed · b-roll · trending sound vs original audio
@@ -41,7 +42,7 @@ PRODUCTION:      Remotion overlay needed · b-roll · trending sound vs original
 | **PROOF (3–15s)** | *(hands turn can to the net-weight line; cut to FullCarts entry screen-record)* "Same canister, same shelf, same-ish price — but it quietly dropped from 51 ounces to 43.5. That's **14.7% of your coffee, gone.**" |
 | **CONTEXT (15–40s)** | *(to camera + Remotion bar overlay 51→43.5)* "Here's the trick: keep the package identical so your eye says 'same thing,' shrink what's inside. I do data for a company billions of people have used — reading numbers is my job — and this is textbook. Coffee beans *did* spike those years, so the cost was real. The sneaky part is hiding the size cut instead of just showing a higher price." |
 | **PAYOFF (40–55s)** | "You're brewing ~10 fewer pots per can and paying the same. That's not inflation you can see — it's the kind they hope you won't." |
-| **CTA (3–5s)** | "Follow — I find these so you don't get got. Search Folgers (or anything) on fullcarts.org." |
+| **CTA (3–5s)** | "Comment CAUGHT and I'll send you the Folgers receipts — free. Follow, I find these so you don't get got." |
 
 **Non-negotiables:** ① 51→43.5oz/−14.7% ✓ ② "looks identical, it's not" curiosity loop ✓ ③ database + day-job signature ✓ ④ "your coffee, gone," fewer pots ✓ ⑤ "inflation they hope you won't see" kicker ✓
 **Production:** Remotion 51→43.5 bar; real can b-roll + FullCarts screen-record; original audio (authority piece).
@@ -58,7 +59,7 @@ PRODUCTION:      Remotion overlay needed · b-roll · trending sound vs original
 | **PROOF (3–15s)** | *(hands present bottle; cut to FullCarts entry)* "If you said 'a sip,' you're being generous. It went 32 ounces to 28. **That's 12.5% — a full glass of Gatorade — same price.**" |
 | **CONTEXT (15–40s)** | *(to camera + Remotion 32→28 overlay)* "It's in my database backed by government data, so this isn't a vibe — it's documented. And the small bottles got hit *harder*: the 20-ouncer dropped to 16.9. The smaller the bottle, the bigger the cut, and the more often you buy it." |
 | **PAYOFF (40–55s)** | "So the bottle you grab after every workout? You're paying the old price for less, every single time." |
-| **CTA (3–5s)** | "Would you still buy it at the new size? 🛒 yes / 💀 no in the comments. Follow for more receipts." |
+| **CTA (3–5s)** | "Would you still buy it at the new size? 🛒 yes / 💀 no. Comment CAUGHT and I'll send you the receipt — free." |
 
 **Non-negotiables:** ① 32→28oz/−12.5% ✓ ② stated-contrast hook (same price / less drink), "you" ✓ ③ "my database, government-backed" ✓ ④ "the bottle you grab after every workout" ✓ ⑤ explicit 🛒/💀 vote ✓
 **Production:** Remotion 32→28 + a second 20→16.9 chip; bottle b-roll; trending sound OK (entertainment).
@@ -75,7 +76,7 @@ PRODUCTION:      Remotion overlay needed · b-roll · trending sound vs original
 | **PROOF (3–15s)** | *(cut to real FRED/BLS chart screenshot)* "This is the official government number — real, here's the source. What it **doesn't** capture: when the price stays flat but the package shrinks. That's a hidden price hike the index barely sees." |
 | **CONTEXT (15–40s)** | *(to camera + FullCarts dashboard screen-record)* "I track that hidden part. In my database this month, **[category]** got hit hardest — [N] documented size cuts, like [example brand X→Y]. Add those to the CPI number and the real bite is bigger." |
 | **PAYOFF (40–55s)** | "So next time you hear 'prices rose [X]%,' remember: that's only the half they could measure." |
-| **CTA (3–5s)** | "Follow for the half the headline misses. Full data: fullcarts.org." |
+| **CTA (3–5s)** | "Comment CAUGHT and I'll send you the full data — free. Follow for the half the headline misses." |
 
 **Non-negotiables:** ① CPI print + a FullCarts category stat ✓ ② "the number is lying to you" ✓ ③ "I track the hidden part" + real BLS source ✓ ④ "next time you hear..." ✓ ⑤ "the half they could measure" kicker ✓
 **Production:** real BLS/FRED screenshot (Bucket 1, never AI); FullCarts dashboard record; original audio. **Pre-build this so it ships same-day as the print.**
@@ -92,7 +93,7 @@ PRODUCTION:      Remotion overlay needed · b-roll · trending sound vs original
 | **PROOF (3–15s)** | *(FullCarts homepage counter + a few entries scrolling)* "It's real and it's public — nearly 1,900 products across 900+ brands, every one backed by government data, receipts, and source links. The largest public shrinkflation database I'm aware of." |
 | **CONTEXT (15–40s)** | *(to camera)* "I do data for a living, so when something feels off I don't guess — I go find the receipt. Honestly? I almost didn't believe how *often* it happens until I saw them all in one place. Companies count on you noticing one product at a time. The database notices all of them at once." |
 | **PAYOFF (40–55s)** | "You're not imagining it, and you're not alone — there are 2,200 receipts and counting." |
-| **CTA (3–5s)** | "Follow and I'll show you a new one every week. Look anything up at fullcarts.org." |
+| **CTA (3–5s)** | "Comment CAUGHT and I'll send you the link — free. Follow, a new one every week." |
 
 **Non-negotiables:** ① 2,228/938/1,881 ✓ ② "got annoyed → built a database" story hook ✓ ③ database + day-job + humility ("almost didn't believe") ✓ ④ "you're not imagining it, not alone" ✓ ⑤ "2,200 receipts and counting" ✓
 **Production:** FullCarts screen-record is the hero; minimal b-roll; original audio. **No inflated number — say 2,200+.**
@@ -108,7 +109,7 @@ PRODUCTION:      Remotion overlay needed · b-roll · trending sound vs original
 | **HOOK (0–3s)** | *(face)* "Five things in your house got smaller this year and kept the same price. Number 1 made me genuinely mad." **Text overlay:** `5 stealth shrinks` |
 | **BODY (3–48s)** | *(one product b-roll + Remotion chip each, ~8s apiece)*<br>**5. Kleenex** — 65 → 60 tissues (−7.7%).<br>**4. Crest toothpaste** — 4.1 → 3.8 oz (−7.3%).<br>**3. Nescafé Azera** — 100 → 90 g (−10%).<br>**2. Chobani Flips** — 5.3 → 4.5 oz (−15.1%).<br>**1. Cadbury Freddo Faces Easter egg** — 122 → 99 g. *"That's almost 19% — nearly a fifth of the chocolate, gone."* |
 | **PAYOFF (48–55s)** | "Every one documented, every one sourced, none of them announced. That's the whole game." |
-| **CTA (3–5s)** | "Comment the product you *swear* got smaller and I'll check the database. Follow for next month's five." |
+| **CTA (3–5s)** | "Comment the product you *swear* got smaller and I'll check the database. Comment CAUGHT and I'll send you the list — free." |
 
 **Non-negotiables:** ① 5 sourced entries ✓ ② "number 1 made me mad" + countdown ✓ ③ "every one documented, sourced" ✓ ④ "things in your house" ✓ ⑤ "comment the product you swear got smaller" ✓
 **Production:** 5 Remotion chips (batch-render from one template); product b-roll bank; trending sound OK; fast cuts (one per item).

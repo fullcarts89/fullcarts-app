@@ -72,7 +72,7 @@ Spend one 60–90 min session before your first batch making "real" the fast pat
 - In **Captions App**: drop each clip, auto-caption (burn them in), trim silences, fix eye contact, layer light sound design.
 - Drop in the **Remotion overlay** *the moment you say the number* (≈0.2–0.5s before you say the subject — the brain reads visuals slightly ahead of audio). Pin it next to the product.
 - Add a **Higgsfield** atmosphere shot only if a clip needs an intro/transition — labeled, Bucket-2 only. Optionally run the cut through Higgsfield `virality_predictor` for a hook gut-check.
-- Final pass against the checklist: captions on, 9:16, cut every 2–4s, CTA present, no Bucket-3 AI.
+- Final pass against the checklist: captions on, 9:16, cut every 2–4s, the standard **"Comment CAUGHT" CTA** present (`content-rules.md` §5) + the `Comment "CAUGHT" 👇` overlay, no Bucket-3 AI.
 
 ### ⑤ Sunday — Schedule (15–20 min)
 - Queue the week: TikTok first (native), cross-post to Reels + Shorts with per-platform caption tweaks. Stagger across Mon/Wed/Thu/Fri.
