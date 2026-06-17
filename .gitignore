@@ -54,3 +54,6 @@ top50_image_posts.json
 API\ Key.numbers
 App\ Screenshots/
 /out/
+
+# Reassembled source film (heavy binary, lives in uploads)
+Film_for_GM.mov
