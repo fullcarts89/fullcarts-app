@@ -34,16 +34,16 @@ const Bar: React.FC<{ before: number; after: number; unit: string; pct: number; 
   const beforeW = (before / max) * 100;
   const afterW = (after / max) * 100 * grow;
   return (
-    <div style={{ opacity: rowIn, transform: `translateY(${interpolate(rowIn, [0, 1], [16, 0])}px)`, display: "flex", flexDirection: "column", gap: 6 }}>
+    <div style={{ opacity: rowIn, transform: `translateY(${interpolate(rowIn, [0, 1], [16, 0])}px)`, display: "flex", flexDirection: "column", gap: 9 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-        <span style={{ fontFamily: mono, fontSize: 26, letterSpacing: 2, color: theme.color.textPrimary }}>{label}</span>
-        <span style={{ fontFamily: mono, fontSize: 24, color: theme.color.textTertiary }}>{before}→{after} {unit}</span>
+        <span style={{ fontFamily: mono, fontSize: 38, letterSpacing: 2, color: theme.color.textPrimary }}>{label}</span>
+        <span style={{ fontFamily: mono, fontSize: 33, color: theme.color.textTertiary }}>{before}→{after} {unit}</span>
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-        <div style={{ height: 14, width: `${beforeW}%`, background: theme.color.textTertiary, opacity: 0.4, borderRadius: 4, minWidth: 20 }} />
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ height: 14, width: `${afterW}%`, background: theme.color.red, borderRadius: 4, minWidth: 20 }} />
-          <span style={{ fontFamily: mono, fontWeight: 700, fontSize: 30, color: theme.color.red, whiteSpace: "nowrap" }}>−{pctVal}%</span>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <div style={{ height: 22, width: `${beforeW}%`, background: theme.color.textTertiary, opacity: 0.4, borderRadius: 5, minWidth: 28 }} />
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ height: 22, width: `${afterW}%`, background: theme.color.red, borderRadius: 5, minWidth: 28 }} />
+          <span style={{ fontFamily: mono, fontWeight: 700, fontSize: 46, color: theme.color.red, whiteSpace: "nowrap" }}>−{pctVal}%</span>
         </div>
       </div>
     </div>
@@ -69,16 +69,16 @@ export const HookChart: React.FC<Props> = ({ title, top, right, width, items }) 
           transform: `translateY(${interpolate(panelIn, [0, 1], [-18, 0])}px)`,
           background: theme.color.cardScrim,
           border: `1px solid ${theme.color.border}`,
-          borderLeft: `6px solid ${theme.color.red}`,
+          borderLeft: `9px solid ${theme.color.red}`,
           borderRadius: theme.radius.xl,
-          padding: "26px 30px",
+          padding: "34px 40px",
           backdropFilter: "blur(6px)",
           display: "flex",
           flexDirection: "column",
-          gap: 22,
+          gap: 30,
         }}
       >
-        <div style={{ fontFamily: mono, fontSize: 24, letterSpacing: 3, color: theme.color.red }}>{title}</div>
+        <div style={{ fontFamily: mono, fontSize: 32, letterSpacing: 3, color: theme.color.red }}>{title}</div>
         {items.map((it, i) => (
           <Bar key={i} {...it} delay={10 + i * 8} />
         ))}

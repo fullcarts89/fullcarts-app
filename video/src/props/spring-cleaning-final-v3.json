@@ -1,0 +1,50 @@
+{
+  "film": "film/spring-cleaning-cut2.mov",
+  "fps": 30,
+  "durationSec": 95.95,
+  "captions": [],
+  "camera": [
+    { "atSec": 0, "scale": 1.0 },
+    { "atSec": 4.4, "scale": 1.1 },
+    { "atSec": 4.85, "scale": 1.13 },
+    { "atSec": 4.95, "scale": 1.33 },
+    { "atSec": 5.5, "scale": 1.0 }
+  ],
+  "overlays": [
+    { "type": "hook", "fromSec": 0.3, "toSec": 4.0, "props": { "lines": ["They shrank your spring cleaning.", "*Here's the receipts.*"], "zone": "above", "accent": "red", "top": 250, "fontSize": 76 } },
+    { "type": "brandmark", "fromSec": 4.2, "toSec": 14.2, "props": {} },
+    { "type": "hookchart", "fromSec": 3.6, "toSec": 8.0, "props": { "title": "SAME PRICE · LESS PRODUCT", "top": 270, "right": 70, "width": 560, "items": [
+      { "label": "SWIFFER", "before": 32, "after": 24, "unit": "ct", "pct": 25.0 },
+      { "label": "FEBREZE", "before": 16.9, "after": 14.8, "unit": "oz", "pct": 12.4 },
+      { "label": "DAWN", "before": 32, "after": 30, "unit": "oz", "pct": 6.3 }
+    ] } },
+    { "type": "footnote", "fromSec": 6.0, "toSec": 8.0, "props": { "text": "awkward data pose 🤷", "top": 980 } },
+    { "type": "shrinkcut", "fromSec": 14.2, "toSec": 27.4, "props": { "brand": "Swiffer", "productName": "Wet Cloths", "sizeBefore": 32, "sizeAfter": 24, "unit": "ct", "pctChange": 25.0, "mode": "shrink", "shots": [ { "src": "img/swiffer.png", "caption": "the 32 and the 24 — same shelf" } ] } },
+    { "type": "shrinkcut", "fromSec": 27.6, "toSec": 39.1, "props": { "brand": "Febreze", "productName": "Fabric Refresher", "sizeBefore": 16.9, "sizeAfter": 14.8, "unit": "fl oz", "pctChange": 12.4, "mode": "shrink", "shots": [ { "src": "img/febreze.png", "caption": "500 ml → 438 ml" } ] } },
+    { "type": "brandmark", "fromSec": 39.1, "toSec": 50.9, "props": {} },
+    { "type": "hook", "fromSec": 47.5, "toSec": 50.9, "props": { "lines": ["their words —", "*“new & improved”*"], "zone": "above", "accent": "red", "top": 270 } },
+    { "type": "shrinkcut", "fromSec": 50.9, "toSec": 62.0, "props": { "brand": "Dawn Platinum", "productName": "Dish Soap", "sizeBefore": 32, "sizeAfter": 30, "unit": "fl oz", "pctChange": 6.3, "mode": "shrink", "shots": [ { "src": "img/dawn.png", "caption": "“new & improved” — and 2 oz lighter" } ] } },
+    { "type": "logoreveal", "fromSec": 62.0, "toSec": 66.0, "props": { "src": "img/pg-logo.png", "lines": ["Swiffer · Febreze · Dawn", "*one company.*"] } },
+    { "type": "kinetic", "fromSec": 66.0, "toSec": 71.566, "props": { "lines": ["you picked *three brands*", "you funded *one shrink*", "three times"], "accent": "red", "align": "center" } },
+    { "type": "brandmark", "fromSec": 71.566, "toSec": 83.5, "props": {} },
+    { "type": "stat", "fromSec": 83.5, "toSec": 88.166, "props": { "value": 2300, "decimals": 0, "prefix": "", "suffix": "+", "label": "DOCUMENTED SHRINKS", "context": "the largest free, public shrinkflation database I know of", "source": "fullcarts.org · live count · AS OF JUN 2026", "accent": "red" } },
+    { "type": "insetvideo", "fromSec": 86.0, "toSec": 88.166, "props": { "src": "clips/fullcarts-web.mov", "top": 270, "height": 380, "left": 60, "right": 170, "fit": "cover" } },
+    { "type": "outro", "fromSec": 88.166, "toSec": 95.95, "props": { "tagline": "Shrink of the week.\n*Every week.*", "followLine": "comment which one got you", "url": "fullcarts.org", "statLine": "2,300+ documented shrinks · every one source-cited" } }
+  ],
+  "sfx": [
+    { "src": "audio/sfx/riser-short.mp3", "atSec": 0.0, "volume": 0.125 },
+    { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 3.6, "volume": 0.45 },
+    { "src": "audio/sfx/whoosh.mp3", "atSec": 6.0, "volume": 0.4 },
+    { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 14.2, "volume": 0.45 },
+    { "src": "audio/sfx/impact.mp3", "atSec": 15.4, "volume": 0.5 },
+    { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 27.6, "volume": 0.45 },
+    { "src": "audio/sfx/impact.mp3", "atSec": 28.8, "volume": 0.5 },
+    { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 50.9, "volume": 0.45 },
+    { "src": "audio/sfx/impact.mp3", "atSec": 52.1, "volume": 0.5 },
+    { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 62.0, "volume": 0.45 },
+    { "src": "audio/sfx/impact.mp3", "atSec": 63.0, "volume": 0.5 },
+    { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 66.0, "volume": 0.4 },
+    { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 83.5, "volume": 0.4 },
+    { "src": "audio/sfx/whoosh-clean.mp3", "atSec": 88.166, "volume": 0.4 }
+  ]
+}
