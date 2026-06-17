@@ -28,6 +28,10 @@ Tokens live in `src/lib/theme.ts` (graphite `#0a0b0d`, alert red `#dc2626`, sign
 | **SourceFrame** | citation bar to lay **on top of a REAL screenshot** (BLS/FRED/FullCarts page) | transparent | **alpha** overlay |
 | **CaughtTitle** | the "Caught:" series cold-open (`CAUGHT: [BRAND]`) — overlay the face hook | transparent | **alpha** overlay |
 | **Thumbnail** | cover overlay (CAUGHT + brand + big mono −X%) — drop over a face cover frame | transparent | **still PNG** |
+| **CoverCard** | series cover / thumbnail — face frame + graphite card ("X IS A LIE" eyebrow + headline + sub + url) | opaque graphite | **still PNG** |
+| **HookChart** | compact upper-right animated before→after bar panel (multi-item hook chart) — floats over the face | transparent | **alpha** overlay |
+| **LogoReveal** | parent-company "illusion of choice" reveal — a REAL brand logo + caption | opaque graphite | mp4 |
+| **InsetVideo** | a real clip/screen-rec played in a positioned frame (e.g. over the StatCard counter) | transparent | **alpha** overlay |
 
 > **Evidence-policy guardrail:** `SourceFrame` labels real evidence; the toolkit never generates
 > a fake chart or fake packaging (three-bucket policy in `content-rules.md`). Keep it that way.

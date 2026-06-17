@@ -96,3 +96,17 @@ npx remotion render FinalVideo out/final.mp4 --props=src/props/cpi-final.json --
 6. **Chart polish rounds (axes, overlaps)** → bake the "axes + labels + clear text zones" rule into every chart up front.
 7. **Full-res every iteration** → use `--scale 0.6` for reviews, full-res only on the approved final.
 8. **Re-deriving the chunked-upload path/command every single video** (this happened *again* Jun 2026, ~5 rounds) → §5 is now the canned, copy-paste answer with the real path convention. Never re-ask where the film is or rebuild the `split` line from scratch.
+9. **Revised on-screen numbers silently contradicting the recorded VO.** When the creator changes figures mid-edit (Swiffer 28→32 ct, Febreze 8.8→16.9 oz), the *filmed voiceover still says the old numbers*. **Flag the mismatch the moment numbers change** — never ship visuals that contradict the audio. (These were a different DB product than the VO cited: Swiffer *Wet Cloths* 32→24 vs *Dusters* 28→24; Febreze *Fabric* 500→438 ml vs *Air Mist* 8.8→8.1 oz — verify which entry the new figure is.)
+
+## Fixing the VO without a re-record (cloned-voice dub)
+When numbers change but the creator won't re-record, you can dub corrected lines **only under full-frame cutaways** (face hidden → **no lip-sync problem**). Proven path (Jun 2026):
+- **Clone the voice via Vidiq `vidiq_voiceover_clone_start` (YouTube URL).** The raw-audio clone (`vidiq_voiceover_clone`) is **not usable from here** — it needs the sample inlined as base64, and a 60s clip is ~520K chars (too large for a tool call). The URL variant has Vidiq fetch the audio, so size is a non-issue.
+- **Source quality matters:** a **Short** gave a weak clone that drifted to a generic British accent. Prefer a **longer, clean, music-free** source (a 1–3 min talking video, or the creator's own clean VO uploaded unlisted).
+- **Generate** the corrected lines (`vidiq_voiceover_generate`), then **level-match** to the film VO with `volumedetect` (target the film's mean dB; this batch: −5 dB / −1.2 dB) and splice with ffmpeg: `volume=0:enable='between(t,A,B)'` to mute the stale region + `adelay` to place the clip, `amix ...:normalize=0`. Keep the dub **inside the cutaway window only**; the real voice carries every face beat.
+
+## Environment toolchain prep (install on demand)
+- **webp images:** the bundled ffmpeg can't decode webp → `pip install pillow` and convert with PIL.
+- **PDF text:** pypdf's cffi backend is broken here → `pip install pymupdf` (`fitz`).
+- **Frame-accurate re-encode trims** (libx264): `pip install imageio-ffmpeg`; its binary handles `trim/concat` + `libx264`. (Remotion's own ffmpeg is for probe/extract, not re-encode.)
+- **Filenames with spaces** break the `remotion ffmpeg` wrapper ("No such file") → rename before use.
+- **Long signed URLs** (S3 voiceover downloads): copy exactly inside single quotes — a stray break corrupts the signature.
