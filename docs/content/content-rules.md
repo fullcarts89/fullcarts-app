@@ -64,6 +64,32 @@ Engineered to pull a reaction — a comment, a share, a "send this to whoever bu
 - ✅ "Would you still buy it at the new size? Comment 🛒 yes / 💀 no."
 - ❌ ending on the number with no ask and no kicker.
 
+### The standard CTA — "Comment CAUGHT" (the default close on every video)
+
+Every video closes on the **same keyword CTA**: ask the viewer to comment **`CAUGHT`** and you'll send
+them the link — free. This is the *main* call to action; the kicker (above) and the "Follow" ask layer
+on top of it, they don't replace it.
+
+Why one fixed keyword:
+- **It's a ritual, not a one-off.** Reusing the same word every video *trains* regulars to comment it
+  before you finish the ask → a wave of first-hour comments, which every algorithm weights far above
+  likes → more reach. The CTA *is* a distribution lever, not just a link hand-off.
+- **It's already our brand.** The series is `Caught:` and the cold-open is `CAUGHT: [BRAND]` — the
+  keyword echoes the open and the name. Total cohesion.
+- **It keeps reach on-platform.** "Comment CAUGHT" beats "link in bio" — the viewer stays in-app and
+  engaging while still getting the link in their DMs (the 1:1 channel where we later offer the free
+  weekly email).
+
+The standard line (adapt the brand, keep the keyword + "free"):
+
+- ✅ `"Comment CAUGHT and I'll send you the receipts on this one — free. Follow, I catch the next one."`
+- ✅ per-brand: `"Comment CAUGHT and I'll send you the [Brand] receipts — free."`
+
+**Operational (the human, not Claude):** the auto-reply runs through an auto-DM tool (ManyChat on
+Instagram / Facebook, and TikTok where enabled) keyed on the word `CAUGHT`; on YouTube Shorts (no
+native auto-DM) the link lives in a **pinned comment** instead. Either way, **pin a first comment** the
+moment the post goes live priming the keyword (see `profile-copy.md` → first-comment templates).
+
 ---
 
 ## The pre-publish checklist
@@ -85,7 +111,7 @@ Evidence policy (hard gate — see three buckets below):
 Platform hygiene:
 [ ] Captions burned in (85% watch sound-off)
 [ ] 9:16, 30–60s, one cut every 2–4s
-[ ] CTA present
+[ ] CTA present — the standard "Comment CAUGHT and I'll send the link, free" close (see §5)
 [ ] "Views my own" disclaimer in bio (standing)
 ```
 

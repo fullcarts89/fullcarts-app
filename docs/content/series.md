@@ -34,8 +34,12 @@ PROOF (10–20s):    real before/after image + FullCarts entry; resolves → Shr
                    the lock-in: "it's not you — here's the receipt"
 TRICK (20–40s):    how they hid it + (1-in-5) day-job signature → data-viz overlay
 PAYOFF (40–52s):   the kicker (price-per-unit gut-punch)
-CTA (52–57s):      "Follow — I catch the next one. fullcarts.org"
+CTA (52–57s):      "Comment CAUGHT and I'll send you the receipts — free. Follow, I catch the next one."
 ```
+> **Standard CTA on every series below:** all of these close on the keyword CTA — *"Comment CAUGHT and
+> I'll send you the link, free"* (the canonical definition + the why is in `content-rules.md` §5). The
+> per-series asks shown in each template (guess / agree / tag) are the **kicker that layers on top** of
+> the CAUGHT close, not a replacement for it.
 
 **Worked example — "Caught: Cadbury"** (with the lock-in beat):
 ```
@@ -46,7 +50,7 @@ LOCK-IN:   "And if you grabbed it for your kid and thought 'huh, this feels smal
 PROOF:     "Freddo Faces went 122 grams to 99 — that's 18.9%, documented, sourced." [ShrinkOverlay]
 TRICK:     "Same mold, same wrapper, less inside — the cut you can't see on the shelf."
 PAYOFF:    "You didn't get worse at noticing. They got better at hiding it."
-CTA:       "Follow — I catch the next one. Search Cadbury at fullcarts.org. 🍫"
+CTA:       "Comment CAUGHT and I'll send you the Cadbury receipts — free. Follow, I catch the next one. 🍫"
 ```
 
 **Worked example — "Caught: Folgers" (★ recommended channel DEBUT)** — big, US-iconic, emotionally
@@ -64,7 +68,7 @@ TRICK:     "Price-per-pot quietly jumped while the shelf price barely moved. Eco
             'rockets and feathers' — prices rocket up on bad news, feather down on good. Coffee
             feathered down. Your can didn't move at all." [day-job signature]
 PAYOFF:    "The costs left. The shrink stayed. You got a permanent raise — for them."
-CTA:       "Follow — I catch the next one. Check your coffee at fullcarts.org. ☕"
+CTA:       "Comment CAUGHT and I'll send you the coffee receipts — free. Follow, I catch the next one. ☕"
 ```
 *Coffee price verified Jun 2026: ~$4.40/lb peak (early 2025) → ~$2.70/lb (~−39%). Always read the
 exact figures off your own real chart screenshot (`coffee-chart.json` → SourceFrame). Never an AI chart.*
@@ -80,7 +84,7 @@ PROOF:     "32oz down to 28 — 12.5%, documented. The small bottles got it wors
             [ShrinkOverlay gatorade]
 TRICK:     "Same silhouette, less liquid — your eye says 'same bottle,' the label says otherwise."
 PAYOFF:    "You didn't get thirstier. The bottle got smaller — old price, every single time."
-CTA:       "Follow — I catch the next one. Search Gatorade at fullcarts.org."
+CTA:       "Comment CAUGHT and I'll send you the Gatorade receipts — free. Follow, I catch the next one."
 ```
 
 **Flagship pilot episodes (already in the data):**
@@ -138,7 +142,7 @@ THEN  (6–15s): "This is what it used to be." → before/after overlay + −[X]
 ```
 **4) Same Price, Less Stuff** — the pure stat-drop (fastest, snackable)
 ```
-SNAP (0–12s): product → "[before] → [after], −[X]%, same price." → "It's in the database. Free."
+SNAP (0–12s): product → "[before] → [after], −[X]%, same price." → "Comment CAUGHT, I'll send you the receipt. Free."
 ```
 
 ### 🎙️ "The Take" — Thu, ~30–45s (the opinion/commentary slot — the moat)
@@ -151,7 +155,7 @@ SNAP (0–12s): product → "[before] → [after], −[X]%, same price." → "It
 HOOK   (0–5s):   the take, stated flat — "The 'New Look!' sticker is the biggest tell in the store."
 RECEIPT(5–18s):  the data that earns the take — a real DB entry / source screenshot (anchor it)
 TAKE   (18–38s): your perspective — why it matters, who they're betting on, what you'd do
-CTA    (38–45s): "Agree? 👇 Follow for the take they won't give you. fullcarts.org"
+CTA    (38–45s): "Agree? 👇 Comment CAUGHT and I'll send you the receipt — free. Follow for the take they won't give you."
 ```
 **Rotates through opinion-first angles** (§6): the **Take/rant** · **Predictions** ("who shrinks next, and
 why") · **The Defense / The Call** ("this one's actually fine" / "this is the worst kind") · the **§2
@@ -169,7 +173,7 @@ take ("groceries 'only' rose X% — here's what that number hides," over a real 
 ```
 RECEIPT (0–6s):  "This week's receipt:" — the freshest/most notable new entry → before/after + −[X]%
 WHY     (6–18s): one line on what makes it notable (magnitude, brand, or the trick) + the source
-CTA     (18–28s): "New receipts every week. Search it free at fullcarts.org."
+CTA     (18–28s): "Comment CAUGHT and I'll send you this week's receipt — free. New ones every week."
 ```
 **Fallback — Evidence-Tag Review** (run when no single shrink is noteworthy enough): pull the freshest
 claims under **one rotating tag** and rundown them (`RundownChip` ×N) with the real tagged photos. The
@@ -179,7 +183,7 @@ before/after) · **Slack Fill** (185, air) · **Skimpflation** (128, recipe) · 
 ```
 THEME  (0–5s):  "This week in [So Smol / Slack Fill / …]:" — name the tag + what it means
 RUNDOWN (5–22s): 3–4 fresh tagged finds, photo + −[X]% each
-CTA    (22–28s): "Caught one in the wild? Tag me. fullcarts.org"
+CTA    (22–28s): "Caught one in the wild? Tag me. Comment CAUGHT for the list — free."
 ```
 > **Genuine breaking news still wins:** if a real story hits a brand we cover, it can **preempt any
 > day's slot** with the "we documented this [N] months before the headline" receipt — it's now a
@@ -191,7 +195,7 @@ CTA    (22–28s): "Caught one in the wild? Tag me. fullcarts.org"
 ```
 HUMAN MOMENT (0–15s): an opinion / confession / slice-of-life — NO stat
 MISSION      (15–45s): connect it to why this matters to a tired dad sick of getting ripped off
-SOFT CTA     (45–60s): "that's why it's free." → fullcarts.org
+SOFT CTA     (45–60s): "that's why it's free. Comment CAUGHT and I'll send you the link." → fullcarts.org
 ```
 
 ---

@@ -81,7 +81,7 @@ You film **hybrid**: your face carries the hook and the explainer; **real before
 | **Proof (3–15s)** | The real **before/after (side-by-side) image** + the FullCarts entry / BLS chart screenshot | Make the number believable. This is the moat. |
 | **Context (15–40s)** | You (voiceover or to-camera) + Remotion data-viz overlay pinned to the product | Explain the trick; drop your credibility signature here when used. |
 | **Payoff (40–55s)** | The kicker — the most outrageous comparison, restated | Evoke the reaction that drives comments/shares. |
-| **CTA (final 3–5s)** | You + text overlay | "Follow — I find these so you don't get got. Search any product on fullcarts.org." |
+| **CTA (final 3–5s)** | You + text overlay (`Comment "CAUGHT" 👇`) | The standard keyword CTA on **every** video: "Comment CAUGHT and I'll send you the receipts — free. Follow, I find these so you don't get got." One fixed keyword echoes the `Caught:` series + drives first-hour comments (reach). Canonical: `content-rules.md` §5. |
 
 Full scripting template and 5 worked examples live in `docs/content/first-batch.md`.
 
