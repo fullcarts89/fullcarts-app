@@ -66,7 +66,9 @@ def test_build_without_assets_400(tmp_path):
     assert c.post("/api/build", json={"slug": "clone"}).status_code == 400
 
 
-def test_root_backend_ok_when_no_static(tmp_path):
+def test_root_serves_static_index(tmp_path):
+    # The front-end page now ships in vfx/web/static/, so root serves it.
     c = _client(tmp_path)
-    body = c.get("/").json()
-    assert "backend ok" in body["status"]
+    r = c.get("/")
+    assert r.status_code == 200
+    assert "<html" in r.text.lower()

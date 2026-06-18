@@ -4,6 +4,17 @@ Turns a step-by-step VFX manual + your footage into an **openable CapCut project
 plus a short finish-by-hand checklist. The brain (recommend / footage-QA / compile
 / draft-assembly) runs locally; the CapCut project is written directly to disk.
 
+## Web app (no Terminal)
+
+One-time, double-click `scripts/install_vfx.command` (sets up the venv and installs
+the tool); after that, double-click `scripts/launch_vfx.command` whenever you want to
+make a video — it starts the local server and opens the app in your browser.
+
+The page walks you through five steps: paste your script + the gear/location/props you
+have, pick one of the top 3 recommended effects, then film & upload each clip (each is
+QA-checked so you can re-shoot before building) and click Build to write an openable
+CapCut project plus a short finish-by-hand checklist.
+
 ## One-time setup (macOS)
 
 ```bash

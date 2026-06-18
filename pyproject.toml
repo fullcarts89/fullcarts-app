@@ -12,6 +12,9 @@ dependencies = [
     "opencv-python-headless>=4.9",
     "pillow>=10.0",
     "pyyaml>=6.0",
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.27",
+    "python-multipart>=0.0.9",
 ]
 
 [project.optional-dependencies]
@@ -21,8 +24,9 @@ dev = ["pytest>=8.0"]
 vfx = "vfx.__main__:main"
 
 [tool.setuptools]
-packages = ["vfx", "vfx.ingest", "vfx.capcut", "vfx.qa"]
+packages = ["vfx", "vfx.ingest", "vfx.capcut", "vfx.qa", "vfx.web"]
 
 [tool.setuptools.package-data]
 "vfx" = ["data/*.db"]
 "vfx.capcut" = ["templates/draft_skeleton/**/*", "FORMAT_NOTES.md"]
+"vfx.web" = ["static/*"]
