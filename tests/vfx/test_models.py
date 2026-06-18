@@ -38,3 +38,24 @@ def test_recipe_roundtrips_to_dict():
     assert d["edit_steps"][1]["channel"] == "GUI"
     again = VFXRecipe.from_dict(d)
     assert again == recipe
+
+
+def test_new_fields_roundtrip():
+    recipe = VFXRecipe(
+        slug="make-object-appear",
+        title="Make an Object Appear",
+        difficulty="beginner",
+        editor="CapCut",
+        shot_on="phone",
+        technique_primitive="clean_plate_mask_reveal",
+        summary="Snap to make an object appear.",
+        gear="tripod",
+        reference_images=["a.jpg", "b.jpg"],
+    )
+    d = recipe.to_dict()
+    assert d["gear"] == "tripod"
+    assert d["reference_images"] == ["a.jpg", "b.jpg"]
+    again = VFXRecipe.from_dict(d)
+    assert again.gear == "tripod"
+    assert again.reference_images == ["a.jpg", "b.jpg"]
+    assert again == recipe

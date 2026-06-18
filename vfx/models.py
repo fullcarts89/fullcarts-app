@@ -41,6 +41,8 @@ class VFXRecipe:
     filming_steps: List[str] = field(default_factory=list)
     edit_steps: List[EditStep] = field(default_factory=list)
     layers_reference: Optional[str] = None
+    gear: Optional[str] = None
+    reference_images: List[str] = field(default_factory=list)
     ingest_confidence: float = 1.0
 
     def to_dict(self) -> Dict[str, Any]:
