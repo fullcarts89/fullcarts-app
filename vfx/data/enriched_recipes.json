@@ -713,9 +713,10 @@
      "name": "action_shot",
      "type": "shot",
      "capture_requirements": {
-      "locked_off": false
+      "locked_off": true
      },
      "acceptance_checks": [
+      "camera_locked_off",
       "object_present"
      ],
      "variance_tolerance": {
@@ -726,9 +727,10 @@
      "name": "clean_plate",
      "type": "shot",
      "capture_requirements": {
-      "locked_off": false
+      "locked_off": true
      },
      "acceptance_checks": [
+      "camera_locked_off",
       "object_absent"
      ],
      "variance_tolerance": {
@@ -4048,9 +4050,10 @@
      "name": "action_shot",
      "type": "shot",
      "capture_requirements": {
-      "locked_off": false
+      "locked_off": true
      },
      "acceptance_checks": [
+      "camera_locked_off",
       "object_present"
      ],
      "variance_tolerance": {
@@ -4061,9 +4064,10 @@
      "name": "clean_plate",
      "type": "shot",
      "capture_requirements": {
-      "locked_off": false
+      "locked_off": true
      },
      "acceptance_checks": [
+      "camera_locked_off",
       "object_absent"
      ],
      "variance_tolerance": {
@@ -5085,9 +5089,10 @@
      "name": "action_shot",
      "type": "shot",
      "capture_requirements": {
-      "locked_off": false
+      "locked_off": true
      },
      "acceptance_checks": [
+      "camera_locked_off",
       "object_present"
      ],
      "variance_tolerance": {
@@ -5098,9 +5103,10 @@
      "name": "clean_plate",
      "type": "shot",
      "capture_requirements": {
-      "locked_off": false
+      "locked_off": true
      },
      "acceptance_checks": [
+      "camera_locked_off",
       "object_absent"
      ],
      "variance_tolerance": {

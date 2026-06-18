@@ -24,7 +24,9 @@ def derive_primitive(tags: List[str]) -> str:
 
 def derive_asset_spec(rec: Dict[str, Any]) -> List[AssetSpec]:
     tags = set(rec.get("tags", []))
-    locked = "locked_off" in tags
+    # A clean-plate effect inherently needs a locked-off camera: if the camera
+    # moves between the action shot and the clean plate, the mask reveal breaks.
+    locked = "locked_off" in tags or "clean_plate" in tags
     cap = {"locked_off": locked}
     lock_checks = ["camera_locked_off"] if locked else []
     if "clean_plate" in tags:
