@@ -1,0 +1,49 @@
+# VFX Manual — fill-in template. See docs/MANUAL_SCHEMA.md for the full guide.
+# Provide one file per effect. Keep exact numbers; name CapCut features exactly.
+
+# ---- Recipe header ----
+id:                      # REQUIRED stable slug, e.g. clone_auto_bg_removal
+technique_primitive:     # REQUIRED from the vocab, e.g. overlay_bg_removal_clone
+title:                   # REQUIRED
+difficulty:              # beginner | intermediate | advanced
+aspect_ratio: "9:16"     # "9:16" | "16:9" | "1:1" | "original"
+gear_required: []        # e.g. [tripod, lighting]
+props_required: []       # e.g. [chair, cup]
+result_description: >    # 1-2 sentences describing the finished effect
+
+source:                  # optional attribution
+
+# ---- Inputs: the clips to capture, in order ----
+inputs:
+  - name:                # e.g. action_shot
+    what_to_film:        # one line: what the creator does in this clip
+    capture_requirements:
+      locked_off:        # true/false (tripod, camera must not move)
+      green_screen:      # true/false
+      framing:           # optional note
+      lighting:          # optional note
+    acceptance_checks: []      # e.g. [camera_locked_off, min_duration]
+    variance_tolerance: {}     # e.g. {camera_shift_px: 8, min_seconds: 2}
+  # - name: second_clip
+  #   what_to_film: ...
+  #   capture_requirements: {locked_off: true}
+  #   acceptance_checks: [camera_locked_off]
+  #   variance_tolerance: {camera_shift_px: 8}
+
+# ---- Edit steps, in execution order ----
+edit_steps:
+  - action:              # import|split|overlay|duplicate|mask|opacity|remove_background|transition|text|...
+    target:              # which clip/track, e.g. "overlay clip"
+    capcut_feature:      # EXACT desktop UI label for ui steps, e.g. "Mask -> Split"
+    params: {}           # EXACT values, e.g. {shape: split, feather: 0.2, rotation: 90}
+    timing: {}           # {at_ms: 2300} OR {cue: "the moment you snap"}
+    channel:             # structural | ui | taste  (optional; tool can infer)
+  # - {action: import, target: "all clips", channel: structural}
+  # - {action: overlay, target: clip2, params: {track: 2}, channel: structural}
+  # - {action: remove_background, target: "top clip",
+  #    capcut_feature: "Remove Background -> Auto Removal", channel: ui}
+
+# ---- Result (optional) ----
+result:
+  description:
+  success_criteria: []
