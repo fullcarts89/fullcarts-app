@@ -50,6 +50,17 @@ TAG_KW={'mask':'mask','overlay':'overlay','keyframe':'keyframes','clean plate':'
  'remove background':'auto_bg_removal','auto removal':'auto_bg_removal','tripod':'locked_off',
  'clone':'cloning','transition':'transition','speed':'speed_ramp','split':'split_clip'}
 
+# CapCut features mentioned (regex -> canonical name)
+CAPCUT_KW={r'\boverlay\b':'Overlay',r'\bmask\b':'Mask',r'\bkeyframe':'Keyframes',
+ r'remove background':'Remove Background',r'chroma key':'Chroma Key',r'\bspeed\b':'Speed',
+ r'\bsplit\b':'Split',r'\bduplicate\b':'Duplicate',r'\brotate\b':'Rotate',r'\btext\b':'Text',
+ r'opacity':'Opacity',r'\blayers?\b':'Layers',r'body effects':'Body Effects',
+ r'video effects':'Video Effects',r'\bcrop\b':'Crop',r'aspect ratio':'Aspect Ratio',
+ r'reverse':'Reverse',r'feather':'Feather'}
+# AI generation tools mentioned
+AI_KW={'higgsfield':'Higgsfield','openart':'OpenArt','kling':'Kling','runway':'Runway',
+ 'sora':'Sora','pika':'Pika','midjourney':'Midjourney','luma':'Luma','veo':'Veo'}
+
 def transcribe(mp4):
     try:
         from faster_whisper import WhisperModel
@@ -66,53 +77,72 @@ def transcribe(mp4):
 
 def ingest(url, slug=None, difficulty="Beginner", do_transcribe=True, frame_every=3):
     print("==>", url)
-    meta = run(["yt-dlp",*INSECURE,"--no-warnings","--skip-download",
-                "--print","%(uploader)s\t%(uploader_id)s\t%(title)s\t%(duration)s\t%(id)s\t%(extractor_key)s",url])
-    uploader=uid=title=dur=vid=platform=""
-    if meta.returncode==0 and meta.stdout.strip():
-        parts=(meta.stdout.strip().split("\t")+[""]*6)[:6]
-        uploader,uid,title,dur,vid,platform=parts
+    # full metadata (caption, hashtags, engagement, dimensions)
+    mj = run(["yt-dlp",*INSECURE,"--no-warnings","--skip-download","--dump-single-json",url])
+    j = {}
+    try: j = json.loads(mj.stdout)
+    except Exception: pass
+    uploader=j.get("uploader") or ""; uid=j.get("uploader_id") or ""
+    title=j.get("title") or ""; vid=j.get("id") or ""
+    platform=(j.get("extractor_key") or "web")
+    duration=float(j.get("duration") or 0)
+    caption=(j.get("description") or "").strip()
+    hashtags=sorted(set(re.findall(r'#(\w+)', caption)))
     slug = slug or slugify(title or vid)
     adir=os.path.join(ASSETS,slug); os.makedirs(adir,exist_ok=True)
     mp4=os.path.join(adir,"_src.mp4")
     dl=run(["yt-dlp",*INSECURE,"--no-warnings","-o",mp4,"-f","mp4/best",url])
     if not (os.path.exists(mp4) and os.path.getsize(mp4)>2000):
         print("  [error] download failed:", dl.stderr.strip()[:200]); return None
-    # duration
-    try: duration=float(run(["ffprobe","-v","error","-show_entries","format=duration","-of","csv=p=0",mp4]).stdout.strip())
-    except: duration=float(dur or 0)
-    # frames
+    try: duration=float(run(["ffprobe","-v","error","-show_entries","format=duration","-of","csv=p=0",mp4]).stdout.strip()) or duration
+    except: pass
     run(["ffmpeg","-y","-loglevel","error","-i",mp4,"-vf","fps=1/%d,scale=360:-1"%frame_every,
          os.path.join(adir,"frame_%02d.jpg")])
     frames=sorted("assets/%s/%s"%(slug,f) for f in os.listdir(adir) if f.startswith("frame_"))
-    # transcribe
     txt=transcribe(mp4) if do_transcribe else None
     os.remove(mp4)
-    # split filming vs editing at the editing-app boundary
-    filming=editing=[]
+    # heuristic filming/editing split (NOTE: imperfect; review + re-author for quality)
+    filming=[]; editing=[]
     if txt:
         m=re.search(r'\b(open up |open )?(capcut|premiere|after effects|cap cut|import (both|your))', txt, re.I)
-        if m:
-            filming=clean_steps(txt[:m.start()]); editing=clean_steps(txt[m.start():])
-        else:
-            editing=clean_steps(txt)
-    tags=sorted({v for k,v in TAG_KW.items() if k in (txt or '').lower()})
+        if m: filming=clean_steps(txt[:m.start()]); editing=clean_steps(txt[m.start():])
+        else: editing=clean_steps(txt)
+    low=(txt or '').lower()
+    tags=sorted({v for k,v in TAG_KW.items() if k in low})
+    capcut_features=sorted({v for k,v in CAPCUT_KW.items() if re.search(k, low)})
+    ai_tools=sorted({v for k,v in AI_KW.items() if k in low})
+    is_ai=bool(ai_tools)
+    if is_ai: capcut_features=[]   # AI-tool tutorials aren't CapCut recipes
     rec={"effect":title or slug.replace('_',' ').title(),"slug":slug,"difficulty":difficulty,
-         "source":(platform or "web").lower(),
-         "source_url":url,
+         "source":platform.lower(),"source_url":url,
          "source_creator":(("%s (@%s)"%(uploader,uid)).strip() if uploader else None),
+         "tool":("AI ("+", ".join(ai_tools)+")") if is_ai else ("CapCut" if capcut_features else None),
+         "effect_category":None,
          "category_ids":[],"gear":None,
-         "technique_note":"Ingested from an external %s video via yt-dlp + ffmpeg frames + Whisper transcription."%(platform or 'web'),
+         "technique_note":"Ingested from an external %s video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended)."%platform,
          "is_full_tutorial":bool(filming or editing),
+         "requires_filming":bool(filming),
+         "is_ai_generated":is_ai,"ai_tools":ai_tools,"prompt_needed":is_ai,
+         "capcut_features":capcut_features,
+         "inputs_required":[],"props":[],"needs_clean_plate":("clean plate" in low),
+         "needs_tripod":("tripod" in low or "locked" in low),"output_aspect":"9:16",
+         "sound_design":None,
          "filming_steps":filming,"editing_steps":editing,"breakdown_images":[],
          "demo_still":frames[0] if frames else None,
          "demo_frames":frames[:3],"editing_screenshots":frames[3:] if len(frames)>3 else [],
          "tags":tags,"num_lessons":1,"num_videos":1,
+         "source_meta":{"platform":platform.lower(),"creator_name":uploader or None,
+            "creator_handle":uid or None,"creator_url":j.get("uploader_url"),
+            "caption":caption[:2000] or None,"hashtags":hashtags,
+            "view_count":j.get("view_count"),"like_count":j.get("like_count"),
+            "comment_count":j.get("comment_count"),"upload_date":j.get("upload_date"),
+            "duration_sec":j.get("duration"),"thumbnail":j.get("thumbnail"),
+            "width":j.get("width"),"height":j.get("height")},
          "lessons":[{"post_id":(platform.lower()+"_"+vid) if vid else slug,
                      "title":title or "Tutorial","role":"tutorial","duration_sec":round(duration,1),
                      "wistia_id":None,"transcript":txt,"transcript_source":"whisper" if txt else None,
                      "source_url":url,"video_url":None}]}
-    print("  ok: %s | filming:%d editing:%d frames:%d tags:%s"%(slug,len(filming),len(editing),len(frames),tags))
+    print("  ok: %s | filming:%d editing:%d frames:%d ai:%s tags:%s"%(slug,len(filming),len(editing),len(frames),is_ai,tags))
     return rec
 
 def save(records):

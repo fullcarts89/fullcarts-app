@@ -72,3 +72,24 @@ INGEST_INSECURE=1 python ingest_video.py "<url>"   # behind a TLS-intercepting p
 ```
 Requires `yt-dlp`, `ffmpeg`/`ffprobe`, and `faster-whisper` (transcription; skipped with
 `--no-transcribe`). Re-running a URL updates that record in place.
+
+## Rich metadata (external records)
+
+Ingested videos carry operational metadata so an automation tool can branch and plan:
+
+| Field | Use |
+|---|---|
+| `tool` | `CapCut` / `AI (Higgsfield)` / `Practical + CapCut` / `Filming technique` |
+| `effect_category` | clone, text, transition, reveal, hologram, object_fx, pop_out, ai_transform, ai_transition, filming_technique |
+| `requires_filming` / `needs_clean_plate` / `needs_tripod` | filming plan |
+| `is_ai_generated` / `ai_tools` / `prompt_needed` | route AI effects to the right generator |
+| `capcut_features` | exact CapCut tools used (Overlay, Mask, Keyframes, Remove Background, Chroma Key, Speed, Split, …) |
+| `inputs_required` / `props` | assets/materials the user must supply |
+| `output_aspect` | `9:16` |
+| `sound_design` | SFX / music notes |
+| `source_meta` | creator, caption, hashtags, likes, comments, upload_date, thumbnail, dimensions |
+
+`ingest_video.py` auto-populates `source_meta`, `capcut_features`, `ai_tools`,
+`is_ai_generated`, `requires_filming`, and the engagement fields. The judgement fields
+(`inputs_required`, `props`, `effect_category`, `sound_design`, clean filming/editing
+split) are best reviewed/edited after ingest — the auto-split is a starting point.
