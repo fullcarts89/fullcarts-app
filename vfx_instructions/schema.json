@@ -1,6 +1,58 @@
 {
  "schema_version": 1,
- "root": {"source":"str","generated":"date","schema_version":"int","effect_count":"int","effects":"Effect[]"},
- "Effect": {"effect":"str","slug":"str (pk; deepdive_* = long-form lesson)","difficulty":"Foundation|Beginner|Intermediate","category_ids":"str[]","gear":"str|null","technique_note":"str|null","is_full_tutorial":"bool","filming_steps":"str[]","editing_steps":"str[]","breakdown_images":"str[] (relative paths)","demo_still":"str|null","demo_frames":"str[]","tags":"str[]","num_lessons":"int","num_videos":"int","lessons":"Lesson[]"},
- "Lesson": {"post_id":"str","title":"str","role":"demo|filming|editing|guide|reference|deep_dive","duration_sec":"float|null","wistia_id":"str|null","transcript":"str|null","transcript_source":"wistia|whisper|null","source_url":"str"}
+ "root": {
+  "source": "str",
+  "generated": "date",
+  "schema_version": "int",
+  "effect_count": "int",
+  "effects": "Effect[]"
+ },
+ "Effect": {
+  "effect": "str",
+  "slug": "str (pk; deepdive_* = long-form lesson)",
+  "difficulty": "Foundation|Beginner|Intermediate",
+  "category_ids": "str[]",
+  "gear": "str|null",
+  "technique_note": "str|null",
+  "is_full_tutorial": "bool",
+  "filming_steps": "str[]",
+  "editing_steps": "str[]",
+  "breakdown_images": "str[] (relative paths)",
+  "demo_still": "str|null",
+  "demo_frames": "str[]",
+  "tags": "str[]",
+  "num_lessons": "int",
+  "num_videos": "int",
+  "lessons": "Lesson[]"
+ },
+ "Lesson": {
+  "post_id": "str",
+  "title": "str",
+  "role": "demo|filming|editing|guide|reference|deep_dive",
+  "duration_sec": "float|null",
+  "wistia_id": "str|null",
+  "transcript": "str|null",
+  "transcript_source": "wistia|whisper|null",
+  "source_url": "str"
+ },
+ "Effect_external_extra": {
+  "_doc": "Extra fields present on records from external_sources.json (ingested videos)",
+  "source": "instagram|youtube|tiktok|web",
+  "source_url": "str",
+  "source_creator": "str|null",
+  "tool": "str|null (e.g. 'CapCut', 'AI (Higgsfield)', 'Practical + CapCut', 'Filming technique')",
+  "effect_category": "clone|text|transition|reveal|transformation|hologram|object_fx|pop_out|ai_transform|ai_transition|filming_technique",
+  "requires_filming": "bool",
+  "is_ai_generated": "bool",
+  "ai_tools": "str[]",
+  "prompt_needed": "bool",
+  "capcut_features": "str[] (Overlay, Mask, Keyframes, Remove Background, Chroma Key, ...)",
+  "inputs_required": "str[] (assets the user must supply)",
+  "props": "str[] (physical props)",
+  "needs_clean_plate": "bool",
+  "needs_tripod": "bool",
+  "output_aspect": "str (e.g. '9:16')",
+  "sound_design": "str|null",
+  "source_meta": "{creator_name, creator_handle, creator_url, caption, hashtags[], view_count, like_count, comment_count, upload_date, duration_sec, thumbnail, width, height}"
+ }
 }
