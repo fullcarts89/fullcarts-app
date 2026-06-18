@@ -209,17 +209,38 @@ def write_project(timeline: Timeline, out_dir: Union[str, Path], name: str) -> P
     dest = Path(out_dir) / name
     shutil.copytree(SKELETON_DIR, dest)
 
+    # The skeleton's main-timeline id lives in the root + inner draft_info.json,
+    # the Timelines/<id>/ folder name, project.json, timeline_layout.json and
+    # mini_draft.json. Regenerate it and propagate everywhere — otherwise CapCut
+    # lists the project (from meta) but can't load the timeline.
+    tl_dirs = [p for p in (dest / "Timelines").iterdir() if p.is_dir()]
+    old_tl_id = tl_dirs[0].name
+    new_tl_id = _uid()
+
     info = build_draft_info(timeline)
+    info["id"] = new_tl_id
     info["name"] = name
 
     # Root draft_info.json
     with open(dest / "draft_info.json", "w", encoding="utf-8") as fh:
         json.dump(info, fh, ensure_ascii=False)
 
-    # Timelines/<UUID>/draft_info.json (identical content)
-    for tl_path in (dest / "Timelines").glob("*/draft_info.json"):
-        with open(tl_path, "w", encoding="utf-8") as fh:
-            json.dump(info, fh, ensure_ascii=False)
+    # Rename Timelines/<old_id> -> Timelines/<new_id> and write its draft_info.json
+    new_tl_dir = dest / "Timelines" / new_tl_id
+    tl_dirs[0].rename(new_tl_dir)
+    with open(new_tl_dir / "draft_info.json", "w", encoding="utf-8") as fh:
+        json.dump(info, fh, ensure_ascii=False)
+
+    # Propagate the id swap into the carried-over reference files (binary-safe).
+    for rel in (
+        Path("Timelines") / "project.json",
+        Path("timeline_layout.json"),
+        Path("Timelines") / new_tl_id / "attachment" / "patch" / "mini_draft.json",
+    ):
+        p = dest / rel
+        if p.exists():
+            data = p.read_bytes()
+            p.write_bytes(data.replace(old_tl_id.encode(), new_tl_id.encode()))
 
     # Patch draft_meta_info.json
     meta_path = dest / "draft_meta_info.json"
