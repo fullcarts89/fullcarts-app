@@ -4,6 +4,8 @@ from vfx.db import RecipeStore
 from vfx.ingest.vfxdata import ingest_all
 
 DEFAULT_DB = Path.home() / ".vfx" / "vfx.db"
+# Committed, enriched store (34 recipes) used as the default for end-user commands.
+ENRICHED_DB = "vfx/data/recipes.db"
 
 
 def main():
@@ -17,7 +19,33 @@ def main():
     en.add_argument("--db", default=str(DEFAULT_DB))
     en.add_argument("--with-vision", action="store_true")
     en.add_argument("--limit", type=int, default=None)
+    rc = sub.add_parser("recommend")
+    rc.add_argument("--equipment", default="")
+    rc.add_argument("-k", type=int, default=3)
+    rc.add_argument("--db", default=ENRICHED_DB)
+    pl = sub.add_parser("plan")
+    pl.add_argument("slug")
+    pl.add_argument("--db", default=ENRICHED_DB)
     args = ap.parse_args()
+
+    if args.cmd == "recommend":
+        from vfx.recommender import top_recipes, feasibility_score
+        from vfx.intake import Capabilities
+        caps = Capabilities(equipment=[e for e in args.equipment.split(",") if e])
+        store = RecipeStore(args.db)
+        for r in top_recipes(store.all(), caps, k=args.k):
+            print(f"{feasibility_score(r, caps):.2f}  {r.slug}  ({r.technique_primitive})")
+        return
+
+    if args.cmd == "plan":
+        from vfx.capcut.checklist import build_filming_plan, build_checklist
+        r = RecipeStore(args.db).get(args.slug)
+        if r is None:
+            raise SystemExit(f"no recipe: {args.slug}")
+        print(build_filming_plan(r))
+        print()
+        print(build_checklist(r))
+        return
 
     if args.cmd == "enrich":
         import os
