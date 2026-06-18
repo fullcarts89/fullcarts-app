@@ -27,6 +27,14 @@ steps).
   computer use).
 - Not pixel-perfect autonomous editing on day one (computer use is Phase 2).
 
+**Human-in-the-loop is intentional, not a limitation.** The agent never shoots
+footage. By design the user provides all film, and two things stay human forever:
+**filming** (the user shoots per the recipe's shot list) and **JUDGMENT-channel
+steps** (subjective taste, e.g. color grading). The Asset QA Gate exists precisely
+because the user is the one filming — it validates user-supplied footage against
+the effect's spec and bounces it back with fixes. "Full automation" therefore
+means: automate everything except the camera and the user's taste.
+
 ## Key decisions (and why)
 
 | Decision | Choice | Why |
