@@ -81,7 +81,8 @@
    "note": "No MCP for OpenArt/Kling in this environment — manual/human step.",
    "settings": {
     "face_consistency": true
-   }
+   },
+   "channel": "ai_gen"
   }
  ]
 }

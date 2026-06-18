@@ -81,7 +81,8 @@
     "outfit_photo"
    ],
    "prompt_strategy": "floating-outfit prompt, authored at runtime",
-   "settings": {}
+   "settings": {},
+   "channel": "ai_gen"
   },
   {
    "provider": "higgsfield",
@@ -89,7 +90,8 @@
    "operation": "cleanup",
    "tool": "remove_background/outpaint",
    "optional": true,
-   "note": "optional: remove background people (inpaint), relight to golden hour"
+   "note": "optional: remove background people (inpaint), relight to golden hour",
+   "channel": "ai_gen"
   },
   {
    "provider": "higgsfield",
@@ -100,7 +102,8 @@
     "generated floating-outfit still"
    ],
    "prompt_strategy": "author at runtime",
-   "settings": {}
+   "settings": {},
+   "channel": "ai_gen"
   }
  ]
 }

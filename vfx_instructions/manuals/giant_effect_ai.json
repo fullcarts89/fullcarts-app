@@ -78,7 +78,8 @@
     "selfie_photo"
    ],
    "prompt_strategy": "giant-scene prompt, authored at runtime",
-   "settings": {}
+   "settings": {},
+   "channel": "ai_gen"
   },
   {
    "provider": "higgsfield",
@@ -90,7 +91,8 @@
     "generated giant image (end frame)"
    ],
    "prompt_strategy": "author at runtime",
-   "settings": {}
+   "settings": {},
+   "channel": "ai_gen"
   }
  ]
 }

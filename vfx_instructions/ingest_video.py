@@ -172,6 +172,26 @@ def main():
     recs=[ingest(u, slug=a.slug if len(a.urls)==1 else None,
                  difficulty=a.difficulty, do_transcribe=not a.no_transcribe) for u in a.urls]
     save(recs)
+    emit_manuals(recs)
+
+def emit_manuals(records):
+    """Land every freshly-ingested video in the MANUAL_SCHEMA format too.
+
+    Writes a draft manual per record (preserving any hand-authored manual) and
+    rebuilds manuals/index.json, so future videos are saved/created in this format
+    automatically — ready for the VFX tool and for human re-authoring.
+    """
+    try:
+        import manual_builder as mb
+    except Exception as e:
+        print("  [warn] manual_builder unavailable, skipping manual emit:", e); return
+    n=0
+    for r in records:
+        if not r: continue
+        _,status=mb.write_draft_if_absent(r); n+=1
+        print("  manual[%s]: %s"%(status, r["slug"]))
+    idx=mb.rebuild_index()
+    print("manuals: %d emitted, index rebuilt (%d total) -> manuals/index.json"%(n, idx["count"]))
 
 if __name__=="__main__":
     main()

@@ -91,7 +91,8 @@
    "prompt_strategy": "author at runtime (creator gated the exact prompt)",
    "settings": {
     "note": "creator's settings not shown"
-   }
+   },
+   "channel": "ai_gen"
   }
  ]
 }

@@ -3,6 +3,18 @@
  "count": 15,
  "manuals": [
   {
+   "id": "ai_location_transition",
+   "title": "AI Location Transition (First/Last Frame)",
+   "technique_primitive": "other",
+   "difficulty": "intermediate",
+   "is_ai_generated": true,
+   "gear_required": [],
+   "props_required": [],
+   "tool": "OpenArt / Kling (AI)",
+   "draft": false,
+   "file": "manuals/ai_location_transition.json"
+  },
+  {
    "id": "clone_effect_talking_head",
    "title": "Clone Effect (Talking-Head, Auto BG Removal)",
    "technique_primitive": "overlay_bg_removal_clone",
@@ -16,20 +28,100 @@
     "chair"
    ],
    "tool": "CapCut",
+   "draft": false,
    "file": "manuals/clone_effect_talking_head.json"
   },
   {
-   "id": "text_behind_subject",
-   "title": "Text Appears Behind You (Masked Subject)",
-   "technique_primitive": "text_reveal",
-   "difficulty": "beginner",
+   "id": "flash_effect_clean_plate",
+   "title": "Flash Effect (Clean Plate)",
+   "technique_primitive": "clean_plate_mask_reveal",
+   "difficulty": "intermediate",
    "is_ai_generated": false,
    "gear_required": [
     "tripod"
    ],
    "props_required": [],
    "tool": "CapCut",
-   "file": "manuals/text_behind_subject.json"
+   "draft": false,
+   "file": "manuals/flash_effect_clean_plate.json"
+  },
+  {
+   "id": "floating_mini_clone",
+   "title": "Floating Mini-Clone (Jump + Slow-Mo Overlay)",
+   "technique_primitive": "keyframe_motion",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [],
+   "tool": "CapCut",
+   "draft": false,
+   "file": "manuals/floating_mini_clone.json"
+  },
+  {
+   "id": "floating_outfit_effect",
+   "title": "Floating Outfit Effect (AI)",
+   "technique_primitive": "other",
+   "difficulty": "intermediate",
+   "is_ai_generated": true,
+   "gear_required": [],
+   "props_required": [],
+   "tool": "Higgsfield (AI)",
+   "draft": false,
+   "file": "manuals/floating_outfit_effect.json"
+  },
+  {
+   "id": "giant_effect_ai",
+   "title": "Giant Effect (Higgsfield AI from a photo)",
+   "technique_primitive": "other",
+   "difficulty": "beginner",
+   "is_ai_generated": true,
+   "gear_required": [],
+   "props_required": [],
+   "tool": "Higgsfield (AI)",
+   "draft": false,
+   "file": "manuals/giant_effect_ai.json"
+  },
+  {
+   "id": "pendulum_effect_ai",
+   "title": "Pendulum Effect (Higgsfield AI from a photo)",
+   "technique_primitive": "other",
+   "difficulty": "beginner",
+   "is_ai_generated": true,
+   "gear_required": [],
+   "props_required": [],
+   "tool": "Higgsfield (AI) + CapCut",
+   "draft": false,
+   "file": "manuals/pendulum_effect_ai.json"
+  },
+  {
+   "id": "perspective_effect",
+   "title": "Perspective Effect (White-Screen Depth)",
+   "technique_primitive": "text_reveal",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": "CapCut",
+   "draft": false,
+   "file": "manuals/perspective_effect.json"
+  },
+  {
+   "id": "phone_hologram",
+   "title": "Phone Hologram (Pull Screen Into Air)",
+   "technique_primitive": "keyframe_motion",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [
+    "phone"
+   ],
+   "tool": "CapCut",
+   "draft": false,
+   "file": "manuals/phone_hologram.json"
   },
   {
    "id": "printed_sticker_flying_object",
@@ -47,18 +139,8 @@
     "tape"
    ],
    "tool": "Practical + CapCut",
+   "draft": false,
    "file": "manuals/printed_sticker_flying_object.json"
-  },
-  {
-   "id": "perspective_effect",
-   "title": "Perspective Effect (White-Screen Depth)",
-   "technique_primitive": "text_reveal",
-   "difficulty": "beginner",
-   "is_ai_generated": false,
-   "gear_required": [],
-   "props_required": [],
-   "tool": "CapCut",
-   "file": "manuals/perspective_effect.json"
   },
   {
    "id": "screen_pop_out_push",
@@ -71,33 +153,8 @@
    ],
    "props_required": [],
    "tool": "CapCut",
+   "draft": false,
    "file": "manuals/screen_pop_out_push.json"
-  },
-  {
-   "id": "tap_synced_text",
-   "title": "Tap-Synced Text Animation (Keyframes)",
-   "technique_primitive": "text_reveal",
-   "difficulty": "intermediate",
-   "is_ai_generated": false,
-   "gear_required": [
-    "tripod"
-   ],
-   "props_required": [],
-   "tool": "CapCut",
-   "file": "manuals/tap_synced_text.json"
-  },
-  {
-   "id": "talking_head_match_cut",
-   "title": "Talking-Head Shot Variety (Match Cut)",
-   "technique_primitive": "match_cut",
-   "difficulty": "beginner",
-   "is_ai_generated": false,
-   "gear_required": [
-    "camera_operator"
-   ],
-   "props_required": [],
-   "tool": "Filming technique (no VFX app)",
-   "file": "manuals/talking_head_match_cut.json"
   },
   {
    "id": "scrunch_paper_reveal",
@@ -113,92 +170,50 @@
     "dark background"
    ],
    "tool": "CapCut",
+   "draft": false,
    "file": "manuals/scrunch_paper_reveal.json"
   },
   {
-   "id": "phone_hologram",
-   "title": "Phone Hologram (Pull Screen Into Air)",
-   "technique_primitive": "keyframe_motion",
-   "difficulty": "intermediate",
-   "is_ai_generated": false,
-   "gear_required": [
-    "tripod"
-   ],
-   "props_required": [
-    "phone"
-   ],
-   "tool": "CapCut",
-   "file": "manuals/phone_hologram.json"
-  },
-  {
-   "id": "flash_effect_clean_plate",
-   "title": "Flash Effect (Clean Plate)",
-   "technique_primitive": "clean_plate_mask_reveal",
-   "difficulty": "intermediate",
-   "is_ai_generated": false,
-   "gear_required": [
-    "tripod"
-   ],
-   "props_required": [],
-   "tool": "CapCut",
-   "file": "manuals/flash_effect_clean_plate.json"
-  },
-  {
-   "id": "floating_mini_clone",
-   "title": "Floating Mini-Clone (Jump + Slow-Mo Overlay)",
-   "technique_primitive": "keyframe_motion",
-   "difficulty": "intermediate",
-   "is_ai_generated": false,
-   "gear_required": [
-    "tripod"
-   ],
-   "props_required": [],
-   "tool": "CapCut",
-   "file": "manuals/floating_mini_clone.json"
-  },
-  {
-   "id": "pendulum_effect_ai",
-   "title": "Pendulum Effect (Higgsfield AI from a photo)",
-   "technique_primitive": "other",
+   "id": "talking_head_match_cut",
+   "title": "Talking-Head Shot Variety (Match Cut)",
+   "technique_primitive": "match_cut",
    "difficulty": "beginner",
-   "is_ai_generated": true,
-   "gear_required": [],
+   "is_ai_generated": false,
+   "gear_required": [
+    "camera_operator"
+   ],
    "props_required": [],
-   "tool": "Higgsfield (AI) + CapCut",
-   "file": "manuals/pendulum_effect_ai.json"
+   "tool": "Filming technique (no VFX app)",
+   "draft": false,
+   "file": "manuals/talking_head_match_cut.json"
   },
   {
-   "id": "floating_outfit_effect",
-   "title": "Floating Outfit Effect (AI)",
-   "technique_primitive": "other",
+   "id": "tap_synced_text",
+   "title": "Tap-Synced Text Animation (Keyframes)",
+   "technique_primitive": "text_reveal",
    "difficulty": "intermediate",
-   "is_ai_generated": true,
-   "gear_required": [],
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
    "props_required": [],
-   "tool": "Higgsfield (AI)",
-   "file": "manuals/floating_outfit_effect.json"
+   "tool": "CapCut",
+   "draft": false,
+   "file": "manuals/tap_synced_text.json"
   },
   {
-   "id": "giant_effect_ai",
-   "title": "Giant Effect (Higgsfield AI from a photo)",
-   "technique_primitive": "other",
+   "id": "text_behind_subject",
+   "title": "Text Appears Behind You (Masked Subject)",
+   "technique_primitive": "text_reveal",
    "difficulty": "beginner",
-   "is_ai_generated": true,
-   "gear_required": [],
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
    "props_required": [],
-   "tool": "Higgsfield (AI)",
-   "file": "manuals/giant_effect_ai.json"
-  },
-  {
-   "id": "ai_location_transition",
-   "title": "AI Location Transition (First/Last Frame)",
-   "technique_primitive": "other",
-   "difficulty": "intermediate",
-   "is_ai_generated": true,
-   "gear_required": [],
-   "props_required": [],
-   "tool": "OpenArt / Kling (AI)",
-   "file": "manuals/ai_location_transition.json"
+   "tool": "CapCut",
+   "draft": false,
+   "file": "manuals/text_behind_subject.json"
   }
  ]
 }
