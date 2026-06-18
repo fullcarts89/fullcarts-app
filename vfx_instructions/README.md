@@ -56,3 +56,19 @@ d.filter(kind="deep_dive")    # the 4 long-form lessons
   (`demo|filming|editing|guide|reference|deep_dive`), `duration_sec`, `source_url`, `wistia_id`
 
 Personal-study use of member content; keep private.
+
+## External sources (`external_sources.json`)
+
+Public short-form videos (Instagram / YouTube / TikTok) ingested into the **same
+schema** via `ingest_video.py`. `VFXData()` merges them automatically (each carries a
+`source` + `source_url` + `source_creator`). Extra fields: `editing_screenshots`
+(frames from the editing portion).
+
+```bash
+# Ingest one or many videos (appends/updates external_sources.json + assets/<slug>/)
+python ingest_video.py "https://www.instagram.com/reel/XXXX/" "https://youtube.com/shorts/YYYY"
+python ingest_video.py "<url>" --slug clone_effect --difficulty Beginner
+INGEST_INSECURE=1 python ingest_video.py "<url>"   # behind a TLS-intercepting proxy
+```
+Requires `yt-dlp`, `ffmpeg`/`ffprobe`, and `faster-whisper` (transcription; skipped with
+`--no-transcribe`). Re-running a URL updates that record in place.
