@@ -29,6 +29,13 @@ def main():
     im = sub.add_parser("ingest-manual")
     im.add_argument("file")
     im.add_argument("--db", default=str(DEFAULT_DB))
+    bd = sub.add_parser("build")
+    bd.add_argument("slug", nargs="?")
+    bd.add_argument("--manual", default=None, help="build straight from a manual file")
+    bd.add_argument("--asset", action="append", default=[], metavar="NAME=PATH")
+    bd.add_argument("--out", default=".")
+    bd.add_argument("--name", default=None)
+    bd.add_argument("--db", default=ENRICHED_DB)
     args = ap.parse_args()
 
     if args.cmd == "ingest-manual":
@@ -37,6 +44,35 @@ def main():
         recipe = load_manual(args.file)
         RecipeStore(args.db).put(recipe)
         print(f"ingested: {recipe.slug} ({recipe.technique_primitive})")
+        return
+
+    if args.cmd == "build":
+        from vfx.ingest.manual_schema import load_manual
+        from vfx.capcut.compile import compile_timeline
+        from vfx.capcut.draft import write_project
+        if args.manual:
+            recipe = load_manual(args.manual)
+        elif args.slug:
+            recipe = RecipeStore(args.db).get(args.slug)
+            if recipe is None:
+                raise SystemExit(f"no recipe: {args.slug}")
+        else:
+            raise SystemExit("provide a slug (with --db) or --manual FILE")
+        assets = {}
+        for pair in args.asset:
+            if "=" not in pair:
+                raise SystemExit(f"bad --asset (need NAME=PATH): {pair}")
+            name, path = pair.split("=", 1)
+            assets[name] = path
+        res = compile_timeline(recipe, assets)
+        name = args.name or recipe.slug
+        dest = write_project(res.timeline, args.out, name)
+        checklist = dest / "FINISH_BY_HAND.md"
+        lines = [f"# Finish by hand - {recipe.title}", ""]
+        lines += [f"- {n}" for n in res.manual_notes] or ["- (nothing - fully assembled)"]
+        checklist.write_text("\n".join(lines), encoding="utf-8")
+        print(f"project:   {dest}")
+        print(f"checklist: {checklist}  ({len(res.manual_notes)} manual step(s))")
         return
 
     if args.cmd == "recommend":
