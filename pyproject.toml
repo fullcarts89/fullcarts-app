@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fullcarts-vfx"
+version = "0.1.0"
+description = "Viral VFX CapCut Agent — manual to footage to assembled CapCut edit"
+requires-python = ">=3.9"
+dependencies = [
+    "anthropic>=0.92.0",
+    "opencv-python-headless>=4.9",
+    "pillow>=10.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+vfx = "vfx.__main__:main"
+
+[tool.setuptools]
+packages = ["vfx", "vfx.ingest", "vfx.capcut", "vfx.qa"]
+
+[tool.setuptools.package-data]
+"vfx" = ["data/*.db"]
+"vfx.capcut" = ["templates/draft_skeleton/**/*", "FORMAT_NOTES.md"]

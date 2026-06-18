@@ -5,7 +5,8 @@ from vfx.ingest.vfxdata import ingest_all
 
 DEFAULT_DB = Path.home() / ".vfx" / "vfx.db"
 # Committed, enriched store (34 recipes) used as the default for end-user commands.
-ENRICHED_DB = "vfx/data/recipes.db"
+# Package-relative so it resolves no matter the caller's working directory.
+ENRICHED_DB = str(Path(__file__).resolve().parent / "data" / "recipes.db")
 
 
 def main():
