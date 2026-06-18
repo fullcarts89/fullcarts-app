@@ -40,7 +40,51 @@ class VFXData:
     def all_transcripts(self,slug):
         return [l["transcript"] for l in self.get(slug)["lessons"] if l.get("transcript")]
 def open_sqlite(): return sqlite3.connect(os.path.join(HERE,"vfx.sqlite"))
+
+class Manuals:
+    """Loader for the machine-executable VFX *manuals* (MANUAL_SCHEMA.md).
+
+        from vfx_loader import Manuals
+        man = Manuals()
+        man.get("clone_effect_talking_head")          # full manual dict
+        man.filter(technique_primitive="chroma_key")   # query the catalog
+        man.filter(gear="tripod", ai=False)
+        man.recipe("phone_hologram")                   # inputs + ordered edit_steps
+    """
+    def __init__(self, manuals_dir=None):
+        self.dir=manuals_dir or os.path.join(HERE,"manuals")
+        idx=os.path.join(self.dir,"index.json")
+        self.index=json.load(open(idx,encoding="utf-8"))["manuals"] if os.path.exists(idx) else []
+        self._by={r["id"]:r for r in self.index}
+    def __iter__(self): return iter(self.index)
+    def __len__(self): return len(self.index)
+    def ids(self): return list(self._by)
+    def get(self,mid):
+        """Full manual dict (loaded from disk)."""
+        r=self._by.get(mid)
+        if not r: return None
+        return json.load(open(os.path.join(HERE,r["file"]),encoding="utf-8"))
+    def filter(self,technique_primitive=None,difficulty=None,gear=None,prop=None,ai=None,drafts=True):
+        out=[]
+        for r in self.index:
+            if technique_primitive and r.get("technique_primitive")!=technique_primitive: continue
+            if difficulty and r.get("difficulty")!=difficulty: continue
+            if gear and gear not in (r.get("gear_required") or []): continue
+            if prop and prop not in (r.get("props_required") or []): continue
+            if ai is not None and bool(r.get("is_ai_generated"))!=ai: continue
+            if not drafts and r.get("draft"): continue
+            out.append(r)
+        return out
+    def recipe(self,mid):
+        """Just the executable parts: inputs + edit_steps (+ ai_generation)."""
+        m=self.get(mid)
+        if not m: return None
+        return {k:m.get(k) for k in ("id","technique_primitive","inputs","edit_steps","ai_generation","result")}
+
 if __name__=="__main__":
     d=VFXData(); print(len(d),"records loaded")
     print("vault:",len(d.filter(source='viral_vfx_vault')),"| external:",len(d.filter(source='instagram'))+len(d.filter(source='external')))
     print("effects:",len(d.filter(kind='effect')),"| deep dives:",len(d.filter(kind='deep_dive')))
+    m=Manuals(); print(len(m),"manuals |",
+        "ai:",len(m.filter(ai=True)),"| chroma_key:",len(m.filter(technique_primitive='chroma_key')),
+        "| with tripod:",len(m.filter(gear='tripod')))

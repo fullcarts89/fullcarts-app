@@ -1,0 +1,144 @@
+{
+ "id": "text_behind_subject",
+ "schema_version": 1,
+ "technique_primitive": "text_reveal",
+ "title": "Text Appears Behind You (Masked Subject)",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "A large text title sits behind you and is revealed as you walk across the frame.",
+ "source": "Sydney Mohni 🏳️‍🌈 UGC Creator & Coach (@53585408420)",
+ "source_url": "https://www.instagram.com/reel/DTQXHABkZzc/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "walk_clip",
+   "what_to_film": "Walk across the frame, side to side.",
+   "capture_requirements": {
+    "locked_off": true,
+    "framing": "full body, room to cross frame"
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "min_duration"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8,
+    "min_seconds": 2
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "walk_clip"
+  },
+  {
+   "action": "text",
+   "channel": "ui",
+   "target": "new text layer",
+   "capcut_feature": "Text → Add text",
+   "params": {
+    "size": "large"
+   }
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "target": "walk_clip",
+   "params": {
+    "to_track": 2
+   }
+  },
+  {
+   "action": "position",
+   "channel": "structural",
+   "target": "duplicated walk_clip",
+   "params": {
+    "note": "align exactly over the original"
+   }
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "duplicated walk_clip",
+   "capcut_feature": "Mask → Linear",
+   "params": {
+    "shape": "linear",
+    "rotation": 90,
+    "note": "horizontal mask rotated to vertical"
+   }
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "duplicated walk_clip",
+   "params": {
+    "property": "mask_position",
+    "note": "keyframe the mask line to follow you across frame"
+   },
+   "timing": {
+    "cue": "each step as you cross"
+   }
+  },
+  {
+   "action": "position",
+   "channel": "ui",
+   "target": "layer order",
+   "capcut_feature": "Layers",
+   "params": {
+    "note": "move the masked overlay ABOVE the text layer"
+   }
+  }
+ ],
+ "result": {
+  "description": "Text appears behind the walking subject.",
+  "success_criteria": [
+   "Text occluded by body as you pass",
+   "Mask edge tracks the body cleanly"
+  ]
+ },
+ "narration_transcript": "If you want to learn how to make the text appear behind you like this, this is the video for you. A couple weeks ago I posted this video and y'all had something to say about it. So welcome back to my series hook where you have where boring hooks go to die and I teach you how to create scroll stopping hooks like this. And today we're going to do the text appear effect. Okay, you're going to start with your clip of you walking across the screen like this and then we're going to add in some text. So hit the text button, add text. Once you have the text that you want it, you're going to make it big and then we're going to use keyframes. Okay, we're going to use the mask feature and keyframes. So you want to click on the actual video and you want to duplicate the video. Once you duplicate the video, you want to scroll over to overlay to put this on a separate layer. Line up the two clips. Now you basically have two clips that are identical over top of each other. Then you're going to click on the overlay and you're going to scroll over to mask, click horizontal and then just turn that line around. So that's actually vertical. You're going to pull the line all the way over to you and you're going to hit a keyframe and you just want that line to follow you just continuing to keyframes. You want to learn how to make the text appear behind you like this. Once you have all those keyframes added, you're going to click on the text and then you're going to scroll over to layers. We're going to switch the overlay and the text so that the overlay is on top of the text and you should get something like this. You want to learn how to make the text appear behind you like this and then you're done.",
+ "frames": {
+  "demo": [
+   "assets/text_behind_subject/frame_01.jpg",
+   "assets/text_behind_subject/frame_02.jpg",
+   "assets/text_behind_subject/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/text_behind_subject/frame_04.jpg",
+   "assets/text_behind_subject/frame_05.jpg",
+   "assets/text_behind_subject/frame_06.jpg",
+   "assets/text_behind_subject/frame_07.jpg",
+   "assets/text_behind_subject/frame_08.jpg",
+   "assets/text_behind_subject/frame_09.jpg",
+   "assets/text_behind_subject/frame_10.jpg",
+   "assets/text_behind_subject/frame_11.jpg",
+   "assets/text_behind_subject/frame_12.jpg",
+   "assets/text_behind_subject/frame_13.jpg",
+   "assets/text_behind_subject/frame_14.jpg",
+   "assets/text_behind_subject/frame_15.jpg",
+   "assets/text_behind_subject/frame_16.jpg",
+   "assets/text_behind_subject/frame_17.jpg",
+   "assets/text_behind_subject/frame_18.jpg",
+   "assets/text_behind_subject/frame_19.jpg",
+   "assets/text_behind_subject/frame_20.jpg",
+   "assets/text_behind_subject/frame_21.jpg",
+   "assets/text_behind_subject/frame_22.jpg",
+   "assets/text_behind_subject/frame_23.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "53585408420",
+  "like_count": 22280,
+  "comment_count": 251,
+  "upload_date": "20260108",
+  "caption": "Welcome BACK to my series HOOK REHAB!\n\nWhere I teach you how to edit fun, unique visual hooks for your next UGC video.\n\nToday we are talking about this walking text effect",
+  "hashtags": []
+ }
+}

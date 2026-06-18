@@ -1,0 +1,141 @@
+{
+ "id": "perspective_effect",
+ "schema_version": 1,
+ "technique_primitive": "text_reveal",
+ "title": "Perspective Effect (White-Screen Depth)",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "gear_required": [],
+ "props_required": [],
+ "result_description": "Bold colored text sits in your scene at an angled 3D perspective.",
+ "source": "inmenta (@69529759015)",
+ "source_url": "https://www.instagram.com/reel/DVzIrPKjrVT/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "main_clip",
+   "what_to_film": "Your main shot the 3D text will sit in.",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_duration"
+   ]
+  },
+  {
+   "name": "text_screenshot",
+   "what_to_film": "Screenshot of bold (red/yellow) text on a white screen, made in CapCut.",
+   "capture_requirements": {
+    "note": "white background for keying"
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "white screen image"
+  },
+  {
+   "action": "text",
+   "channel": "ui",
+   "target": "new text layer",
+   "capcut_feature": "Text → Add text",
+   "params": {
+    "color": "red or yellow"
+   }
+  },
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "main_clip"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "text_screenshot",
+   "params": {
+    "track": 2
+   }
+  },
+  {
+   "action": "transform",
+   "channel": "ui",
+   "target": "text_screenshot",
+   "capcut_feature": "Crop",
+   "params": {
+    "note": "crop to text"
+   }
+  },
+  {
+   "action": "chroma_key",
+   "channel": "ui",
+   "target": "text_screenshot",
+   "capcut_feature": "Remove Background → Chroma Key",
+   "params": {
+    "key_color": "white"
+   }
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "text_screenshot",
+   "capcut_feature": "Effects → Video Effects → Player 3",
+   "params": {
+    "glow": false,
+    "texture": false
+   }
+  },
+  {
+   "action": "transform",
+   "channel": "taste",
+   "target": "text_screenshot",
+   "capcut_feature": "Rotate",
+   "params": {
+    "note": "adjust perspective to angled 3D"
+   }
+  }
+ ],
+ "result": {
+  "description": "Angled 3D text composited into the scene.",
+  "success_criteria": [
+   "White fully keyed out",
+   "Perspective reads as 3D"
+  ]
+ },
+ "narration_transcript": "How to go from this, to this, and from this, to this. This is called the perspective effect. It's super easy to make and it will make your videos look high end. So let's get to it. First, you're going to open up CapCut and upload a white screen. You can easily find one on Google. Next, you're going to add your text and choose a color that really stands out. I recommend either red or yellow. Once you're done, export that clip, then go to your photos and take a screenshot of the text. Now go back into CapCut and upload your main video. Tap Overlay and add the screenshot of the text on top of your video and crop it. Next, go to Remove Background, select Chroma Key and choose the white background. This will remove the white and leave you with just the color text. After that, go to Effects, then Video Effects and select Player 3. When the settings appear, make sure to turn off the glow and texture options. Finally, tap Rotate and adjust the perspective of the text to give it that angled 3D look and that's about it. Follow for more editing tips and content hacks.",
+ "frames": {
+  "demo": [
+   "assets/perspective_effect/frame_01.jpg",
+   "assets/perspective_effect/frame_02.jpg",
+   "assets/perspective_effect/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/perspective_effect/frame_04.jpg",
+   "assets/perspective_effect/frame_05.jpg",
+   "assets/perspective_effect/frame_06.jpg",
+   "assets/perspective_effect/frame_07.jpg",
+   "assets/perspective_effect/frame_08.jpg",
+   "assets/perspective_effect/frame_09.jpg",
+   "assets/perspective_effect/frame_10.jpg",
+   "assets/perspective_effect/frame_11.jpg",
+   "assets/perspective_effect/frame_12.jpg",
+   "assets/perspective_effect/frame_13.jpg",
+   "assets/perspective_effect/frame_14.jpg",
+   "assets/perspective_effect/frame_15.jpg",
+   "assets/perspective_effect/frame_16.jpg",
+   "assets/perspective_effect/frame_17.jpg",
+   "assets/perspective_effect/frame_18.jpg",
+   "assets/perspective_effect/frame_19.jpg",
+   "assets/perspective_effect/frame_20.jpg",
+   "assets/perspective_effect/frame_21.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "69529759015",
+  "like_count": 53767,
+  "comment_count": 194,
+  "upload_date": "20260312",
+  "caption": "Spice up your videos with this perspective effect 🫰🏼",
+  "hashtags": []
+ }
+}

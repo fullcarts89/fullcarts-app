@@ -1,0 +1,148 @@
+{
+ "id": "phone_hologram",
+ "schema_version": 1,
+ "technique_primitive": "keyframe_motion",
+ "title": "Phone Hologram (Pull Screen Into Air)",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "phone"
+ ],
+ "result_description": "A floating holographic screen rises out of your phone as you swipe up.",
+ "source": "Harry Allsop | VFX Creator (@67795363025)",
+ "source_url": "https://www.instagram.com/reel/DUbnT-lDJx2/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "swipe_clip",
+   "what_to_film": "Face camera holding a phone; swipe up from the screen as if pulling the display into the air, then scroll the floating screen.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "screen_recording",
+   "what_to_film": "Screen recording of you scrolling on the phone.",
+   "capture_requirements": {}
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "swipe_clip, screen_recording"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "screen_recording",
+   "params": {
+    "track": 2
+   }
+  },
+  {
+   "action": "opacity",
+   "channel": "ui",
+   "target": "screen_recording",
+   "capcut_feature": "Opacity",
+   "params": {
+    "opacity": 50
+   }
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "screen_recording",
+   "params": {
+    "property": "position",
+    "note": "start just below the phone; rise up on the swipe"
+   },
+   "timing": {
+    "cue": "the swipe-up gesture"
+   }
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "target": "swipe_clip",
+   "params": {
+    "to_track": 3
+   }
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "duplicated swipe_clip",
+   "capcut_feature": "Mask → Linear",
+   "params": {
+    "shape": "linear",
+    "orientation": "horizontal",
+    "position": "top edge of phone",
+    "feather": "slight"
+   }
+  },
+  {
+   "action": "trim",
+   "channel": "taste",
+   "target": "clips",
+   "params": {
+    "note": "match scrolling to finger movement; trim to sync"
+   }
+  }
+ ],
+ "result": {
+  "description": "Hologram screen emerges from the phone.",
+  "success_criteria": [
+   "Screen rises exactly with the swipe",
+   "Mask edge hidden at phone top"
+  ]
+ },
+ "narration_transcript": "Here's how to turn your phone into a hologram. Give me 60 seconds and I'll show you how. First, record a clip of you facing the camera, holding a phone in one hand. With your free hand, swipe up from the screen like you're pulling the display out into the air. Then keep swiping as if you're scrolling a floating screen. Next, take a screen recording of you scrolling on your phone and put both clips into CapCut. But screen recording is an overlay. Move it to layer two and lower the opacity to about 50%. Add a keyframe where you swipe the hologram up, then go back to the start and position the screen recording just below the phone. Duplicate your main clip, move it to layer three and add a horizontal mask and line it up at the top edge of the phone with a slight feather. Now just tweak the timing so the hologram rises out exactly with your swipe. Match the scrolling to your finger movement, trim the clips to match and hit export. And that's it. Send this to a friend who needs better edits and follow some more effects like this.",
+ "frames": {
+  "demo": [
+   "assets/phone_hologram/frame_01.jpg",
+   "assets/phone_hologram/frame_02.jpg",
+   "assets/phone_hologram/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/phone_hologram/frame_04.jpg",
+   "assets/phone_hologram/frame_05.jpg",
+   "assets/phone_hologram/frame_06.jpg",
+   "assets/phone_hologram/frame_07.jpg",
+   "assets/phone_hologram/frame_08.jpg",
+   "assets/phone_hologram/frame_09.jpg",
+   "assets/phone_hologram/frame_10.jpg",
+   "assets/phone_hologram/frame_11.jpg",
+   "assets/phone_hologram/frame_12.jpg",
+   "assets/phone_hologram/frame_13.jpg",
+   "assets/phone_hologram/frame_14.jpg",
+   "assets/phone_hologram/frame_15.jpg",
+   "assets/phone_hologram/frame_16.jpg",
+   "assets/phone_hologram/frame_17.jpg",
+   "assets/phone_hologram/frame_18.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "67795363025",
+  "like_count": 1256,
+  "comment_count": 47,
+  "upload_date": "20260206",
+  "caption": "Here’s how to turn your phone into a hologram 👀\n\nThis effect makes it look like your screen pops out of the phone\nand lets you scroll it in mid-air — clean, subtle, and way easier than it looks.\n\nSave this for later\nSend it to a mate who needs better edits\n\nPerfect for:\n• Transitions\n• Scroll-stopping hooks\n• Creative POV edits\n\nWant 45 detailed CapCut PDF tutorials\n(with more being added 👀)\nComment EDIT and I’ll DM you the full pack\n\n#capcut #capcuttutorial #vfxediting #mobileediting @capcutapp",
+  "hashtags": [
+   "capcut",
+   "capcuttutorial",
+   "mobileediting",
+   "vfxediting"
+  ]
+ }
+}

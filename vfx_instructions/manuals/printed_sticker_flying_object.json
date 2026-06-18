@@ -1,0 +1,166 @@
+{
+ "id": "printed_sticker_flying_object",
+ "schema_version": 1,
+ "technique_primitive": "chroma_key",
+ "title": "Flying Object via Printed Sticker + Green Paper",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "football",
+  "printer + paper",
+  "green paper",
+  "tape"
+ ],
+ "result_description": "A real thrown object (football) becomes a printed sticker that flies across the scene.",
+ "source": "Steven Wommack (@549671804)",
+ "source_url": "https://www.instagram.com/reel/DTFpToZDPuU/",
+ "is_ai_generated": false,
+ "tool": "Practical + CapCut",
+ "inputs": [
+  {
+   "name": "throw_clip",
+   "what_to_film": "Throw a football across the field.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "pull_clip",
+   "what_to_film": "Pull the printed sticker (behind a hole in green paper) through toward camera.",
+   "capture_requirements": {
+    "green_screen": true,
+    "note": "green paper fills frame behind sticker"
+   },
+   "acceptance_checks": [
+    "has_green_screen"
+   ],
+   "variance_tolerance": {
+    "green_ratio": 0.3
+   }
+  },
+  {
+   "name": "sticker_screenshot",
+   "what_to_film": "Screenshot of the Instagram sticker on a green story background.",
+   "capture_requirements": {
+    "green_screen": true
+   },
+   "acceptance_checks": [
+    "has_green_screen"
+   ]
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "throw_clip, pull_clip, sticker_screenshot (in order)"
+  },
+  {
+   "action": "chroma_key",
+   "channel": "ui",
+   "target": "sticker_screenshot",
+   "capcut_feature": "Remove Background → Chroma Key",
+   "params": {
+    "key_color": "green"
+   }
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "sticker_screenshot",
+   "params": {
+    "track": 2,
+    "note": "pull to front of track"
+   }
+  },
+  {
+   "action": "chroma_key",
+   "channel": "ui",
+   "target": "pull_clip",
+   "capcut_feature": "Remove Background → Chroma Key",
+   "params": {
+    "key_color": "green"
+   }
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "pull_clip",
+   "params": {
+    "track": 2,
+    "note": "place at end of the screenshot clip"
+   }
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "pull_clip / sticker",
+   "params": {
+    "property": "position+scale",
+    "note": "keyframe paper/sticker to follow the ball"
+   },
+   "timing": {
+    "cue": "ball travel path"
+   }
+  }
+ ],
+ "result": {
+  "description": "Object turns into a flying sticker tracking the ball.",
+  "success_criteria": [
+   "Clean green key, no spill",
+   "Sticker follows the ball convincingly"
+  ]
+ },
+ "narration_transcript": "First, film yourself throwing a football across the field. Next go to Instagram and create a sticker like this. Then print this out on a piece of paper and cut it out. Take a green paper and cut a hole in the middle. Put some tape on the back of your sticker and push it through the hole so you can grab it from the other side. Then film the front while pulling it through the paper. In Instagram, open a green story and create that sticker again. Take a screenshot and open it all in the cap cut app. First the clip of you throwing, then the green paper clip and then the screenshot. Select the screenshot, hit remove background and chroma key. Now select the green area and then hit overlay. This will drop it to a second layer and now pull it all the way to the front of the track. You now have the sticker in the air. Select the green paper clip, hit remove background chroma key and select the green area. Again hit overlay and drag it to the end of that screenshot clip right here. The clip now looks like this. Scroll to the beginning of the paper clip and hit keyframe. Now scroll a little bit ahead in the clip and resize and place the paper over the ball. Do the same thing again, scroll ahead and place the paper over the ball. The paper now follows the ball, all you have to do is export the video and that's it.",
+ "frames": {
+  "demo": [
+   "assets/printed_sticker_flying_object/frame_01.jpg",
+   "assets/printed_sticker_flying_object/frame_02.jpg",
+   "assets/printed_sticker_flying_object/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/printed_sticker_flying_object/frame_04.jpg",
+   "assets/printed_sticker_flying_object/frame_05.jpg",
+   "assets/printed_sticker_flying_object/frame_06.jpg",
+   "assets/printed_sticker_flying_object/frame_07.jpg",
+   "assets/printed_sticker_flying_object/frame_08.jpg",
+   "assets/printed_sticker_flying_object/frame_09.jpg",
+   "assets/printed_sticker_flying_object/frame_10.jpg",
+   "assets/printed_sticker_flying_object/frame_11.jpg",
+   "assets/printed_sticker_flying_object/frame_12.jpg",
+   "assets/printed_sticker_flying_object/frame_13.jpg",
+   "assets/printed_sticker_flying_object/frame_14.jpg",
+   "assets/printed_sticker_flying_object/frame_15.jpg",
+   "assets/printed_sticker_flying_object/frame_16.jpg",
+   "assets/printed_sticker_flying_object/frame_17.jpg",
+   "assets/printed_sticker_flying_object/frame_18.jpg",
+   "assets/printed_sticker_flying_object/frame_19.jpg",
+   "assets/printed_sticker_flying_object/frame_20.jpg",
+   "assets/printed_sticker_flying_object/frame_21.jpg",
+   "assets/printed_sticker_flying_object/frame_22.jpg",
+   "assets/printed_sticker_flying_object/frame_23.jpg",
+   "assets/printed_sticker_flying_object/frame_24.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "549671804",
+  "like_count": 57662,
+  "comment_count": 211,
+  "upload_date": "20260104",
+  "caption": "Since not all of you love AI that much 😅 here is one of the most manual tutorials on how to create this creative football throw reel 🎥🏈 I saw this on @warmnfuzzy.tv and just had to make a tutorial 🫶🏼 enjoy creating!! #football #tutorial #reels",
+  "hashtags": [
+   "football",
+   "reels",
+   "tutorial"
+  ]
+ }
+}

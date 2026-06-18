@@ -1,0 +1,100 @@
+{
+ "id": "talking_head_match_cut",
+ "schema_version": 1,
+ "technique_primitive": "match_cut",
+ "title": "Talking-Head Shot Variety (Match Cut)",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "camera_operator"
+ ],
+ "props_required": [],
+ "result_description": "A talking-head script broken into 3 framings (wide/close/medium) cut together so motion hides the cuts.",
+ "source": "Julia Gao Miller (@183501901)",
+ "source_url": "https://www.instagram.com/reel/DYdneOvxTdL/",
+ "is_ai_generated": false,
+ "tool": "Filming technique (no VFX app)",
+ "inputs": [
+  {
+   "name": "wide_shot",
+   "what_to_film": "Wide: walk toward camera, turn head left at a set point.",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_duration"
+   ]
+  },
+  {
+   "name": "close_shot",
+   "what_to_film": "Close-up: deliver next part, walk out of frame.",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_duration"
+   ]
+  },
+  {
+   "name": "medium_shot",
+   "what_to_film": "Medium: walk into frame for the final part.",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_duration"
+   ]
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "wide_shot, close_shot, medium_shot"
+  },
+  {
+   "action": "trim",
+   "channel": "structural",
+   "target": "each shot",
+   "params": {
+    "note": "cut on the matched motion (head turn / walk out / walk in)"
+   }
+  },
+  {
+   "action": "position",
+   "channel": "structural",
+   "target": "sequence",
+   "params": {
+    "note": "order wide → close → medium"
+   }
+  }
+ ],
+ "result": {
+  "description": "Seamless match-cut talking head.",
+  "success_criteria": [
+   "Cuts hidden by motion",
+   "Continuous energy across shots"
+  ]
+ },
+ "narration_transcript": "So if you're filming talking head videos that nobody wants to watch, have your videographer try this tip. You need to break up your scripts. For the first shot, you're gonna film yourself in a wide shot, walking towards a cameraman. And then when you reach a certain point, you're gonna turn your head to the left. Now shoot the second part of your script in a close up shot. Once you're done, walk out of the frame. For the third part of your script, you can film yourself in a medium shot walking into the frame. Let's start it again. My name is Julia and my team and I run a short form content agency, where we script edit and post content for a remote fitness and online business coaches. If you're an established entrepreneur and want more information, just comment info to start a conversation.",
+ "frames": {
+  "demo": [
+   "assets/talking_head_match_cut/frame_01.jpg",
+   "assets/talking_head_match_cut/frame_02.jpg",
+   "assets/talking_head_match_cut/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/talking_head_match_cut/frame_04.jpg",
+   "assets/talking_head_match_cut/frame_05.jpg",
+   "assets/talking_head_match_cut/frame_06.jpg",
+   "assets/talking_head_match_cut/frame_07.jpg",
+   "assets/talking_head_match_cut/frame_08.jpg",
+   "assets/talking_head_match_cut/frame_09.jpg",
+   "assets/talking_head_match_cut/frame_10.jpg",
+   "assets/talking_head_match_cut/frame_11.jpg",
+   "assets/talking_head_match_cut/frame_12.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "183501901",
+  "like_count": 23032,
+  "comment_count": 466,
+  "upload_date": "20260518",
+  "caption": "When scripting for clients, we’ll often have them change scenes throughout the video because even if the information is valuable, attention spans on short form content are still short 🕥\n\nSmall scene changes, movement, and visual variation help keep the viewer engaged while the person is speaking.\n\nSo when you or your team are scripting short form content, it’s good to intentionally build in these little scene changes and visual resets to help maintain attention throughout the video 👀🍬",
+  "hashtags": []
+ }
+}
