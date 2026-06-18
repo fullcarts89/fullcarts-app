@@ -120,6 +120,8 @@ def manual_to_recipe(m: Dict[str, Any]) -> VFXRecipe:
             params=params,
             channel=_step_channel(step),
             reference_screenshot=None,
+            action=step.get("action"),
+            target=step.get("target"),
         ))
 
     return VFXRecipe(
