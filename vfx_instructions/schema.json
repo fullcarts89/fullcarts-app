@@ -1,0 +1,20 @@
+{
+ "schema_version": 1,
+ "root": {"source":"str","generated":"date","schema_version":"int","effect_count":"int","effects":"Effect[]"},
+ "Effect": {
+   "effect":"str","slug":"str (primary key)","difficulty":"Foundation|Beginner|Intermediate",
+   "category_ids":"str[]","gear":"str|null","technique_note":"str|null",
+   "is_full_tutorial":"bool (false=enriched from demo)",
+   "filming_steps":"str[]","editing_steps":"str[]",
+   "breakdown_images":"str[] (relative asset paths)",
+   "demo_still":"str|null","demo_frames":"str[]",
+   "tags":"str[]","num_lessons":"int","num_videos":"int","lessons":"Lesson[]"
+ },
+ "Lesson": {
+   "post_id":"str (primary key)","title":"str","role":"demo|filming|editing|guide|reference|other",
+   "type":"video|text","duration_sec":"float|null","wistia_id":"str|null",
+   "transcript":"str|null","transcript_source":"wistia|whisper|null",
+   "source_url":"str","video_url":"str|null",
+   "image_source_urls":"str[] (durable CDN urls)","image_files":"str[] (relative paths)"
+ }
+}
