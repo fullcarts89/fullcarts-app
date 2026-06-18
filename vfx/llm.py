@@ -50,6 +50,28 @@ def build_prompt(record: Dict[str, Any]):
     return _SYSTEM, user
 
 
+def _encode_image(path: str, max_edge: int = 2000) -> str:
+    """Base64-encode a JPEG, downscaling so the long edge <= max_edge.
+
+    The Anthropic API rejects images whose dimensions exceed ~8000px; the tall
+    breakdown infographics (e.g. 850x9690) trip that. Downscaling also caps the
+    image token cost. (Very tall step-strips lose legibility here; tiling is a
+    future improvement — the narration remains the primary step source.)
+    """
+    from PIL import Image  # lazy import; module stays importable without Pillow
+    import io
+    with Image.open(path) as im:
+        im = im.convert("RGB")
+        w, h = im.size
+        longest = max(w, h)
+        if longest > max_edge:
+            scale = max_edge / float(longest)
+            im = im.resize((max(1, int(w * scale)), max(1, int(h * scale))))
+        buf = io.BytesIO()
+        im.save(buf, format="JPEG", quality=85)
+    return base64.standard_b64encode(buf.getvalue()).decode("utf-8")
+
+
 class LLM:
     """Real client. Lazy-imports anthropic so the module loads without it."""
 
@@ -69,10 +91,9 @@ class LLM:
         system, user_text = build_prompt(record)
         content: List[Dict[str, Any]] = [{"type": "text", "text": user_text}]
         for p in (image_paths or []):
-            with open(p, "rb") as f:
-                data = base64.standard_b64encode(f.read()).decode("utf-8")
             content.append({"type": "image", "source": {
-                "type": "base64", "media_type": "image/jpeg", "data": data}})
+                "type": "base64", "media_type": "image/jpeg",
+                "data": _encode_image(p)}})
         resp = client.messages.create(
             model=MODEL, max_tokens=self.max_tokens, system=system,
             thinking={"type": "adaptive"},
