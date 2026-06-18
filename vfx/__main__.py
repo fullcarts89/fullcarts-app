@@ -13,7 +13,28 @@ def main():
     ing.add_argument("--db", default=str(DEFAULT_DB))
     ls = sub.add_parser("list")
     ls.add_argument("--db", default=str(DEFAULT_DB))
+    en = sub.add_parser("enrich")
+    en.add_argument("--db", default=str(DEFAULT_DB))
+    en.add_argument("--with-vision", action="store_true")
+    en.add_argument("--limit", type=int, default=None)
     args = ap.parse_args()
+
+    if args.cmd == "enrich":
+        import os
+        if not os.environ.get("ANTHROPIC_API_KEY"):
+            raise SystemExit(
+                "ANTHROPIC_API_KEY is not set - refusing to run (would spend money).")
+        from vfx.llm import LLM
+        from vfx.ingest.enrich_llm import enrich_all
+        from vfx_instructions.vfx_loader import VFXData
+        Path(args.db).parent.mkdir(parents=True, exist_ok=True)
+        d = VFXData()
+        records = list(d)[: args.limit] if args.limit else list(d)
+        store = RecipeStore(args.db)
+        n = enrich_all(records, LLM(), store, with_vision=args.with_vision,
+                       asset_resolver=d.asset_path)
+        print(f"enriched {n} recipes -> {args.db}")
+        return
 
     Path(args.db).parent.mkdir(parents=True, exist_ok=True)
     store = RecipeStore(args.db)
