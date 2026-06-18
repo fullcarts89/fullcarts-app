@@ -1,0 +1,124 @@
+{
+ "id": "clone_effect_talking_head",
+ "schema_version": 1,
+ "technique_primitive": "overlay_bg_removal_clone",
+ "title": "Clone Effect (Talking-Head, Auto BG Removal)",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod",
+  "lighting"
+ ],
+ "props_required": [
+  "chair"
+ ],
+ "result_description": "Two copies of you in one shot — you sit pointing, and your clone steps in and sits beside you.",
+ "source": "Elly Walton (@elly.walton)",
+ "source_url": "https://www.instagram.com/reel/DVFUotSjbEp/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "pointing_clip",
+   "what_to_film": "Sit, point to where the clone will be, then step out of frame.",
+   "capture_requirements": {
+    "locked_off": true,
+    "green_screen": false,
+    "framing": "leave the clone's seat empty"
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "min_duration"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8,
+    "min_seconds": 2
+   }
+  },
+  {
+   "name": "stepin_clip",
+   "what_to_film": "Step into frame from the side and sit in the empty seat.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "both clips"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "stepin_clip",
+   "params": {
+    "track": 2
+   }
+  },
+  {
+   "action": "position",
+   "channel": "structural",
+   "target": "stepin_clip",
+   "params": {
+    "note": "directly under the pointing clip"
+   }
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "target": "pointing_clip",
+   "params": {
+    "to_track": 3
+   }
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "top pointing clip",
+   "capcut_feature": "Remove Background → Auto Removal",
+   "params": {
+    "mode": "auto"
+   }
+  }
+ ],
+ "result": {
+  "description": "Clone sits beside you with no hard seam.",
+  "success_criteria": [
+   "Two people visible simultaneously",
+   "Clean cutout edge, no flicker"
+  ]
+ },
+ "narration_transcript": "I'm going to show you how to do the cloning effect. Actually, she's going to show you how to do the cloning effect. Let's go. You'll need a clip of yourself sitting in a chair, pointing to your clones and stepping out. Then you'll need a second clip of you stepping into the frame sitting down in the chair. Open up CapCut and import both of your clips. Scroll to the second clip where you're coming into the frame. Select your clip and in your editing tool, select Overlay. Drag your second clip underneath your first clip where you're pointing to your clone. Select your first clip and in your editing tool, select Duplicate and in your editing tools, scroll to Overlay, select Overlay. Now drag that overlay right underneath the first clip. In your editing tools, scroll to Remove Background, select Auto Removal. This removes the background of the first clip, allowing you to see your clone from the second clip. And there you have it, a fun clone effect for your next Talking Head video.",
+ "frames": {
+  "demo": [
+   "assets/clone_effect_talking_head/hook_1.jpg",
+   "assets/clone_effect_talking_head/hook_2.jpg"
+  ],
+  "editing": [
+   "assets/clone_effect_talking_head/edit_1.jpg",
+   "assets/clone_effect_talking_head/edit_2.jpg",
+   "assets/clone_effect_talking_head/edit_3.jpg",
+   "assets/clone_effect_talking_head/edit_4.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "73011387655",
+  "like_count": 6683,
+  "comment_count": 192,
+  "upload_date": "20260223",
+  "caption": "Everyone keeps asking how I do my clone videos 👀\n\nThere are tons of ways, but this one hits different for storytelling.\n\nTalking head videos are everywhere right now.\nIf you’re not adding a visual hook, you’re losing attention.\n\nCloning = instant pattern interrupt.\nIt keeps people watching.\n\nBUT Visual hooks grab attention. Content keeps it. Editing elevates good content. It doesn’t fix boring content.\n\n⚠️ Pro tip:\nKeep your camera locked and lighting consistent when filming. If the light shifts even slightly, you’ll see a tiny glitch in your clone (you can actually spot it here 👀).\n\nSave this for your next reel.\n\ntop @outerknown \n\n#editingtutorial #capcuttutorial #standaretopost @stanforcreators",
+  "hashtags": [
+   "capcuttutorial",
+   "editingtutorial",
+   "standaretopost"
+  ]
+ }
+}

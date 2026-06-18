@@ -1,0 +1,120 @@
+{
+ "id": "screen_pop_out_push",
+ "schema_version": 1,
+ "technique_primitive": "other",
+ "title": "Screen Pop-Out (Push Toward Camera)",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "Your hand pushes out of a screenshot of your own Instagram post toward the viewer.",
+ "source": "˗ˏˋ celina ˎˊ˗ (@8887399639)",
+ "source_url": "https://www.instagram.com/reel/DYwb5BLBp1L/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "push_clip",
+   "what_to_film": "Push your hand toward the camera.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "post_screenshot",
+   "what_to_film": "Screenshot of one of your Instagram posts.",
+   "capture_requirements": {}
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "post_screenshot, push_clip"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "push_clip",
+   "params": {
+    "track": 2
+   }
+  },
+  {
+   "action": "transform",
+   "channel": "ui",
+   "target": "push_clip",
+   "capcut_feature": "Crop",
+   "params": {
+    "note": "fit exactly over the post in the screenshot"
+   }
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "target": "push_clip",
+   "params": {
+    "to_track": 3,
+    "note": "move under original; crop to where hand pops out"
+   }
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "duplicated push_clip",
+   "capcut_feature": "Remove Background → Auto Removal",
+   "params": {
+    "mode": "auto",
+    "note": "keep only the hand"
+   }
+  },
+  {
+   "action": "text",
+   "channel": "taste",
+   "target": "caption + SFX"
+  }
+ ],
+ "result": {
+  "description": "Hand breaks the frame of the post.",
+  "success_criteria": [
+   "Hand cleanly cut out",
+   "Pop-out aligns with the post edge"
+  ]
+ },
+ "narration_transcript": "Here's how to create this pop out effect for your next video. First, film yourself pushing something towards the camera, then take a screenshot of one of your Instagram posts. Take those two clips into CapCut and set the video as an overlay and crop that video so it fits in place of the original post that you screenshot it. Then duplicate the video, move it under the original and crop it to where you want your hand to pop out. Go to remove background and remove everything but your hand in the note. Get any text, sound effects and you'll get",
+ "frames": {
+  "demo": [
+   "assets/screen_pop_out_push/frame_01.jpg",
+   "assets/screen_pop_out_push/frame_02.jpg",
+   "assets/screen_pop_out_push/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/screen_pop_out_push/frame_04.jpg",
+   "assets/screen_pop_out_push/frame_05.jpg",
+   "assets/screen_pop_out_push/frame_06.jpg",
+   "assets/screen_pop_out_push/frame_07.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "8887399639",
+  "like_count": 21524,
+  "comment_count": 103,
+  "upload_date": "20260525",
+  "caption": "the long awaited EDITING TUTORIAL is here !!! 🧚✨ \n\nthank you guys for enjoying my edits, hopefully this helps you all on your own content journeys 💌 i’d also love to see your recreations - tag me if you try it out !! \n\n#editingtutorial #vlog #capcut, #edittutorial #capcutedit visual hook, intro edit",
+  "hashtags": [
+   "capcut",
+   "capcutedit",
+   "editingtutorial",
+   "edittutorial",
+   "vlog"
+  ]
+ }
+}

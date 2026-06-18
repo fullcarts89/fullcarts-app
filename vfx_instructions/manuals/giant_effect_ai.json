@@ -1,0 +1,96 @@
+{
+ "id": "giant_effect_ai",
+ "schema_version": 1,
+ "technique_primitive": "other",
+ "title": "Giant Effect (Higgsfield AI from a photo)",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "gear_required": [],
+ "props_required": [],
+ "result_description": "An AI transition turning you into a giant, from one photo.",
+ "source": "Karen X (@169385)",
+ "source_url": "https://www.instagram.com/reel/DVhwmGVgASG/",
+ "is_ai_generated": true,
+ "tool": "Higgsfield (AI)",
+ "inputs": [
+  {
+   "name": "selfie_photo",
+   "what_to_film": "One photo of yourself.",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_resolution"
+   ]
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "generated clip"
+  }
+ ],
+ "result": {
+  "description": "Transition into a giant.",
+  "success_criteria": [
+   "Smooth scale transition",
+   "Face consistent"
+  ]
+ },
+ "narration_transcript": "This is the giant effect, and here's how to do it. It's so easy, all you need is a photo of yourself. This is day two of extremely easy edits. First, we need to turn your photo into this photo. So go to Higgsfield, create image, and upload your photo. Then use these settings and type this in. I did so much experimenting to figure out the right prompt, so you can just call it giant and I'll send you everything you need. Now, we need to transition between these two photos. So go to create video and add your photos as a start frame and end frame. And then use these settings. Again, just call it giant and I'll send it to you. After a few attempts, I've had a video like this. This was day two of extremely easy edits. On day three, I'll show you how to improve your opening hooks like this. So follow along if you want to learn.",
+ "frames": {
+  "demo": [
+   "assets/giant_effect_ai/frame_01.jpg",
+   "assets/giant_effect_ai/frame_02.jpg",
+   "assets/giant_effect_ai/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/giant_effect_ai/frame_04.jpg",
+   "assets/giant_effect_ai/frame_05.jpg",
+   "assets/giant_effect_ai/frame_06.jpg",
+   "assets/giant_effect_ai/frame_07.jpg",
+   "assets/giant_effect_ai/frame_08.jpg",
+   "assets/giant_effect_ai/frame_09.jpg",
+   "assets/giant_effect_ai/frame_10.jpg",
+   "assets/giant_effect_ai/frame_11.jpg",
+   "assets/giant_effect_ai/frame_12.jpg",
+   "assets/giant_effect_ai/frame_13.jpg",
+   "assets/giant_effect_ai/frame_14.jpg",
+   "assets/giant_effect_ai/frame_15.jpg",
+   "assets/giant_effect_ai/frame_16.jpg",
+   "assets/giant_effect_ai/frame_17.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "169385",
+  "like_count": 4603,
+  "comment_count": 4571,
+  "upload_date": "20260306",
+  "caption": "comment GIANT and I’ll send you the prompts\nthis is Day 2 of extremely easy edits\n\nthanks to @higgsfield.ai for sponsoring this tutorial",
+  "hashtags": []
+ },
+ "ai_generation": [
+  {
+   "provider": "higgsfield",
+   "mcp_server": "66e733f1-17be-4bb6-b57b-70fea20b08b2",
+   "operation": "image_generation",
+   "tool": "generate_image",
+   "inputs": [
+    "selfie_photo"
+   ],
+   "prompt_strategy": "giant-scene prompt, authored at runtime",
+   "settings": {}
+  },
+  {
+   "provider": "higgsfield",
+   "mcp_server": "66e733f1-17be-4bb6-b57b-70fea20b08b2",
+   "operation": "first_last_frame_video",
+   "tool": "generate_video",
+   "inputs": [
+    "selfie_photo (start frame)",
+    "generated giant image (end frame)"
+   ],
+   "prompt_strategy": "author at runtime",
+   "settings": {}
+  }
+ ]
+}

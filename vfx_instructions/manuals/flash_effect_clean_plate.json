@@ -1,0 +1,132 @@
+{
+ "id": "flash_effect_clean_plate",
+ "schema_version": 1,
+ "technique_primitive": "clean_plate_mask_reveal",
+ "title": "Flash Effect (Clean Plate)",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "A white flash and you instantly vanish/appear, using a clean plate of the scene.",
+ "source": "Harry Allsop | VFX Creator (@67795363025)",
+ "source_url": "https://www.instagram.com/reel/DUq2QjfjEzI/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "talking_clip",
+   "what_to_film": "Talk to camera in the scene.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "clean_plate",
+   "what_to_film": "Same scene, empty, camera unmoved.",
+   "capture_requirements": {
+    "locked_off": true,
+    "subject_exits_frame": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "object_absent"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "clean_plate, talking_clip"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "talking_clip",
+   "params": {
+    "track": 2,
+    "note": "start of layer 2"
+   }
+  },
+  {
+   "action": "trim",
+   "channel": "structural",
+   "target": "talking_clip",
+   "params": {
+    "note": "trim start slightly"
+   }
+  },
+  {
+   "action": "split",
+   "channel": "structural",
+   "target": "talking_clip",
+   "timing": {
+    "cue": "a few frames in"
+   }
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "first section",
+   "capcut_feature": "Effects → Body Effects → White Flash"
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "talking_clip",
+   "capcut_feature": "Remove Background → Auto Removal",
+   "params": {
+    "mode": "auto"
+   }
+  }
+ ],
+ "result": {
+  "description": "Flash transition reveal.",
+  "success_criteria": [
+   "Flash masks the cut",
+   "Subject appears/disappears cleanly"
+  ]
+ },
+ "narration_transcript": "Here's how you make this scroll-stopping flash effect using just your fun. Give me 60 seconds and I'll show you how. First, film your main clip, talking to the camera, then film a clean plate of the exact same scene, now import both clips into CapCut. Select your talking clip, tap overlay and move to the start of Layer 2. Trim the start of your talking clip slightly, then scrub forward a few frames and tap Split. Select the first section of the clip, go to Effects, then Body Effects, search for Flash and choose White Flash. Now tap Remove Backgrounds and use either Auto or Custom to cut yourself out. And that's it, effect done. Send this to a friend who needs better edits and follow for more effects like this.",
+ "frames": {
+  "demo": [
+   "assets/flash_effect_clean_plate/frame_01.jpg",
+   "assets/flash_effect_clean_plate/frame_02.jpg",
+   "assets/flash_effect_clean_plate/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/flash_effect_clean_plate/frame_04.jpg",
+   "assets/flash_effect_clean_plate/frame_05.jpg",
+   "assets/flash_effect_clean_plate/frame_06.jpg",
+   "assets/flash_effect_clean_plate/frame_07.jpg",
+   "assets/flash_effect_clean_plate/frame_08.jpg",
+   "assets/flash_effect_clean_plate/frame_09.jpg",
+   "assets/flash_effect_clean_plate/frame_10.jpg",
+   "assets/flash_effect_clean_plate/frame_11.jpg",
+   "assets/flash_effect_clean_plate/frame_12.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "67795363025",
+  "like_count": 767,
+  "comment_count": 20,
+  "upload_date": "20260212",
+  "caption": "How to flash into an empty scene in CapCut ⚡️\n\nThis CapCut teleport effect makes it look like you instantly appear out of nowhere — using just your phone.\n\nNo green screen.\nNo After Effects.\nJust clean layering and timing.\n\nSave this CapCut tutorial for later\nSend it to a mate who needs better edits\n\nWant the step-by-step PDF version with PRO realism tips?\nComment EDIT and I’ll DM you the full tutorial pack (45 tutorials + more being added 👀)\n\n#vfx #creative #edit",
+  "hashtags": [
+   "creative",
+   "edit",
+   "vfx"
+  ]
+ }
+}

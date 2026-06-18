@@ -1,0 +1,143 @@
+{
+ "id": "floating_mini_clone",
+ "schema_version": 1,
+ "technique_primitive": "keyframe_motion",
+ "title": "Floating Mini-Clone (Jump + Slow-Mo Overlay)",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "A shrunken, slow-motion clone of you floats/jumps within your main shot.",
+ "source": "Horla_dap0 Visualz (@14772383154)",
+ "source_url": "https://www.instagram.com/reel/DYNhPFgCqDx/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "foreground_clip",
+   "what_to_film": "Your main foreground shot.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "jump_clip",
+   "what_to_film": "A jump, ideally on an iPhone/rig for smooth slow motion.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "foreground_clip, jump_clip"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "jump_clip",
+   "params": {
+    "track": 2
+   }
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "jump_clip",
+   "capcut_feature": "Remove Background → Auto Removal",
+   "params": {
+    "mode": "auto"
+   }
+  },
+  {
+   "action": "speed",
+   "channel": "ui",
+   "target": "jump_clip",
+   "capcut_feature": "Speed",
+   "params": {
+    "note": "slow down (rate set to taste)"
+   }
+  },
+  {
+   "action": "transform",
+   "channel": "ui",
+   "target": "jump_clip",
+   "capcut_feature": "Scale",
+   "params": {
+    "note": "scale the cutout down, position in scene"
+   }
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "jump_clip",
+   "params": {
+    "property": "position",
+    "note": "keyframe start, then a few frames later raise it for the float"
+   },
+   "timing": {
+    "cue": "jump apex"
+   }
+  }
+ ],
+ "result": {
+  "description": "Mini floating clone composited in.",
+  "success_criteria": [
+   "Clean cutout",
+   "Smooth slow-mo float"
+  ]
+ },
+ "narration_transcript": "Let's recreate this, this is the top core. First, take a shot of you in the foreground, then record a set jump in an iPhone rig to get a smooth slow motion effect, input the foreground clip and add the jumping clip as an overlay, select the jumping clip, click on remove background, tap on speed and reduce the speed as desired, take the cutout, scale it down and position it wherever you want. Add keyframes at the beginning and also a few frames forward. On second keyframe, pull it up a little bit to get the floating effect. Now repeat the same process for the other clips as well, to appear the angel subject, import the foreground clip as an overlay and remove background, there you have it.",
+ "frames": {
+  "demo": [
+   "assets/floating_mini_clone/frame_01.jpg",
+   "assets/floating_mini_clone/frame_02.jpg",
+   "assets/floating_mini_clone/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/floating_mini_clone/frame_04.jpg",
+   "assets/floating_mini_clone/frame_05.jpg",
+   "assets/floating_mini_clone/frame_06.jpg",
+   "assets/floating_mini_clone/frame_07.jpg",
+   "assets/floating_mini_clone/frame_08.jpg",
+   "assets/floating_mini_clone/frame_09.jpg",
+   "assets/floating_mini_clone/frame_10.jpg",
+   "assets/floating_mini_clone/frame_11.jpg",
+   "assets/floating_mini_clone/frame_12.jpg",
+   "assets/floating_mini_clone/frame_13.jpg",
+   "assets/floating_mini_clone/frame_14.jpg",
+   "assets/floating_mini_clone/frame_15.jpg",
+   "assets/floating_mini_clone/frame_16.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "14772383154",
+  "like_count": 122,
+  "comment_count": 17,
+  "upload_date": "20260511",
+  "caption": "Episode 3 of CAPCUT made easier. Inspired by @futurist__ \nToday we’re doing the floating effect 🎈\n​It looks like magic, but it’s actually really easy to pull off right on your phone. Watch the steps and try it out on your next video.\n​What effect do you want to see next? Let me know in the comments 👇\n​Hashtags:\n#CapCut #CapCutTutorial #FloatingEffect #vfx #editinghacks",
+  "hashtags": [
+   "CapCut",
+   "CapCutTutorial",
+   "FloatingEffect",
+   "editinghacks",
+   "vfx"
+  ]
+ }
+}

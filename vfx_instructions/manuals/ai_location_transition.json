@@ -1,0 +1,87 @@
+{
+ "id": "ai_location_transition",
+ "schema_version": 1,
+ "technique_primitive": "other",
+ "title": "AI Location Transition (First/Last Frame)",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [],
+ "props_required": [],
+ "result_description": "An AI first/last-frame video transitioning you between two locations with a consistent face.",
+ "source": "Karen X (@169385)",
+ "source_url": "https://www.instagram.com/reel/DW7iJnJie1q/",
+ "is_ai_generated": true,
+ "tool": "OpenArt / Kling (AI)",
+ "inputs": [
+  {
+   "name": "location_photos",
+   "what_to_film": "Two photos of yourself in two different locations.",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_resolution"
+   ]
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "generated clip"
+  }
+ ],
+ "result": {
+  "description": "Location-to-location AI transition.",
+  "success_criteria": [
+   "Face consistent across frames",
+   "Smooth morph"
+  ]
+ },
+ "narration_transcript": "This is the height and the last effect, and here is how you do it. All you need is a photo of yourself in two different locations. I took this photo but watch my face. See how AI changes it? It's just a super common problem with AI. To fix this, use OpenArt. They just launched Kling 2.0. It's so good at keeping your face consistent. Next, add your photos as your first frame and last frame. I did some experimenting. This was the prompt that worked. Just comment, walk, and I'll send it to you. I think most people don't realize about AI video is that even with the same prompt, AI gets you different results every time. I use this feature of OpenArt to generate three or four at a time to get the result I want. This was day five of extremely easy edits. On day six, I'll show you how to make this to follow along if you want to learn.",
+ "frames": {
+  "demo": [
+   "assets/ai_location_transition/frame_01.jpg",
+   "assets/ai_location_transition/frame_02.jpg",
+   "assets/ai_location_transition/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/ai_location_transition/frame_04.jpg",
+   "assets/ai_location_transition/frame_05.jpg",
+   "assets/ai_location_transition/frame_06.jpg",
+   "assets/ai_location_transition/frame_07.jpg",
+   "assets/ai_location_transition/frame_08.jpg",
+   "assets/ai_location_transition/frame_09.jpg",
+   "assets/ai_location_transition/frame_10.jpg",
+   "assets/ai_location_transition/frame_11.jpg",
+   "assets/ai_location_transition/frame_12.jpg",
+   "assets/ai_location_transition/frame_13.jpg",
+   "assets/ai_location_transition/frame_14.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "169385",
+  "like_count": 6450,
+  "comment_count": 4037,
+  "upload_date": "20260410",
+  "caption": "comment WALK and i’ll send you the prompt\nedited with @openart_ai #OpenArtPartner \nthis is day 5 of extremely easy edits",
+  "hashtags": [
+   "OpenArtPartner"
+  ]
+ },
+ "ai_generation": [
+  {
+   "provider": "openart",
+   "mcp_server": null,
+   "operation": "first_last_frame_video",
+   "tool": "Kling 2.0 (OpenArt)",
+   "inputs": [
+    "photo A (first frame)",
+    "photo B (last frame)"
+   ],
+   "prompt_strategy": "author at runtime; generate 3-4, pick best",
+   "note": "No MCP for OpenArt/Kling in this environment — manual/human step.",
+   "settings": {
+    "face_consistency": true
+   }
+  }
+ ]
+}

@@ -1,0 +1,97 @@
+{
+ "id": "pendulum_effect_ai",
+ "schema_version": 1,
+ "technique_primitive": "other",
+ "title": "Pendulum Effect (Higgsfield AI from a photo)",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "gear_required": [],
+ "props_required": [],
+ "result_description": "An AI 'aerial pullback' from a single photo of you, looped back-and-forth into a pendulum swing.",
+ "source": "Karen X (@169385)",
+ "source_url": "https://www.instagram.com/reel/DVcnggfEQDD/",
+ "is_ai_generated": true,
+ "tool": "Higgsfield (AI) + CapCut",
+ "inputs": [
+  {
+   "name": "selfie_photo",
+   "what_to_film": "One photo of yourself.",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_resolution"
+   ]
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "generated clip"
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "target": "generated clip",
+   "params": {
+    "to_track": 1
+   }
+  },
+  {
+   "action": "reverse",
+   "channel": "ui",
+   "target": "second copy",
+   "capcut_feature": "Reverse"
+  }
+ ],
+ "result": {
+  "description": "Pendulum back-and-forth from one photo.",
+  "success_criteria": [
+   "Seamless forward/reverse loop"
+  ]
+ },
+ "narration_transcript": "This is the pendulum effect. It's so easy. All you need is a photo of yourself. This is day one of extremely easy edits You'll go to Higgsfield create video add your photo here Tap change choose aerial pullback Then type this prompt using these settings. Don't worry. Just comment settings and I'll send it to you Now hit generate and you'll get a video like this to get the pendulum effect You're just gonna duplicate your clip and cap cut reverse your second clip and Now you have the pendulum effect. This was day one of extremely easy edits on day two I'll show you how to make this so follow along if you want to learn",
+ "frames": {
+  "demo": [
+   "assets/pendulum_effect_ai/frame_01.jpg",
+   "assets/pendulum_effect_ai/frame_02.jpg",
+   "assets/pendulum_effect_ai/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/pendulum_effect_ai/frame_04.jpg",
+   "assets/pendulum_effect_ai/frame_05.jpg",
+   "assets/pendulum_effect_ai/frame_06.jpg",
+   "assets/pendulum_effect_ai/frame_07.jpg",
+   "assets/pendulum_effect_ai/frame_08.jpg",
+   "assets/pendulum_effect_ai/frame_09.jpg",
+   "assets/pendulum_effect_ai/frame_10.jpg",
+   "assets/pendulum_effect_ai/frame_11.jpg",
+   "assets/pendulum_effect_ai/frame_12.jpg",
+   "assets/pendulum_effect_ai/frame_13.jpg",
+   "assets/pendulum_effect_ai/frame_14.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "169385",
+  "like_count": 41187,
+  "comment_count": 11486,
+  "upload_date": "20260304",
+  "caption": "day 1 of extremely easy edits\ncomment SETTINGS and I’ll send them to you\n\nexcited to kick off this new series! it’s getting so much easier to make cool looking shots. what used to require complex VFX knowledge or fancy camera rigs, you can now achieve with a few button presses\n\nthanks to @higgsfield.ai for sponsoring this tutorial",
+  "hashtags": []
+ },
+ "ai_generation": [
+  {
+   "provider": "higgsfield",
+   "mcp_server": "66e733f1-17be-4bb6-b57b-70fea20b08b2",
+   "operation": "image_to_video",
+   "tool": "generate_video",
+   "inputs": [
+    "selfie_photo"
+   ],
+   "motion": "Aerial Pullback",
+   "prompt_strategy": "author at runtime (creator gated the exact prompt)",
+   "settings": {
+    "note": "creator's settings not shown"
+   }
+  }
+ ]
+}
