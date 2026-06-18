@@ -26,7 +26,18 @@ def main():
     pl = sub.add_parser("plan")
     pl.add_argument("slug")
     pl.add_argument("--db", default=ENRICHED_DB)
+    im = sub.add_parser("ingest-manual")
+    im.add_argument("file")
+    im.add_argument("--db", default=str(DEFAULT_DB))
     args = ap.parse_args()
+
+    if args.cmd == "ingest-manual":
+        from vfx.ingest.manual_schema import load_manual
+        Path(args.db).parent.mkdir(parents=True, exist_ok=True)
+        recipe = load_manual(args.file)
+        RecipeStore(args.db).put(recipe)
+        print(f"ingested: {recipe.slug} ({recipe.technique_primitive})")
+        return
 
     if args.cmd == "recommend":
         from vfx.recommender import top_recipes, feasibility_score
