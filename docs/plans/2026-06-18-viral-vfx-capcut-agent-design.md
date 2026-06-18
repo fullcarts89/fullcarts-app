@@ -4,6 +4,18 @@
 **Status:** Approved (brainstorming) → ready for implementation planning
 **Owner:** liuxnard@gmail.com
 
+> **Update 2026-06-18 (post-kickoff):** The manual library is available as a
+> **structured dataset** (`vfx_instructions/` — `VFXData` loader + `effects.json`
+> + `vfx.sqlite` + breakdown assets; 34 records, local reads, no API/LLM cost),
+> not just PDFs. This **supersedes PDF parsing as the primary ingest** — Phase 0
+> now adapts `VFXData` records → `VFXRecipe`. The PDF reader/parser remain a
+> fallback for any PDF-only manuals. The records' `gear`/`tags`/`difficulty`
+> feed the Recommender directly; `filming_steps` feed the Asset Director;
+> `breakdown_images` are the computer-use visual anchors. Caveat: `editing_steps`
+> are narration-derived (incl. filler), so converting them into executable,
+> channel-tagged steps is the tool's core value-add (heuristic first; optional
+> one-time LLM normalization).
+
 ## One-line summary
 
 A **local, personal companion app** (myclaw-style) that takes a video idea from

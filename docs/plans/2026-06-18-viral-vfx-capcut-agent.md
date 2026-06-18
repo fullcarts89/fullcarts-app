@@ -18,6 +18,14 @@ in annotations — use `typing`), Anthropic SDK (Claude Opus 4.8 + vision), SQLi
 
 **Design doc:** `docs/plans/2026-06-18-viral-vfx-capcut-agent-design.md`
 
+> **Update 2026-06-18:** Phase 0 ingestion is now **structured-source-first**.
+> Tasks 3–6 (PDF → text → parse → LLM enrich) are superseded by a `VFXData`
+> adapter (`vfx_instructions/` dataset → `VFXRecipe`); the PDF reader/parser
+> (Tasks 3–4, already built) stay as a fallback. New Phase-0 tasks: a VFXData
+> adapter + heuristic channel classifier (free), with an optional one-time LLM
+> step-normalization pass (permission-gated, est. ~$2–10 for all 34 effects) to
+> lift executable fidelity of the narration-derived `editing_steps`.
+
 ---
 
 ## Conventions for every task
