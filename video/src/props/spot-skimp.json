@@ -39,7 +39,6 @@
       "image": "spotskimp/mars.jpg",
       "question": "Mars Bar. *Spot it?*",
       "reveal": "*Shorter* bar — same wrapper.",
-      "chip": "Same wrapper",
       "fromSec": 18.933,
       "toSec": 28.333,
       "revealAtSec": 26.0
