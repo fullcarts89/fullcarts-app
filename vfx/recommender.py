@@ -15,7 +15,14 @@ class ScriptMatch:
 
 _STOP = {"the", "a", "an", "and", "or", "to", "of", "in", "on", "for", "with", "you", "your",
          "i", "it", "is", "are", "this", "that", "my", "me", "we", "they", "them", "then",
-         "into", "out", "up", "down", "at", "as", "be", "do", "so", "just", "like"}
+         "into", "out", "up", "down", "at", "as", "be", "do", "so", "just", "like",
+         # generic fillers that otherwise drown out the meaningful keywords
+         "have", "has", "had", "want", "wants", "make", "makes", "get", "got", "go",
+         "going", "show", "shows", "talk", "talks", "talking", "see", "look", "looking",
+         "take", "put", "use", "using", "will", "would", "can", "could", "should",
+         "need", "really", "here", "there", "what", "when", "where", "how", "all",
+         "one", "two", "first", "next", "also", "video", "clip", "clips", "effect",
+         "effects", "myself", "yourself", "about", "from", "going", "want", "some"}
 
 
 def _tokens(text: str) -> Set[str]:
