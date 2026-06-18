@@ -26,6 +26,8 @@ class EditStep:
     params: Dict[str, Any] = field(default_factory=dict)
     channel: Channel = Channel.GUI
     reference_screenshot: Optional[str] = None
+    action: Optional[str] = None     # raw verb, e.g. "overlay", "duplicate"
+    target: Optional[str] = None     # raw target, e.g. "stepin_clip"
 
 
 @dataclass
