@@ -1,0 +1,68 @@
+{
+ "source": "External short-form videos ingested into the VFX schema",
+ "generated": "2026-06-18",
+ "schema_version": 1,
+ "effect_count": 1,
+ "effects": [
+  {
+   "effect": "Clone Effect (Talking-Head, Auto Background Removal)",
+   "slug": "clone_effect_talking_head",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DVFUotSjbEp/",
+   "source_creator": "Elly Walton (@elly.walton)",
+   "category_ids": [],
+   "gear": "Phone on a tripod (locked off — do not move between takes), even lighting.",
+   "technique_note": "Ingested from a public Instagram reel via yt-dlp + ffmpeg frames + Whisper transcription. Same locked-off cloning method as the vault 'cloning' family, but uses CapCut's Auto Background Removal instead of manual masking.",
+   "is_full_tutorial": true,
+   "filming_steps": [
+    "I'm going to show you how to do the cloning effect.",
+    "Actually, she's going to show you how to do the cloning effect.",
+    "You'll need a clip of yourself sitting in a chair, pointing to your clones and stepping out.",
+    "You'll need a second clip of you stepping into the frame sitting down in the chair."
+   ],
+   "editing_steps": [
+    "Open up CapCut and import both of your clips.",
+    "Scroll to the second clip where you're coming into the frame.",
+    "Select your clip and in your editing tool, select Overlay.",
+    "Drag your second clip underneath your first clip where you're pointing to your clone.",
+    "Select your first clip and in your editing tool, select Duplicate and in your editing tools, scroll to Overlay, select Overlay.",
+    "Drag that overlay right underneath the first clip.",
+    "In your editing tools, scroll to Remove Background, select Auto Removal.",
+    "This removes the background of the first clip, allowing you to see your clone from the second clip."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/clone_effect_talking_head/hook_1.jpg",
+   "demo_frames": [
+    "assets/clone_effect_talking_head/hook_1.jpg",
+    "assets/clone_effect_talking_head/hook_2.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/clone_effect_talking_head/edit_1.jpg",
+    "assets/clone_effect_talking_head/edit_2.jpg",
+    "assets/clone_effect_talking_head/edit_3.jpg",
+    "assets/clone_effect_talking_head/edit_4.jpg"
+   ],
+   "tags": [
+    "auto_bg_removal",
+    "cloning",
+    "overlay"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "lessons": [
+    {
+     "post_id": "ig_DVFUotSjbEp",
+     "title": "Clone Effect tutorial (IG reel)",
+     "role": "tutorial",
+     "duration_sec": 49.8,
+     "wistia_id": null,
+     "transcript": "I'm going to show you how to do the cloning effect. Actually, she's going to show you how to do the cloning effect. Let's go. You'll need a clip of yourself sitting in a chair, pointing to your clones and stepping out. Then you'll need a second clip of you stepping into the frame sitting down in the chair. Open up CapCut and import both of your clips. Scroll to the second clip where you're coming into the frame. Select your clip and in your editing tool, select Overlay. Drag your second clip underneath your first clip where you're pointing to your clone. Select your first clip and in your editing tool, select Duplicate and in your editing tools, scroll to Overlay, select Overlay. Now drag that overlay right underneath the first clip. In your editing tools, scroll to Remove Background, select Auto Removal. This removes the background of the first clip, allowing you to see your clone from the second clip. And there you have it, a fun clone effect for your next Talking Head video.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DVFUotSjbEp/",
+     "video_url": null
+    }
+   ]
+  }
+ ]
+}
