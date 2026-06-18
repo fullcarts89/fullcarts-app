@@ -23,20 +23,34 @@ def _tokens(text: str) -> Set[str]:
             if len(w) > 2 and w not in _STOP}
 
 
+def _stem(w: str) -> str:
+    """Crude stemmer so clone/cloning/clones/cloned all match (ranking only)."""
+    for suf in ("ing", "ed", "es", "s"):
+        if w.endswith(suf) and len(w) - len(suf) >= 3:
+            w = w[: -len(suf)]
+            break
+    return w.rstrip("e")
+
+
 def recommend_for_script(recipes, script, caps, k: int = 3) -> List["ScriptMatch"]:
-    """Rank recipes by (feasibility, then script keyword overlap)."""
-    s_tokens = _tokens(script)
+    """Rank recipes by (feasibility, then stemmed script-keyword overlap)."""
+    # stem -> the original script word, so the "why" stays human-readable
+    s_by_stem = {}
+    for w in _tokens(script):
+        s_by_stem.setdefault(_stem(w), w)
     out: List[ScriptMatch] = []
     for r in recipes:
         hay = " ".join([r.title, r.technique_primitive.replace("_", " "), r.summary,
                         " ".join(r.filming_steps),
                         " ".join(a.name for a in r.asset_spec)])
-        overlap = s_tokens & _tokens(hay)
+        hay_stems = {_stem(w) for w in _tokens(hay)}
+        matched_stems = set(s_by_stem) & hay_stems
+        matched_words = sorted(s_by_stem[st] for st in matched_stems)
         feas = feasibility_score(r, caps)
-        score = feas * 100 + len(overlap)
+        score = feas * 100 + len(matched_stems)
         why_bits: List[str] = []
-        if overlap:
-            why_bits.append("matches: " + ", ".join(sorted(overlap)[:5]))
+        if matched_words:
+            why_bits.append("matches: " + ", ".join(matched_words[:5]))
         why_bits.append("gear OK" if feas >= 1.0 else "missing some gear")
         out.append(ScriptMatch(r, score, "; ".join(why_bits), feas >= 1.0))
     out.sort(key=lambda m: m.score, reverse=True)
