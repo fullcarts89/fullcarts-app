@@ -1,0 +1,109 @@
+{
+ "id": "floating_outfit_effect",
+ "schema_version": 1,
+ "technique_primitive": "other",
+ "title": "Floating Outfit Effect (AI)",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [],
+ "props_required": [],
+ "result_description": "An AI-generated shot of your outfit floating as if worn by an invisible person.",
+ "source": "Karen X (@169385)",
+ "source_url": "https://www.instagram.com/reel/DWAmiUPjt7e/",
+ "is_ai_generated": true,
+ "tool": "Higgsfield (AI)",
+ "inputs": [
+  {
+   "name": "outfit_photo",
+   "what_to_film": "One photo of you in the outfit.",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_resolution"
+   ]
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "generated clip"
+  }
+ ],
+ "result": {
+  "description": "Floating outfit clip.",
+  "success_criteria": [
+   "Outfit holds a worn shape",
+   "No visible body"
+  ]
+ },
+ "narration_transcript": "This is the floating outfit effect and here's how you do it. This is such an interesting moment for creators because a shot like this used to take a whole crew but AI tools are getting so good that anyone can get this shot now by themselves with your editing experience. Let me show you how. First take a photo of yourself with the outfit, go to Higgsfield, add your image and write this prompt and you'll get a floating outfit picture. Just come at creator and I'll send you the prompt. If there's someone you don't want in the background use in paint and they're gone. Sometimes you don't get to shoot under ideal lighting so you can use a real light to change it to golden hour. Now let's go to create video. I tested a bunch of settings. This is what worked best. Just comment creator and I'll send it to you. You'll get a video like this. Everything I just showed you is on Higgsfield for $9 a month. This was day four of extremely easy edits on day five. I'll show you how to make this. So follow along if you want to learn.",
+ "frames": {
+  "demo": [
+   "assets/floating_outfit_effect/frame_01.jpg",
+   "assets/floating_outfit_effect/frame_02.jpg",
+   "assets/floating_outfit_effect/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/floating_outfit_effect/frame_04.jpg",
+   "assets/floating_outfit_effect/frame_05.jpg",
+   "assets/floating_outfit_effect/frame_06.jpg",
+   "assets/floating_outfit_effect/frame_07.jpg",
+   "assets/floating_outfit_effect/frame_08.jpg",
+   "assets/floating_outfit_effect/frame_09.jpg",
+   "assets/floating_outfit_effect/frame_10.jpg",
+   "assets/floating_outfit_effect/frame_11.jpg",
+   "assets/floating_outfit_effect/frame_12.jpg",
+   "assets/floating_outfit_effect/frame_13.jpg",
+   "assets/floating_outfit_effect/frame_14.jpg",
+   "assets/floating_outfit_effect/frame_15.jpg",
+   "assets/floating_outfit_effect/frame_16.jpg",
+   "assets/floating_outfit_effect/frame_17.jpg",
+   "assets/floating_outfit_effect/frame_18.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "169385",
+  "like_count": 9999,
+  "comment_count": 7481,
+  "upload_date": "20260318",
+  "caption": "comment CREATOR and I’ll send you the prompts\nday 4 of extremely easy edits\nedited with @higgsfield.ai #HiggsfieldCreator \nthanks to them for sponsoring this tutorial",
+  "hashtags": [
+   "HiggsfieldCreator"
+  ]
+ },
+ "ai_generation": [
+  {
+   "provider": "higgsfield",
+   "mcp_server": "66e733f1-17be-4bb6-b57b-70fea20b08b2",
+   "operation": "image_generation",
+   "tool": "generate_image",
+   "inputs": [
+    "outfit_photo"
+   ],
+   "prompt_strategy": "floating-outfit prompt, authored at runtime",
+   "settings": {},
+   "channel": "ai_gen"
+  },
+  {
+   "provider": "higgsfield",
+   "mcp_server": "66e733f1-17be-4bb6-b57b-70fea20b08b2",
+   "operation": "cleanup",
+   "tool": "remove_background/outpaint",
+   "optional": true,
+   "note": "optional: remove background people (inpaint), relight to golden hour",
+   "channel": "ai_gen"
+  },
+  {
+   "provider": "higgsfield",
+   "mcp_server": "66e733f1-17be-4bb6-b57b-70fea20b08b2",
+   "operation": "image_to_video",
+   "tool": "generate_video",
+   "inputs": [
+    "generated floating-outfit still"
+   ],
+   "prompt_strategy": "author at runtime",
+   "settings": {},
+   "channel": "ai_gen"
+  }
+ ]
+}

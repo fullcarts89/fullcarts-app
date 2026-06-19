@@ -1,0 +1,118 @@
+{
+ "id": "scrunch_paper_reveal",
+ "schema_version": 1,
+ "technique_primitive": "other",
+ "title": "Scrunch Paper Reveal Intro",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "paper",
+  "dark background"
+ ],
+ "result_description": "A stop-motion of paper un-scrunching reveals an object/title as an intro.",
+ "source": "˗ˏˋ celina ˎˊ˗ (@8887399639)",
+ "source_url": "https://www.instagram.com/reel/DZrPYvmAJAD/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "scrunch_photos",
+   "what_to_film": "~7 photos of paper from flat to fully scrunched on a dark background.",
+   "capture_requirements": {
+    "locked_off": true,
+    "note": "~7 stages"
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "scrunch_photos (flat → scrunched order)"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "each photo",
+   "params": {
+    "track": 2
+   }
+  },
+  {
+   "action": "trim",
+   "channel": "structural",
+   "target": "each photo",
+   "params": {
+    "duration_s": 0.1
+   }
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "each photo",
+   "capcut_feature": "Remove Background → Custom Removal",
+   "params": {
+    "mode": "custom",
+    "note": "highlight the paper"
+   }
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "background video",
+   "capcut_feature": "Effects → Flash 2"
+  },
+  {
+   "action": "audio",
+   "channel": "taste",
+   "target": "crumpled-paper SFX"
+  }
+ ],
+ "result": {
+  "description": "Paper-reveal intro.",
+  "success_criteria": [
+   "Smooth stop-motion crumple",
+   "Object revealed on final frame"
+  ]
+ },
+ "narration_transcript": "If you want to go viral, you need a good intro. So let me show you how I made this. To make this scrunch effect, first pick what object you want to reveal. Then place your paper on a dark background and take a picture of it flat. Start scrunching it up and take photos. I took about seven here. Now open cap cut or you're editing software and add each photo as an overlay. I'm trimming each photo down to about 0.1 second and moving them in order next to each other. Then go to remove background, so let custom removal and highlight the paper in each clip. You should now have something like this. Edit your background video and add effects to elevate it even more. I used the flash 2 effect and the crumbled paper sound effect. And now you have a super cool intro.",
+ "frames": {
+  "demo": [
+   "assets/scrunch_paper_reveal/frame_01.jpg",
+   "assets/scrunch_paper_reveal/frame_02.jpg",
+   "assets/scrunch_paper_reveal/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/scrunch_paper_reveal/frame_04.jpg",
+   "assets/scrunch_paper_reveal/frame_05.jpg",
+   "assets/scrunch_paper_reveal/frame_06.jpg",
+   "assets/scrunch_paper_reveal/frame_07.jpg",
+   "assets/scrunch_paper_reveal/frame_08.jpg",
+   "assets/scrunch_paper_reveal/frame_09.jpg",
+   "assets/scrunch_paper_reveal/frame_10.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "8887399639",
+  "like_count": 4448,
+  "comment_count": 88,
+  "upload_date": "20260617",
+  "caption": "you ask, your editing fairy godmother delivers 🧚🪄\n\nthe long awaited paper crumple tutorial is here !! please feel free to steal this intro and tag me if you recreate it !! \n\ncomment below any other tutorials you’d like to see 🌟\n\n#editing #editingtutorial #capcuttutorial #contentcreator #viralvideos visual hook, editing inspiration, vlog, capcut",
+  "hashtags": [
+   "capcuttutorial",
+   "contentcreator",
+   "editing",
+   "editingtutorial",
+   "viralvideos"
+  ]
+ }
+}

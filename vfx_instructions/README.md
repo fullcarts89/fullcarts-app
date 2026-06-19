@@ -1,16 +1,26 @@
 # Viral VFX — Instruction Dataset
 
-Machine-readable recreation instructions for ~30 phone VFX effects (filming + CapCut
-editing). Designed as inputs to a VFX automation tool. **Local reads only — no network,
-no API, no LLM cost.**
+Machine-readable recreation instructions for the full Viral VFX Vault catalog
+(filming + CapCut editing). Built as inputs to a VFX video automation tool.
+**Local reads only — no network, no API, no LLM cost.**
+
+## Counts
+**44 records** = **34 distinct VFX effects** + **7 foundation/training modules**
+(CapCut crash course ×4, Getting Started, Keyframes, Working with Audio)
++ **4 long-form deep-dive lessons** (`deepdive_*`, incl. an 80-min keyframes demo).
+
+The 34 effects break down as 26 standalone effects + 8 that the vault bundled inside
+two BONUS modules (now split into individual records: Stomp Effect, Appear (Bonus),
+Clothing Appear, Jump Cuts, Animating Text, Mirror/Flashlight Costume Change,
+Costume Fly-in).
 
 ## Files
 | File | What |
 |---|---|
-| `effects.json` | Full dataset: `{ meta..., effects: [...] }`. Primary source of truth. |
-| `effects.jsonl` | Same data, one effect per line (stream-friendly). |
+| `effects.json` | Full dataset: `{ meta..., effects: [...] }`. Source of truth. |
+| `effects.jsonl` | One effect per line (stream-friendly). |
 | `vfx.sqlite` | `effects` + `lessons` tables. List/dict fields are JSON-encoded strings. |
-| `assets/<slug>/…` | Images: official breakdown infographics, demo stills, demo frames. Referenced by **relative path** from records. |
+| `assets/<slug>/…` | Breakdown infographics, demo stills, demo frames. Referenced by relative path. |
 | `vfx_loader.py` | Zero-dependency helper (`VFXData`). |
 | `schema.json` | Field-by-field schema. |
 
@@ -18,34 +28,68 @@ no API, no LLM cost.**
 ```python
 from vfx_loader import VFXData
 d = VFXData()
-eff = d.get("make_an_object_appear")
+eff = d.get("jump_cuts")
 for s in eff["filming_steps"]: print("FILM:", s)
 for s in eff["editing_steps"]: print("EDIT:", s)
-for img in eff["breakdown_images"]: print(d.asset_path(img))
-```
-SQL:
-```python
-import sqlite3, json
-con = sqlite3.connect("vfx.sqlite")
-steps = json.loads(con.execute(
-  "SELECT editing_steps FROM effects WHERE slug=?", ("ball_transition",)).fetchone()[0])
+for img in eff["breakdown_images"]: print(d.asset_path(img))   # official visual steps
+d.filter(kind="effect")       # 34 effects only (excludes foundations? no—excludes deep dives)
+d.filter(kind="deep_dive")    # the 4 long-form lessons
 ```
 
 ## Effect record (key fields)
 - `slug`, `effect`, `difficulty` (`Foundation|Beginner|Intermediate`)
-- `gear` — required equipment (string; null for full-tutorial effects)
-- `filming_steps` / `editing_steps` — ordered `list[str]` (CapCut). **Narration-derived**;
-  for the authoritative raw source use `lessons[].transcript`.
-- `breakdown_images` — relative paths to official numbered visual guides (when available)
+- `gear` — equipment (string; often null)
+- `filming_steps` / `editing_steps` — ordered `list[str]`. **Narration-derived**; the
+  authoritative raw source is `lessons[].transcript`.
+- `breakdown_images` — relative paths to the official **tall annotated step-sheet
+  infographics**. These exist for only **5 core effects** (Object Appear, 1st Cloning,
+  Liquid from an Object, Ball Transition, Magic Pole Transition); the vault never made
+  them for the rest. Decorative 16:9 title cards were stripped — this field is empty
+  unless a genuine visual guide exists.
 - `demo_still`, `demo_frames` — result preview images
-- `tags` — derived technique tags: `mask, overlay, keyframes, clean_plate, blend_mode,
-  green_screen, cutout, locked_off, feather, speed_ramp, transition, split_clip`
-- `is_full_tutorial` — `true` = steps from the real lesson videos; `false` = newer effect
-  that ships only a demo, so steps are the standard technique (see `technique_note`)
+- `tags` — `mask, overlay, keyframes, clean_plate, blend_mode, green_screen, cutout,
+  feather, speed_ramp, transition, split_clip`
+- `is_full_tutorial` — `false` = newer effect with only a demo (steps are standard
+  technique in `technique_note`)
+- `slug.startswith("deepdive_")` marks the 4 long-form reference lessons
 - `lessons[]` — per-lesson `transcript`, `transcript_source` (`wistia|whisper`), `role`
-  (`demo|filming|editing|guide|reference`), `duration_sec`, `source_url`, `wistia_id`,
-  `image_files`, `image_source_urls` (durable CDN urls)
+  (`demo|filming|editing|guide|reference|deep_dive`), `duration_sec`, `source_url`, `wistia_id`
 
-## Notes
-- `meta.schema_version` + `meta.generated` are stamped at the top of `effects.json`.
-- Personal-study use of member content; keep private.
+Personal-study use of member content; keep private.
+
+## External sources (`external_sources.json`)
+
+Public short-form videos (Instagram / YouTube / TikTok) ingested into the **same
+schema** via `ingest_video.py`. `VFXData()` merges them automatically (each carries a
+`source` + `source_url` + `source_creator`). Extra fields: `editing_screenshots`
+(frames from the editing portion).
+
+```bash
+# Ingest one or many videos (appends/updates external_sources.json + assets/<slug>/)
+python ingest_video.py "https://www.instagram.com/reel/XXXX/" "https://youtube.com/shorts/YYYY"
+python ingest_video.py "<url>" --slug clone_effect --difficulty Beginner
+INGEST_INSECURE=1 python ingest_video.py "<url>"   # behind a TLS-intercepting proxy
+```
+Requires `yt-dlp`, `ffmpeg`/`ffprobe`, and `faster-whisper` (transcription; skipped with
+`--no-transcribe`). Re-running a URL updates that record in place.
+
+## Rich metadata (external records)
+
+Ingested videos carry operational metadata so an automation tool can branch and plan:
+
+| Field | Use |
+|---|---|
+| `tool` | `CapCut` / `AI (Higgsfield)` / `Practical + CapCut` / `Filming technique` |
+| `effect_category` | clone, text, transition, reveal, hologram, object_fx, pop_out, ai_transform, ai_transition, filming_technique |
+| `requires_filming` / `needs_clean_plate` / `needs_tripod` | filming plan |
+| `is_ai_generated` / `ai_tools` / `prompt_needed` | route AI effects to the right generator |
+| `capcut_features` | exact CapCut tools used (Overlay, Mask, Keyframes, Remove Background, Chroma Key, Speed, Split, …) |
+| `inputs_required` / `props` | assets/materials the user must supply |
+| `output_aspect` | `9:16` |
+| `sound_design` | SFX / music notes |
+| `source_meta` | creator, caption, hashtags, likes, comments, upload_date, thumbnail, dimensions |
+
+`ingest_video.py` auto-populates `source_meta`, `capcut_features`, `ai_tools`,
+`is_ai_generated`, `requires_filming`, and the engagement fields. The judgement fields
+(`inputs_required`, `props`, `effect_category`, `sound_design`, clean filming/editing
+split) are best reviewed/edited after ingest — the auto-split is a starting point.

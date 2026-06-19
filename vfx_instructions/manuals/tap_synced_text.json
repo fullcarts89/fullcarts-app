@@ -1,0 +1,130 @@
+{
+ "id": "tap_synced_text",
+ "schema_version": 1,
+ "technique_primitive": "text_reveal",
+ "title": "Tap-Synced Text Animation (Keyframes)",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "Three text lines reveal one-by-one, synced to foot taps / jumps, with you popping in front of the text.",
+ "source": "Colin Pomeroy (@321857083)",
+ "source_url": "https://www.instagram.com/reel/DT_lj5EAbY6/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "landscape_clip",
+   "what_to_film": "Landscape shot; tap 3 times then jump 3 times as sync points.",
+   "capture_requirements": {
+    "locked_off": true,
+    "note": "shot in landscape"
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "landscape_clip"
+  },
+  {
+   "action": "transform",
+   "channel": "ui",
+   "target": "project",
+   "capcut_feature": "Aspect Ratio",
+   "params": {
+    "aspect": "9:16"
+   }
+  },
+  {
+   "action": "text",
+   "channel": "ui",
+   "target": "3 text layers",
+   "capcut_feature": "Text → Add text",
+   "params": {
+    "count": 3,
+    "animation": "none/static"
+   }
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "landscape_clip",
+   "params": {
+    "property": "position",
+    "note": "keyframe just before each tap, then 1 frame later drag video down; reveal text after each move"
+   },
+   "timing": {
+    "cue": "each foot tap / jump"
+   }
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "target": "landscape_clip",
+   "params": {
+    "to_track": 2,
+    "note": "overlay, drag under original"
+   }
+  },
+  {
+   "action": "position",
+   "channel": "ui",
+   "target": "layer order",
+   "capcut_feature": "Layers → Front",
+   "params": {
+    "note": "bring subject in front of text"
+   }
+  }
+ ],
+ "result": {
+  "description": "Text reveals in sync with movement, subject in front.",
+  "success_criteria": [
+   "Each line lands on a tap",
+   "Subject occludes text correctly"
+  ]
+ },
+ "narration_transcript": "This video got 3.5 million views. Here's how to easily make it with your phone. First thing you're gonna do is get a landscape shot. For those of you don't know, that means turning your phone like that. All you got to do is just tap three times and then jump three times. And now on to the edit. Import your shot into cap cut. Tap aspect ratio and 9 by 16. Then tap add text and add three layers of text and tap lasting text for each layer. Scroll to right before your first foot tap. Tap the keyframe button then scroll one-frame forward when your foot taps and drag the video down. Repeat this for the remaining foot taps and jumps. Position your text to be gradually revealed after each video movement. Highlight your video layer, tap duplicate, overlay and drag it directly underneath the original clip. Tap layers, tap front and you're done. You should now have this.",
+ "frames": {
+  "demo": [
+   "assets/tap_synced_text/frame_01.jpg",
+   "assets/tap_synced_text/frame_02.jpg",
+   "assets/tap_synced_text/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/tap_synced_text/frame_04.jpg",
+   "assets/tap_synced_text/frame_05.jpg",
+   "assets/tap_synced_text/frame_06.jpg",
+   "assets/tap_synced_text/frame_07.jpg",
+   "assets/tap_synced_text/frame_08.jpg",
+   "assets/tap_synced_text/frame_09.jpg",
+   "assets/tap_synced_text/frame_10.jpg",
+   "assets/tap_synced_text/frame_11.jpg",
+   "assets/tap_synced_text/frame_12.jpg",
+   "assets/tap_synced_text/frame_13.jpg",
+   "assets/tap_synced_text/frame_14.jpg",
+   "assets/tap_synced_text/frame_15.jpg",
+   "assets/tap_synced_text/frame_16.jpg",
+   "assets/tap_synced_text/frame_17.jpg",
+   "assets/tap_synced_text/frame_18.jpg",
+   "assets/tap_synced_text/frame_19.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "321857083",
+  "like_count": 27112,
+  "comment_count": 172,
+  "upload_date": "20260127",
+  "caption": "How to get 3.5M views like @urbanpropertiesdxb",
+  "hashtags": []
+ }
+}

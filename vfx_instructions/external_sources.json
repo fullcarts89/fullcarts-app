@@ -1,0 +1,1589 @@
+{
+ "source": "External short-form videos ingested into the VFX schema",
+ "generated": "2026-06-18",
+ "schema_version": 1,
+ "effect_count": 15,
+ "effects": [
+  {
+   "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
+   "slug": "clone_effect_talking_head",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DVFUotSjbEp/",
+   "source_creator": "Elly Walton (@elly.walton)",
+   "category_ids": [],
+   "gear": "Phone on a locked-off tripod; even lighting.",
+   "technique_note": "Ingested from a public Instagram reel via yt-dlp + ffmpeg frames + Whisper transcription. Same locked-off cloning method as the vault 'cloning' family, but uses CapCut's Auto Background Removal instead of manual masking.",
+   "is_full_tutorial": true,
+   "filming_steps": [
+    "I'm going to show you how to do the cloning effect.",
+    "Actually, she's going to show you how to do the cloning effect.",
+    "You'll need a clip of yourself sitting in a chair, pointing to your clones and stepping out.",
+    "You'll need a second clip of you stepping into the frame sitting down in the chair."
+   ],
+   "editing_steps": [
+    "Open up CapCut and import both of your clips.",
+    "Scroll to the second clip where you're coming into the frame.",
+    "Select your clip and in your editing tool, select Overlay.",
+    "Drag your second clip underneath your first clip where you're pointing to your clone.",
+    "Select your first clip and in your editing tool, select Duplicate and in your editing tools, scroll to Overlay, select Overlay.",
+    "Drag that overlay right underneath the first clip.",
+    "In your editing tools, scroll to Remove Background, select Auto Removal.",
+    "This removes the background of the first clip, allowing you to see your clone from the second clip."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/clone_effect_talking_head/hook_1.jpg",
+   "demo_frames": [
+    "assets/clone_effect_talking_head/hook_1.jpg",
+    "assets/clone_effect_talking_head/hook_2.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/clone_effect_talking_head/edit_1.jpg",
+    "assets/clone_effect_talking_head/edit_2.jpg",
+    "assets/clone_effect_talking_head/edit_3.jpg",
+    "assets/clone_effect_talking_head/edit_4.jpg"
+   ],
+   "tags": [
+    "cloning",
+    "overlay",
+    "auto_bg_removal",
+    "locked_off"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "lessons": [
+    {
+     "post_id": "ig_DVFUotSjbEp",
+     "title": "Clone Effect tutorial (IG reel)",
+     "role": "tutorial",
+     "duration_sec": 49.8,
+     "wistia_id": null,
+     "transcript": "I'm going to show you how to do the cloning effect. Actually, she's going to show you how to do the cloning effect. Let's go. You'll need a clip of yourself sitting in a chair, pointing to your clones and stepping out. Then you'll need a second clip of you stepping into the frame sitting down in the chair. Open up CapCut and import both of your clips. Scroll to the second clip where you're coming into the frame. Select your clip and in your editing tool, select Overlay. Drag your second clip underneath your first clip where you're pointing to your clone. Select your first clip and in your editing tool, select Duplicate and in your editing tools, scroll to Overlay, select Overlay. Now drag that overlay right underneath the first clip. In your editing tools, scroll to Remove Background, select Auto Removal. This removes the background of the first clip, allowing you to see your clone from the second clip. And there you have it, a fun clone effect for your next Talking Head video.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DVFUotSjbEp/",
+     "video_url": null
+    }
+   ],
+   "tool": "CapCut",
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Elly Walton",
+    "creator_handle": "73011387655",
+    "creator_url": null,
+    "caption": "Everyone keeps asking how I do my clone videos 👀\n\nThere are tons of ways, but this one hits different for storytelling.\n\nTalking head videos are everywhere right now.\nIf you’re not adding a visual hook, you’re losing attention.\n\nCloning = instant pattern interrupt.\nIt keeps people watching.\n\nBUT Visual hooks grab attention. Content keeps it. Editing elevates good content. It doesn’t fix boring content.\n\n⚠️ Pro tip:\nKeep your camera locked and lighting consistent when filming. If the light shifts even slightly, you’ll see a tiny glitch in your clone (you can actually spot it here 👀).\n\nSave this for your next reel.\n\ntop @outerknown \n\n#editingtutorial #capcuttutorial #standaretopost @stanforcreators",
+    "hashtags": [
+     "capcuttutorial",
+     "editingtutorial",
+     "standaretopost"
+    ],
+    "view_count": null,
+    "like_count": 6683,
+    "comment_count": 192,
+    "upload_date": "20260223",
+    "duration_sec": 49.806,
+    "thumbnail": "https://scontent-ord5-1.cdninstagram.com/v/t51.82787-15/641181912_17888878413435656_7693406369181786267_n.jpg?stp=dst-jpg_e35_p1080x1080_sh2.08_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xMTUwLnNkci52aWRlb19kZWZhdWx0X2NvdmVyX2ZyYW1lLmMyIn0&_nc_ht=scontent-ord5-1.cdninstagram.com&_nc_cat=108&_nc_oc=Q6cZ2gGD2zahcFrMLLgBsH4AqH2bYF4GjQ4NynQ_-U2mbL7a1poVoMewwC7QLcvF4l4NvFM&_nc_ohc=q1quTbTn0yoQ7kNvwEAh1pc&_nc_gid=wK_DzFlvf9vUwW3-5GEDbA&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af8SE5V5_RWcUhKabmeomLS6q8StKB1wzjtHK97EmRbVMQ&oe=6A395CB1&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1919
+   },
+   "effect_category": "clone",
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Overlay",
+    "Remove Background",
+    "Duplicate"
+   ],
+   "inputs_required": [
+    "2 video clips (you pointing then stepping out; you stepping in and sitting)"
+   ],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": true,
+   "output_aspect": "9:16",
+   "sound_design": "music bed"
+  },
+  {
+   "effect": "Text Appears Behind You (Masked Subject)",
+   "slug": "text_behind_subject",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DTQXHABkZzc/",
+   "source_creator": "Sydney Mohni 🏳️‍🌈 UGC Creator & Coach (@53585408420)",
+   "category_ids": [],
+   "gear": "Phone; room with space to walk across frame.",
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription.",
+   "is_full_tutorial": true,
+   "filming_steps": [
+    "Film one clip of yourself walking across the frame, side to side (locked-off camera)."
+   ],
+   "editing_steps": [
+    "Add your text (Text → Add text) and make it large.",
+    "Select the video clip and Duplicate it.",
+    "Move the duplicate to an Overlay layer; line the two identical clips up exactly on top of each other.",
+    "On the overlay, go to Mask → Horizontal, then rotate the mask line so it runs vertically.",
+    "Drag the mask line all the way over onto you and add a keyframe.",
+    "Keep adding keyframes so the mask line follows you as you walk across the frame.",
+    "Select the Text → go to Layers and swap the order so the overlay sits ABOVE the text.",
+    "Result: the text appears behind you as you walk past it."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/text_behind_subject/frame_01.jpg",
+   "demo_frames": [
+    "assets/text_behind_subject/frame_01.jpg",
+    "assets/text_behind_subject/frame_02.jpg",
+    "assets/text_behind_subject/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/text_behind_subject/frame_04.jpg",
+    "assets/text_behind_subject/frame_05.jpg",
+    "assets/text_behind_subject/frame_06.jpg",
+    "assets/text_behind_subject/frame_07.jpg",
+    "assets/text_behind_subject/frame_08.jpg",
+    "assets/text_behind_subject/frame_09.jpg",
+    "assets/text_behind_subject/frame_10.jpg",
+    "assets/text_behind_subject/frame_11.jpg",
+    "assets/text_behind_subject/frame_12.jpg",
+    "assets/text_behind_subject/frame_13.jpg",
+    "assets/text_behind_subject/frame_14.jpg",
+    "assets/text_behind_subject/frame_15.jpg",
+    "assets/text_behind_subject/frame_16.jpg",
+    "assets/text_behind_subject/frame_17.jpg",
+    "assets/text_behind_subject/frame_18.jpg",
+    "assets/text_behind_subject/frame_19.jpg",
+    "assets/text_behind_subject/frame_20.jpg",
+    "assets/text_behind_subject/frame_21.jpg",
+    "assets/text_behind_subject/frame_22.jpg",
+    "assets/text_behind_subject/frame_23.jpg"
+   ],
+   "tags": [
+    "mask",
+    "keyframes",
+    "overlay",
+    "duplicate",
+    "text"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "lessons": [
+    {
+     "post_id": "instagram_DTQXHABkZzc",
+     "title": "Video by sydneymohni",
+     "role": "tutorial",
+     "duration_sec": 69.8,
+     "wistia_id": null,
+     "transcript": "If you want to learn how to make the text appear behind you like this, this is the video for you. A couple weeks ago I posted this video and y'all had something to say about it. So welcome back to my series hook where you have where boring hooks go to die and I teach you how to create scroll stopping hooks like this. And today we're going to do the text appear effect. Okay, you're going to start with your clip of you walking across the screen like this and then we're going to add in some text. So hit the text button, add text. Once you have the text that you want it, you're going to make it big and then we're going to use keyframes. Okay, we're going to use the mask feature and keyframes. So you want to click on the actual video and you want to duplicate the video. Once you duplicate the video, you want to scroll over to overlay to put this on a separate layer. Line up the two clips. Now you basically have two clips that are identical over top of each other. Then you're going to click on the overlay and you're going to scroll over to mask, click horizontal and then just turn that line around. So that's actually vertical. You're going to pull the line all the way over to you and you're going to hit a keyframe and you just want that line to follow you just continuing to keyframes. You want to learn how to make the text appear behind you like this. Once you have all those keyframes added, you're going to click on the text and then you're going to scroll over to layers. We're going to switch the overlay and the text so that the overlay is on top of the text and you should get something like this. You want to learn how to make the text appear behind you like this and then you're done.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DTQXHABkZzc/",
+     "video_url": null
+    }
+   ],
+   "tool": "CapCut",
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Sydney Mohni 🏳️‍🌈 UGC Creator & Coach",
+    "creator_handle": "53585408420",
+    "creator_url": null,
+    "caption": "Welcome BACK to my series HOOK REHAB!\n\nWhere I teach you how to edit fun, unique visual hooks for your next UGC video.\n\nToday we are talking about this walking text effect",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 22280,
+    "comment_count": 251,
+    "upload_date": "20260108",
+    "duration_sec": 69.7,
+    "thumbnail": "https://scontent-ord5-2.cdninstagram.com/v/t51.71878-15/610592203_2074669029954665_5356021101936178636_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi42NDAuc2RyLnZpZGVvX2RlZmF1bHRfY292ZXJfZnJhbWUuYzIifQ&_nc_ht=scontent-ord5-2.cdninstagram.com&_nc_cat=105&_nc_oc=Q6cZ2gFhih8slkBzq-evrSfsXJbUzWbOWqWzbpI6jgf7Qj0q7e35w7aQ0CiXg6bB-sV4Y6Q&_nc_ohc=KHKpV7Y-M5MQ7kNvwF0zpCN&_nc_gid=Vpis0h67Clec4_RHnFI6Eg&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af_nPP4qolSAK4IdgH8MCpiXSurn_BWBRXttZveIijUbJg&oe=6A392874&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "effect_category": "text",
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Overlay",
+    "Mask",
+    "Keyframes",
+    "Duplicate",
+    "Rotate",
+    "Text",
+    "Layers"
+   ],
+   "inputs_required": [
+    "1 video clip of you walking across frame"
+   ],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": true,
+   "output_aspect": "9:16",
+   "sound_design": "hook/music"
+  },
+  {
+   "effect": "Flying Object via Printed Sticker + Green Paper",
+   "slug": "printed_sticker_flying_object",
+   "difficulty": "Intermediate",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DTFpToZDPuU/",
+   "source_creator": "Steven Wommack (@549671804)",
+   "category_ids": [],
+   "gear": "Football, printer + paper, a sheet of green paper, tape, phone.",
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription.",
+   "is_full_tutorial": true,
+   "filming_steps": [
+    "Film yourself throwing a football across the field.",
+    "Make an Instagram sticker of the object, print it, and cut it out.",
+    "Cut a hole in a sheet of green paper; tape the sticker behind the hole and push it through so you can hold it from behind.",
+    "Film the front of the green paper while pulling the sticker through it."
+   ],
+   "editing_steps": [
+    "In Instagram, open a green story, recreate the sticker, and screenshot it.",
+    "Import into CapCut in order: throwing clip → green-paper clip → sticker screenshot.",
+    "Select the screenshot → Remove Background → Chroma Key → pick the green → set as Overlay and pull it to the front (now the sticker floats in the air).",
+    "Select the green-paper clip → Remove Background → Chroma Key → green → Overlay; drag it to the end of the screenshot clip.",
+    "At the start of the paper clip add a keyframe; scroll ahead and resize/position the paper over the ball; repeat so the paper follows the ball.",
+    "Export."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/printed_sticker_flying_object/frame_01.jpg",
+   "demo_frames": [
+    "assets/printed_sticker_flying_object/frame_01.jpg",
+    "assets/printed_sticker_flying_object/frame_02.jpg",
+    "assets/printed_sticker_flying_object/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/printed_sticker_flying_object/frame_04.jpg",
+    "assets/printed_sticker_flying_object/frame_05.jpg",
+    "assets/printed_sticker_flying_object/frame_06.jpg",
+    "assets/printed_sticker_flying_object/frame_07.jpg",
+    "assets/printed_sticker_flying_object/frame_08.jpg",
+    "assets/printed_sticker_flying_object/frame_09.jpg",
+    "assets/printed_sticker_flying_object/frame_10.jpg",
+    "assets/printed_sticker_flying_object/frame_11.jpg",
+    "assets/printed_sticker_flying_object/frame_12.jpg",
+    "assets/printed_sticker_flying_object/frame_13.jpg",
+    "assets/printed_sticker_flying_object/frame_14.jpg",
+    "assets/printed_sticker_flying_object/frame_15.jpg",
+    "assets/printed_sticker_flying_object/frame_16.jpg",
+    "assets/printed_sticker_flying_object/frame_17.jpg",
+    "assets/printed_sticker_flying_object/frame_18.jpg",
+    "assets/printed_sticker_flying_object/frame_19.jpg",
+    "assets/printed_sticker_flying_object/frame_20.jpg",
+    "assets/printed_sticker_flying_object/frame_21.jpg",
+    "assets/printed_sticker_flying_object/frame_22.jpg",
+    "assets/printed_sticker_flying_object/frame_23.jpg",
+    "assets/printed_sticker_flying_object/frame_24.jpg"
+   ],
+   "tags": [
+    "chroma_key",
+    "green_screen",
+    "overlay",
+    "keyframes",
+    "practical"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "lessons": [
+    {
+     "post_id": "instagram_DTFpToZDPuU",
+     "title": "Video by stevenwommack",
+     "role": "tutorial",
+     "duration_sec": 72.1,
+     "wistia_id": null,
+     "transcript": "First, film yourself throwing a football across the field. Next go to Instagram and create a sticker like this. Then print this out on a piece of paper and cut it out. Take a green paper and cut a hole in the middle. Put some tape on the back of your sticker and push it through the hole so you can grab it from the other side. Then film the front while pulling it through the paper. In Instagram, open a green story and create that sticker again. Take a screenshot and open it all in the cap cut app. First the clip of you throwing, then the green paper clip and then the screenshot. Select the screenshot, hit remove background and chroma key. Now select the green area and then hit overlay. This will drop it to a second layer and now pull it all the way to the front of the track. You now have the sticker in the air. Select the green paper clip, hit remove background chroma key and select the green area. Again hit overlay and drag it to the end of that screenshot clip right here. The clip now looks like this. Scroll to the beginning of the paper clip and hit keyframe. Now scroll a little bit ahead in the clip and resize and place the paper over the ball. Do the same thing again, scroll ahead and place the paper over the ball. The paper now follows the ball, all you have to do is export the video and that's it.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DTFpToZDPuU/",
+     "video_url": null
+    }
+   ],
+   "tool": "Practical + CapCut",
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Steven Wommack",
+    "creator_handle": "549671804",
+    "creator_url": null,
+    "caption": "Since not all of you love AI that much 😅 here is one of the most manual tutorials on how to create this creative football throw reel 🎥🏈 I saw this on @warmnfuzzy.tv and just had to make a tutorial 🫶🏼 enjoy creating!! #football #tutorial #reels",
+    "hashtags": [
+     "football",
+     "reels",
+     "tutorial"
+    ],
+    "view_count": null,
+    "like_count": 57662,
+    "comment_count": 211,
+    "upload_date": "20260104",
+    "duration_sec": 71.966,
+    "thumbnail": "https://scontent-ord5-3.cdninstagram.com/v/t51.71878-15/610627631_1565360544672079_4208842500242685257_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi42NDAuc2RyLnZpZGVvX25mcmFtZV9jb3Zlcl9mcmFtZS5jMiJ9&_nc_ht=scontent-ord5-3.cdninstagram.com&_nc_cat=107&_nc_oc=Q6cZ2gFbI1dNjm2qqz_NhwpIcd_dXR874bkB-YTGZ3e5YmXJ3tV1kFbFBvHjOhoviXDw5Z0&_nc_ohc=relpbta4acoQ7kNvwE4Gn66&_nc_gid=dKcqmVDjad6o3vZNKpKWRA&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af8_bBXBskoYX-huPw26vaf3edsncfkgUz3VHYeRXUbR1w&oe=6A3935BC&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "effect_category": "object_fx",
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Overlay",
+    "Keyframes",
+    "Remove Background",
+    "Chroma Key"
+   ],
+   "inputs_required": [
+    "throwing clip",
+    "green-paper pull-through clip",
+    "printed object sticker",
+    "Instagram sticker screenshot"
+   ],
+   "props": [
+    "football",
+    "printer + paper",
+    "green paper",
+    "tape"
+   ],
+   "needs_clean_plate": false,
+   "needs_tripod": true,
+   "output_aspect": "9:16",
+   "sound_design": "impact/whoosh optional"
+  },
+  {
+   "effect": "Perspective Effect (White-Screen Depth)",
+   "slug": "perspective_effect",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DVzIrPKjrVT/",
+   "source_creator": "inmenta (@69529759015)",
+   "category_ids": [],
+   "gear": "Phone; your main video clip; a white-screen image.",
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription.",
+   "is_full_tutorial": true,
+   "filming_steps": [
+    "Have your main video clip ready (the shot the 3D text will sit in)."
+   ],
+   "editing_steps": [
+    "Open CapCut and upload a plain white screen image (find one on Google).",
+    "Add your text in a bold color (red or yellow). Export the clip, then screenshot the text from your Photos.",
+    "Back in CapCut, upload your main video. Tap Overlay, add the text screenshot on top, and crop it.",
+    "Remove Background → Chroma Key → select the white → leaves just the colored text.",
+    "Effects → Video Effects → 'Player 3'; turn OFF glow and texture.",
+    "Tap Rotate and adjust the perspective to give the text an angled 3D look."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/perspective_effect/frame_01.jpg",
+   "demo_frames": [
+    "assets/perspective_effect/frame_01.jpg",
+    "assets/perspective_effect/frame_02.jpg",
+    "assets/perspective_effect/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/perspective_effect/frame_04.jpg",
+    "assets/perspective_effect/frame_05.jpg",
+    "assets/perspective_effect/frame_06.jpg",
+    "assets/perspective_effect/frame_07.jpg",
+    "assets/perspective_effect/frame_08.jpg",
+    "assets/perspective_effect/frame_09.jpg",
+    "assets/perspective_effect/frame_10.jpg",
+    "assets/perspective_effect/frame_11.jpg",
+    "assets/perspective_effect/frame_12.jpg",
+    "assets/perspective_effect/frame_13.jpg",
+    "assets/perspective_effect/frame_14.jpg",
+    "assets/perspective_effect/frame_15.jpg",
+    "assets/perspective_effect/frame_16.jpg",
+    "assets/perspective_effect/frame_17.jpg",
+    "assets/perspective_effect/frame_18.jpg",
+    "assets/perspective_effect/frame_19.jpg",
+    "assets/perspective_effect/frame_20.jpg",
+    "assets/perspective_effect/frame_21.jpg"
+   ],
+   "tags": [
+    "chroma_key",
+    "overlay",
+    "3d_text",
+    "perspective"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "lessons": [
+    {
+     "post_id": "instagram_DVzIrPKjrVT",
+     "title": "Video by inmenta_digital",
+     "role": "tutorial",
+     "duration_sec": 62.4,
+     "wistia_id": null,
+     "transcript": "How to go from this, to this, and from this, to this. This is called the perspective effect. It's super easy to make and it will make your videos look high end. So let's get to it. First, you're going to open up CapCut and upload a white screen. You can easily find one on Google. Next, you're going to add your text and choose a color that really stands out. I recommend either red or yellow. Once you're done, export that clip, then go to your photos and take a screenshot of the text. Now go back into CapCut and upload your main video. Tap Overlay and add the screenshot of the text on top of your video and crop it. Next, go to Remove Background, select Chroma Key and choose the white background. This will remove the white and leave you with just the color text. After that, go to Effects, then Video Effects and select Player 3. When the settings appear, make sure to turn off the glow and texture options. Finally, tap Rotate and adjust the perspective of the text to give it that angled 3D look and that's about it. Follow for more editing tips and content hacks.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DVzIrPKjrVT/",
+     "video_url": null
+    }
+   ],
+   "tool": "CapCut",
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "inmenta",
+    "creator_handle": "69529759015",
+    "creator_url": null,
+    "caption": "Spice up your videos with this perspective effect 🫰🏼",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 53767,
+    "comment_count": 194,
+    "upload_date": "20260312",
+    "duration_sec": 62.266,
+    "thumbnail": "https://scontent-ord5-1.cdninstagram.com/v/t51.71878-15/650506557_2378850505955207_452137330361250940_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi42NDAuc2RyLnZpZGVvX25mcmFtZV9jb3Zlcl9mcmFtZS5jMiJ9&_nc_ht=scontent-ord5-1.cdninstagram.com&_nc_cat=111&_nc_oc=Q6cZ2gEaRIGOJAUTfia_CEAnyt5Tf_Fq7PQBk2U7EHTKG-Ksbsom_iStRUyEyhd0BqJgaLU&_nc_ohc=BdAcXMXmpowQ7kNvwF4_pJd&_nc_gid=JxeXDWBZPraw_PCFVaVMmw&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af8uLrh8f-n_hTMUqNOoHGo5HwDFooCfsqRywAsb0iyUCA&oe=6A39318C&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "effect_category": "text",
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Overlay",
+    "Remove Background",
+    "Chroma Key",
+    "Rotate",
+    "Text",
+    "Video Effects",
+    "Effects",
+    "Crop"
+   ],
+   "inputs_required": [
+    "main video clip",
+    "white-screen image",
+    "text screenshot"
+   ],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": "music"
+  },
+  {
+   "effect": "Screen Pop-Out (Push Toward Camera)",
+   "slug": "screen_pop_out_push",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DYwb5BLBp1L/",
+   "source_creator": "˗ˏˋ celina ˎˊ˗ (@8887399639)",
+   "category_ids": [],
+   "gear": "Phone; a screenshot of an Instagram post.",
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription.",
+   "is_full_tutorial": true,
+   "filming_steps": [
+    "Film yourself pushing something (e.g. your hand) toward the camera."
+   ],
+   "editing_steps": [
+    "Take a screenshot of one of your Instagram posts.",
+    "Import both into CapCut; set your video as an Overlay and crop it to fit exactly over the post in the screenshot.",
+    "Duplicate the video, move it under the original, and crop it to the area where you want your hand to pop out.",
+    "Remove Background → remove everything except your hand.",
+    "Add text and sound effects. (Note: source reel audio cut off at the end.)"
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/screen_pop_out_push/frame_01.jpg",
+   "demo_frames": [
+    "assets/screen_pop_out_push/frame_01.jpg",
+    "assets/screen_pop_out_push/frame_02.jpg",
+    "assets/screen_pop_out_push/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/screen_pop_out_push/frame_04.jpg",
+    "assets/screen_pop_out_push/frame_05.jpg",
+    "assets/screen_pop_out_push/frame_06.jpg",
+    "assets/screen_pop_out_push/frame_07.jpg"
+   ],
+   "tags": [
+    "overlay",
+    "auto_bg_removal",
+    "duplicate",
+    "pop_out"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "lessons": [
+    {
+     "post_id": "instagram_DYwb5BLBp1L",
+     "title": "Video by celfstudies",
+     "role": "tutorial",
+     "duration_sec": 21.6,
+     "wistia_id": null,
+     "transcript": "Here's how to create this pop out effect for your next video. First, film yourself pushing something towards the camera, then take a screenshot of one of your Instagram posts. Take those two clips into CapCut and set the video as an overlay and crop that video so it fits in place of the original post that you screenshot it. Then duplicate the video, move it under the original and crop it to where you want your hand to pop out. Go to remove background and remove everything but your hand in the note. Get any text, sound effects and you'll get",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DYwb5BLBp1L/",
+     "video_url": null
+    }
+   ],
+   "tool": "CapCut",
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "˗ˏˋ celina ˎˊ˗",
+    "creator_handle": "8887399639",
+    "creator_url": null,
+    "caption": "the long awaited EDITING TUTORIAL is here !!! 🧚✨ \n\nthank you guys for enjoying my edits, hopefully this helps you all on your own content journeys 💌 i’d also love to see your recreations - tag me if you try it out !! \n\n#editingtutorial #vlog #capcut, #edittutorial #capcutedit visual hook, intro edit",
+    "hashtags": [
+     "capcut",
+     "capcutedit",
+     "editingtutorial",
+     "edittutorial",
+     "vlog"
+    ],
+    "view_count": null,
+    "like_count": 21524,
+    "comment_count": 103,
+    "upload_date": "20260525",
+    "duration_sec": 21.453,
+    "thumbnail": "https://scontent-ord5-1.cdninstagram.com/v/t51.82787-15/707656273_18296460634303640_3622069038582726770_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi43MjAuc2RyLnZpZGVvX2RlZmF1bHRfY292ZXJfZnJhbWUuYzIifQ&_nc_ht=scontent-ord5-1.cdninstagram.com&_nc_cat=108&_nc_oc=Q6cZ2gGIMGYQxANRLZoeWqnRRDxroowvo16ajBr6aZ_OnXrD8-c6Pk80BUgzzR4UbW6G0s0&_nc_ohc=HQTp3gODfJcQ7kNvwFMn2D4&_nc_gid=2CtmXJXtzYH7_HrHOMnEug&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af93rPAXZ9Jh5fh2SvZwv6pbi2VnjNpsemtbE0jtoJr7tw&oe=6A39424B&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "effect_category": "pop_out",
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Overlay",
+    "Remove Background",
+    "Duplicate",
+    "Text",
+    "Effects",
+    "Crop"
+   ],
+   "inputs_required": [
+    "1 clip of you pushing hand toward camera",
+    "screenshot of an Instagram post"
+   ],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": true,
+   "output_aspect": "9:16",
+   "sound_design": "pop SFX + text"
+  },
+  {
+   "effect": "Pendulum Effect (Higgsfield AI from a photo)",
+   "slug": "pendulum_effect_ai",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DVcnggfEQDD/",
+   "source_creator": "Karen X (@169385)",
+   "category_ids": [],
+   "gear": "One photo of yourself.",
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription.",
+   "is_full_tutorial": true,
+   "filming_steps": [
+    "No filming — you only need a single photo of yourself."
+   ],
+   "editing_steps": [
+    "In Higgsfield → Create Video → add your photo.",
+    "Tap Change → choose 'Aerial Pullback'; enter the prompt and settings, then Generate.",
+    "Bring the generated clip into CapCut; duplicate it and reverse the second copy.",
+    "Forward + reversed plays as a back-and-forth pendulum swing."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/pendulum_effect_ai/frame_01.jpg",
+   "demo_frames": [
+    "assets/pendulum_effect_ai/frame_01.jpg",
+    "assets/pendulum_effect_ai/frame_02.jpg",
+    "assets/pendulum_effect_ai/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/pendulum_effect_ai/frame_04.jpg",
+    "assets/pendulum_effect_ai/frame_05.jpg",
+    "assets/pendulum_effect_ai/frame_06.jpg",
+    "assets/pendulum_effect_ai/frame_07.jpg",
+    "assets/pendulum_effect_ai/frame_08.jpg",
+    "assets/pendulum_effect_ai/frame_09.jpg",
+    "assets/pendulum_effect_ai/frame_10.jpg",
+    "assets/pendulum_effect_ai/frame_11.jpg",
+    "assets/pendulum_effect_ai/frame_12.jpg",
+    "assets/pendulum_effect_ai/frame_13.jpg",
+    "assets/pendulum_effect_ai/frame_14.jpg"
+   ],
+   "tags": [
+    "ai_tool",
+    "higgsfield",
+    "duplicate",
+    "reverse"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "lessons": [
+    {
+     "post_id": "instagram_DVcnggfEQDD",
+     "title": "Video by karenxcheng",
+     "role": "tutorial",
+     "duration_sec": 41.3,
+     "wistia_id": null,
+     "transcript": "This is the pendulum effect. It's so easy. All you need is a photo of yourself. This is day one of extremely easy edits You'll go to Higgsfield create video add your photo here Tap change choose aerial pullback Then type this prompt using these settings. Don't worry. Just comment settings and I'll send it to you Now hit generate and you'll get a video like this to get the pendulum effect You're just gonna duplicate your clip and cap cut reverse your second clip and Now you have the pendulum effect. This was day one of extremely easy edits on day two I'll show you how to make this so follow along if you want to learn",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DVcnggfEQDD/",
+     "video_url": null
+    }
+   ],
+   "tool": "Higgsfield (AI) + CapCut",
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Karen X",
+    "creator_handle": "169385",
+    "creator_url": null,
+    "caption": "day 1 of extremely easy edits\ncomment SETTINGS and I’ll send them to you\n\nexcited to kick off this new series! it’s getting so much easier to make cool looking shots. what used to require complex VFX knowledge or fancy camera rigs, you can now achieve with a few button presses\n\nthanks to @higgsfield.ai for sponsoring this tutorial",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 41187,
+    "comment_count": 11486,
+    "upload_date": "20260304",
+    "duration_sec": 41.166,
+    "thumbnail": "https://scontent-ord5-2.cdninstagram.com/v/t51.82787-15/708891317_18590713558041386_3623320964370618763_n.jpg?stp=dst-jpg_e15_fr_p1080x1080_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xMDgwLnNkci52aWRlb19kZWZhdWx0X2NvdmVyX2ZyYW1lLmMyIn0&_nc_ht=scontent-ord5-2.cdninstagram.com&_nc_cat=102&_nc_oc=Q6cZ2gH02zz0Bk3vrZxKbaVZfvn5C3Y4RkukX7xyF0cxICUUkY0WnnMQE4s6B5M_Sij7-o0&_nc_ohc=DSz3XlnfsPIQ7kNvwGoHNd0&_nc_gid=cscvc8_GvoqPuTifpNaSxQ&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af8-wMIEIQj7J-usbdZYBb_otCotLqSdgB5o4tcVjv7LCw&oe=6A394F09&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "effect_category": "ai_transform",
+   "requires_filming": false,
+   "is_ai_generated": true,
+   "ai_tools": [
+    "Higgsfield (Aerial Pullback, image-to-video)"
+   ],
+   "prompt_needed": true,
+   "capcut_features": [
+    "Duplicate",
+    "Reverse"
+   ],
+   "inputs_required": [
+    "1 photo of yourself"
+   ],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": "trending audio"
+  },
+  {
+   "effect": "Tap-Synced Text Animation (Keyframes)",
+   "slug": "tap_synced_text",
+   "difficulty": "Intermediate",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DT_lj5EAbY6/",
+   "source_creator": "Colin Pomeroy (@321857083)",
+   "category_ids": [],
+   "gear": "Phone (shot in landscape).",
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription.",
+   "is_full_tutorial": true,
+   "filming_steps": [
+    "Shoot a landscape clip (turn the phone sideways).",
+    "On camera, tap three times then jump three times — these motions are your sync points."
+   ],
+   "editing_steps": [
+    "Import into CapCut; set Aspect Ratio to 9:16.",
+    "Add three separate Text layers; set each to static/'lasting'.",
+    "Scroll to just before the first foot tap and tap Keyframe; scroll one frame forward to the tap and drag the video down.",
+    "Repeat for each tap/jump, revealing the text gradually after each movement.",
+    "Highlight the video layer → Duplicate → Overlay → drag underneath the original.",
+    "Tap Layers → Front. Done."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/tap_synced_text/frame_01.jpg",
+   "demo_frames": [
+    "assets/tap_synced_text/frame_01.jpg",
+    "assets/tap_synced_text/frame_02.jpg",
+    "assets/tap_synced_text/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/tap_synced_text/frame_04.jpg",
+    "assets/tap_synced_text/frame_05.jpg",
+    "assets/tap_synced_text/frame_06.jpg",
+    "assets/tap_synced_text/frame_07.jpg",
+    "assets/tap_synced_text/frame_08.jpg",
+    "assets/tap_synced_text/frame_09.jpg",
+    "assets/tap_synced_text/frame_10.jpg",
+    "assets/tap_synced_text/frame_11.jpg",
+    "assets/tap_synced_text/frame_12.jpg",
+    "assets/tap_synced_text/frame_13.jpg",
+    "assets/tap_synced_text/frame_14.jpg",
+    "assets/tap_synced_text/frame_15.jpg",
+    "assets/tap_synced_text/frame_16.jpg",
+    "assets/tap_synced_text/frame_17.jpg",
+    "assets/tap_synced_text/frame_18.jpg",
+    "assets/tap_synced_text/frame_19.jpg"
+   ],
+   "tags": [
+    "keyframes",
+    "text",
+    "overlay",
+    "duplicate"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "lessons": [
+    {
+     "post_id": "instagram_DT_lj5EAbY6",
+     "title": "Video by colinpomeroyyy",
+     "role": "tutorial",
+     "duration_sec": 58.1,
+     "wistia_id": null,
+     "transcript": "This video got 3.5 million views. Here's how to easily make it with your phone. First thing you're gonna do is get a landscape shot. For those of you don't know, that means turning your phone like that. All you got to do is just tap three times and then jump three times. And now on to the edit. Import your shot into cap cut. Tap aspect ratio and 9 by 16. Then tap add text and add three layers of text and tap lasting text for each layer. Scroll to right before your first foot tap. Tap the keyframe button then scroll one-frame forward when your foot taps and drag the video down. Repeat this for the remaining foot taps and jumps. Position your text to be gradually revealed after each video movement. Highlight your video layer, tap duplicate, overlay and drag it directly underneath the original clip. Tap layers, tap front and you're done. You should now have this.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DT_lj5EAbY6/",
+     "video_url": null
+    }
+   ],
+   "tool": "CapCut",
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Colin Pomeroy",
+    "creator_handle": "321857083",
+    "creator_url": null,
+    "caption": "How to get 3.5M views like @urbanpropertiesdxb",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 27112,
+    "comment_count": 172,
+    "upload_date": "20260127",
+    "duration_sec": 58.033,
+    "thumbnail": "https://scontent-ord5-1.cdninstagram.com/v/t51.71878-15/622515709_1771837366845697_6069632500747814660_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi42NDAuc2RyLnZpZGVvX25mcmFtZV9jb3Zlcl9mcmFtZS5jMiJ9&_nc_ht=scontent-ord5-1.cdninstagram.com&_nc_cat=101&_nc_oc=Q6cZ2gEeCNgJfmKRZB56HslFoi1LtiS0gySzXTBoz79uFF9qKGnpdI23LocRWC0T9NX4St4&_nc_ohc=P71__u0aj3sQ7kNvwGG2xVy&_nc_gid=6epFt8qYHyhr-oX0SWPVig&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af8Uu9ko0krmoyCNVa1KcQY1VKYasljxqhAfiCgoMk93MQ&oe=6A394345&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "effect_category": "text",
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Overlay",
+    "Keyframes",
+    "Duplicate",
+    "Text",
+    "Layers",
+    "Aspect Ratio"
+   ],
+   "inputs_required": [
+    "1 landscape clip with 3 taps + 3 jumps"
+   ],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": true,
+   "output_aspect": "9:16",
+   "sound_design": "beat-synced track"
+  },
+  {
+   "effect": "Talking-Head Shot Variety (Match Cut)",
+   "slug": "talking_head_match_cut",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DYdneOvxTdL/",
+   "source_creator": "Julia Gao Miller (@183501901)",
+   "category_ids": [],
+   "gear": "Camera operator; 3 framings (wide/close/medium).",
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription.",
+   "is_full_tutorial": true,
+   "filming_steps": [
+    "Break your script into 3 parts.",
+    "Shot 1 (wide): walk toward the camera; at a set point, turn your head to the left.",
+    "Shot 2 (close-up): deliver the next part, then walk out of frame.",
+    "Shot 3 (medium): walk into frame for the final part."
+   ],
+   "editing_steps": [
+    "Cut the three shots together in sequence; the matched movement (head turn / walking in and out) hides the cuts as a match cut."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/talking_head_match_cut/frame_01.jpg",
+   "demo_frames": [
+    "assets/talking_head_match_cut/frame_01.jpg",
+    "assets/talking_head_match_cut/frame_02.jpg",
+    "assets/talking_head_match_cut/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/talking_head_match_cut/frame_04.jpg",
+    "assets/talking_head_match_cut/frame_05.jpg",
+    "assets/talking_head_match_cut/frame_06.jpg",
+    "assets/talking_head_match_cut/frame_07.jpg",
+    "assets/talking_head_match_cut/frame_08.jpg",
+    "assets/talking_head_match_cut/frame_09.jpg",
+    "assets/talking_head_match_cut/frame_10.jpg",
+    "assets/talking_head_match_cut/frame_11.jpg",
+    "assets/talking_head_match_cut/frame_12.jpg"
+   ],
+   "tags": [
+    "match_cut",
+    "shot_variety",
+    "filming_technique"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "lessons": [
+    {
+     "post_id": "instagram_DYdneOvxTdL",
+     "title": "Video by juliagaom",
+     "role": "tutorial",
+     "duration_sec": 35.7,
+     "wistia_id": null,
+     "transcript": "So if you're filming talking head videos that nobody wants to watch, have your videographer try this tip. You need to break up your scripts. For the first shot, you're gonna film yourself in a wide shot, walking towards a cameraman. And then when you reach a certain point, you're gonna turn your head to the left. Now shoot the second part of your script in a close up shot. Once you're done, walk out of the frame. For the third part of your script, you can film yourself in a medium shot walking into the frame. Let's start it again. My name is Julia and my team and I run a short form content agency, where we script edit and post content for a remote fitness and online business coaches. If you're an established entrepreneur and want more information, just comment info to start a conversation.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DYdneOvxTdL/",
+     "video_url": null
+    }
+   ],
+   "tool": "Filming technique (no VFX app)",
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Julia Gao Miller",
+    "creator_handle": "183501901",
+    "creator_url": null,
+    "caption": "When scripting for clients, we’ll often have them change scenes throughout the video because even if the information is valuable, attention spans on short form content are still short 🕥\n\nSmall scene changes, movement, and visual variation help keep the viewer engaged while the person is speaking.\n\nSo when you or your team are scripting short form content, it’s good to intentionally build in these little scene changes and visual resets to help maintain attention throughout the video 👀🍬",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 23032,
+    "comment_count": 466,
+    "upload_date": "20260518",
+    "duration_sec": 35.571,
+    "thumbnail": "https://scontent-ord5-3.cdninstagram.com/v/t51.82787-15/701663967_18587570866013902_2401439732033182862_n.jpg?stp=dst-jpg_e35_p1080x1080_sh2.08_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xMjE3LnNkci52aWRlb19kZWZhdWx0X2NvdmVyX2ZyYW1lLmMyIn0&_nc_ht=scontent-ord5-3.cdninstagram.com&_nc_cat=110&_nc_oc=Q6cZ2gH9mvfnKnsTNoIAhbyQGFUuQZgk-8KWIgR3AifcoI0IQuCI2scDDEGH1FXpuXh23m0&_nc_ohc=wHYdZUEjzm4Q7kNvwH5cOxU&_nc_gid=4D2fTTOxQky4vNgmlcNVCQ&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af8uW2LmzMGoPeSplQMeAz_CyflR2j8SPbMfHB3DXb7WOg&oe=6A395C50&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "effect_category": "filming_technique",
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [],
+   "inputs_required": [
+    "3 shots: wide (walk-in + head turn), close-up, medium"
+   ],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": "n/a"
+  },
+  {
+   "effect": "Scrunch Paper Reveal Intro",
+   "slug": "scrunch_paper_reveal",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DZrPYvmAJAD/",
+   "source_creator": "˗ˏˋ celina ˎˊ˗ (@8887399639)",
+   "category_ids": [],
+   "gear": "Paper, a dark background, the object to reveal, phone.",
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription.",
+   "is_full_tutorial": true,
+   "filming_steps": [
+    "Pick the object you want to reveal.",
+    "Place paper on a dark background and photograph it flat.",
+    "Scrunch the paper up gradually, taking a photo at each stage (~7 photos)."
+   ],
+   "editing_steps": [
+    "In CapCut, add each photo as an Overlay; trim each to ~0.1s and place them in order (flat → fully scrunched).",
+    "Remove Background → Custom Removal → highlight the paper in each clip.",
+    "Add your reveal/background video behind; add effects (creator used 'Flash 2') and a crumpled-paper sound effect."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/scrunch_paper_reveal/frame_01.jpg",
+   "demo_frames": [
+    "assets/scrunch_paper_reveal/frame_01.jpg",
+    "assets/scrunch_paper_reveal/frame_02.jpg",
+    "assets/scrunch_paper_reveal/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/scrunch_paper_reveal/frame_04.jpg",
+    "assets/scrunch_paper_reveal/frame_05.jpg",
+    "assets/scrunch_paper_reveal/frame_06.jpg",
+    "assets/scrunch_paper_reveal/frame_07.jpg",
+    "assets/scrunch_paper_reveal/frame_08.jpg",
+    "assets/scrunch_paper_reveal/frame_09.jpg",
+    "assets/scrunch_paper_reveal/frame_10.jpg"
+   ],
+   "tags": [
+    "stop_motion",
+    "auto_bg_removal",
+    "overlay",
+    "reveal"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "lessons": [
+    {
+     "post_id": "instagram_DZrPYvmAJAD",
+     "title": "Video by celfstudies",
+     "role": "tutorial",
+     "duration_sec": 31.3,
+     "wistia_id": null,
+     "transcript": "If you want to go viral, you need a good intro. So let me show you how I made this. To make this scrunch effect, first pick what object you want to reveal. Then place your paper on a dark background and take a picture of it flat. Start scrunching it up and take photos. I took about seven here. Now open cap cut or you're editing software and add each photo as an overlay. I'm trimming each photo down to about 0.1 second and moving them in order next to each other. Then go to remove background, so let custom removal and highlight the paper in each clip. You should now have something like this. Edit your background video and add effects to elevate it even more. I used the flash 2 effect and the crumbled paper sound effect. And now you have a super cool intro.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DZrPYvmAJAD/",
+     "video_url": null
+    }
+   ],
+   "tool": "CapCut",
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "˗ˏˋ celina ˎˊ˗",
+    "creator_handle": "8887399639",
+    "creator_url": null,
+    "caption": "you ask, your editing fairy godmother delivers 🧚🪄\n\nthe long awaited paper crumple tutorial is here !! please feel free to steal this intro and tag me if you recreate it !! \n\ncomment below any other tutorials you’d like to see 🌟\n\n#editing #editingtutorial #capcuttutorial #contentcreator #viralvideos visual hook, editing inspiration, vlog, capcut",
+    "hashtags": [
+     "capcuttutorial",
+     "contentcreator",
+     "editing",
+     "editingtutorial",
+     "viralvideos"
+    ],
+    "view_count": null,
+    "like_count": 4448,
+    "comment_count": 88,
+    "upload_date": "20260617",
+    "duration_sec": 31.137,
+    "thumbnail": "https://scontent-ord5-1.cdninstagram.com/v/t51.82787-15/725767521_18299454532303640_8241991845028986731_n.jpg?stp=dst-jpg_e35_p1080x1080_sh2.08_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xMTc4LnNkci52aWRlb19kZWZhdWx0X2NvdmVyX2ZyYW1lLmMyIn0&_nc_ht=scontent-ord5-1.cdninstagram.com&_nc_cat=108&_nc_oc=Q6cZ2gHw7q4PwJIDn7QbHEliwX3zPNCZQVq36ZWRZGdlLczjznBNAPvxnAP5g1PYnk-D2DI&_nc_ohc=HZtw7i_zZ5YQ7kNvwGMmmOt&_nc_gid=pt8htO-lOwbvK-j5QhRInQ&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af_U3MVlt8skZzPbMBKPhQijpwnuxHz-DjERzr7i9ysUPA&oe=6A393534&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "effect_category": "reveal",
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Overlay",
+    "Remove Background",
+    "Effects",
+    "Flash effect"
+   ],
+   "inputs_required": [
+    "~7 photos of paper scrunching in stages",
+    "background/reveal video"
+   ],
+   "props": [
+    "paper",
+    "dark background"
+   ],
+   "needs_clean_plate": false,
+   "needs_tripod": true,
+   "output_aspect": "9:16",
+   "sound_design": "crumpled-paper SFX + Flash 2 effect"
+  },
+  {
+   "effect": "Floating Outfit Effect (AI)",
+   "slug": "floating_outfit_effect",
+   "difficulty": "Intermediate",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DWAmiUPjt7e/",
+   "source_creator": "Karen X (@169385)",
+   "category_ids": [],
+   "gear": "One photo of yourself in the outfit.",
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription.",
+   "is_full_tutorial": true,
+   "filming_steps": [
+    "No live filming — take one photo of yourself wearing the outfit."
+   ],
+   "editing_steps": [
+    "Higgsfield → add your image → enter the floating-outfit prompt → get a floating-outfit still.",
+    "Optional: use Inpaint to remove background people; use relight to fake golden-hour lighting.",
+    "Create Video with the tested settings → generates the floating-outfit clip."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/floating_outfit_effect/frame_01.jpg",
+   "demo_frames": [
+    "assets/floating_outfit_effect/frame_01.jpg",
+    "assets/floating_outfit_effect/frame_02.jpg",
+    "assets/floating_outfit_effect/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/floating_outfit_effect/frame_04.jpg",
+    "assets/floating_outfit_effect/frame_05.jpg",
+    "assets/floating_outfit_effect/frame_06.jpg",
+    "assets/floating_outfit_effect/frame_07.jpg",
+    "assets/floating_outfit_effect/frame_08.jpg",
+    "assets/floating_outfit_effect/frame_09.jpg",
+    "assets/floating_outfit_effect/frame_10.jpg",
+    "assets/floating_outfit_effect/frame_11.jpg",
+    "assets/floating_outfit_effect/frame_12.jpg",
+    "assets/floating_outfit_effect/frame_13.jpg",
+    "assets/floating_outfit_effect/frame_14.jpg",
+    "assets/floating_outfit_effect/frame_15.jpg",
+    "assets/floating_outfit_effect/frame_16.jpg",
+    "assets/floating_outfit_effect/frame_17.jpg",
+    "assets/floating_outfit_effect/frame_18.jpg"
+   ],
+   "tags": [
+    "ai_tool",
+    "higgsfield",
+    "inpaint"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "lessons": [
+    {
+     "post_id": "instagram_DWAmiUPjt7e",
+     "title": "Video by karenxcheng",
+     "role": "tutorial",
+     "duration_sec": 55.5,
+     "wistia_id": null,
+     "transcript": "This is the floating outfit effect and here's how you do it. This is such an interesting moment for creators because a shot like this used to take a whole crew but AI tools are getting so good that anyone can get this shot now by themselves with your editing experience. Let me show you how. First take a photo of yourself with the outfit, go to Higgsfield, add your image and write this prompt and you'll get a floating outfit picture. Just come at creator and I'll send you the prompt. If there's someone you don't want in the background use in paint and they're gone. Sometimes you don't get to shoot under ideal lighting so you can use a real light to change it to golden hour. Now let's go to create video. I tested a bunch of settings. This is what worked best. Just comment creator and I'll send it to you. You'll get a video like this. Everything I just showed you is on Higgsfield for $9 a month. This was day four of extremely easy edits on day five. I'll show you how to make this. So follow along if you want to learn.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DWAmiUPjt7e/",
+     "video_url": null
+    }
+   ],
+   "tool": "Higgsfield (AI)",
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Karen X",
+    "creator_handle": "169385",
+    "creator_url": null,
+    "caption": "comment CREATOR and I’ll send you the prompts\nday 4 of extremely easy edits\nedited with @higgsfield.ai #HiggsfieldCreator \nthanks to them for sponsoring this tutorial",
+    "hashtags": [
+     "HiggsfieldCreator"
+    ],
+    "view_count": null,
+    "like_count": 9999,
+    "comment_count": 7481,
+    "upload_date": "20260318",
+    "duration_sec": 55.4,
+    "thumbnail": "https://scontent-ord5-2.cdninstagram.com/v/t51.82787-15/710315289_18590713972041386_1006012206090220882_n.jpg?stp=dst-jpg_e15_fr_p1080x1080_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xMDgwLnNkci52aWRlb19kZWZhdWx0X2NvdmVyX2ZyYW1lLmMyIn0&_nc_ht=scontent-ord5-2.cdninstagram.com&_nc_cat=102&_nc_oc=Q6cZ2gHUBxf8kgEbAHXkJSLcHxaLBoWWZCcxCaI95ci2cFr74cx202qyRfxxr44oQzwtyMI&_nc_ohc=K9PEsbYGUq4Q7kNvwFTYKEm&_nc_gid=oDT7qSwvYLmYsTNGBPaLqQ&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af-C5qN5QimwmmfErcrz7bNVSyWnrMqwnL0tQQPX3xYsNA&oe=6A3933E3&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "effect_category": "ai_transform",
+   "requires_filming": false,
+   "is_ai_generated": true,
+   "ai_tools": [
+    "Higgsfield (image gen + image-to-video, Inpaint, relight)"
+   ],
+   "prompt_needed": true,
+   "capcut_features": [],
+   "inputs_required": [
+    "1 photo of yourself in the outfit"
+   ],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": "music"
+  },
+  {
+   "effect": "AI Location Transition (First/Last Frame)",
+   "slug": "ai_location_transition",
+   "difficulty": "Intermediate",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DW7iJnJie1q/",
+   "source_creator": "Karen X (@169385)",
+   "category_ids": [],
+   "gear": "Two photos of yourself in two different locations.",
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription.",
+   "is_full_tutorial": true,
+   "filming_steps": [
+    "No live filming — you need two photos of yourself in two different locations."
+   ],
+   "editing_steps": [
+    "Use OpenArt (Kling 2.0) for face consistency.",
+    "Add the two photos as the first frame and the last frame.",
+    "Enter the prompt; generate 3–4 variations and pick the best result."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/ai_location_transition/frame_01.jpg",
+   "demo_frames": [
+    "assets/ai_location_transition/frame_01.jpg",
+    "assets/ai_location_transition/frame_02.jpg",
+    "assets/ai_location_transition/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/ai_location_transition/frame_04.jpg",
+    "assets/ai_location_transition/frame_05.jpg",
+    "assets/ai_location_transition/frame_06.jpg",
+    "assets/ai_location_transition/frame_07.jpg",
+    "assets/ai_location_transition/frame_08.jpg",
+    "assets/ai_location_transition/frame_09.jpg",
+    "assets/ai_location_transition/frame_10.jpg",
+    "assets/ai_location_transition/frame_11.jpg",
+    "assets/ai_location_transition/frame_12.jpg",
+    "assets/ai_location_transition/frame_13.jpg",
+    "assets/ai_location_transition/frame_14.jpg"
+   ],
+   "tags": [
+    "ai_tool",
+    "openart",
+    "kling",
+    "first_last_frame"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "lessons": [
+    {
+     "post_id": "instagram_DW7iJnJie1q",
+     "title": "Video by karenxcheng",
+     "role": "tutorial",
+     "duration_sec": 43.3,
+     "wistia_id": null,
+     "transcript": "This is the height and the last effect, and here is how you do it. All you need is a photo of yourself in two different locations. I took this photo but watch my face. See how AI changes it? It's just a super common problem with AI. To fix this, use OpenArt. They just launched Kling 2.0. It's so good at keeping your face consistent. Next, add your photos as your first frame and last frame. I did some experimenting. This was the prompt that worked. Just comment, walk, and I'll send it to you. I think most people don't realize about AI video is that even with the same prompt, AI gets you different results every time. I use this feature of OpenArt to generate three or four at a time to get the result I want. This was day five of extremely easy edits. On day six, I'll show you how to make this to follow along if you want to learn.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DW7iJnJie1q/",
+     "video_url": null
+    }
+   ],
+   "tool": "OpenArt / Kling (AI)",
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Karen X",
+    "creator_handle": "169385",
+    "creator_url": null,
+    "caption": "comment WALK and i’ll send you the prompt\nedited with @openart_ai #OpenArtPartner \nthis is day 5 of extremely easy edits",
+    "hashtags": [
+     "OpenArtPartner"
+    ],
+    "view_count": null,
+    "like_count": 6450,
+    "comment_count": 4037,
+    "upload_date": "20260410",
+    "duration_sec": 43.2,
+    "thumbnail": "https://scontent-ord5-2.cdninstagram.com/v/t51.82787-15/710537671_18590714017041386_3905425369502617933_n.jpg?stp=dst-jpg_e15_fr_p1080x1080_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xMDgwLnNkci52aWRlb19kZWZhdWx0X2NvdmVyX2ZyYW1lLmMyIn0&_nc_ht=scontent-ord5-2.cdninstagram.com&_nc_cat=102&_nc_oc=Q6cZ2gHutJr_I2pNExfzyRMLqtiBnLSsHbumrNTD2yKXeOmfTgDIECCozm5-Z5KPOd3HLTQ&_nc_ohc=Pabh9ZQ48RoQ7kNvwGJVWV0&_nc_gid=922YpC9Os9rmvRNUOftLgg&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af9JKrHdMlh7yRTDJ3S-riQtIfMJQ0y4_sZWyTXDUsJbKA&oe=6A393AEE&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "effect_category": "ai_transition",
+   "requires_filming": false,
+   "is_ai_generated": true,
+   "ai_tools": [
+    "OpenArt (Kling 2.0, first/last-frame video)"
+   ],
+   "prompt_needed": true,
+   "capcut_features": [],
+   "inputs_required": [
+    "2 photos of you in 2 locations"
+   ],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": "music"
+  },
+  {
+   "effect": "Giant Effect (Higgsfield AI from a photo)",
+   "slug": "giant_effect_ai",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DVhwmGVgASG/",
+   "source_creator": "Karen X (@169385)",
+   "category_ids": [],
+   "gear": "One photo of yourself.",
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription.",
+   "is_full_tutorial": true,
+   "filming_steps": [
+    "No live filming — you only need one photo of yourself."
+   ],
+   "editing_steps": [
+    "Higgsfield → Create Image → upload your photo; use the giant-effect settings + prompt → get the 'giant' image.",
+    "Create Video → add the original photo as the start frame and the giant image as the end frame; use the settings → generates the transition into a giant."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/giant_effect_ai/frame_01.jpg",
+   "demo_frames": [
+    "assets/giant_effect_ai/frame_01.jpg",
+    "assets/giant_effect_ai/frame_02.jpg",
+    "assets/giant_effect_ai/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/giant_effect_ai/frame_04.jpg",
+    "assets/giant_effect_ai/frame_05.jpg",
+    "assets/giant_effect_ai/frame_06.jpg",
+    "assets/giant_effect_ai/frame_07.jpg",
+    "assets/giant_effect_ai/frame_08.jpg",
+    "assets/giant_effect_ai/frame_09.jpg",
+    "assets/giant_effect_ai/frame_10.jpg",
+    "assets/giant_effect_ai/frame_11.jpg",
+    "assets/giant_effect_ai/frame_12.jpg",
+    "assets/giant_effect_ai/frame_13.jpg",
+    "assets/giant_effect_ai/frame_14.jpg",
+    "assets/giant_effect_ai/frame_15.jpg",
+    "assets/giant_effect_ai/frame_16.jpg",
+    "assets/giant_effect_ai/frame_17.jpg"
+   ],
+   "tags": [
+    "ai_tool",
+    "higgsfield",
+    "first_last_frame"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "lessons": [
+    {
+     "post_id": "instagram_DVhwmGVgASG",
+     "title": "Video by karenxcheng",
+     "role": "tutorial",
+     "duration_sec": 51.3,
+     "wistia_id": null,
+     "transcript": "This is the giant effect, and here's how to do it. It's so easy, all you need is a photo of yourself. This is day two of extremely easy edits. First, we need to turn your photo into this photo. So go to Higgsfield, create image, and upload your photo. Then use these settings and type this in. I did so much experimenting to figure out the right prompt, so you can just call it giant and I'll send you everything you need. Now, we need to transition between these two photos. So go to create video and add your photos as a start frame and end frame. And then use these settings. Again, just call it giant and I'll send it to you. After a few attempts, I've had a video like this. This was day two of extremely easy edits. On day three, I'll show you how to improve your opening hooks like this. So follow along if you want to learn.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DVhwmGVgASG/",
+     "video_url": null
+    }
+   ],
+   "tool": "Higgsfield (AI)",
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Karen X",
+    "creator_handle": "169385",
+    "creator_url": null,
+    "caption": "comment GIANT and I’ll send you the prompts\nthis is Day 2 of extremely easy edits\n\nthanks to @higgsfield.ai for sponsoring this tutorial",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 4603,
+    "comment_count": 4571,
+    "upload_date": "20260306",
+    "duration_sec": 51.233,
+    "thumbnail": "https://scontent-ord5-2.cdninstagram.com/v/t51.82787-15/709609505_18590713756041386_4890753441068402189_n.jpg?stp=dst-jpg_e15_fr_p1080x1080_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xMDgwLnNkci52aWRlb19kZWZhdWx0X2NvdmVyX2ZyYW1lLmMyIn0&_nc_ht=scontent-ord5-2.cdninstagram.com&_nc_cat=102&_nc_oc=Q6cZ2gFOZ8xxu3K2F5oeQPbvCfPKxrmLTEH2pjwcx2Gpucu5HZOPLD7joIk-KIqkW13I0Uc&_nc_ohc=xKYXzgOSA94Q7kNvwH9KqIS&_nc_gid=koZ8CSzrCgGswxdQ8OjQ5g&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af-hYvo3RhJ-9NKW1dRJcPw3IIOvImOi_ZEMyVceEn5pmA&oe=6A39328F&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "effect_category": "ai_transform",
+   "requires_filming": false,
+   "is_ai_generated": true,
+   "ai_tools": [
+    "Higgsfield (image gen + first/last-frame video)"
+   ],
+   "prompt_needed": true,
+   "capcut_features": [],
+   "inputs_required": [
+    "1 photo of yourself"
+   ],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": "music"
+  },
+  {
+   "effect": "Phone Hologram (Pull Screen Into Air)",
+   "slug": "phone_hologram",
+   "difficulty": "Intermediate",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DUbnT-lDJx2/",
+   "source_creator": "Harry Allsop | VFX Creator (@67795363025)",
+   "category_ids": [],
+   "gear": "Phone, a second phone/screen recording.",
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription.",
+   "is_full_tutorial": true,
+   "filming_steps": [
+    "Record a clip facing the camera, holding a phone in one hand.",
+    "With your free hand, swipe up from the screen as if pulling the display into the air, then keep swiping like scrolling a floating screen.",
+    "Separately, screen-record yourself scrolling on the phone."
+   ],
+   "editing_steps": [
+    "Import both into CapCut; set the screen recording as an Overlay on layer 2 at ~50% opacity.",
+    "Add a keyframe where you swipe the hologram up; at the start, position the screen recording just below the phone.",
+    "Duplicate your main clip → move to layer 3 → add a Horizontal mask lined up at the top edge of the phone, with a slight feather.",
+    "Tweak timing so the hologram rises exactly with your swipe; match the scrolling to your finger movement; trim and export."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/phone_hologram/frame_01.jpg",
+   "demo_frames": [
+    "assets/phone_hologram/frame_01.jpg",
+    "assets/phone_hologram/frame_02.jpg",
+    "assets/phone_hologram/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/phone_hologram/frame_04.jpg",
+    "assets/phone_hologram/frame_05.jpg",
+    "assets/phone_hologram/frame_06.jpg",
+    "assets/phone_hologram/frame_07.jpg",
+    "assets/phone_hologram/frame_08.jpg",
+    "assets/phone_hologram/frame_09.jpg",
+    "assets/phone_hologram/frame_10.jpg",
+    "assets/phone_hologram/frame_11.jpg",
+    "assets/phone_hologram/frame_12.jpg",
+    "assets/phone_hologram/frame_13.jpg",
+    "assets/phone_hologram/frame_14.jpg",
+    "assets/phone_hologram/frame_15.jpg",
+    "assets/phone_hologram/frame_16.jpg",
+    "assets/phone_hologram/frame_17.jpg",
+    "assets/phone_hologram/frame_18.jpg"
+   ],
+   "tags": [
+    "mask",
+    "keyframes",
+    "overlay",
+    "duplicate",
+    "feather"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "lessons": [
+    {
+     "post_id": "instagram_DUbnT-lDJx2",
+     "title": "Video by harry__allsop",
+     "role": "tutorial",
+     "duration_sec": 53.2,
+     "wistia_id": null,
+     "transcript": "Here's how to turn your phone into a hologram. Give me 60 seconds and I'll show you how. First, record a clip of you facing the camera, holding a phone in one hand. With your free hand, swipe up from the screen like you're pulling the display out into the air. Then keep swiping as if you're scrolling a floating screen. Next, take a screen recording of you scrolling on your phone and put both clips into CapCut. But screen recording is an overlay. Move it to layer two and lower the opacity to about 50%. Add a keyframe where you swipe the hologram up, then go back to the start and position the screen recording just below the phone. Duplicate your main clip, move it to layer three and add a horizontal mask and line it up at the top edge of the phone with a slight feather. Now just tweak the timing so the hologram rises out exactly with your swipe. Match the scrolling to your finger movement, trim the clips to match and hit export. And that's it. Send this to a friend who needs better edits and follow some more effects like this.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DUbnT-lDJx2/",
+     "video_url": null
+    }
+   ],
+   "tool": "CapCut",
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Harry Allsop | VFX Creator",
+    "creator_handle": "67795363025",
+    "creator_url": null,
+    "caption": "Here’s how to turn your phone into a hologram 👀\n\nThis effect makes it look like your screen pops out of the phone\nand lets you scroll it in mid-air — clean, subtle, and way easier than it looks.\n\nSave this for later\nSend it to a mate who needs better edits\n\nPerfect for:\n• Transitions\n• Scroll-stopping hooks\n• Creative POV edits\n\nWant 45 detailed CapCut PDF tutorials\n(with more being added 👀)\nComment EDIT and I’ll DM you the full pack\n\n#capcut #capcuttutorial #vfxediting #mobileediting @capcutapp",
+    "hashtags": [
+     "capcut",
+     "capcuttutorial",
+     "mobileediting",
+     "vfxediting"
+    ],
+    "view_count": null,
+    "like_count": 1256,
+    "comment_count": 47,
+    "upload_date": "20260206",
+    "duration_sec": 53.1,
+    "thumbnail": "https://scontent-ord5-1.cdninstagram.com/v/t51.82787-15/630025751_17918201784259026_2065620271309425262_n.jpg?stp=dst-jpg_e15_fr_p1080x1080_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xMDgwLnNkci52aWRlb19kZWZhdWx0X2NvdmVyX2ZyYW1lLmMyIn0&_nc_ht=scontent-ord5-1.cdninstagram.com&_nc_cat=106&_nc_oc=Q6cZ2gFKCcEiUKpv0IOX6-saN2umQRqt2HVbIlVZjSiCxqbto6_Xpk9iJTy0LOqKvZktKkw&_nc_ohc=Y6pGT7nx7G0Q7kNvwFFac2Y&_nc_gid=ZuaRXi2Wt9IXiaQVCbBMcw&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af9Aj9Ny3mKOgGqg2T4ksQkLgm0z_d5M5Zb4l2emDCl-zg&oe=6A395278&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "effect_category": "hologram",
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Overlay",
+    "Mask",
+    "Keyframes",
+    "Duplicate",
+    "Opacity",
+    "Layers",
+    "Feather"
+   ],
+   "inputs_required": [
+    "1 clip holding phone + swipe-up gesture",
+    "screen recording of scrolling"
+   ],
+   "props": [
+    "phone"
+   ],
+   "needs_clean_plate": false,
+   "needs_tripod": true,
+   "output_aspect": "9:16",
+   "sound_design": "sci-fi SFX"
+  },
+  {
+   "effect": "Flash Effect (Clean Plate)",
+   "slug": "flash_effect_clean_plate",
+   "difficulty": "Intermediate",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DUq2QjfjEzI/",
+   "source_creator": "Harry Allsop | VFX Creator (@67795363025)",
+   "category_ids": [],
+   "gear": "Phone on a locked-off tripod (for the clean plate).",
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription.",
+   "is_full_tutorial": true,
+   "filming_steps": [
+    "Film your main clip talking to the camera.",
+    "Film a clean plate of the exact same scene (empty, camera unmoved)."
+   ],
+   "editing_steps": [
+    "Import both into CapCut; select your talking clip → Overlay → move to the start of layer 2.",
+    "Trim the start of the talking clip slightly; scrub forward a few frames → Split.",
+    "Select the first section → Effects → Body Effects → search 'Flash' → White Flash.",
+    "Remove Background (Auto or Custom) to cut yourself out. Done."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/flash_effect_clean_plate/frame_01.jpg",
+   "demo_frames": [
+    "assets/flash_effect_clean_plate/frame_01.jpg",
+    "assets/flash_effect_clean_plate/frame_02.jpg",
+    "assets/flash_effect_clean_plate/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/flash_effect_clean_plate/frame_04.jpg",
+    "assets/flash_effect_clean_plate/frame_05.jpg",
+    "assets/flash_effect_clean_plate/frame_06.jpg",
+    "assets/flash_effect_clean_plate/frame_07.jpg",
+    "assets/flash_effect_clean_plate/frame_08.jpg",
+    "assets/flash_effect_clean_plate/frame_09.jpg",
+    "assets/flash_effect_clean_plate/frame_10.jpg",
+    "assets/flash_effect_clean_plate/frame_11.jpg",
+    "assets/flash_effect_clean_plate/frame_12.jpg"
+   ],
+   "tags": [
+    "clean_plate",
+    "overlay",
+    "split_clip",
+    "auto_bg_removal",
+    "flash"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "lessons": [
+    {
+     "post_id": "instagram_DUq2QjfjEzI",
+     "title": "Video by harry__allsop",
+     "role": "tutorial",
+     "duration_sec": 34.6,
+     "wistia_id": null,
+     "transcript": "Here's how you make this scroll-stopping flash effect using just your fun. Give me 60 seconds and I'll show you how. First, film your main clip, talking to the camera, then film a clean plate of the exact same scene, now import both clips into CapCut. Select your talking clip, tap overlay and move to the start of Layer 2. Trim the start of your talking clip slightly, then scrub forward a few frames and tap Split. Select the first section of the clip, go to Effects, then Body Effects, search for Flash and choose White Flash. Now tap Remove Backgrounds and use either Auto or Custom to cut yourself out. And that's it, effect done. Send this to a friend who needs better edits and follow for more effects like this.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DUq2QjfjEzI/",
+     "video_url": null
+    }
+   ],
+   "tool": "CapCut",
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Harry Allsop | VFX Creator",
+    "creator_handle": "67795363025",
+    "creator_url": null,
+    "caption": "How to flash into an empty scene in CapCut ⚡️\n\nThis CapCut teleport effect makes it look like you instantly appear out of nowhere — using just your phone.\n\nNo green screen.\nNo After Effects.\nJust clean layering and timing.\n\nSave this CapCut tutorial for later\nSend it to a mate who needs better edits\n\nWant the step-by-step PDF version with PRO realism tips?\nComment EDIT and I’ll DM you the full tutorial pack (45 tutorials + more being added 👀)\n\n#vfx #creative #edit",
+    "hashtags": [
+     "creative",
+     "edit",
+     "vfx"
+    ],
+    "view_count": null,
+    "like_count": 767,
+    "comment_count": 20,
+    "upload_date": "20260212",
+    "duration_sec": 34.5,
+    "thumbnail": "https://scontent-ord5-1.cdninstagram.com/v/t51.82787-15/632520301_17918916342259026_5200316390570194908_n.jpg?stp=dst-jpg_e15_fr_p1080x1080_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xMDgwLnNkci52aWRlb19kZWZhdWx0X2NvdmVyX2ZyYW1lLmMyIn0&_nc_ht=scontent-ord5-1.cdninstagram.com&_nc_cat=106&_nc_oc=Q6cZ2gHMfrAVbGohkPJJm2CdBv9noyhIj29tYYzVY8dOLv7fi81zdXDIbuBZH1GDU6eqDY8&_nc_ohc=9tCG4Y2qmecQ7kNvwGpiJbF&_nc_gid=NxXlHMLnflykR75SLy7BJw&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af_tomNsFANz8Z9zb4w8PPsld3H1Z_F-YNnN1DOeSQfM1w&oe=6A394705&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "effect_category": "transition",
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Overlay",
+    "Remove Background",
+    "Split",
+    "Layers",
+    "Body Effects",
+    "Effects",
+    "Flash effect"
+   ],
+   "inputs_required": [
+    "talking clip",
+    "clean plate of same scene"
+   ],
+   "props": [],
+   "needs_clean_plate": true,
+   "needs_tripod": true,
+   "output_aspect": "9:16",
+   "sound_design": "whoosh/flash SFX"
+  },
+  {
+   "effect": "Floating Mini-Clone (Jump + Slow-Mo Overlay)",
+   "slug": "floating_mini_clone",
+   "difficulty": "Intermediate",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DYNhPFgCqDx/",
+   "source_creator": "Horla_dap0 Visualz (@14772383154)",
+   "category_ids": [],
+   "gear": "Phone (iPhone/rig helps for smooth slow-mo jump).",
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription.",
+   "is_full_tutorial": true,
+   "filming_steps": [
+    "Film a foreground shot of you.",
+    "Film a jump (a 'set jump'), ideally on an iPhone/rig for smooth slow motion."
+   ],
+   "editing_steps": [
+    "Import the foreground clip; add the jumping clip as an Overlay.",
+    "Select the jumping clip → Remove Background; Speed → slow it down.",
+    "Scale the cutout down and position it where you want.",
+    "Add keyframes at the start and a few frames forward; on the second keyframe pull it up slightly for the floating effect.",
+    "Repeat for additional clones; to reveal the main/angel subject, import the foreground clip as an overlay and Remove Background."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/floating_mini_clone/frame_01.jpg",
+   "demo_frames": [
+    "assets/floating_mini_clone/frame_01.jpg",
+    "assets/floating_mini_clone/frame_02.jpg",
+    "assets/floating_mini_clone/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/floating_mini_clone/frame_04.jpg",
+    "assets/floating_mini_clone/frame_05.jpg",
+    "assets/floating_mini_clone/frame_06.jpg",
+    "assets/floating_mini_clone/frame_07.jpg",
+    "assets/floating_mini_clone/frame_08.jpg",
+    "assets/floating_mini_clone/frame_09.jpg",
+    "assets/floating_mini_clone/frame_10.jpg",
+    "assets/floating_mini_clone/frame_11.jpg",
+    "assets/floating_mini_clone/frame_12.jpg",
+    "assets/floating_mini_clone/frame_13.jpg",
+    "assets/floating_mini_clone/frame_14.jpg",
+    "assets/floating_mini_clone/frame_15.jpg",
+    "assets/floating_mini_clone/frame_16.jpg"
+   ],
+   "tags": [
+    "cutout",
+    "auto_bg_removal",
+    "keyframes",
+    "overlay",
+    "speed_ramp"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "lessons": [
+    {
+     "post_id": "instagram_DYNhPFgCqDx",
+     "title": "Video by hd.visualz",
+     "role": "tutorial",
+     "duration_sec": 48.2,
+     "wistia_id": null,
+     "transcript": "Let's recreate this, this is the top core. First, take a shot of you in the foreground, then record a set jump in an iPhone rig to get a smooth slow motion effect, input the foreground clip and add the jumping clip as an overlay, select the jumping clip, click on remove background, tap on speed and reduce the speed as desired, take the cutout, scale it down and position it wherever you want. Add keyframes at the beginning and also a few frames forward. On second keyframe, pull it up a little bit to get the floating effect. Now repeat the same process for the other clips as well, to appear the angel subject, import the foreground clip as an overlay and remove background, there you have it.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DYNhPFgCqDx/",
+     "video_url": null
+    }
+   ],
+   "tool": "CapCut",
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Horla_dap0 Visualz",
+    "creator_handle": "14772383154",
+    "creator_url": null,
+    "caption": "Episode 3 of CAPCUT made easier. Inspired by @futurist__ \nToday we’re doing the floating effect 🎈\n​It looks like magic, but it’s actually really easy to pull off right on your phone. Watch the steps and try it out on your next video.\n​What effect do you want to see next? Let me know in the comments 👇\n​Hashtags:\n#CapCut #CapCutTutorial #FloatingEffect #vfx #editinghacks",
+    "hashtags": [
+     "CapCut",
+     "CapCutTutorial",
+     "FloatingEffect",
+     "editinghacks",
+     "vfx"
+    ],
+    "view_count": null,
+    "like_count": 122,
+    "comment_count": 17,
+    "upload_date": "20260511",
+    "duration_sec": 48.085,
+    "thumbnail": "https://scontent-ord5-2.cdninstagram.com/v/t51.82787-15/687735532_18145804681495155_3904563241470287549_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi41NDAuc2RyLnZpZGVvX2RlZmF1bHRfY292ZXJfZnJhbWUuYzIifQ&_nc_ht=scontent-ord5-2.cdninstagram.com&_nc_cat=103&_nc_oc=Q6cZ2gEwYrhbjFMrr1sBXeVx3iSHmMkU9Byc2SPiRF92ed3a8mkqA2ciceddURWhTZgtTes&_nc_ohc=VmoXLZor-fsQ7kNvwFTdGho&_nc_gid=dG7xDkkqW7-TpSNIVXyIsg&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af-h8Y89dpxXPKJogNDxg4xZOVPMECns-QH6LweXP9ltsg&oe=6A394172&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "effect_category": "clone",
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Overlay",
+    "Keyframes",
+    "Remove Background",
+    "Speed",
+    "Effects"
+   ],
+   "inputs_required": [
+    "foreground clip",
+    "jump clip (slow-mo)"
+   ],
+   "props": [
+    "iPhone rig (optional)"
+   ],
+   "needs_clean_plate": false,
+   "needs_tripod": true,
+   "output_aspect": "9:16",
+   "sound_design": "ambient/whoosh"
+  }
+ ]
+}
