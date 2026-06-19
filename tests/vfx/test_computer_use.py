@@ -82,10 +82,11 @@ def test_build_task_only_includes_gui_steps():
     recipe = load_manual("vfx_instructions/manuals/package_morph_transition.json")
     steps = gui_steps(recipe)
     joined = " ".join(steps).lower()
-    # GUI-only effects present
+    # GUI-only effects present (the morph spine + the genuine button-clicks)
+    assert any("tawel flip" in s.lower() for s in steps)
+    assert any("glitch" in s.lower() or "bad signal" in s.lower() for s in steps)
     assert any("remove background" in s.lower() for s in steps)
-    assert any("sticker" in s.lower() or "dust" in s.lower() for s in steps)
-    # structural steps (import/overlay/transition/text) excluded
+    # structural steps (import/overlay/split/position) excluded
     assert "import" not in joined and "overlay" not in joined
     task = build_task(recipe)
     assert task and "CapCut" in task and "STEPS" in task
