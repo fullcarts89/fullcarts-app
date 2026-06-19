@@ -83,10 +83,11 @@ def _filming_step_for(recipe: VFXRecipe, asset_name: str) -> str:
 
 
 def create_app(store: Optional[RecipeStore] = None,
+               recipes_provider: Optional[Callable[[], List[VFXRecipe]]] = None,
                work_dir: Optional[Any] = None,
                out_dir: Optional[Any] = None,
                qa_check: Optional[Callable[..., Any]] = None) -> FastAPI:
-    store_path = store.path if store is not None else str(_BUNDLED_DB)
+    store_path = store.path if store is not None else None
     if work_dir is None:
         work_dir = Path(tempfile.mkdtemp(prefix="vfx-web-"))
     work_dir = Path(work_dir)
@@ -104,30 +105,51 @@ def create_app(store: Optional[RecipeStore] = None,
     app.state.out_dir = out_dir
     app.state.qa_check = qa_check
 
+    def _resolve_recipes() -> List[VFXRecipe]:
+        """Per-request recipe list from the active source.
+
+        Reloaded each request so newly-added manuals show up live.
+        """
+        if recipes_provider is not None:
+            return list(recipes_provider())
+        if store_path is not None:
+            return list(_merged_recipes(store_path))
+        from vfx.ingest import manuals_source
+        return manuals_source.all_recipes()
+
+    def _recipes_and_index():
+        """Return ``(recipes_list, by_slug_dict)`` for the active source."""
+        recipes = _resolve_recipes()
+        by_slug: Dict[str, VFXRecipe] = {r.slug: r for r in recipes}
+        return recipes, by_slug
+
     static_dir = Path(__file__).parent / "static"
     if static_dir.is_dir():
         app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
     @app.get("/api/health")
     def health() -> Dict[str, Any]:
-        return {"status": "ok", "recipes": len(_merged_recipes(store_path))}
+        recipes, _ = _recipes_and_index()
+        return {"status": "ok", "recipes": len(recipes)}
 
     @app.post("/api/recommend")
     def recommend(body: RecommendBody) -> Dict[str, Any]:
         app.state.session = {"slug": None, "assets": {}}
         caps = Capabilities(equipment=body.equipment, props=body.props,
                             location=body.location)
-        matches = recommend_for_script(_merged_recipes(store_path), body.script,
-                                       caps, k=body.k)
+        recipes, _ = _recipes_and_index()
+        matches = recommend_for_script(recipes, body.script, caps, k=body.k)
         return {"candidates": [
             {"slug": m.recipe.slug, "title": m.recipe.title,
              "technique_primitive": m.recipe.technique_primitive,
-             "score": m.score, "why": m.why, "feasible": m.feasible}
+             "score": m.score, "why": m.why, "feasible": m.feasible,
+             "ai": m.recipe.is_ai_generated}
             for m in matches]}
 
     @app.post("/api/plan")
     def plan(body: PlanBody) -> Dict[str, Any]:
-        recipe = _store_for(store_path).get(body.slug)
+        _, by_slug = _recipes_and_index()
+        recipe = by_slug.get(body.slug)
         if recipe is None:
             raise HTTPException(status_code=404, detail=f"no recipe {body.slug!r}")
         app.state.session = {"slug": body.slug, "assets": {}}
@@ -138,13 +160,16 @@ def create_app(store: Optional[RecipeStore] = None,
             "acceptance_checks": a.acceptance_checks,
         } for a in recipe.asset_spec]
         return {"slug": recipe.slug, "title": recipe.title,
-                "gear": recipe.gear, "inputs": inputs}
+                "gear": recipe.gear, "inputs": inputs,
+                "is_ai_generated": recipe.is_ai_generated,
+                "ai_generation": recipe.ai_generation}
 
     @app.post("/api/upload")
     async def upload(file: UploadFile = File(...),
                      slug: str = Form(...),
                      asset_name: str = Form(...)) -> Dict[str, Any]:
-        recipe = _store_for(store_path).get(slug)
+        _, by_slug = _recipes_and_index()
+        recipe = by_slug.get(slug)
         if recipe is None:
             raise HTTPException(status_code=400, detail=f"unknown slug {slug!r}")
         spec: Optional[AssetSpec] = next(
@@ -171,7 +196,8 @@ def create_app(store: Optional[RecipeStore] = None,
 
     @app.post("/api/build")
     def build(body: BuildBody) -> Dict[str, Any]:
-        recipe = _store_for(store_path).get(body.slug)
+        _, by_slug = _recipes_and_index()
+        recipe = by_slug.get(body.slug)
         if recipe is None:
             raise HTTPException(status_code=400, detail=f"unknown slug {body.slug!r}")
         assets = app.state.session.get("assets", {})
@@ -181,7 +207,12 @@ def create_app(store: Optional[RecipeStore] = None,
         dest_out.mkdir(parents=True, exist_ok=True)
         res = compile_timeline(recipe, assets)
         dest = write_project(res.timeline, dest_out, body.slug)
-        notes = res.manual_notes or []
+        notes = list(res.manual_notes or [])
+        if recipe.is_ai_generated:
+            for gen in recipe.ai_generation:
+                tool = gen.get("tool") or gen.get("provider") or "AI tool"
+                what = gen.get("operation") or gen.get("prompt_strategy") or "generate asset"
+                notes.append(f"AI step: generate via {tool} — {what}")
         checklist_md = "# Finish by hand\n\n" + (
             "\n".join("- [ ] " + n for n in notes) if notes
             else "Nothing flagged — the draft assembled cleanly.")
