@@ -9,6 +9,7 @@ labels) into a single, explicit instruction string for the model.
 from __future__ import annotations
 
 import os
+from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional, Tuple
 
@@ -110,3 +111,40 @@ def reference_blocks(
                     ("General reference frame for this effect (not step-aligned)",
                      str(resolved)))
     return blocks
+
+
+@dataclass
+class RefCoverage:
+    index: int            # GUI-step number (1-based among GUI steps)
+    instruction: str
+    declared: Optional[str]    # the path the manual declares, if any
+    resolved: Optional[str]    # the file it resolves to on disk, if found
+
+    @property
+    def status(self) -> str:
+        if self.resolved:
+            return "ok"            # declared + file present
+        if self.declared:
+            return "missing"      # declared a path but the file isn't on disk
+        return "none"             # no reference_screenshot on this step
+
+
+def reference_coverage(recipe: VFXRecipe,
+                       base_dir: Optional[Path] = None) -> List[RefCoverage]:
+    """Per-GUI-step report: has a screenshot / declared-but-missing / none.
+
+    Authoring aid (surfaced by ``vfx finish --dry-run``): the runtime path skips
+    missing files silently so a run never breaks, but at authoring time you want
+    to SEE the gaps so you know which frames to capture.
+    """
+    out: List[RefCoverage] = []
+    n = 0
+    for s in recipe.edit_steps:
+        if s.channel != Channel.GUI:
+            continue
+        n += 1
+        declared = s.reference_screenshot
+        resolved = _resolve(declared, base_dir) if declared else None
+        out.append(RefCoverage(n, s.instruction, declared,
+                               str(resolved) if resolved else None))
+    return out

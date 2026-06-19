@@ -87,7 +87,8 @@ def main():
         return
 
     if args.cmd == "finish":
-        from vfx.computer_use import build_task, gui_steps, reference_blocks
+        from vfx.computer_use import (build_task, gui_steps, reference_blocks,
+                                      reference_coverage)
         if args.manual:
             from vfx.ingest.manual_schema import load_manual
             recipe = load_manual(args.manual)
@@ -104,11 +105,17 @@ def main():
             print("No GUI-only steps for this recipe — the file-writer covers it.")
             return
         print(f"GUI-only steps computer-use will perform ({len(steps)}):")
-        for i, s in enumerate(steps, 1):
-            print(f"  {i}. {s}")
-        print(f"reference screenshots attached: {len(refs)}")
-        for cap, path in refs:
-            print(f"  - {cap} -> {path}")
+        _mark = {"ok": "✓ screenshot", "missing": "⚠ declared but FILE MISSING",
+                 "none": "– no screenshot"}
+        for cov in reference_coverage(recipe):
+            print(f"  {cov.index}. {cov.instruction}")
+            print(f"       {_mark[cov.status]}"
+                  + (f": {cov.declared}" if cov.declared else ""))
+        n_ok = sum(1 for c in reference_coverage(recipe) if c.status == "ok")
+        n_missing = sum(1 for c in reference_coverage(recipe) if c.status == "missing")
+        print(f"reference coverage: {n_ok}/{len(steps)} steps have a screenshot"
+              + (f"  ({n_missing} declared but missing on disk)" if n_missing else ""))
+        print(f"reference images that will be attached at run time: {len(refs)}")
         if args.dry_run:
             print("\n[dry-run] not launching. Open the built project in CapCut, then "
                   "re-run without --dry-run.")

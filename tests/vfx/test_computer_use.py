@@ -149,3 +149,30 @@ def test_manual_schema_reads_reference_screenshot(tmp_path):
     p = tmp_path / "m.json"; p.write_text(json.dumps(m))
     r = load_manual(p)
     assert r.edit_steps[0].reference_screenshot == "assets/t/s1.jpg"
+
+
+def test_reference_coverage_three_states(tmp_path):
+    from vfx.computer_use import reference_coverage
+    from vfx.models import VFXRecipe, EditStep, Channel
+    present = _png(tmp_path / "ok.png")
+    r = VFXRecipe(slug="x", title="X", difficulty="b", editor="CapCut", shot_on="phone",
+                  technique_primitive="other", summary="", edit_steps=[
+        EditStep(1, "has shot", "a", channel=Channel.GUI, reference_screenshot=present),
+        EditStep(2, "declared missing", "b", channel=Channel.GUI,
+                 reference_screenshot="/nope/missing.jpg"),
+        EditStep(3, "no ref", "c", channel=Channel.GUI),
+        EditStep(4, "structural ignored", "d", channel=Channel.DRAFT),
+    ])
+    cov = reference_coverage(r)
+    assert [c.status for c in cov] == ["ok", "missing", "none"]   # DRAFT excluded
+    assert cov[0].resolved == present
+
+
+def test_morph_manual_declares_step_screenshots():
+    from vfx.computer_use import reference_coverage
+    from vfx.ingest.manual_schema import load_manual
+    r = load_manual("vfx_instructions/manuals/package_morph_transition.json")
+    cov = reference_coverage(r)
+    declared = [c for c in cov if c.declared]
+    assert len(declared) >= 3   # keyframe scale, dust sticker, remove bg
+    assert all(c.declared.startswith("assets/package_morph_transition/") for c in declared)

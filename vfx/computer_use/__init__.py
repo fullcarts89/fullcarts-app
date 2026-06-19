@@ -6,9 +6,11 @@ sticker/particle effects) that can't live in the project file.
 """
 from vfx.computer_use.executor import Action, DryRunExecutor, Executor, MacExecutor
 from vfx.computer_use.runner import RunResult, run_task
-from vfx.computer_use.task import build_task, gui_steps, reference_blocks
+from vfx.computer_use.task import (build_task, gui_steps, reference_blocks,
+                                   reference_coverage, RefCoverage)
 
 __all__ = [
     "Action", "Executor", "DryRunExecutor", "MacExecutor",
     "run_task", "RunResult", "build_task", "gui_steps", "reference_blocks",
+    "reference_coverage", "RefCoverage",
 ]

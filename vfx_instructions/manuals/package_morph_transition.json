@@ -115,6 +115,7 @@
    "channel": "ui",
    "target": "old_pack",
    "capcut_feature": "Keyframe (diamond) -> Scale",
+   "reference_screenshot": "assets/package_morph_transition/step_keyframe_scale.jpg",
    "params": {
     "keyframes": [
      {"at_ms": 0, "scale": 1.0},
@@ -128,6 +129,7 @@
    "channel": "ui",
    "target": "current_pack (smaller pack, masked to its silhouette)",
    "capcut_feature": "Stickers -> search 'dust' / 'sand particles' (or Effects -> Sandstorm)",
+   "reference_screenshot": "assets/package_morph_transition/step_dust_sticker.jpg",
    "params": {
     "effect": "falling dust / sand particles",
     "intent": "the 'missing weight' falls off the smaller pack",
@@ -180,6 +182,7 @@
    "channel": "ui",
    "target": "operator_endcard",
    "capcut_feature": "Remove Background -> Auto Removal",
+   "reference_screenshot": "assets/package_morph_transition/step_remove_bg.jpg",
    "params": {
     "mode": "auto"
    }

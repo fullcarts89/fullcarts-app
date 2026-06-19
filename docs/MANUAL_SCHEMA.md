@@ -154,6 +154,17 @@ edit_steps:
 | `params` | ⭐ | `{opacity: 50}`, `{shape: split, feather: 0.2}` | **exact values** — every number here makes the step deterministic instead of a guess |
 | `timing` | – | `{at_ms: 2300}` or `{cue: "when you step in"}` | flags whether the cut is an absolute time vs a moment in *your* footage you'll mark |
 | `channel` | – (inferable) | `structural` / `ui` / `taste` | which execution path; tag it to remove ambiguity |
+| `reference_screenshot` | ⭐ (for `ui` steps) | `assets/<id>/step_remove_bg.jpg` | a frame showing **this step** — fed to computer-use as visual grounding so it can match the control on screen even when the wording doesn't name a button. Path is relative to `vfx_instructions/`. |
+
+**Reference screenshots (visual grounding).** When computer-use finishes the
+`ui` steps in CapCut, it can be shown the tutorial frame for each step next to the
+live desktop — so it matches "the control the creator used" by sight, not just by
+the text. Tag the precise frame per step with `reference_screenshot`. It's
+**optional and additive**: a manual with no per-step screenshots falls back to the
+recipe's general `frames` bundle, and a path that doesn't resolve is skipped (a
+stale path never breaks a run). Run `python -m vfx finish <id> --dry-run` to see a
+**coverage report** — which `ui` steps have a screenshot, which declared one that's
+missing on disk, and which have none.
 
 **Why exact `params` matter so much:** "boost the feather a little," "bring opacity
 down," "a quick transition" are the steps that *can't* be automated — they stay

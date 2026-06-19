@@ -38,10 +38,14 @@ edit_steps:
     params: {}           # EXACT values, e.g. {shape: split, feather: 0.2, rotation: 90}
     timing: {}           # {at_ms: 2300} OR {cue: "the moment you snap"}
     channel:             # structural | ui | taste  (optional; tool can infer)
+    reference_screenshot:  # optional: path to a frame showing THIS step (visual
+                           #   grounding for computer-use). Relative to vfx_instructions,
+                           #   e.g. assets/<id>/step_remove_bg.jpg. Best on `ui` steps.
   # - {action: import, target: "all clips", channel: structural}
   # - {action: overlay, target: clip2, params: {track: 2}, channel: structural}
   # - {action: remove_background, target: "top clip",
-  #    capcut_feature: "Remove Background -> Auto Removal", channel: ui}
+  #    capcut_feature: "Remove Background -> Auto Removal", channel: ui,
+  #    reference_screenshot: "assets/my_effect/step_remove_bg.jpg"}
 
 # ---- Result (optional) ----
 result:
