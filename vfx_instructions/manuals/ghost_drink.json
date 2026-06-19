@@ -1,0 +1,107 @@
+{
+ "id": "ghost_drink",
+ "schema_version": 1,
+ "draft": true,
+ "needs_authoring": true,
+ "technique_primitive": "keyframe_motion",
+ "title": "Ghost Drink (reverse pour + mask)",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "gear_required": [],
+ "props_required": [],
+ "result_description": "Ghost Drink (reverse pour + mask)",
+ "source": "Francesca ✨ creative phone content (@77606021734)",
+ "source_url": "https://www.instagram.com/reel/DXu05chjPg9/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "clip_1",
+   "what_to_film": "This is the ghost drink effect and here's how to do it in",
+   "capture_requirements": {
+    "locked_off": false
+   },
+   "acceptance_checks": [],
+   "variance_tolerance": {}
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "position",
+   "channel": "structural",
+   "note": "Get a shot of an empty glass and then a drink being poured in."
+  },
+  {
+   "action": "reverse",
+   "channel": "ui",
+   "note": "Reverse shot two so that it's moving backwards.",
+   "capcut_feature": "Reverse"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "note": "Turn this into an overlay and drop it underneath.",
+   "capcut_feature": "Overlay"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "note": "Add a horizontal mask and then flip this.",
+   "capcut_feature": "Mask"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "note": "Take the line of the mask up to the top of the full drink.",
+   "capcut_feature": "Mask"
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "note": "Set a keyframe then move forward slightly and track the drink as it moves down.",
+   "capcut_feature": "Keyframes"
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "note": "This will automatically set more keyframes and that's it you're all done.",
+   "capcut_feature": "Keyframes"
+  }
+ ],
+ "result": {
+  "description": "",
+  "success_criteria": []
+ },
+ "narration_transcript": "This is the ghost drink effect and here's how to do it in cap cut. Get a shot of an empty glass and then a drink being poured in. Now reverse shot two so that it's moving backwards. Then turn this into an overlay and drop it underneath. Add a horizontal mask and then flip this. Take the line of the mask up to the top of the full drink. Set a keyframe then move forward slightly and track the drink as it moves down. This will automatically set more keyframes and that's it you're all done.",
+ "frames": {
+  "demo": [
+   "assets/ghost_drink/frame_01.jpg",
+   "assets/ghost_drink/frame_02.jpg",
+   "assets/ghost_drink/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/ghost_drink/frame_04.jpg",
+   "assets/ghost_drink/frame_05.jpg",
+   "assets/ghost_drink/frame_06.jpg",
+   "assets/ghost_drink/frame_07.jpg",
+   "assets/ghost_drink/frame_08.jpg",
+   "assets/ghost_drink/frame_09.jpg",
+   "assets/ghost_drink/frame_10.jpg",
+   "assets/ghost_drink/frame_11.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "77606021734",
+  "like_count": 2470,
+  "comment_count": 26,
+  "upload_date": "20260429",
+  "caption": "Ghost drink effect… So easy - all you need is your phone!\n\nSave this video so you can try it later.\n\n(CapCut video editing tutorial, Drink pour effect, CapCut trending edit, cinematic video, viral effect, CapCut tutorial, CapCut series, CapCut effects, sfx)\n#CapCutEditing #drinkpour #capcutedit\n#CinematicReels #ViralEffect",
+  "hashtags": [
+   "CapCutEditing",
+   "CinematicReels",
+   "ViralEffect",
+   "capcutedit",
+   "drinkpour"
+  ]
+ }
+}

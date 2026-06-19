@@ -1,0 +1,114 @@
+{
+ "id": "stop_motion_teleport",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "other",
+ "title": "Video by stevenwommack",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "Stop-motion 'teleport' — you snap between held poses with the motion between them deleted.",
+ "source": "Steven Wommack (@549671804)",
+ "source_url": "https://www.instagram.com/reel/DX0DYe1MgYM/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "poses_clip",
+   "what_to_film": "On a tripod, move through a sequence of positions, holding each for ~1 second.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8,
+    "hold_seconds": 1
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "poses_clip"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "poses_clip",
+   "capcut_feature": "Freeze",
+   "timing": {
+    "cue": "each held position"
+   },
+   "note": "scroll to each position and Freeze → one image per pose"
+  },
+  {
+   "action": "trim",
+   "channel": "structural",
+   "target": "video between freezes",
+   "capcut_feature": "Delete",
+   "note": "delete every video clip between the freeze frames"
+  },
+  {
+   "action": "trim",
+   "channel": "taste",
+   "target": "each freeze frame",
+   "params": {
+    "note": "drag the end left to shorten"
+   },
+   "timing": {
+    "cue": "all freezes"
+   },
+   "note": "shorten freezes to speed up the teleport"
+  }
+ ],
+ "result": {
+  "description": "Stop-motion 'teleport' — you snap between held poses with the motion between them deleted.",
+  "success_criteria": [
+   "Only freeze frames remain (no video between)",
+   "Poses snap cleanly with no drift (locked-off)",
+   "Shortened freezes read as fast stop-motion"
+  ]
+ },
+ "narration_transcript": "Put your phone on the tripod and film yourself standing in the first pose, moving down to the second and keep moving, always holding the next position for one second. Like under the chair with the legs up, then the head up, then the upper body up, sitting on the chair, sitting on the back and standing. Now open this long video in the cap cut app and at that first position, hit freeze. This will create an image, then scroll to the next position and hit freeze again, creating the second image. Keep doing this, always scrolling to the next position, hitting freeze. Do that throughout the whole video until you have all these freeze frames from your positions. Now simply just delete the video part in between those freeze frames that we've just created. So scroll through and delete every clip that is a video. Playing back these freeze frames should now look like this. To make it faster, just shorten these freeze frames by dragging the end to the left. Once you've shortened all these freeze frames and play them back, the movement should now look way faster. Click it creative, export and that's it.",
+ "frames": {
+  "demo": [
+   "assets/stop_motion_teleport/frame_01.jpg",
+   "assets/stop_motion_teleport/frame_02.jpg",
+   "assets/stop_motion_teleport/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/stop_motion_teleport/frame_04.jpg",
+   "assets/stop_motion_teleport/frame_05.jpg",
+   "assets/stop_motion_teleport/frame_06.jpg",
+   "assets/stop_motion_teleport/frame_07.jpg",
+   "assets/stop_motion_teleport/frame_08.jpg",
+   "assets/stop_motion_teleport/frame_09.jpg",
+   "assets/stop_motion_teleport/frame_10.jpg",
+   "assets/stop_motion_teleport/frame_11.jpg",
+   "assets/stop_motion_teleport/frame_12.jpg",
+   "assets/stop_motion_teleport/frame_13.jpg",
+   "assets/stop_motion_teleport/frame_14.jpg",
+   "assets/stop_motion_teleport/frame_15.jpg",
+   "assets/stop_motion_teleport/frame_16.jpg",
+   "assets/stop_motion_teleport/frame_17.jpg",
+   "assets/stop_motion_teleport/frame_18.jpg",
+   "assets/stop_motion_teleport/frame_19.jpg",
+   "assets/stop_motion_teleport/frame_20.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "549671804",
+  "like_count": 24330,
+  "comment_count": 136,
+  "upload_date": "20260501",
+  "caption": "Got so many requests for a tutorial about this super creative stop motion move video edit that the amazing @aaronyooz created for his Instagram reel 🎥✨ I had to give it a try! And here is your tutorial about how you can get a similar result video effect for your next reel 🫶🏼 hope you like it! Enjoy creating! 🚀",
+  "hashtags": []
+ },
+ "shrinkflation_use": "Start behind a cereal box, teleport into the box holding less cereal, teleport out with an even smaller box — you shrink with the product."
+}

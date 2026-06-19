@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 60,
+ "count": 67,
  "manuals": [
   {
    "id": "3_clones",
@@ -105,6 +105,23 @@
    "draft": false,
    "status": null,
    "file": "manuals/ball_transition.json"
+  },
+  {
+   "id": "before_after_freeze",
+   "title": "Video by iamitom",
+   "manual_type": "effect",
+   "technique_primitive": "overlay_bg_removal_clone",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "Frank itom (@1267357316)",
+   "draft": false,
+   "status": null,
+   "file": "manuals/before_after_freeze.json"
   },
   {
    "id": "building_jump",
@@ -316,6 +333,21 @@
    "file": "manuals/dr_strange_portal.json"
   },
   {
+   "id": "dramatic_zoom_reveal",
+   "title": "Video by nq_tutorials",
+   "manual_type": "effect",
+   "technique_primitive": "keyframe_motion",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "NQtutorials (@77452664349)",
+   "draft": false,
+   "status": null,
+   "file": "manuals/dramatic_zoom_reveal.json"
+  },
+  {
    "id": "flash_effect_clean_plate",
    "title": "Flash Effect (Clean Plate)",
    "manual_type": "effect",
@@ -441,6 +473,23 @@
    "file": "manuals/flying_book.json"
   },
   {
+   "id": "frozen_jump_float",
+   "title": "Video by sam.prasad__",
+   "manual_type": "effect",
+   "technique_primitive": "keyframe_motion",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "Sampada | AI Video & Tech (@246413352)",
+   "draft": false,
+   "status": null,
+   "file": "manuals/frozen_jump_float.json"
+  },
+  {
    "id": "getting_started",
    "title": "Getting Started",
    "manual_type": "reference",
@@ -454,6 +503,21 @@
    "draft": false,
    "status": "course_lesson",
    "file": "manuals/getting_started.json"
+  },
+  {
+   "id": "ghost_drink",
+   "title": "Ghost Drink (reverse pour + mask)",
+   "manual_type": "effect",
+   "technique_primitive": "keyframe_motion",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "Francesca ✨ creative phone content (@77606021734)",
+   "draft": true,
+   "status": null,
+   "file": "manuals/ghost_drink.json"
   },
   {
    "id": "giant_effect_ai",
@@ -912,6 +976,23 @@
    "file": "manuals/stomp_effect.json"
   },
   {
+   "id": "stop_motion_teleport",
+   "title": "Video by stevenwommack",
+   "manual_type": "effect",
+   "technique_primitive": "other",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "Steven Wommack (@549671804)",
+   "draft": false,
+   "status": null,
+   "file": "manuals/stop_motion_teleport.json"
+  },
+  {
    "id": "storm_clouds",
    "title": "Storm Clouds",
    "manual_type": "effect",
@@ -927,6 +1008,25 @@
    "draft": false,
    "status": null,
    "file": "manuals/storm_clouds.json"
+  },
+  {
+   "id": "sunrise_hand_swipe",
+   "title": "Video by harry__allsop",
+   "manual_type": "effect",
+   "technique_primitive": "keyframe_motion",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [
+    "wall / flat surface"
+   ],
+   "tool": "CapCut",
+   "source": "Harry Allsop | VFX Creator (@67795363025)",
+   "draft": false,
+   "status": null,
+   "file": "manuals/sunrise_hand_swipe.json"
   },
   {
    "id": "talking_head_match_cut",
@@ -995,6 +1095,26 @@
    "draft": false,
    "status": null,
    "file": "manuals/time_warp.json"
+  },
+  {
+   "id": "toss_object_transform",
+   "title": "Toss & Transform Object (green-screen + scale keyframes)",
+   "manual_type": "effect",
+   "technique_primitive": "chroma_key",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [
+    "object",
+    "green screen / green backdrop"
+   ],
+   "tool": "CapCut",
+   "source": "Joe Anderson | Viral VFX (@70214543852)",
+   "draft": false,
+   "status": null,
+   "file": "manuals/toss_object_transform.json"
   },
   {
    "id": "wall_hologram",

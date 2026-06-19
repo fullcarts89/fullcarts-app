@@ -1,0 +1,171 @@
+{
+ "id": "frozen_jump_float",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "keyframe_motion",
+ "title": "Video by sam.prasad__",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "You jump, freeze at the apex, and your frozen self floats upward and away — bending reality on the reveal.",
+ "source": "Sampada | AI Video & Tech (@246413352)",
+ "source_url": "https://www.instagram.com/reel/DN3MeKSXB-1/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "jump_clip",
+   "what_to_film": "Jump; make sure the apex (top of the jump) is clearly captured.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "jump_clip"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "jump_clip",
+   "capcut_feature": "Freeze",
+   "timing": {
+    "cue": "apex of the jump"
+   },
+   "note": "freeze at the top of the jump"
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "target": "jump_clip",
+   "params": {
+    "to_track": 2
+   },
+   "note": "add as overlay"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "overlay",
+   "capcut_feature": "Freeze",
+   "timing": {
+    "cue": "same apex point"
+   }
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "overlay",
+   "capcut_feature": "Remove Background → Custom",
+   "params": {
+    "mode": "custom",
+    "select": "only the person"
+   }
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "overlay",
+   "params": {
+    "property": "position"
+   },
+   "timing": {
+    "keys": [
+     "start",
+     "step forward + key",
+     "repeat to the end"
+    ]
+   },
+   "note": "float the frozen subject upward"
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "overlay (last keyframe)",
+   "capcut_feature": "Animations → Zoom 2",
+   "params": {
+    "animation": "Zoom 2"
+   }
+  }
+ ],
+ "result": {
+  "description": "You jump, freeze at the apex, and your frozen self floats upward and away — bending reality on the reveal.",
+  "success_criteria": [
+   "Frozen subject cleanly isolated",
+   "Float motion is smooth across keyframes",
+   "Zoom 2 sells the drift on the reveal"
+  ]
+ },
+ "narration_transcript": "put your clip into cap cut and pause when you are in the air. Tap freeze right at that spot. Now tap on the first clip, duplicate it and add it as in overly. Again, add another freeze like before at the same point as earlier. Go to remove each custom, select only the person, add a keyframe at the start, move forward, add another keyframe, repeat this until you reach the lab. On the last keyframe, go to animations, choose zone 2 for the effect and that's how your video looks.",
+ "frames": {
+  "demo": [
+   "assets/frozen_jump_float/frame_01.jpg",
+   "assets/frozen_jump_float/frame_02.jpg",
+   "assets/frozen_jump_float/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/frozen_jump_float/frame_04.jpg",
+   "assets/frozen_jump_float/frame_05.jpg",
+   "assets/frozen_jump_float/frame_06.jpg",
+   "assets/frozen_jump_float/frame_07.jpg",
+   "assets/frozen_jump_float/frame_08.jpg",
+   "assets/frozen_jump_float/frame_09.jpg",
+   "assets/frozen_jump_float/frame_10.jpg",
+   "assets/frozen_jump_float/frame_11.jpg",
+   "assets/frozen_jump_float/frame_12.jpg",
+   "assets/frozen_jump_float/frame_13.jpg",
+   "assets/frozen_jump_float/frame_14.jpg",
+   "assets/frozen_jump_float/frame_15.jpg",
+   "assets/frozen_jump_float/frame_16.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "246413352",
+  "like_count": -1,
+  "comment_count": 109,
+  "upload_date": "20250827",
+  "caption": "This edit literally bends reality - wait for the ending 🔥😳🧐. Comment  VIRAL to learn more!🚀\n.\n.\n.\n.\n.\n.\n.\n.\n.\n\n#tutorial #capcute #pissart #alightmotion #viralediting #newtrendediying #editing #edits #photography #edit #instagram #love #editor #capcutvideoediting #picsart #instagood \n #lightroom #photooftheday #editingtutorial inspired by @jisoo_sion \n[ edits Aap, tutorial, reels, trending reels, CapCut, video edit]\n #explorepage #photo #explore #art #capcutproeffect #trending #india #model",
+  "hashtags": [
+   "alightmotion",
+   "art",
+   "capcute",
+   "capcutproeffect",
+   "capcutvideoediting",
+   "edit",
+   "editing",
+   "editingtutorial",
+   "editor",
+   "edits",
+   "explore",
+   "explorepage",
+   "india",
+   "instagood",
+   "instagram",
+   "lightroom",
+   "love",
+   "model",
+   "newtrendediying",
+   "photo",
+   "photography",
+   "photooftheday",
+   "picsart",
+   "pissart",
+   "trending",
+   "tutorial",
+   "viralediting"
+  ]
+ },
+ "shrinkflation_use": "Toss a bag of chips up, freeze it mid-air, overlay text '2.3 OZ vanished', then cut to you catching the lighter bag — the missing weight literally floats away."
+}

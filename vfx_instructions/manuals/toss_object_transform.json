@@ -1,0 +1,178 @@
+{
+ "id": "toss_object_transform",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "chroma_key",
+ "title": "Toss & Transform Object (green-screen + scale keyframes)",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "object",
+  "green screen / green backdrop"
+ ],
+ "result_description": "Toss an object toward camera and it transforms into a spinning version that flies at you, then lands back in your hand.",
+ "source": "Joe Anderson | Viral VFX (@70214543852)",
+ "source_url": "https://www.instagram.com/reel/DP33jMkkQq-/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "toss_clip",
+   "what_to_film": "Toss the object toward camera, then film the same toss empty-handed (two takes, locked-off).",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "catch_clip",
+   "what_to_film": "Film an empty catch, then a catch with the object back in your hands (two takes).",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "object_green",
+   "what_to_film": "The object spinning on a green background.",
+   "capture_requirements": {
+    "green_screen": true
+   },
+   "acceptance_checks": [
+    "has_green_screen"
+   ],
+   "variance_tolerance": {
+    "green_ratio": 0.3
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "toss_clip, catch_clip, object_green"
+  },
+  {
+   "action": "split",
+   "channel": "structural",
+   "target": "toss_clip",
+   "capcut_feature": "Split",
+   "timing": {
+    "cue": "the toss moment"
+   },
+   "note": "split with object, split the empty version at the same point, delete the middle → object leaves the hand"
+  },
+  {
+   "action": "split",
+   "channel": "structural",
+   "target": "catch_clip",
+   "capcut_feature": "Split",
+   "timing": {
+    "cue": "the catch moment"
+   },
+   "note": "split empty, split again with object in hand, delete middle → object reappears on catch"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "object_green",
+   "params": {
+    "track": 2
+   },
+   "note": "drag into position"
+  },
+  {
+   "action": "chroma_key",
+   "channel": "ui",
+   "target": "object_green",
+   "capcut_feature": "Remove Background → Chroma Key",
+   "params": {
+    "key_color": "green",
+    "intensity": "raise until green fully removed"
+   }
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "object_green",
+   "capcut_feature": "Mask → Rectangle",
+   "params": {
+    "shape": "rectangle"
+   },
+   "note": "cover the object"
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "object_green",
+   "params": {
+    "property": "position+scale"
+   },
+   "timing": {
+    "keys": [
+     "start: in hand",
+     "middle: enlarge toward camera",
+     "end: back into hands"
+    ]
+   }
+  }
+ ],
+ "result": {
+  "description": "Toss an object toward camera and it transforms into a spinning version that flies at you, then lands back in your hand.",
+  "success_criteria": [
+   "Green fully keyed, no spill",
+   "Object scales smoothly toward camera and back",
+   "Object vanishes/reappears cleanly at toss & catch"
+  ]
+ },
+ "narration_transcript": "Here's how to make this. Record yourself tossing an object towards the camera, set aside, and repeat empty-handed. Repeat with an empty catch, then again with the object back in your hands. Next, record the object spinning on a green background. In CapCut, make a split right as you toss the object, set aside, and split at the same point without it, then delete the middle. Move to the empty catch, split, then split again with the object in hand, deleting the middle. Tap overlay on your green screen clip, and drag to the left. If the frame is needed, then tap Remove Background, chroma key. Move the icon into the green area, and adjust the intensity until the green is fully removed. Tap Mask, choose Rectangle, and move to cover your object. Scroll to the beginning, reposition the object into your hand, and add a keyframe. Move to the middle, and enlarge the object towards the camera. Then go to the end, resize it back into your hands. And that's it! Follow for more tips, tap Export, and it should look like this.",
+ "frames": {
+  "demo": [
+   "assets/toss_object_transform/frame_01.jpg",
+   "assets/toss_object_transform/frame_02.jpg",
+   "assets/toss_object_transform/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/toss_object_transform/frame_04.jpg",
+   "assets/toss_object_transform/frame_05.jpg",
+   "assets/toss_object_transform/frame_06.jpg",
+   "assets/toss_object_transform/frame_07.jpg",
+   "assets/toss_object_transform/frame_08.jpg",
+   "assets/toss_object_transform/frame_09.jpg",
+   "assets/toss_object_transform/frame_10.jpg",
+   "assets/toss_object_transform/frame_11.jpg",
+   "assets/toss_object_transform/frame_12.jpg",
+   "assets/toss_object_transform/frame_13.jpg",
+   "assets/toss_object_transform/frame_14.jpg",
+   "assets/toss_object_transform/frame_15.jpg",
+   "assets/toss_object_transform/frame_16.jpg",
+   "assets/toss_object_transform/frame_17.jpg",
+   "assets/toss_object_transform/frame_18.jpg",
+   "assets/toss_object_transform/frame_19.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "70214543852",
+  "like_count": 1136,
+  "comment_count": 49,
+  "upload_date": "20251016",
+  "caption": "⚡️COMMENT “LESSON” for the full step-by-step tutorial + hidden pro tips!\n🔥 Share this with someone who’s ready to level up their edits!\n\n🎬 STOP scrolling — this effect is pure movie magic!\nEver wanted to throw any object and make it fly, spin, and zoom straight at the camera — then snap right back into your hand?\nYou’re about to learn The Throw & Return Effect — the viral transition EVERY creator needs in their toolkit.\n\n✨ Here’s why you’ll love it:\n🎥 Turn everyday objects into mind-blowing VFX moments\n💡 Create it entirely inside CapCut — 100% free and beginner-friendly\n📈 Instantly boost watch time + follower growth with scroll-stopping visuals\n🔥 Finally make videos that stand out instead of getting lost in the feed\n\n💥 Pro Tip: Add a whoosh SFX perfectly timed with the throw — it gives your edit that cinematic energy viewers can’t skip.\n\n👇 Try it today, tag me when you post your version — and let’s make your next video go VIRAL 🚀#capcutedit #visualeffects",
+  "hashtags": [
+   "capcutedit",
+   "visualeffects"
+  ]
+ }
+}
