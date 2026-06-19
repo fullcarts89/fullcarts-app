@@ -41,23 +41,19 @@
   },
   {
    "name": "old_pack",
-   "what_to_film": "Same tripod, same spot, same distance and light: the OLDER (larger/original) package centered identically so it morphs cleanly into the current one. Hold static 3-4s.",
+   "type": "image",
+   "what_to_film": "NOT filmed by you. A sourced, REAL front-facing photo of the OLDER (larger/original) package, used as a held still the current pack morphs into. Must be a real photo/screenshot of the real old box (three-bucket rule) - never AI-generated or hand-built packaging. Crop to the box, plain/neutral background preferred.",
    "capture_requirements": {
-    "locked_off": true,
-    "green_screen": false,
-    "framing": "package centered on the EXACT spot current_pack occupied",
-    "lighting": "identical to current_pack"
+    "real_evidence": true,
+    "ai_generated": false,
+    "framing": "old box front, centered to land on the same spot current_pack occupies"
    },
    "acceptance_checks": [
-    "camera_locked_off",
-    "min_duration",
     "min_resolution"
    ],
    "variance_tolerance": {
-    "camera_shift_px": 8,
-    "min_seconds": 3,
-    "min_w": 1080,
-    "min_h": 1920
+    "min_w": 800,
+    "min_h": 800
    }
   },
   {
