@@ -23,10 +23,10 @@ Views), find the outlier, and bias the next batch toward what won (hook? series?
 
 | # | Posted | Series | Brand | Product | Change (dedup key) | Platforms | Hook (Snap one-liner) | URL | Views | Follows | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| _ex_ | 2026-06-12 | Caught: | Folgers | Coffee | 51→43.5oz (−14.7%) | TT/RE/SH | "blamed record prices… coffee crashed 40%, your can never came back" | _link_ | — | — | debut · coffee-chart real screenshot |
+| 1 | 2026-06-19 | Spot the Skimp | Nature's Bakery · Mars · Charmin · Listerine · McDonald's · Cheez-It | 6-product game (Easy→Impossible) | spot-the-difference, no measured deltas (Cheez-It = marketing trick) | RE/SH | "6 products, same price, 6 got worse — can you spot all 6?" | IG: instagram.com/reel/DZwGBv5h7Cd · YT: youtube.com/shorts/9YFc3aUxbKM | — | — | quiz format · `SpotTheSkimp` b-roll comp (creator head composited) · final boss = Cheez-It "75% MORE" marketing · Pt 2 teased |
 
-> Delete the `_ex_` example row once your first real post is logged. Keep rows append-only;
-> don't overwrite history (the audit trail is the point).
+> Keep rows append-only; don't overwrite history (the audit trail is the point).
+> Fill Views / Follows in a day or two for the follows-driven 10-post review.
 
 ## Quick dedup check (optional cross-check against the DB)
 The log is the authority for *what you posted*. To sanity-check you're not about to repeat, the
