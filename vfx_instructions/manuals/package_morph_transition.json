@@ -49,11 +49,13 @@
     "framing": "old box front, centered to land on the same spot current_pack occupies"
    },
    "acceptance_checks": [
-    "min_resolution"
+    "min_resolution",
+    "product_matches_reference"
    ],
    "variance_tolerance": {
     "min_w": 800,
-    "min_h": 800
+    "min_h": 800,
+    "reference_asset": "current_pack"
    }
   },
   {
