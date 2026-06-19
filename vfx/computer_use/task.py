@@ -13,13 +13,22 @@ from typing import List
 from vfx.models import Channel, VFXRecipe
 
 _PREAMBLE = (
-    "You are operating CapCut Desktop on macOS to finish a video. The project is "
-    "already open with all clips on the timeline; only the GUI-only effects below "
-    "remain. Work strictly through CapCut's on-screen controls. Use the EXACT "
-    "feature names given (they are CapCut's real menu labels). After each action, "
-    "take a screenshot and verify the result before moving on. Do not touch color "
-    "grading or anything not listed. If a control isn't visible, select the named "
-    "clip on the timeline first. When every step is done, stop.\n\n"
+    "You are operating CapCut **Desktop** on macOS to finish a video. The project "
+    "is already open with all clips on the timeline; only the GUI-only effects "
+    "below remain.\n\n"
+    "IMPORTANT — mobile vs desktop: some steps may be worded for CapCut's MOBILE "
+    "app (e.g. 'tap', 'bottom bar', 'swipe'). CapCut Desktop has the SAME features "
+    "under the SAME names, only in different places (menus, the right-hand "
+    "properties panel, the toolbar above the player). Treat each step's named "
+    "feature as the source of truth and FIND IT on the desktop UI by reading the "
+    "screen — ignore any mobile-specific location/gesture wording and translate it "
+    "to the desktop equivalent (click, not tap; panels, not bottom sheets).\n\n"
+    "Method: select the named clip on the timeline first if a control isn't "
+    "visible; use the EXACT feature names given (they are CapCut's real labels). "
+    "After each action, take a screenshot and verify the result before moving on. "
+    "Do not touch color grading or anything not listed. If you genuinely cannot "
+    "find a named feature after looking, say so in text and stop rather than "
+    "clicking randomly. When every step is done, stop.\n\n"
     "STEPS (in order):\n"
 )
 
