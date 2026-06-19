@@ -1,7 +1,24 @@
 {
  "schema_version": 1,
- "count": 15,
+ "count": 16,
  "manuals": [
+  {
+   "id": "package_morph_transition",
+   "title": "Package Morph Transition (Shrink Time-Machine)",
+   "technique_primitive": "object_transition",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [
+    "current product package (smaller / newer)",
+    "older product package (larger / original)"
+   ],
+   "tool": "CapCut",
+   "draft": false,
+   "file": "manuals/package_morph_transition.json"
+  },
   {
    "id": "ai_location_transition",
    "title": "AI Location Transition (First/Last Frame)",
