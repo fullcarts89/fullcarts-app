@@ -22,6 +22,6 @@ def test_record_to_recipe_maps_core_fields():
 def test_ingest_all_persists_every_record(tmp_path):
     store = RecipeStore(tmp_path / "vfx.db")
     n = ingest_all(store)
-    assert n == 34
+    assert n == len(VFXData())   # every source record persisted (dataset-size agnostic)
     got = store.get("make_an_object_appear")
     assert got is not None and got.technique_primitive == "clean_plate_mask_reveal"
