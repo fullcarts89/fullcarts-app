@@ -66,6 +66,19 @@ def _img_block(png: bytes) -> dict:
         "data": base64.standard_b64encode(png).decode("ascii")}}
 
 
+_MEDIA_BY_EXT = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
+                 ".webp": "image/webp", ".gif": "image/gif"}
+
+
+def _file_img_block(path: str) -> dict:
+    import os
+    data = open(path, "rb").read()
+    media = _MEDIA_BY_EXT.get(os.path.splitext(path)[1].lower(), "image/jpeg")
+    return {"type": "image", "source": {
+        "type": "base64", "media_type": media,
+        "data": base64.standard_b64encode(data).decode("ascii")}}
+
+
 def _describe(action: Action) -> str:
     if action.kind in ("left_click", "double_click", "right_click", "mouse_move"):
         return f"{action.kind} @ ({action.x},{action.y})"
@@ -85,6 +98,7 @@ def run_task(
     max_tokens: int = 1500,
     confirm: Optional[Callable[[Action], bool]] = None,
     on_event: Optional[Callable[[str], None]] = None,
+    reference_images: Optional[List[tuple]] = None,
 ) -> RunResult:
     width, height = executor.dimensions()
     tools = [{"type": _TOOL_TYPE, "name": "computer",
@@ -98,11 +112,28 @@ def run_task(
         import anthropic  # lazy
         client = anthropic.Anthropic()
 
-    # Seed with the task + an initial screenshot so the model sees the desktop.
-    messages: List[dict] = [{"role": "user", "content": [
-        {"type": "text", "text": task},
-        _img_block(executor.screenshot()),
-    ]}]
+    # Seed with the task, any reference screenshots (visual grounding), then the
+    # live desktop screenshot. The references come from the tutorial/manual so the
+    # model can match "the control the creator used" to the desktop UI in front of
+    # it — even when a step doesn't spell out which button to click.
+    seed: List[dict] = [{"type": "text", "text": task}]
+    refs = reference_images or []
+    if refs:
+        seed.append({"type": "text", "text": (
+            "\nREFERENCE SCREENSHOTS (from the tutorial — what each step should "
+            "look like; they may be from CapCut mobile, so match by feature, not "
+            "position):")})
+        for caption, path in refs:
+            try:
+                block = _file_img_block(path)
+            except OSError:
+                continue
+            seed.append({"type": "text", "text": caption})
+            seed.append(block)
+        log(f"attached {sum(1 for c in seed if c.get('type') == 'image')} reference image(s)")
+    seed.append({"type": "text", "text": "\nYOUR CURRENT DESKTOP SCREEN:"})
+    seed.append(_img_block(executor.screenshot()))
+    messages: List[dict] = [{"role": "user", "content": seed}]
     transcript: List[str] = []
 
     steps = 0

@@ -8,9 +8,14 @@ labels) into a single, explicit instruction string for the model.
 """
 from __future__ import annotations
 
-from typing import List
+import os
+from pathlib import Path
+from typing import List, Optional, Tuple
 
 from vfx.models import Channel, VFXRecipe
+
+# Manual asset paths (frames) are stored relative to the vfx_instructions dir.
+_VFX_INSTRUCTIONS = Path(__file__).resolve().parents[2] / "vfx_instructions"
 
 _PREAMBLE = (
     "You are operating CapCut **Desktop** on macOS to finish a video. The project "
@@ -51,3 +56,57 @@ def build_task(recipe: VFXRecipe) -> str:
         return ""  # nothing GUI-only to do
     body = "\n".join(f"{i}. {s}" for i, s in enumerate(steps, 1))
     return _PREAMBLE + body
+
+
+def _resolve(rel: str, base_dir: Optional[Path]) -> Optional[Path]:
+    """Resolve a (possibly relative) image path to a file that exists, or None."""
+    if not rel:
+        return None
+    cands = []
+    p = Path(rel)
+    if p.is_absolute():
+        cands.append(p)
+    else:
+        if base_dir:
+            cands.append(Path(base_dir) / rel)
+        cands.append(_VFX_INSTRUCTIONS / rel)
+        cands.append(Path.cwd() / rel)
+    for c in cands:
+        if c.is_file():
+            return c
+    return None
+
+
+def reference_blocks(
+    recipe: VFXRecipe,
+    base_dir: Optional[Path] = None,
+    max_general: int = 4,
+) -> List[Tuple[str, str]]:
+    """Resolve reference screenshots to feed the runner as visual grounding.
+
+    Returns a list of ``(caption, absolute_path)``:
+      * one per GUI step that declares a ``reference_screenshot`` (step-aligned,
+        the precise kind), captioned with that step's instruction; plus
+      * up to ``max_general`` recipe-level frames as non-aligned context, only if
+        no step-aligned refs exist (so we don't double up or blow the token budget).
+
+    Missing files are skipped silently — a stale path never breaks a run.
+    """
+    blocks: List[Tuple[str, str]] = []
+    n = 0
+    for s in recipe.edit_steps:
+        if s.channel != Channel.GUI or not s.reference_screenshot:
+            continue
+        n += 1
+        resolved = _resolve(s.reference_screenshot, base_dir)
+        if resolved:
+            blocks.append((f"Reference for step {n} ({s.instruction})", str(resolved)))
+
+    if not blocks:  # fall back to the recipe's general frame bundle (not step-aligned)
+        for rel in recipe.reference_images[:max_general]:
+            resolved = _resolve(rel, base_dir)
+            if resolved:
+                blocks.append(
+                    ("General reference frame for this effect (not step-aligned)",
+                     str(resolved)))
+    return blocks

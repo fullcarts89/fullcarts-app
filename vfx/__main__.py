@@ -87,7 +87,7 @@ def main():
         return
 
     if args.cmd == "finish":
-        from vfx.computer_use import build_task, gui_steps
+        from vfx.computer_use import build_task, gui_steps, reference_blocks
         if args.manual:
             from vfx.ingest.manual_schema import load_manual
             recipe = load_manual(args.manual)
@@ -99,12 +99,16 @@ def main():
             raise SystemExit("provide a slug (with --db) or --manual FILE")
         steps = gui_steps(recipe)
         task = build_task(recipe)
+        refs = reference_blocks(recipe)
         if not steps:
             print("No GUI-only steps for this recipe — the file-writer covers it.")
             return
         print(f"GUI-only steps computer-use will perform ({len(steps)}):")
         for i, s in enumerate(steps, 1):
             print(f"  {i}. {s}")
+        print(f"reference screenshots attached: {len(refs)}")
+        for cap, path in refs:
+            print(f"  - {cap} -> {path}")
         if args.dry_run:
             print("\n[dry-run] not launching. Open the built project in CapCut, then "
                   "re-run without --dry-run.")
@@ -129,7 +133,8 @@ def main():
             return ans == "y"
 
         res = run_task(task, executor, max_steps=args.max_steps,
-                       confirm=_confirm, on_event=lambda m: print("   ", m))
+                       confirm=_confirm, on_event=lambda m: print("   ", m),
+                       reference_images=refs)
         print(f"\n{'✅ completed' if res.completed else '⛔ stopped'} after {res.steps} step(s).")
         return
 

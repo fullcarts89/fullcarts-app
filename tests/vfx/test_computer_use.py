@@ -89,3 +89,63 @@ def test_build_task_only_includes_gui_steps():
     assert "import" not in joined and "overlay" not in joined
     task = build_task(recipe)
     assert task and "CapCut" in task and "STEPS" in task
+
+
+# --- Q1: reference-screenshot grounding -----------------------------------
+
+def _png(path):
+    import subprocess
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "lavfi",
+                    "-i", "color=c=blue:size=64x64:duration=0.1",
+                    "-frames:v", "1", str(path)], check=True)
+    return str(path)
+
+
+def test_reference_blocks_step_aligned(tmp_path):
+    from vfx.computer_use import reference_blocks
+    from vfx.models import VFXRecipe, EditStep, Channel
+    img = _png(tmp_path / "step.png")
+    r = VFXRecipe(slug="x", title="X", difficulty="b", editor="CapCut", shot_on="phone",
+                  technique_primitive="other", summary="",
+                  edit_steps=[EditStep(1, "Remove Background", "rbg",
+                                       channel=Channel.GUI, reference_screenshot=img)])
+    blocks = reference_blocks(r)
+    assert len(blocks) == 1 and blocks[0][1] == img and "step 1" in blocks[0][0].lower()
+
+
+def test_reference_blocks_general_fallback_and_missing_skipped(tmp_path):
+    from vfx.computer_use import reference_blocks
+    from vfx.models import VFXRecipe
+    img = _png(tmp_path / "frame.png")
+    r = VFXRecipe(slug="x", title="X", difficulty="b", editor="CapCut", shot_on="phone",
+                  technique_primitive="other", summary="",
+                  reference_images=[img, "/does/not/exist.jpg"])
+    blocks = reference_blocks(r, max_general=4)
+    assert len(blocks) == 1 and blocks[0][1] == img      # missing one skipped
+    assert "not step-aligned" in blocks[0][0]
+
+
+def test_runner_injects_reference_images_into_seed(tmp_path):
+    img = _png(tmp_path / "ref.png")
+    ex = DryRunExecutor()
+    client = _ScriptedClient([_resp([_text("done")], stop_reason="end_turn")])
+    run_task("t", ex, client=client, reference_images=[("Reference for step 1", img)])
+    seed = client.calls[0]["messages"][0]["content"]
+    images = [b for b in seed if b.get("type") == "image"]
+    # one reference image + the live screenshot
+    assert len(images) == 2
+    assert any(b.get("type") == "text" and "Reference for step 1" in b["text"] for b in seed)
+
+
+def test_manual_schema_reads_reference_screenshot(tmp_path):
+    import json
+    from vfx.ingest.manual_schema import load_manual
+    m = {
+        "id": "t", "technique_primitive": "other", "title": "T",
+        "inputs": [{"name": "a", "what_to_film": "x"}],
+        "edit_steps": [{"action": "remove_background", "target": "a",
+                        "channel": "ui", "reference_screenshot": "assets/t/s1.jpg"}],
+    }
+    p = tmp_path / "m.json"; p.write_text(json.dumps(m))
+    r = load_manual(p)
+    assert r.edit_steps[0].reference_screenshot == "assets/t/s1.jpg"

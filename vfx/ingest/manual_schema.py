@@ -119,7 +119,7 @@ def manual_to_recipe(m: Dict[str, Any]) -> VFXRecipe:
             capcut_target=capcut_target,
             params=params,
             channel=_step_channel(step),
-            reference_screenshot=None,
+            reference_screenshot=step.get("reference_screenshot"),
             action=step.get("action"),
             target=step.get("target"),
         ))
