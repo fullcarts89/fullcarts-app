@@ -17,11 +17,41 @@ class ProbeResult:
 
 def _first_frame(path: PathLike):
     cap = cv2.VideoCapture(str(path))
+    # Apply the file's display-matrix rotation so frames are display-oriented
+    # (matches probe_resolution). No-op on builds/files without the flag.
+    try:
+        cap.set(cv2.CAP_PROP_ORIENTATION_AUTO, 1)
+    except AttributeError:
+        pass
     ok, frame = cap.read()
     cap.release()
     if not ok:
         raise ValueError("cannot read a frame from " + str(path))
     return frame
+
+
+def video_rotation_deg(path: PathLike) -> int:
+    """Display-matrix rotation in degrees (0/90/180/270).
+
+    iPhone clips are commonly stored as 1920x1080 with a ``rotation=-90`` (or a
+    legacy ``rotate`` tag) display matrix, so they *display* vertical even though
+    the encoded stream is landscape. We read that flag so the resolution check
+    judges the **displayed** orientation, not the raw stream.
+    """
+    out = subprocess.run(
+        ["ffprobe", "-v", "error", "-select_streams", "v:0",
+         "-show_entries", "stream_side_data=rotation:stream_tags=rotate",
+         "-of", "default=noprint_wrappers=1:nokey=1", str(path)],
+        capture_output=True, text=True, check=False)
+    deg = 0
+    for line in out.stdout.splitlines():
+        tok = line.split("=", 1)[-1].strip()  # tolerate "rotation=-90" or bare "-90"
+        try:
+            deg = int(float(tok))
+        except ValueError:
+            continue
+        break
+    return abs(deg) % 360
 
 
 def probe_resolution(path: PathLike, min_w: int, min_h: int) -> ProbeResult:
@@ -31,6 +61,9 @@ def probe_resolution(path: PathLike, min_w: int, min_h: int) -> ProbeResult:
          "-of", "default=noprint_wrappers=1:nokey=1", str(path)],
         capture_output=True, text=True, check=True)
     w, h = (int(x) for x in out.stdout.split())
+    # Respect display-matrix rotation: a 90/270 rotation swaps display W/H.
+    if video_rotation_deg(path) in (90, 270):
+        w, h = h, w
     ok = w >= min_w and h >= min_h
     return ProbeResult(ok, f"{w}x{h} (min {min_w}x{min_h})", value=float(w * h))
 
