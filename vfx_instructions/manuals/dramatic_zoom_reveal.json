@@ -1,0 +1,122 @@
+{
+ "id": "dramatic_zoom_reveal",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "keyframe_motion",
+ "title": "Video by nq_tutorials",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "gear_required": [],
+ "props_required": [],
+ "result_description": "A dramatic fade-zoom: start tight on a detail, then zoom out to reveal the full picture (or vice-versa), with eased motion.",
+ "source": "NQtutorials (@77452664349)",
+ "source_url": "https://www.instagram.com/reel/DQl5qVdiOsa/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "product_clip",
+   "what_to_film": "A steady shot of the package/text you want to reveal.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "product_clip"
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "product_clip",
+   "params": {
+    "property": "scale+opacity",
+    "state": "zoomed in on the detail/text"
+   },
+   "timing": {
+    "cue": "start"
+   }
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "product_clip",
+   "params": {
+    "property": "scale+opacity",
+    "state": "zoomed out to full reveal"
+   },
+   "timing": {
+    "cue": "end"
+   }
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "keyframes",
+   "capcut_feature": "Ease Out",
+   "params": {
+    "easing": "Ease Out"
+   },
+   "note": "apply easing for drama"
+  }
+ ],
+ "result": {
+  "description": "A dramatic fade-zoom: start tight on a detail, then zoom out to reveal the full picture (or vice-versa), with eased motion.",
+  "success_criteria": [
+   "Smooth eased zoom between the two keyframes",
+   "Opacity fade reads as a clean reveal",
+   "Tight-on-detail → wide-on-truth lands the point"
+  ]
+ },
+ "narration_transcript": "Simpero Simpero moray Odin Simpero moray Odin portrait",
+ "frames": {
+  "demo": [
+   "assets/dramatic_zoom_reveal/frame_01.jpg",
+   "assets/dramatic_zoom_reveal/frame_02.jpg",
+   "assets/dramatic_zoom_reveal/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/dramatic_zoom_reveal/frame_04.jpg",
+   "assets/dramatic_zoom_reveal/frame_05.jpg",
+   "assets/dramatic_zoom_reveal/frame_06.jpg",
+   "assets/dramatic_zoom_reveal/frame_07.jpg",
+   "assets/dramatic_zoom_reveal/frame_08.jpg",
+   "assets/dramatic_zoom_reveal/frame_09.jpg",
+   "assets/dramatic_zoom_reveal/frame_10.jpg",
+   "assets/dramatic_zoom_reveal/frame_11.jpg",
+   "assets/dramatic_zoom_reveal/frame_12.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "77452664349",
+  "like_count": 6627,
+  "comment_count": 18,
+  "upload_date": "20251103",
+  "caption": "Fade zoom in&out tutorial in CapCut!\n.\n\n.\n\n.\n\n#reels #fyp #capcut #instagood #capcutpioneer #trendingreels #capcutedit #capcuttemplate #capcuttutorials #editor #areyouaneditor #aftereffects #funk",
+  "hashtags": [
+   "aftereffects",
+   "areyouaneditor",
+   "capcut",
+   "capcutedit",
+   "capcutpioneer",
+   "capcuttemplate",
+   "capcuttutorials",
+   "editor",
+   "funk",
+   "fyp",
+   "instagood",
+   "reels",
+   "trendingreels"
+  ]
+ },
+ "shrinkflation_use": "Start zoomed on 'BONUS 20%' / 'Family Size', then zoom out to reveal the bag is smaller than last year. Start tight on the lie, end wide on the truth."
+}

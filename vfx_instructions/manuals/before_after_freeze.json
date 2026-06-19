@@ -1,0 +1,154 @@
+{
+ "id": "before_after_freeze",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "overlay_bg_removal_clone",
+ "title": "Video by iamitom",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "A frozen 'before' version of you stands in frame while the live 'after' you moves — a same-frame before/after.",
+ "source": "Frank itom (@1267357316)",
+ "source_url": "https://www.instagram.com/reel/DQmrhhUD6xj/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "poses_clip",
+   "what_to_film": "On a tripod, hold a pose (the 'before'), then step out of frame and keep recording the empty background (clean plate). More background movement = better.",
+   "capture_requirements": {
+    "locked_off": true,
+    "subject_exits_frame": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "subject_exits_frame"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "poses_clip"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "poses_clip",
+   "capcut_feature": "Freeze",
+   "timing": {
+    "cue": "the pose"
+   },
+   "note": "freeze the pose → a photo"
+  },
+  {
+   "action": "trim",
+   "channel": "structural",
+   "target": "original first clip",
+   "capcut_feature": "Delete"
+  },
+  {
+   "action": "split",
+   "channel": "structural",
+   "target": "background section",
+   "capcut_feature": "Split",
+   "note": "split start & end of the clean background, delete the rest"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "freeze frame",
+   "params": {
+    "track": 2
+   }
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "freeze frame",
+   "capcut_feature": "Remove Background → Brush",
+   "params": {
+    "mode": "custom",
+    "paint": "yourself + your shadow"
+   }
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "target": "background",
+   "params": {
+    "note": "optional: split, duplicate remaining part"
+   }
+  },
+  {
+   "action": "reverse",
+   "channel": "taste",
+   "target": "duplicated background",
+   "capcut_feature": "Reverse",
+   "note": "optional motion loop in the backdrop"
+  }
+ ],
+ "result": {
+  "description": "A frozen 'before' version of you stands in frame while the live 'after' you moves — a same-frame before/after.",
+  "success_criteria": [
+   "Frozen subject cleanly cut out (incl. shadow)",
+   "Background seamless under the composite",
+   "Before & after both readable in one frame"
+  ]
+ },
+ "narration_transcript": "It's been more than two weeks since we posted the tutorial on this page and nobody has messaged me about it We're so important of learning Don't worry, you must learn As long as no, this page You must learn something I know that many of you have been messaging me about having a master class I have head, I have head But before then, today is what I'm going to learn It's very simple, let me show you how I did it You will need a tripod If I see a shaky transition again, I will report your account First, record yourself in different poses Like how your ex was changing personalities You can even try this kick pose Just like how they kick out of the relationship When you're done, step out of the frame And record the background The more movement you have in the background, the better Now import your clips into a cap cut Scroll to the point where you did the pose And make sure your clip is selected Scroll to freeze and select it Now you have a photo of your pose Delete the first clip like a toxic relationship And then move along your timeline To find the background that you want Split where you want it to start And delete the first part And then split where you want it to end And delete the second part Then select your freeze frame And then click on overlay To move you to a new layer Just like how you moved into a new relationship Then go to remove background to cut out the photo Use the brush tool to paint on yourself And also the shadows When you're done, click OK And if you play it, this is what we have You can set to add something extra Split the background at some point And then delete the second part Duplicate the remaining part And then reverse the duplicate And if you play it, you have something cool like this Because that was easy, right? So try it out, tag me And don't worry, we're gonna have our master class soon But before then, I've been wondering",
+ "frames": {
+  "demo": [
+   "assets/before_after_freeze/frame_01.jpg",
+   "assets/before_after_freeze/frame_02.jpg",
+   "assets/before_after_freeze/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/before_after_freeze/frame_04.jpg",
+   "assets/before_after_freeze/frame_05.jpg",
+   "assets/before_after_freeze/frame_06.jpg",
+   "assets/before_after_freeze/frame_07.jpg",
+   "assets/before_after_freeze/frame_08.jpg",
+   "assets/before_after_freeze/frame_09.jpg",
+   "assets/before_after_freeze/frame_10.jpg",
+   "assets/before_after_freeze/frame_11.jpg",
+   "assets/before_after_freeze/frame_12.jpg",
+   "assets/before_after_freeze/frame_13.jpg",
+   "assets/before_after_freeze/frame_14.jpg",
+   "assets/before_after_freeze/frame_15.jpg",
+   "assets/before_after_freeze/frame_16.jpg",
+   "assets/before_after_freeze/frame_17.jpg",
+   "assets/before_after_freeze/frame_18.jpg",
+   "assets/before_after_freeze/frame_19.jpg",
+   "assets/before_after_freeze/frame_20.jpg",
+   "assets/before_after_freeze/frame_21.jpg",
+   "assets/before_after_freeze/frame_22.jpg",
+   "assets/before_after_freeze/frame_23.jpg",
+   "assets/before_after_freeze/frame_24.jpg",
+   "assets/before_after_freeze/frame_25.jpg",
+   "assets/before_after_freeze/frame_26.jpg",
+   "assets/before_after_freeze/frame_27.jpg",
+   "assets/before_after_freeze/frame_28.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "1267357316",
+  "like_count": 22673,
+  "comment_count": 376,
+  "upload_date": "20251103",
+  "caption": "How to create those cool dynamic photos. \n\n#Editing #capcut #tutorials",
+  "hashtags": [
+   "Editing",
+   "capcut",
+   "tutorials"
+  ]
+ },
+ "shrinkflation_use": "Freeze the 'before' you holding the big 2022 bag, then walk in as the 'after' you with the shrunk 2026 bag — visual proof the product shrank, not time."
+}

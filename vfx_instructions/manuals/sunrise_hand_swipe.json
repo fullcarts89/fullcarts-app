@@ -1,0 +1,183 @@
+{
+ "id": "sunrise_hand_swipe",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "keyframe_motion",
+ "title": "Video by harry__allsop",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "wall / flat surface"
+ ],
+ "result_description": "Swipe your hand up a wall and the scene shifts from night to day in real time, as if you're sliding a brightness control.",
+ "source": "Harry Allsop | VFX Creator (@67795363025)",
+ "source_url": "https://www.instagram.com/reel/DNQt11xsz_i/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "swipe_clip",
+   "what_to_film": "Swipe your hand up a wall/surface as if dragging a brightness slider.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "brightness_bar",
+   "what_to_film": "Screen-record your phone's brightness bar moving, over a green background.",
+   "capture_requirements": {
+    "green_screen": true
+   },
+   "acceptance_checks": [
+    "has_green_screen"
+   ]
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "swipe_clip, brightness_bar"
+  },
+  {
+   "action": "trim",
+   "channel": "ui",
+   "target": "brightness_bar",
+   "capcut_feature": "Trim",
+   "note": "keep only the part where the bar moves"
+  },
+  {
+   "action": "transform",
+   "channel": "ui",
+   "target": "brightness_bar",
+   "capcut_feature": "Crop",
+   "note": "crop down to just the brightness bar"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "brightness_bar",
+   "params": {
+    "track": 2
+   }
+  },
+  {
+   "action": "position",
+   "channel": "structural",
+   "target": "brightness_bar",
+   "timing": {
+    "cue": "exact frame the hand touches the wall"
+   },
+   "note": "align the bar's motion to the swipe"
+  },
+  {
+   "action": "chroma_key",
+   "channel": "ui",
+   "target": "brightness_bar",
+   "capcut_feature": "Remove Background → Chroma Key",
+   "params": {
+    "key_color": "green"
+   }
+  },
+  {
+   "action": "transform",
+   "channel": "ui",
+   "target": "brightness_bar",
+   "capcut_feature": "Crop/Scale",
+   "note": "resize & move the bar over the wall"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "swipe_clip",
+   "capcut_feature": "Freeze",
+   "note": "freeze frames at the swipe to hold the transition beat"
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "swipe_clip",
+   "capcut_feature": "Adjust (Brightness/Color)",
+   "params": {
+    "property": "brightness+color",
+    "from": "night",
+    "to": "day"
+   },
+   "timing": {
+    "cue": "synced to the swipe"
+   }
+  }
+ ],
+ "result": {
+  "description": "Swipe your hand up a wall and the scene shifts from night to day in real time, as if you're sliding a brightness control.",
+  "success_criteria": [
+   "Brightness bar lands exactly on the hand touch",
+   "Lighting ramps night→day in sync with the swipe",
+   "Green bar fully keyed"
+  ]
+ },
+ "narration_transcript": "Here's how to make this effect record a clip of yourself swiping up on a surface like a wall as if you're adjusting brightness and take a screen recording of your phone's brightness bar over a green background. Open the screen recording and trim the ends keeping only the part where the brightness bar moves. Crop it down so only the brightness bar is visible. Import both clips into cap cut. Select the brightness bar hit overlay and move it to the second layer. Find the exact point where your hand touches the wall and align the brightness bar with this moment. With the brightness bar clip still selected go to chroma key and use the color picker to select the green background. Resize and move the brightness bar so it follows the motion of your hand. Now add a freeze frame at the start of the brightness bar clip and extend it to just before your hand starts moving. Trim an adjust the speed of the brightness bar to match the swipe speed in your main clip. Now add another freeze frame at the end of the brightness bar clip. Duplicate your main clip hit overlay and move it to the third layer. Use remove background on this duplicate to create a cut out of yourself. Go to adjust and lower some of the sliders to make it look like night time. Go to the point your hand is about to move upwards and hit keyframe and then go to the point where your hand is right at the top of the slider and set another keyframe and go back to the adjust and increase those sliders back to their normal values. And that's it your video should look like this.",
+ "frames": {
+  "demo": [
+   "assets/sunrise_hand_swipe/frame_01.jpg",
+   "assets/sunrise_hand_swipe/frame_02.jpg",
+   "assets/sunrise_hand_swipe/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/sunrise_hand_swipe/frame_04.jpg",
+   "assets/sunrise_hand_swipe/frame_05.jpg",
+   "assets/sunrise_hand_swipe/frame_06.jpg",
+   "assets/sunrise_hand_swipe/frame_07.jpg",
+   "assets/sunrise_hand_swipe/frame_08.jpg",
+   "assets/sunrise_hand_swipe/frame_09.jpg",
+   "assets/sunrise_hand_swipe/frame_10.jpg",
+   "assets/sunrise_hand_swipe/frame_11.jpg",
+   "assets/sunrise_hand_swipe/frame_12.jpg",
+   "assets/sunrise_hand_swipe/frame_13.jpg",
+   "assets/sunrise_hand_swipe/frame_14.jpg",
+   "assets/sunrise_hand_swipe/frame_15.jpg",
+   "assets/sunrise_hand_swipe/frame_16.jpg",
+   "assets/sunrise_hand_swipe/frame_17.jpg",
+   "assets/sunrise_hand_swipe/frame_18.jpg",
+   "assets/sunrise_hand_swipe/frame_19.jpg",
+   "assets/sunrise_hand_swipe/frame_20.jpg",
+   "assets/sunrise_hand_swipe/frame_21.jpg",
+   "assets/sunrise_hand_swipe/frame_22.jpg",
+   "assets/sunrise_hand_swipe/frame_23.jpg",
+   "assets/sunrise_hand_swipe/frame_24.jpg",
+   "assets/sunrise_hand_swipe/frame_25.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "67795363025",
+  "like_count": 4712,
+  "comment_count": 134,
+  "upload_date": "20250812",
+  "caption": "Comment SUNSHINE and I’ll send you a super detailed breakdown, with some secret PRO TIPS included � \n\nControl the Sunshine with Just a Swipe! ��\n\nWant to make it look like you can adjust the sun with a brightness bar? Try this mind-blowing effect in CapCut! ��\n\n� Film your clip – Swipe up on a wall as if you’re increasing brightness.\n� Screen record your phone’s brightness bar over a green background.\n� Trim & crop the recording so only the brightness bar is visible.\n� Import both clips into CapCut and move the brightness bar into position.\n� Use ‘Chroma Key’ to remove the green background.\n� Resize & align the brightness bar with your hand movement.\n� Freeze frame the start & end points for a seamless transition.\n� Duplicate your main clip, overlay it & remove the background so your hand stays in front.\n� Keyframe brightness adjustments to match the effect (lower brightness for night, increase for day).\n� PRO TIP: Boost saturation & warmth at the final keyframe to make the sunlight effect pop! �\n\n� Now you’ve mastered the power of the sun! � Try this out and tag me—I’d love to see your version! �\n\n#vfx #visualeffects #creative #edit #video #capcut #creativeminds #videoedits #tutorial #MagicReveal #CapCutEdit #VideoEditingTips #CapCutTutorial #vfxediting",
+  "hashtags": [
+   "CapCutEdit",
+   "CapCutTutorial",
+   "MagicReveal",
+   "VideoEditingTips",
+   "capcut",
+   "creative",
+   "creativeminds",
+   "edit",
+   "tutorial",
+   "vfx",
+   "vfxediting",
+   "video",
+   "videoedits",
+   "visualeffects"
+  ]
+ }
+}
