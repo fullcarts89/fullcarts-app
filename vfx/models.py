@@ -46,6 +46,8 @@ class VFXRecipe:
     gear: Optional[str] = None
     reference_images: List[str] = field(default_factory=list)
     ingest_confidence: float = 1.0
+    is_ai_generated: bool = False
+    ai_generation: List[Dict[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
         d = asdict(self)
