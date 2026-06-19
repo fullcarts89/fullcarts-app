@@ -1,0 +1,168 @@
+{
+ "id": "liquid_from_an_object",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "blend_composite",
+ "title": "Liquid from an Object",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "clear glass cup",
+  "coffee (or pourable liquid)",
+  "phone"
+ ],
+ "result_description": "Coffee appears to pour out of a phone screen into the cup below: you set the phone on top of the glass, push down, and the liquid fills the cup as if the phone produced it.",
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "inputs": [
+  {
+   "name": "pour_clip",
+   "what_to_film": "On a locked-off, exposure-locked camera, pour coffee into the clear glass; keep arms and shadows clear of the glass so the area is clean for masking.",
+   "capture_requirements": {
+    "locked_off": true,
+    "note": "lock exposure on the countertop next to the glass; pour from the lit side to avoid shadows"
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "min_duration"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8,
+    "min_seconds": 4
+   }
+  },
+  {
+   "name": "phone_push_clip",
+   "what_to_film": "Same locked-off frame: set the phone on top of the glass and push down with your fingers; do not let your hand pass behind the glass (it is see-through and breaks the illusion).",
+   "capture_requirements": {
+    "locked_off": true,
+    "note": "keep hands in front of the glass, never behind it"
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "pour_clip, phone_push_clip"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "source footage",
+   "capcut_feature": "Split",
+   "params": {
+    "note": "isolate the pour section and the phone-push section; delete the rest"
+   }
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "pour_clip",
+   "params": {
+    "track": 2,
+    "note": "coffee pour goes on the top layer; phone_push is the main/base layer"
+   }
+  },
+  {
+   "action": "opacity",
+   "channel": "ui",
+   "target": "pour_clip",
+   "capcut_feature": "Opacity",
+   "params": {
+    "opacity": 50,
+    "note": "temporarily lower so you can line up the timing of the two actions"
+   }
+  },
+  {
+   "action": "trim",
+   "channel": "taste",
+   "target": "pour_clip",
+   "params": {
+    "note": "slide so the coffee starts pouring right as the phone is pushed down"
+   },
+   "timing": {
+    "cue": "the finger push-down"
+   }
+  },
+  {
+   "action": "opacity",
+   "channel": "ui",
+   "target": "pour_clip",
+   "capcut_feature": "Opacity",
+   "params": {
+    "opacity": 100,
+    "note": "restore once timing is set"
+   }
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "pour_clip",
+   "capcut_feature": "Mask → Rectangle",
+   "params": {
+    "shape": "rectangle",
+    "position": "around the glass, just below the phone / on top of the cup",
+    "note": "shape it to the glass so only the liquid inside shows"
+   }
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "pour_clip mask",
+   "capcut_feature": "Mask → Feather",
+   "params": {
+    "feather": 2,
+    "note": "soften the mask edge along the line below the phone"
+   }
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "target": "phone_push_clip",
+   "params": {
+    "note": "freeze-frame the duplicate to cover the moment a hand crosses the glass"
+   }
+  },
+  {
+   "action": "opacity",
+   "channel": "taste",
+   "target": "freeze-frame patch",
+   "params": {
+    "note": "fade the freeze-frame in/out to hide the hard cut (pop)"
+   }
+  },
+  {
+   "action": "audio",
+   "channel": "taste",
+   "target": "clips",
+   "params": {
+    "note": "keyframe/duck volume to remove pre-pour talking"
+   }
+  }
+ ],
+ "result": {
+  "description": "Coffee pours out of the phone into the cup with a seamless join.",
+  "success_criteria": [
+   "Liquid level rises in sync with the push-down",
+   "No visible mask line below the phone",
+   "No pop or hand crossing behind the glass"
+  ]
+ },
+ "narration_transcript": "Coffee hack For this one we need two shots. A shot of us pouring the coffee into the cup and then a shot of us setting the phone on top of the cup, pushing down and we're gonna combine the two shots to make it feel like we're pushing the coffee into the cup. This is gonna be our coffee hack. Okay, so let's go ahead and lock our exposure.\n\nNow lock it on the table on the countertop right next to the glass and hit record, okay. So I got my phone the picture of my coffee beans here. They show up good and I have my coffee right here. So I'm actually gonna do the coffee shot first and I wanna make sure none of my arms or shadows cross over anything as much as possible.\n\nTo make it easier to do the masking. Looks good. It's gonna be easier I'm gonna use this to pour. Okay so my light is coming from that way.\n\nSo I'm gonna stand on pour it from this side so I don't get any shadows and my mask will sit there 1 2 3 So I purposefully poured it a little bit fast. I think that's gonna work better for the effect. Okay, so now let's get our second shot and I wanna make sure that I don't stand behind the glass cause we can see through it. Okay so we're still recording and this coffee hack.\n\nOkay so I did that I counted four seconds. I'm gonna do another one. Coffee hack. Okay that one was 6 seconds.\n\nAnd just for safe measure make sure you're recording and just for safe measure I'm gonna go ahead and get a third one so I don't have to set all this stuff up again. Coffee hack. Alright I'm gonna go ahead and watch those back. So I just to be clear I did one for four seconds one for six seconds that one I did for about eight seconds.\n\nWhat I'm watching for is just when it's playing when I'm holding the phone I wanna make sure that I don't go behind the coffee. Cause that's gonna mess up the illusion. Yeah I think it looks great. Awesome.\n\nAlright let's go edit this thing.\n\nOkay so let's get CapCut opened up here. Start a new project. I will import my one clip. Okay, so there's my test, so we have the two shots.\n\nAs you can see, I was very careful to make sure that my arms didn't go behind it because you'll be able to see through and it's gonna break the illusion. So right now I know that we need the clip of the coffee pouring. So let's go ahead and just take out that section. I'm gonna split it there, delete everything before that, that's on the left side.\n\nOkay we'll leave it extra long for now. Split it there. Okay so I remember that the first tap was 4 seconds then I did six seconds and then I did longer. So let's go with let's try the 4 seconds clip first and see how that works with our timing.\n\nSo I'll split it beginning of that one delete everything on the left side and then just go to the end of this clip. Give a little extra there, before we do the next one and I'll split it there and I'm gonna delete everything on the right side. So now we're just left with the two clips. The coffee pour and the phone touch.\n\nOkay so I'm gonna combine the two clips just using a simple mask so, the coffee pour I would want to be on the top layer. So that we can make a mask and put it on top of our main layer which would be this one. We'll call this our main layer so I'm gonna tap overlay on the coffee layer. To drop that down and I'll use my opacity trick so we're gonna find opacity and turn that down to 50.\n\nThis is so that we can see through and line up the timing of the two actions. Okay so we want to push down with our fingers. And since I'm not gonna be adjusting the main clip what I can do to mark it, is I can actually split it right there. So now I know when I find my coffee pour I can just line it up with that cut mark where I split those and it'll save some time.\n\nSo there's the coffee pour and drag that over a little bit. I don't wanna split the bottom clip yet because I'm gonna be putting a mask on that and if I split it I'm gonna have to adjust the mask the same on both sides of it. So I wanna make my mask get that set before I do any splitting or just not split at all. Okay so let's check that out.\n\nLet's see how the timing looks real quick so we push and coffee comes out I think it can happen just a here sooner and we'll be good to go. A little bit more and There we go. Cool. Alright select the coffee clip on the bottom.\n\nLet's get our opacity selected and turn that back up to 100. So now we can see that fully and we're gonna find our mask tool. For this one I'll use a rectangle mask and I'll just put it on there roughly so you can see what's happening. And we'll go ahead and play that.\n\nOkay so we're gonna adjust the mask to make it feel a little bit more seamless but that gives you an idea of just kind of what we're building there. I think it can actually scoot over a little bit sooner. Alright so I'm happy with the timing. I'm gonna extend the head of that back over.\n\nOkay so in my case I have my hand going front so what I'm gonna do is I'm gonna create a freeze frame to cover that up. Okay great so now we're happy with the timing so we just need to find two in our mask to make it feel much more seamless. I think that like these little details can make a huge difference in the storytelling of the clip. So the story should always have a beginning and middle and an end.\n\nSo the beginning as we show the coffee beans, the middle is us putting the phone on the cup and then we have the payoff which is the end and that is the coffee coming out of the phone. So our foundation is built here. So let's go back into our mask and we're just gonna shape this right around the glass. Okay so we wanna pay attention to the line right below the phone and on top of the cup cause that's where if there's any inconsistency it might catch the eye.\n\nSo I wanna get it right in that spot right there and then we'll add a little touch of feather just to help smooth it. Now you can adjust the feather with this arrow here but it's really hard to get it fine tuned. So I like to go into the adjust part down here select feather and just kind of choose my number. Which could be just like a number two and that'll just help blend those two together.\n\nOkay let's see how that looks. Alright there we go. So I'm happy with that so have some fun with this one and I'll see you in the next video.\n\nOnce we have our footage imported we're gonna drop it down into the timeline and we wanna separate the two clips that we need to use for this edit. So it's a long video so I'm just gonna go in and split it in the sections where I know that I need and then I can trim it down shorter after so, there's the coffee pour so I'm gonna keep this and I'll delete everything to the left of that I know I don't need that. And for this one I believe we used the second take, with the finger yeah Okay so I'll come over and use the split tool there. Delete that and I put it through to the end and we can also trim this just by grabbing right here once it's highlighted and drag it over.\n\nI'm gonna hit Control Plus to zoom in. Command plus if you're on a Mac. Okay so we want this clip to sit on top and we're gonna use the opacity trip so come over to opacity turn that down to 50% that's in the basic tab over here under video. So now we can see both of our, oops.\n\nIgnore that. So now we can see both of our clips and we just wanna, line up the timing which actually that might work right there. Okay. Yeah that should work.\n\nSo I'll drag this to the opening to the beginning over there so that they match. And this clip here, we're gonna come over to under video the mask tab and we're gonna use a rectangle mask. We wanna do is shrink this down a bit and just get it to where it's not cutting off the phone at all. I can zoom in.\n\nWe don't want it to cover the phone at all like that. We wanted to sit right underneath the phone. Fit the glass and then we'll just bump up the feather to just to help. Blend that line on the edge right there.\n\nOkay let me go back zoom back out and hit play. We need to turn our opacity back up so come back over to the basic tab opacity to 100 and then there's that this part right here that we need to fix too but first let's make sure the timing is good. Think it could be a little bit earlier. Okay so to get rid of me talking and now the pouring starts right here so come over to audio and set a keyframe.\n\nOn the volume and I can fade it out or I could even just split this clip and then just turn the volume down on the first part. So now we don't hear me talking in the beginning of this part Okay now we need to fix my hand crossing over. So how I'm gonna do that is go ahead and duplicate this guy and just freeze frame it so the freeze frame is right here. If I click freeze there I can get rid of these outside parts and just keep the part that's frozen here.\n\nAnd we just wanna make sure that that's covering the cup up until the point where that is. We can do a little longer here and then actually I just have this start at the end of that one. So now there's a little pop there. So what I'll do is I'll drag this over and then we'll fade this clip in with opacity underneath this one just to get rid of that pop that hard cut so now and then we should still fade this clip out too.\n\nSo if you're more careful when you shoot and you don't cross your hand over like I did you won't run into this problem but I'm showing you how to fix it just in case. So now. Nice and smooth. No pops, No glitches.\n\nAwesome, There it is.",
+ "frames": {
+  "demo": [],
+  "editing": []
+ }
+}

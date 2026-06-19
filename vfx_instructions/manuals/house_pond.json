@@ -1,0 +1,98 @@
+{
+ "schema_version": 1,
+ "manual_type": "effect",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "sparse_source": true,
+ "id": "house_pond",
+ "technique_primitive": "blend_composite",
+ "title": "House Pond",
+ "difficulty": "intermediate",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "A patch of ground in your yard turns into a realistic pond with reflections.",
+ "inputs": [
+  {
+   "name": "yard_clip",
+   "what_to_film": "Lock the camera on a tripod looking at the patch of ground/yard you want to turn into water.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "water_footage",
+   "what_to_film": "Water/pond stock footage.",
+   "capture_requirements": {}
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "yard_clip"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "water_footage",
+   "params": {
+    "track": 2
+   }
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "water_footage",
+   "capcut_feature": "Mask",
+   "params": {
+    "area": "exact area that should become the pond",
+    "feather": "slight"
+   }
+  },
+  {
+   "action": "opacity",
+   "channel": "taste",
+   "target": "water_footage",
+   "capcut_feature": "Opacity",
+   "params": {
+    "note": "lower slightly and match color so it blends with the ground"
+   }
+  },
+  {
+   "action": "overlay",
+   "channel": "taste",
+   "target": "reflection",
+   "params": {
+    "note": "duplicate scenery, flip vertically, mask into the water; add ripple/ambient sound"
+   }
+  }
+ ],
+ "result": {
+  "description": "The ground patch reads as a believable pond.",
+  "success_criteria": [
+   "Water confined to the masked area",
+   "Edge feathered into the ground",
+   "Reflection sells the depth"
+  ]
+ },
+ "narration_transcript": "",
+ "frames": {
+  "demo": [
+   "assets/house_pond/demoframe_0.jpg",
+   "assets/house_pond/demoframe_1.jpg",
+   "assets/house_pond/demoframe_2.jpg"
+  ],
+  "editing": []
+ }
+}

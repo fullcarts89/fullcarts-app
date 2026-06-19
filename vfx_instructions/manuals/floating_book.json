@@ -1,0 +1,170 @@
+{
+ "id": "floating_book",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "chroma_key",
+ "title": "Floating Book",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "gear_required": [
+  "tripod",
+  "green_screen"
+ ],
+ "props_required": [
+  "book",
+  "green paper (construction paper backdrop)"
+ ],
+ "result_description": "A book rises and gently rotates as it floats up from a pile of books on the couch, composited from a green-screen photo of the book.",
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "inputs": [
+  {
+   "name": "background_plate",
+   "what_to_film": "Locked-off shot of the scene (e.g. couch with a small pile of books) where the floating book will rise.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "greenscreen_book",
+   "what_to_film": "A photo of the book laid flat on green construction paper, evenly lit so the green is clean.",
+   "capture_requirements": {
+    "green_screen": true,
+    "note": "fill behind the book with green; avoid harsh shadows/hotspots"
+   },
+   "acceptance_checks": [
+    "has_green_screen"
+   ],
+   "variance_tolerance": {
+    "green_ratio": 0.3
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "background_plate, greenscreen_book"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "greenscreen_book",
+   "params": {
+    "track": 2,
+    "note": "extend to match the background length"
+   }
+  },
+  {
+   "action": "chroma_key",
+   "channel": "ui",
+   "target": "greenscreen_book",
+   "capcut_feature": "Remove Background → Chroma Key",
+   "params": {
+    "key_color": "green",
+    "note": "pick a mid-tone green, raise intensity slowly until the green clears; boost shadow to recover any keyed-out reflections"
+   }
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "greenscreen_book",
+   "capcut_feature": "Mask → Rectangle",
+   "params": {
+    "shape": "rectangle",
+    "note": "crop off the paper edges/borders around the book"
+   }
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "book mask",
+   "capcut_feature": "Mask → Feather",
+   "params": {
+    "feather": 2,
+    "note": "soften edges; pull the mask just outside the book"
+   }
+  },
+  {
+   "action": "transform",
+   "channel": "ui",
+   "target": "greenscreen_book",
+   "capcut_feature": "Scale",
+   "params": {
+    "note": "scale the book down toward the size of the books in the pile"
+   }
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "greenscreen_book",
+   "capcut_feature": "Keyframes",
+   "params": {
+    "property": "position",
+    "note": "first frame: set a position keyframe at the pile; end frame: move it up to its floating spot"
+   },
+   "timing": {
+    "cue": "the float-up"
+   }
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "greenscreen_book",
+   "capcut_feature": "Keyframes",
+   "params": {
+    "property": "rotation",
+    "note": "add a rotation keyframe (creator used about -130 degrees by the end) so the float feels organic"
+   }
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "book layer",
+   "capcut_feature": "Adjustment",
+   "params": {
+    "note": "tint toward the scene's purple + add warmth, slight brightness down so the book integrates"
+   }
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "adjustment layer (over all)",
+   "capcut_feature": "Adjustment → Custom Adjustment",
+   "params": {
+    "note": "optional: add an adjustment layer to color-grade both layers together"
+   }
+  },
+  {
+   "action": "keyframe",
+   "channel": "taste",
+   "target": "exported composite",
+   "capcut_feature": "Keyframes",
+   "params": {
+    "property": "scale",
+    "note": "optional: export, re-import, and keyframe a subtle ~110% push-in for a fake camera move"
+   }
+  }
+ ],
+ "result": {
+  "description": "Book floats up from the pile with a natural rotation, color-matched to the scene.",
+  "success_criteria": [
+   "Clean green key with no edge fringing on the book",
+   "Smooth float + rotation (deselect layer to remove jitter)",
+   "Book color blends into the scene"
+  ]
+ },
+ "narration_transcript": "Okay so here we are in CapCut Desktop. I've got my two pieces of footage imported already. There's my background and my foreground image so this is a picture of a book I took just on some green construction paper. I'm gonna go ahead and import my background and let me zoom in, command plus gonna bring my green screen shot so this is just an image and I'm gonna show you how to separate this book from the the green right there.\n\nSo what we wanna do is first let's extend this to the same length. Okay. We want to have this clip selected then come up to mask no sorry come up to remove background, check chroma key and then use this color picker tool and we want to select the green color but when you have a range of colors here so it's not all flat lighting. We have lighter green and darker green we kind of want to choose one of the middle ground.\n\nSo when we select that you can see I selected that green color and then we want to start pulling the intensity up slowly just to get enough to get rid of the green. I'm gonna pull it up a little too far and then try to bring it back. Okay if you go too far it starts removing the blues and anything that has any type of green in it okay so about right there and then since it did remove some of this reflective blue in here we can fill that in with the shadow. Okay so now we have our key done then we wanna come over to mask and we're gonna choose rectangle mask and what's happening if you pull it back up it's basically just cropping our image so that we don't see the border up there.\n\nSo we're gonna wanna crop that you can see the sides over here too and we're definitely gonna wanna add at least a little bit of feather this is gonna smooth the edges of our mask even though you can't see them there still might be some type of line there so we just wanna make sure to get rid of us all I'll put that up to a 2 and then you can see the feathered edge right there but I'll pull it right outside of the book. Okay. So what I've done here let me go back to so I can't move this it's got the mask selected so we're gonna wanna unselect this mask to be able to move our layer so I need to come back over to basic and now I can move the mask around sorry I can move the layer around the mask is locked in so you can see down here you can still see a little bit of the layer so actually I'm gonna I'll show you so down here we have an issue I'll come back into the mask .and\n\nthat's because the feather is revealing that So we just wanna pull it in closer and just make sure the top is the same. Okay that should do it. Okay so what I've done here is I just put a few books back here on the couch just to kind of help with the storytelling so the the idea is that the book is floating up from this pile of books so what we're gonna wanna do to create this animation is use keyframes I'll come back over to basic. So now we have control over the book so we're gonna create an animation to make it float from down here up to here and we're gonna use keyframes to do that.\n\nSo first we want to scale the book down and make it a little bit closer to the size of its friends down there so I'll go about right there so we can still see it and what I wanna do is go to the very first frame and on the position right here we're gonna click this diamond to set a keyframe. So now anywhere we go over here if we move this book you're gonna see a new keyframe get set right here so if I move it over here there's a keyframe and it's recording the position so now it's gonna move from that position to that position okay that's not where we want it but so I'll go ahead and move it up here.\n\nI think I want it right about there and I'm actually gonna move this keyframe to the end you can slide it around afterwards. Let's see how our timing is it's pretty slow. I think I will shorten it so I'm gonna bring my keyframe over here and then I'm gonna shorten the layer right up to the keyframe and shorten this. We want the length of these layers to match and I will zoom in.\n\nOkay so what we have here you can see this jitter that's because I have the layer selected if you want to get rid of that just deselect the layer by clicking somewhere in here and then when you hit play it's smooth. Okay so there's our basic floating book if you wanna make it feel a little bit more organic what we can do is come back in and I'm gonna set another keyframe and have it rotate a little bit as it floats up. So I'll set my keyframe up here on the rotate setting and then if I go to the end I can either scroll to the end or I can just hit the down arrow on my keyboard and it jumps to the last frame and then I can either dial it in here or I can grab it here to make it rotate and what it's gonna do is automatically set that keyframe because we already put a keyframe at the beginning.\n\nSo now hit play and it floats up and has a rotation so it feels a little bit more natural. Okay so if we want to start playing with the colors just to kind of make this book it feels a little bit bright maybe like it doesn't fit in the scene. What we can do is what this book layer selected come over to adjustment up here at the top and then let's see. I think if I shift the tent of it a little bit since there's some purple back here it might feel a little bit more integrated into the scene so you can see if I pull this over it goes way purple.\n\nSo I like to kind of jam it way over and see how far it goes to make sure the effects working and then pull it back to where it feels a little bit more natural like that. Add some warmth to it. It's a little bit bright if you look at the whites down here I can bring the brightness down just the hair and maybe that's too much purple let's pull back a little bit. Okay so since I have this layer selected any adjustments I make are only being affected on this book layer.\n\nIf we wanted to make some adjustments and affect both layers what we could do is come up here to the top and click the adjustment panel and then under custom adjustment hit the plus sign. What this does is creates an adjustment layer and anything that we put on this will affect everything underneath. So this is its own layer it's invisible but if you see now when we make adjustments it's affecting both layers. It doesn't matter how many layers you have it affects everything underneath it.\n\nOkay. So let me zoom back out I would say we could probably brighten up the scene a little bit so if I wanna do that over the whole thing you could try the auto adjust that is a pro feature but just to click it and see what it does little too bright for my liking I like to have more control so I'd say I could just come down and just boost the exposure a little bit and like I said I like to push it too far and then pull it back. Okay. Okay so when we hit play let's see what we got.\n\nFloating book. Cool so that's the basics if we wanna take it a little bit further have some more fun with it we can come back over to our video tab and then maybe go to that last frame and let's say we just wanted it to rotate a bunch let's go like negative 500. So now what it's gonna do is rotate a lot faster and that's too much but just kind of showing you different options definitely way too much. So I'd go with like negative 130.\n\nSee what that gets us. Yeah that's cool. Alright so let's add a couple more things. It's a little hard to read our scene is a little bit a little bit zoomed out there so couple things we could do.\n\nI can take this bottom layer and I can actually just scale that up a little bit so we're a little closer and then scoot it over here so we can still see Mr Giraffeey. Okay so with that being pulled up we can have our book a little bit larger. Oops and do that. Select the book and we'll just bump his scale a little bit more and then he's off center so with it selected I can I can slide my position over as long as I'm hovering over that keyframe that already exists then it'll replace the keyframe.\n\nSo we're gonna put it back over here. Right above the books and then I'm gonna hit down on my keyboard to jump to the end and that might work like that let me see. Okay still too much rotation for me. Let's bring it back maybe like that.\n\nJust gonna scoot it over to the right like we did. Okay another thing you could do is if you did want it to be a little bit more legible let me scale it down in the beginning and then so it'll automatically adjust that keyframe that we have. If you look at the keyframes on the right over here you'll see when I go back to the first keyframe sorry to the first frame where our keyframes were set they're blue that means that there's an active keyframe at that spot when I go to the next frame they're no longer blue. So when you wanna make adjustments make sure that you're on the right key on the right frame.\n\nOkay so what I'm gonna do is jump to the end and then let's try and just scale this book up and see how that looks oh I didn't set my keyframe okay so I'm gonna undo control z, select layer then I want to set a keyframe on my scale parameter right here then go to the end and scale the book up a little bit. So that makes it a little bit more legible. Okay and let's hit play. Bring it down a little bit.\n\nCool alright. So since we are shooting on a tripod the shots a little bit boring obviously doesn't have music so that will help a lot when we add audio music but something that we can do is we can actually export this and add a fake camera move just to kind of bring it to life a little bit so I'm gonna come up to the top and hit export and book floats demo. I usually always put the date in my renders but since this is not an actual render not gonna worry about that okay okay export. So here's our animated render right there.\n\nLooks pretty cool. Not bad of a cut out for using construction paper okay. So what we're gonna do is we're gonna re import this so I'm gonna open the folder here and we wanna come back over to here and go to our import tab and we'll bring this export back in okay so a couple things we could do here if you wanted to you can start a new project and import that you could delete these layers and bring it down on this timeline what I like to do is just bring it down after and what happens inside of CapCut is when you have layers when you go to export it automatically sets the output sorry the outpoint to the last frame that exists so right now if we if we clicked export it would export all of this all the way until this last frame but you can tell CapCut where the inpoint and outpoint is.\n\nSo by default I'll show you by hitting I the beginning it's gonna set the end point and then if I come to the end of this and I click 0 it sets the outpoint so now in between this in and out point is what's going to render when I click the export button. So what I can do if I wanna save this stuff just in case I wanted to mess with it later is I can just come to my layer here and type 0 sorry N. I for N. Little tired over here and come to the last frame and then do O.\n\nSo now that we have our in and out point here when we type when we tap export it's just gonna save this portion right here okay. So let's go to our first frame and I'm gonna come up to scale and we're gonna set a keyframe on the scale and I'll hit down to jump to the end of it and I'll say let's I'll do a big scale up just so you can see what's happening so now not only do we have the floating book but now we've added this fake camera motion. Just to add another level of aliveness to it so that for me that's too much of a move it definitely feels fake but what we're trying to accomplish here is just giving it a little bit of movement to make it feel like it's not sitting on a tripod so what I'll do is in the rule of thumb for me I usually go 10% so I'm gonna go ahead and type 110 here.\n\nSo we're only zooming out from 100% 210 so you can see the corners here you can see it zooming in it's more subtle but that works for what I'm trying to do. Alright so go ahead and give this exercise a try I'll leave the footage layers down below and let me know if you have any questions.",
+ "frames": {
+  "demo": [],
+  "editing": []
+ }
+}

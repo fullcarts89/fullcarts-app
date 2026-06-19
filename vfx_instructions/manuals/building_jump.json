@@ -1,0 +1,102 @@
+{
+ "schema_version": 1,
+ "manual_type": "effect",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "sparse_source": true,
+ "id": "building_jump",
+ "technique_primitive": "speed_ramp_transition",
+ "title": "Building Jump",
+ "difficulty": "intermediate",
+ "gear_required": [],
+ "props_required": [],
+ "result_description": "You jump up out of one location and drop into another, cut together at the apex into one continuous super-jump.",
+ "inputs": [
+  {
+   "name": "jump_up_A",
+   "what_to_film": "Location A: film yourself crouching and JUMPING UP, exiting the top of frame.",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_duration"
+   ],
+   "variance_tolerance": {}
+  },
+  {
+   "name": "drop_in_B",
+   "what_to_film": "Location B: film yourself DROPPING INTO frame and landing, matching the same body angle. Match framing and motion direction at the cut point (the apex of the jump).",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_duration"
+   ],
+   "variance_tolerance": {}
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "jump_up_A, drop_in_B"
+  },
+  {
+   "action": "position",
+   "channel": "structural",
+   "target": "clips",
+   "params": {
+    "note": "place clip A then clip B on the timeline"
+   }
+  },
+  {
+   "action": "trim",
+   "channel": "taste",
+   "target": "jump_up_A",
+   "params": {
+    "note": "trim to the moment you leave frame at the top"
+   }
+  },
+  {
+   "action": "trim",
+   "channel": "taste",
+   "target": "drop_in_B",
+   "params": {
+    "note": "trim the start to the moment you enter from the top"
+   }
+  },
+  {
+   "action": "split",
+   "channel": "taste",
+   "target": "cut point",
+   "params": {
+    "note": "cut them together at that apex so the match cut makes one continuous super-jump"
+   }
+  },
+  {
+   "action": "speed",
+   "channel": "taste",
+   "target": "cut point",
+   "capcut_feature": "Speed",
+   "params": {
+    "note": "add a tiny speed ramp for punch; add a whoosh/impact SFX on the landing"
+   }
+  }
+ ],
+ "result": {
+  "description": "One seamless super-jump from location A to location B.",
+  "success_criteria": [
+   "Cut is hidden at the jump apex",
+   "Body angle/motion direction match across the cut",
+   "Landing punctuated by SFX"
+  ]
+ },
+ "narration_transcript": "",
+ "frames": {
+  "demo": [
+   "assets/building_jump/demoframe_0.jpg",
+   "assets/building_jump/demoframe_1.jpg",
+   "assets/building_jump/demoframe_2.jpg"
+  ],
+  "editing": []
+ }
+}

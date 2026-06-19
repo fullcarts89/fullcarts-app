@@ -1,22 +1,190 @@
 {
  "schema_version": 1,
- "count": 15,
+ "count": 60,
  "manuals": [
+  {
+   "id": "3_clones",
+   "title": "3 Clones",
+   "manual_type": "effect",
+   "technique_primitive": "overlay_bg_removal_clone",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/3_clones.json"
+  },
+  {
+   "id": "3_product_reveal",
+   "title": "3 Product Reveal",
+   "manual_type": "effect",
+   "technique_primitive": "mask_transition",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [
+    "product"
+   ],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/3_product_reveal.json"
+  },
   {
    "id": "ai_location_transition",
    "title": "AI Location Transition (First/Last Frame)",
+   "manual_type": "effect",
    "technique_primitive": "other",
    "difficulty": "intermediate",
    "is_ai_generated": true,
    "gear_required": [],
    "props_required": [],
    "tool": "OpenArt / Kling (AI)",
+   "source": "Karen X (@169385)",
    "draft": false,
+   "status": null,
    "file": "manuals/ai_location_transition.json"
+  },
+  {
+   "id": "animating_text",
+   "title": "Animating Text",
+   "manual_type": "stub",
+   "technique_primitive": null,
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": null,
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": "no_source_steps",
+   "file": "manuals/animating_text.json"
+  },
+  {
+   "id": "appear_bonus",
+   "title": "Appear (Bonus)",
+   "manual_type": "effect",
+   "technique_primitive": "clean_plate_mask_reveal",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/appear_bonus.json"
+  },
+  {
+   "id": "ball_transition",
+   "title": "Ball Transition",
+   "manual_type": "effect",
+   "technique_primitive": "mask_transition",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [
+    "ping_pong_ball",
+    "egg",
+    "frying_pan",
+    "soft_cloth",
+    "stove"
+   ],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/ball_transition.json"
+  },
+  {
+   "id": "building_jump",
+   "title": "Building Jump",
+   "manual_type": "effect",
+   "technique_primitive": "speed_ramp_transition",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/building_jump.json"
+  },
+  {
+   "id": "capcut_crash_course_desktop_app",
+   "title": "Capcut Crash Course - Desktop App",
+   "manual_type": "reference",
+   "technique_primitive": null,
+   "difficulty": "foundation",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": null,
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": "course_lesson",
+   "file": "manuals/capcut_crash_course_desktop_app.json"
+  },
+  {
+   "id": "capcut_crash_course_intro",
+   "title": "Capcut Crash Course - Intro",
+   "manual_type": "reference",
+   "technique_primitive": null,
+   "difficulty": "foundation",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": null,
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": "course_lesson",
+   "file": "manuals/capcut_crash_course_intro.json"
+  },
+  {
+   "id": "capcut_crash_course_layers_masking",
+   "title": "Capcut Crash Course - Layers & Masking",
+   "manual_type": "reference",
+   "technique_primitive": null,
+   "difficulty": "foundation",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": null,
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": "course_lesson",
+   "file": "manuals/capcut_crash_course_layers_masking.json"
+  },
+  {
+   "id": "capcut_crash_course_mobile_app",
+   "title": "Capcut Crash Course - Mobile App",
+   "manual_type": "reference",
+   "technique_primitive": null,
+   "difficulty": "foundation",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": null,
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": "course_lesson",
+   "file": "manuals/capcut_crash_course_mobile_app.json"
   },
   {
    "id": "clone_effect_talking_head",
    "title": "Clone Effect (Talking-Head, Auto BG Removal)",
+   "manual_type": "effect",
    "technique_primitive": "overlay_bg_removal_clone",
    "difficulty": "beginner",
    "is_ai_generated": false,
@@ -28,12 +196,129 @@
     "chair"
    ],
    "tool": "CapCut",
+   "source": "Elly Walton (@elly.walton)",
    "draft": false,
+   "status": null,
    "file": "manuals/clone_effect_talking_head.json"
+  },
+  {
+   "id": "clothing_appear",
+   "title": "Clothing Appear",
+   "manual_type": "effect",
+   "technique_primitive": "clean_plate_mask_reveal",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [
+    "jacket"
+   ],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/clothing_appear.json"
+  },
+  {
+   "id": "costume_fly_in",
+   "title": "Costume Fly-in Effect",
+   "manual_type": "stub",
+   "technique_primitive": null,
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": null,
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": "no_source_steps",
+   "file": "manuals/costume_fly_in.json"
+  },
+  {
+   "id": "deepdive_cloning_level_02",
+   "title": "Cloning - Level 02 (Deep Dive)",
+   "manual_type": "deep_dive",
+   "technique_primitive": null,
+   "difficulty": "foundation",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": null,
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": "commentary",
+   "file": "manuals/deepdive_cloning_level_02.json"
+  },
+  {
+   "id": "deepdive_cloning_level_03",
+   "title": "Cloning - Level 03 (Deep Dive)",
+   "manual_type": "deep_dive",
+   "technique_primitive": null,
+   "difficulty": "foundation",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": null,
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": "commentary",
+   "file": "manuals/deepdive_cloning_level_03.json"
+  },
+  {
+   "id": "deepdive_floating_object_level_01",
+   "title": "Floating Object - Level 01 (Deep Dive)",
+   "manual_type": "deep_dive",
+   "technique_primitive": null,
+   "difficulty": "foundation",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": null,
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": "commentary",
+   "file": "manuals/deepdive_floating_object_level_01.json"
+  },
+  {
+   "id": "deepdive_keyframes_full_live_demo",
+   "title": "Keyframes (Full Live Demo) (Deep Dive)",
+   "manual_type": "deep_dive",
+   "technique_primitive": null,
+   "difficulty": "foundation",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": null,
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": "commentary",
+   "file": "manuals/deepdive_keyframes_full_live_demo.json"
+  },
+  {
+   "id": "dr_strange_portal",
+   "title": "Dr. Strange Portal",
+   "manual_type": "effect",
+   "technique_primitive": "mask_transition",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [
+    "tripod_marker_card",
+    "portal_stock_footage"
+   ],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/dr_strange_portal.json"
   },
   {
    "id": "flash_effect_clean_plate",
    "title": "Flash Effect (Clean Plate)",
+   "manual_type": "effect",
    "technique_primitive": "clean_plate_mask_reveal",
    "difficulty": "intermediate",
    "is_ai_generated": false,
@@ -42,12 +327,51 @@
    ],
    "props_required": [],
    "tool": "CapCut",
+   "source": "Harry Allsop | VFX Creator (@67795363025)",
    "draft": false,
+   "status": null,
    "file": "manuals/flash_effect_clean_plate.json"
+  },
+  {
+   "id": "flashlight_costume_change",
+   "title": "Flashlight Costume Change",
+   "manual_type": "stub",
+   "technique_primitive": null,
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": null,
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": "no_source_steps",
+   "file": "manuals/flashlight_costume_change.json"
+  },
+  {
+   "id": "floating_book",
+   "title": "Floating Book",
+   "manual_type": "effect",
+   "technique_primitive": "chroma_key",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod",
+    "green_screen"
+   ],
+   "props_required": [
+    "book",
+    "green paper (construction paper backdrop)"
+   ],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/floating_book.json"
   },
   {
    "id": "floating_mini_clone",
    "title": "Floating Mini-Clone (Jump + Slow-Mo Overlay)",
+   "manual_type": "effect",
    "technique_primitive": "keyframe_motion",
    "difficulty": "intermediate",
    "is_ai_generated": false,
@@ -56,60 +380,397 @@
    ],
    "props_required": [],
    "tool": "CapCut",
+   "source": "Horla_dap0 Visualz (@14772383154)",
    "draft": false,
+   "status": null,
    "file": "manuals/floating_mini_clone.json"
   },
   {
    "id": "floating_outfit_effect",
    "title": "Floating Outfit Effect (AI)",
+   "manual_type": "effect",
    "technique_primitive": "other",
    "difficulty": "intermediate",
    "is_ai_generated": true,
    "gear_required": [],
    "props_required": [],
    "tool": "Higgsfield (AI)",
+   "source": "Karen X (@169385)",
    "draft": false,
+   "status": null,
    "file": "manuals/floating_outfit_effect.json"
+  },
+  {
+   "id": "fly_like_superman",
+   "title": "Fly like Superman",
+   "manual_type": "effect",
+   "technique_primitive": "keyframe_motion",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/fly_like_superman.json"
+  },
+  {
+   "id": "flying_book",
+   "title": "Flying Book",
+   "manual_type": "effect",
+   "technique_primitive": "chroma_key",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod",
+    "green_screen"
+   ],
+   "props_required": [
+    "book",
+    "fishing line",
+    "tape",
+    "soft box / single light source"
+   ],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/flying_book.json"
+  },
+  {
+   "id": "getting_started",
+   "title": "Getting Started",
+   "manual_type": "reference",
+   "technique_primitive": null,
+   "difficulty": "foundation",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": null,
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": "course_lesson",
+   "file": "manuals/getting_started.json"
   },
   {
    "id": "giant_effect_ai",
    "title": "Giant Effect (Higgsfield AI from a photo)",
+   "manual_type": "effect",
    "technique_primitive": "other",
    "difficulty": "beginner",
    "is_ai_generated": true,
    "gear_required": [],
    "props_required": [],
    "tool": "Higgsfield (AI)",
+   "source": "Karen X (@169385)",
    "draft": false,
+   "status": null,
    "file": "manuals/giant_effect_ai.json"
+  },
+  {
+   "id": "house_pond",
+   "title": "House Pond",
+   "manual_type": "effect",
+   "technique_primitive": "blend_composite",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/house_pond.json"
+  },
+  {
+   "id": "hyperspeed_effect",
+   "title": "HyperSpeed Effect",
+   "manual_type": "effect",
+   "technique_primitive": "speed_ramp_transition",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/hyperspeed_effect.json"
+  },
+  {
+   "id": "intro_to_keyframes",
+   "title": "Intro to Keyframes",
+   "manual_type": "reference",
+   "technique_primitive": null,
+   "difficulty": "foundation",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": null,
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": "course_lesson",
+   "file": "manuals/intro_to_keyframes.json"
+  },
+  {
+   "id": "jacket_vanish",
+   "title": "Jacket Vanish (solo, clean-plate + mask)",
+   "manual_type": "effect",
+   "technique_primitive": "keyframe_motion",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "Kayo Daniel | Learn, create, monetize, grow (@70269079851)",
+   "draft": true,
+   "status": null,
+   "file": "manuals/jacket_vanish.json"
+  },
+  {
+   "id": "jump_cuts",
+   "title": "Jump Cuts",
+   "manual_type": "effect",
+   "technique_primitive": "match_cut",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/jump_cuts.json"
+  },
+  {
+   "id": "jump_in_cup",
+   "title": "Jump in Cup",
+   "manual_type": "effect",
+   "technique_primitive": "speed_ramp_transition",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [
+    "coffee cup",
+    "beach ball (alignment marker)"
+   ],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/jump_in_cup.json"
+  },
+  {
+   "id": "kick_away",
+   "title": "Kick Away",
+   "manual_type": "effect",
+   "technique_primitive": "keyframe_motion",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/kick_away.json"
+  },
+  {
+   "id": "liquid_from_an_object",
+   "title": "Liquid from an Object",
+   "manual_type": "effect",
+   "technique_primitive": "blend_composite",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [
+    "clear glass cup",
+    "coffee (or pourable liquid)",
+    "phone"
+   ],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/liquid_from_an_object.json"
+  },
+  {
+   "id": "magic_pole_transition",
+   "title": "Magic Pole Transition",
+   "manual_type": "effect",
+   "technique_primitive": "mask_transition",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [
+    "pole",
+    "two_outfits"
+   ],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/magic_pole_transition.json"
+  },
+  {
+   "id": "make_an_object_appear",
+   "title": "Make an Object Appear",
+   "manual_type": "effect",
+   "technique_primitive": "clean_plate_mask_reveal",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [
+    "cup"
+   ],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/make_an_object_appear.json"
+  },
+  {
+   "id": "mirror_costume_change",
+   "title": "Mirror Costume Change",
+   "manual_type": "stub",
+   "technique_primitive": null,
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": null,
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": "no_source_steps",
+   "file": "manuals/mirror_costume_change.json"
+  },
+  {
+   "id": "moving_object",
+   "title": "Moving Object",
+   "manual_type": "effect",
+   "technique_primitive": "keyframe_motion",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [
+    "object"
+   ],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/moving_object.json"
+  },
+  {
+   "id": "object_from_portal",
+   "title": "Object from Portal",
+   "manual_type": "effect",
+   "technique_primitive": "mask_transition",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [
+    "portal overlay clip",
+    "object to reveal"
+   ],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/object_from_portal.json"
+  },
+  {
+   "id": "object_reveal",
+   "title": "Object Reveal",
+   "manual_type": "effect",
+   "technique_primitive": "clean_plate_mask_reveal",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/object_reveal.json"
+  },
+  {
+   "id": "object_switch",
+   "title": "Object Switch",
+   "manual_type": "effect",
+   "technique_primitive": "clean_plate_mask_reveal",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [
+    "object_a",
+    "object_b"
+   ],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/object_switch.json"
   },
   {
    "id": "pendulum_effect_ai",
    "title": "Pendulum Effect (Higgsfield AI from a photo)",
+   "manual_type": "effect",
    "technique_primitive": "other",
    "difficulty": "beginner",
    "is_ai_generated": true,
    "gear_required": [],
    "props_required": [],
    "tool": "Higgsfield (AI) + CapCut",
+   "source": "Karen X (@169385)",
    "draft": false,
+   "status": null,
    "file": "manuals/pendulum_effect_ai.json"
   },
   {
    "id": "perspective_effect",
    "title": "Perspective Effect (White-Screen Depth)",
+   "manual_type": "effect",
    "technique_primitive": "text_reveal",
    "difficulty": "beginner",
    "is_ai_generated": false,
    "gear_required": [],
    "props_required": [],
    "tool": "CapCut",
+   "source": "inmenta (@69529759015)",
    "draft": false,
+   "status": null,
    "file": "manuals/perspective_effect.json"
   },
   {
    "id": "phone_hologram",
    "title": "Phone Hologram (Pull Screen Into Air)",
+   "manual_type": "effect",
    "technique_primitive": "keyframe_motion",
    "difficulty": "intermediate",
    "is_ai_generated": false,
@@ -120,12 +781,15 @@
     "phone"
    ],
    "tool": "CapCut",
+   "source": "Harry Allsop | VFX Creator (@67795363025)",
    "draft": false,
+   "status": null,
    "file": "manuals/phone_hologram.json"
   },
   {
    "id": "printed_sticker_flying_object",
    "title": "Flying Object via Printed Sticker + Green Paper",
+   "manual_type": "effect",
    "technique_primitive": "chroma_key",
    "difficulty": "intermediate",
    "is_ai_generated": false,
@@ -139,12 +803,30 @@
     "tape"
    ],
    "tool": "Practical + CapCut",
+   "source": "Steven Wommack (@549671804)",
    "draft": false,
+   "status": null,
    "file": "manuals/printed_sticker_flying_object.json"
+  },
+  {
+   "id": "screen_pop_out",
+   "title": "Screen Pop Out",
+   "manual_type": "stub",
+   "technique_primitive": null,
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": null,
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": "no_source_steps",
+   "file": "manuals/screen_pop_out.json"
   },
   {
    "id": "screen_pop_out_push",
    "title": "Screen Pop-Out (Push Toward Camera)",
+   "manual_type": "effect",
    "technique_primitive": "other",
    "difficulty": "beginner",
    "is_ai_generated": false,
@@ -153,12 +835,15 @@
    ],
    "props_required": [],
    "tool": "CapCut",
+   "source": "˗ˏˋ celina ˎˊ˗ (@8887399639)",
    "draft": false,
+   "status": null,
    "file": "manuals/screen_pop_out_push.json"
   },
   {
    "id": "scrunch_paper_reveal",
    "title": "Scrunch Paper Reveal Intro",
+   "manual_type": "effect",
    "technique_primitive": "other",
    "difficulty": "beginner",
    "is_ai_generated": false,
@@ -170,12 +855,79 @@
     "dark background"
    ],
    "tool": "CapCut",
+   "source": "˗ˏˋ celina ˎˊ˗ (@8887399639)",
    "draft": false,
+   "status": null,
    "file": "manuals/scrunch_paper_reveal.json"
+  },
+  {
+   "id": "sky_transition",
+   "title": "Sky Transition",
+   "manual_type": "effect",
+   "technique_primitive": "mask_transition",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/sky_transition.json"
+  },
+  {
+   "id": "spray_reveal",
+   "title": "Spray Reveal",
+   "manual_type": "stub",
+   "technique_primitive": null,
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": null,
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": "no_source_steps",
+   "file": "manuals/spray_reveal.json"
+  },
+  {
+   "id": "stomp_effect",
+   "title": "Stomp Effect",
+   "manual_type": "effect",
+   "technique_primitive": "keyframe_motion",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/stomp_effect.json"
+  },
+  {
+   "id": "storm_clouds",
+   "title": "Storm Clouds",
+   "manual_type": "effect",
+   "technique_primitive": "blend_composite",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/storm_clouds.json"
   },
   {
    "id": "talking_head_match_cut",
    "title": "Talking-Head Shot Variety (Match Cut)",
+   "manual_type": "effect",
    "technique_primitive": "match_cut",
    "difficulty": "beginner",
    "is_ai_generated": false,
@@ -184,12 +936,15 @@
    ],
    "props_required": [],
    "tool": "Filming technique (no VFX app)",
+   "source": "Julia Gao Miller (@183501901)",
    "draft": false,
+   "status": null,
    "file": "manuals/talking_head_match_cut.json"
   },
   {
    "id": "tap_synced_text",
    "title": "Tap-Synced Text Animation (Keyframes)",
+   "manual_type": "effect",
    "technique_primitive": "text_reveal",
    "difficulty": "intermediate",
    "is_ai_generated": false,
@@ -198,12 +953,15 @@
    ],
    "props_required": [],
    "tool": "CapCut",
+   "source": "Colin Pomeroy (@321857083)",
    "draft": false,
+   "status": null,
    "file": "manuals/tap_synced_text.json"
   },
   {
    "id": "text_behind_subject",
    "title": "Text Appears Behind You (Masked Subject)",
+   "manual_type": "effect",
    "technique_primitive": "text_reveal",
    "difficulty": "beginner",
    "is_ai_generated": false,
@@ -212,8 +970,63 @@
    ],
    "props_required": [],
    "tool": "CapCut",
+   "source": "Sydney Mohni 🏳️‍🌈 UGC Creator & Coach (@53585408420)",
    "draft": false,
+   "status": null,
    "file": "manuals/text_behind_subject.json"
+  },
+  {
+   "id": "time_warp",
+   "title": "Time Warp",
+   "manual_type": "effect",
+   "technique_primitive": "keyframe_motion",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/time_warp.json"
+  },
+  {
+   "id": "wall_hologram",
+   "title": "Wall Hologram",
+   "manual_type": "effect",
+   "technique_primitive": "keyframe_motion",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/wall_hologram.json"
+  },
+  {
+   "id": "your_1st_cloning_video",
+   "title": "Your 1st Cloning Video",
+   "manual_type": "effect",
+   "technique_primitive": "overlay_bg_removal_clone",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [
+    "tripod_markers"
+   ],
+   "tool": "CapCut",
+   "source": "viral_vfx_vault",
+   "draft": false,
+   "status": null,
+   "file": "manuals/your_1st_cloning_video.json"
   }
  ]
 }

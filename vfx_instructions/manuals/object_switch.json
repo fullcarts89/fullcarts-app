@@ -1,0 +1,110 @@
+{
+ "id": "object_switch",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "clean_plate_mask_reveal",
+ "title": "Object Switch",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "object_a",
+  "object_b"
+ ],
+ "result_description": "An object held in frame transforms into a different object the instant a hand wipes across it.",
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "inputs": [
+  {
+   "name": "object_a_clip",
+   "what_to_film": "Lock the camera. Hold object A still in frame, then pass a hand / quick motion across the object (or briefly cover it).",
+   "capture_requirements": {
+    "locked_off": true,
+    "hand_fully_covers_object": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "object_fully_covered_at_wipe"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "object_b_clip",
+   "what_to_film": "Without moving the camera, swap to object B in the exact same position and repeat the same hand motion.",
+   "capture_requirements": {
+    "locked_off": true,
+    "same_position_as_object_a": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "object_fully_covered_at_wipe"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "object_a_clip, object_b_clip"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "object_a_clip",
+   "capcut_feature": "Split",
+   "params": {
+    "note": "cut at the frame where the hand fully covers the object (the wipe moment)"
+   }
+  },
+  {
+   "action": "position",
+   "channel": "structural",
+   "target": "object_b_clip",
+   "params": {
+    "note": "place object B's clip right after the cut so its hand-reveal lines up with object A's wipe"
+   }
+  },
+  {
+   "action": "trim",
+   "channel": "taste",
+   "target": "both clips",
+   "params": {
+    "note": "nudge the cut so the hand position matches across the switch"
+   }
+  },
+  {
+   "action": "audio",
+   "channel": "taste",
+   "target": "the switch",
+   "params": {
+    "note": "add a magic / whoosh SFX on the switch"
+   }
+  }
+ ],
+ "result": {
+  "description": "Object A appears to morph into object B under the passing hand.",
+  "success_criteria": [
+   "Hand position matches across the cut",
+   "Object B sits in the same spot as object A"
+  ]
+ },
+ "narration_transcript": "",
+ "frames": {
+  "demo": [
+   "assets/object_switch/demoframe_0.jpg",
+   "assets/object_switch/demoframe_1.jpg",
+   "assets/object_switch/demoframe_2.jpg"
+  ],
+  "editing": []
+ },
+ "sparse_source": true
+}

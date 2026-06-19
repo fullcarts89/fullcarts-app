@@ -1,0 +1,88 @@
+{
+ "schema_version": 1,
+ "manual_type": "effect",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "sparse_source": true,
+ "id": "3_product_reveal",
+ "technique_primitive": "mask_transition",
+ "title": "3 Product Reveal",
+ "difficulty": "intermediate",
+ "gear_required": [],
+ "props_required": [
+  "product"
+ ],
+ "result_description": "Three products reveal one after another via quick beat-synced transitions, each with a text/price callout.",
+ "inputs": [
+  {
+   "name": "product_clips",
+   "what_to_film": "Film a short clip of each product (or each angle) with identical framing and lighting. Add a consistent motion you can transition on — e.g. swipe a hand across, or a quick push toward the lens.",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_duration"
+   ],
+   "variance_tolerance": {}
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "product_clips"
+  },
+  {
+   "action": "position",
+   "channel": "structural",
+   "target": "product_clips",
+   "params": {
+    "note": "lay the 3 product clips in sequence"
+   }
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "between clips",
+   "capcut_feature": "Transitions",
+   "params": {
+    "note": "add a quick transition (zoom/spin/swipe) timed to the motion or a beat"
+   }
+  },
+  {
+   "action": "audio",
+   "channel": "taste",
+   "target": "timeline",
+   "params": {
+    "note": "sync the cuts to a trending audio track's beats"
+   }
+  },
+  {
+   "action": "text",
+   "channel": "ui",
+   "target": "each reveal",
+   "capcut_feature": "Text",
+   "params": {
+    "note": "add text/price callouts on each reveal"
+   }
+  }
+ ],
+ "result": {
+  "description": "Three products revealed in a snappy beat-synced sequence with callouts.",
+  "success_criteria": [
+   "Transitions land on the motion/beat",
+   "Consistent framing across products",
+   "Each product has a text/price callout"
+  ]
+ },
+ "narration_transcript": "",
+ "frames": {
+  "demo": [
+   "assets/3_product_reveal/demoframe_0.jpg",
+   "assets/3_product_reveal/demoframe_1.jpg",
+   "assets/3_product_reveal/demoframe_2.jpg"
+  ],
+  "editing": []
+ }
+}

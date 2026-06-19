@@ -1,0 +1,134 @@
+{
+ "id": "object_reveal",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "clean_plate_mask_reveal",
+ "title": "Object Reveal",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "As you walk across frame, text or a logo is revealed on the wall behind you — appearing in your wake while you pass in front of it.",
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "inputs": [
+  {
+   "name": "walk_clip",
+   "what_to_film": "On a locked-off camera, walk across the frame using your eyeline to look at the empty spot where the text/logo will be revealed.",
+   "capture_requirements": {
+    "locked_off": true,
+    "note": "single take; pre-focus on where you'll stand"
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "min_duration"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8,
+    "min_seconds": 3
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "walk_clip"
+  },
+  {
+   "action": "text",
+   "channel": "ui",
+   "target": "text/logo (or sticker)",
+   "capcut_feature": "Text",
+   "params": {
+    "note": "add and scale the text/logo/sticker over the wall spot; decide final scale now"
+   }
+  },
+  {
+   "action": "trim",
+   "channel": "structural",
+   "target": "text/logo layer",
+   "params": {
+    "note": "stretch it over the full clip duration so it's static, then export this composite and re-import it as a flattened plate"
+   }
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "target": "walk_clip",
+   "params": {
+    "note": "build a 3-layer sandwich: bottom = original plate, middle = text-baked plate, top = original plate; all in/out points must match"
+   }
+  },
+  {
+   "action": "position",
+   "channel": "structural",
+   "target": "three layers",
+   "capcut_feature": "Layers",
+   "params": {
+    "order": "original (bottom) / text-baked (middle) / original (top)"
+   }
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "top layer",
+   "capcut_feature": "Remove Background → Auto Removal",
+   "params": {
+    "mode": "auto",
+    "note": "cut yourself out so you sit in front of the revealed text"
+   }
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "middle (text-baked) layer",
+   "capcut_feature": "Mask → Horizontal",
+   "params": {
+    "shape": "horizontal",
+    "rotation": "so only one side shows",
+    "feather": "slight",
+    "note": "keep the mask line tucked behind your body; the cutout hides the mask edge"
+   }
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "middle layer mask",
+   "capcut_feature": "Keyframes",
+   "params": {
+    "property": "mask position",
+    "note": "keyframe the mask to follow your body across frame (set few keyframes: start, middle, end, then refine)"
+   },
+   "timing": {
+    "cue": "your body crossing frame"
+   }
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "middle layer mask",
+   "capcut_feature": "Mask → Reverse",
+   "params": {
+    "note": "if it hides instead of reveals, hit Reverse/invert so the text reveals as you walk past"
+   }
+  }
+ ],
+ "result": {
+  "description": "Text/logo is revealed on the wall in the wake of your walk, with you passing in front of it.",
+  "success_criteria": [
+   "Reveal tracks your body cleanly with no visible mask line",
+   "You appear in front of the revealed text via the cutout",
+   "All three layers stay timing-aligned"
+  ]
+ },
+ "narration_transcript": "I'm actually gonna walk the focus on the carpet where I'll be standing. Just to make sure that we're nice and sharp. So this one's a pretty simple move basically just gonna walk across screen and we're gonna reveal the text or logo right behind us. Hey so something to note here the more movement you have with your arms or if you create gaps it's gonna be harder to do to cut out so what you wanna do is if you wanna keep it simple keep your arms to your sides as you move across. I'm getting a couple different shots so that I can choose my favorite and I'm basically acting like as if there was text on the wall right here so I'm gonna use my eyeline and look at the spot where I want the text to be. So go ahead and walk in and as the text reveals I'm looking at it. So for this one that's all we need just the one shot and let's take it inside the edit and I'll show you how we layer it together.\n\nOkay so for this text reveal I went ahead and chose my favorite shot. We're gonna go with this one. Okay so a couple steps involved here so the first thing I wanna do is create my text layer or go ahead and just use my name Okay. So this is what we want we want the text baked into there so what I'm gonna do is actually export this layer.\n\nOkay go back in and then I can import that layer that I just exported and I'm gonna delete my text. So what we're doing here is we have our first layer where the text is baked into the background and then we have our original layer which the timing matches up okay so the starting in points are all the same everything matches so what actually we need to do is we're gonna create a sandwich with the clips so we're gonna have the original plate then we're gonna have our text layer and then we're gonna have our original plate with the cutout. Okay, so we'll take this one and tap overlay to drop that down and then we want to copy our original plate and overlay that move it all the way over.\n\nSo since we set it up this way the start and end points of all these clips match up perfectly. And what we wanna do is now go to this 3rd layer go to cut out and remove background. Okay so now that gives us this effect here and it's done a really good job cutting us out and putting us on top of the text so to finish off this reveal what we actually wanna do is use a mask on the middle layer and let me go ahead and add that and we're gonna do a split mask and we just have to figure out which side we want it. So if we want it revealing from the left then we're gonna rotate our mask this way so that as we're moving across we can animate this mask and it will reveal from the left to right and then the cutout is actually allowing us to hide that mask point so what we're gonna do is go here set a keyframe on the mask and just move through time and move that mask along with our body.\n\nAnd just make sure that it's following some more in the middle and go all the way out. Okay so let's see how that looks. Perfect and that's it. So I'm gonna show you what's going on here.\n\nSo if we come to this third layer and I go to opacity and I toggle that down to zero you can see that it's revealing the text underneath right so that's our top layer. Our middle layer if I go to opacity and I turn that down it's getting rid of the text. Okay. Accidentally set a key frame there gotta be careful of that, okay.\n\nSo if I go to my bottom layer which is my base footage and I turn that down it's actually gonna create a black layer. So this should give you a visualization of what's happening here. Okay so without that original layer back there this is what we're what we've built. Okay so now when we turn this capacity back up to 100 it's gonna fill in that black area and that's it.\n\nOkay here we are inside of CapCut Desktop. I have my chosen shot, down here. So I've already imported that into the timeline and what we wanna do is we wanna reveal some type of object we can use a logo, we can use text, anything we want. So let's go to our text and looks like network error.\n\nOkay can't use text so let's go to stickers. Okay we'll try this follow sticker. So what we want to do is stretch this over the total duration of the clip. Not really like it's animating and get rid of that.\n\nAlright let's use let's use this one instead, it's not bouncing around. Okay so first I'll scale it up I can either do it here or I can do it up here. We can adjust the scale later. No we're gonna bake it in right now so we kind of want to decide on the scale now so I'll move it above this line here.\n\nLet's make it a little bit smaller. Okay so what we're gonna do is we're going to export this clip and then bring it back in. So come up here in the corner to export. Let's go.\n\nTest clip. Subscribe. And I'll put it in my folder there so we're gonna export that and then right here I can click open folder. It'll take me right to there and then I can just bring it back in by dragging it or you can click this button here to import.\n\nOkay so what I like to do is not delete my original so that we can make changes later if we want to. So I'm gonna bring this clip in. First, I will duplicate my original clip. Bring it over here And then what I wanna do is bring this one on top of it.\n\nNow I know the timing matches on these because I exported it from here. Okay. So if I wanted to save this and not export that out what I'll do is I'll come over to this side. Actually let me do this backwards.\n\nLet me grab these guys and move those out of the way. It's not gonna let me do that. Let me grab these guys move those out of the way. So what we have here is we have our original clip on the bottom and we have our clip with the subscribe button baked into it on top.\n\nOkay. What we're gonna do is take this original clip duplicate it and we want it to be on top. So we've now created let me zoom in we've created a sandwich, original, subscribe then original. On this top layer we're gonna come up to video remove background and auto removal.\n\nSo this will remove the background and cut us out. Processing yeah there we go. So you just gotta wait for it to load. Auto cut out complete.\n\nIf you need it to be more accurate to you can use this custom removal which is a pro feature works really well but that's pretty good. So we have ourselves cut out on top of the object. And that looks pretty good. So to make the reveal happen we need to use a mask on this middle layer to reveal the subscribe button as we're walking.\n\nSo we'll come over to mask will do horizontal and we wanna rotate it so that we can see only the right side and we can add a little bit of feather just in case. Little bit of feather usually will always help smooth things out even if you can't tell and I'm just gonna keep this line in between my body so that this is completely hidden the whole time so we need to set a keyframe. So since we're in the middle that'll work come up here click the diamond to set a keyframe and then I'll use my arrows to move forward I don't know let's go forward a little bit faster and I can. What I'm gonna do is I'm gonna go to the end.\n\nMove this to the middle of my body it automatically sets a keyframe down here. So then if we come all the way to the beginning and I move this over it automatically sets a key frame down here and now we're only dealing with three key frames. So what we can do is just come in between these two key frames and just see if it matches up and then it's a little off so we'll move it to the middle of my body and then it should be good we get to that key frame then we wanna move to the middle of these two key frames. And see if it's in the right spot and it's a little bit off so we just push it that way a little bit.\n\nSo now we only have five key frames to deal with. Rather than if we started at the beginning and we add key frames you know all the way through every few frames. So if I hit play actually we did that opposite. Easy fix come to the mask hit reverse and it's going to reveal instead of hide.\n\nSo that what I did right there is with the mask selected with this layer selected up here there's a reverse which actually inverts so you see the other side of the mask. Which is what we want we want it to reveal as I'm walking past. So deselect, hit play. And there you go.\n\nSo let me zoom out for a sec. and I'll just show you what's going on. So we'll split these up so if they're not stacked here's our original then we have our masked layer coming up next. Which is revealing like that then we have our cutout.\n\nIt's good to watch these separately because then you can understand what's happening. So if we stack these on top of each other. You can see how the reveal is happening. So when you do that and then you oops and then you drop this clip underneath both of them it just fills in the right side with the original so the only thing you gotta make sure not to mess up is that the timing matches on all three clips.\n\nOkay so we move things around so you can see they get out of order if that happens you can select these clips and if you're in the basic tab scroll all the way down and there's a layer order and you can just play with the number here. So we want that to be layer 2 and this would be layer one. There you go. That's it",
+ "frames": {
+  "demo": [],
+  "editing": []
+ }
+}

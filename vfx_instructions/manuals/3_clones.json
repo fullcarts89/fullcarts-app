@@ -1,0 +1,131 @@
+{
+ "schema_version": 1,
+ "manual_type": "effect",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "sparse_source": true,
+ "id": "3_clones",
+ "technique_primitive": "overlay_bg_removal_clone",
+ "title": "3 Clones",
+ "difficulty": "intermediate",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "Three copies of you appear in the same locked-off shot at once.",
+ "inputs": [
+  {
+   "name": "take_A",
+   "what_to_film": "Mount your phone on a tripod and frame your scene. Stand/act in position A, then walk out of frame.",
+   "capture_requirements": {
+    "locked_off": true,
+    "note": "lock exposure/focus for every take so lighting matches"
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "take_B",
+   "what_to_film": "Without moving the camera, act in position B, then walk out.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "take_C",
+   "what_to_film": "Act in position C. Keep positions far enough apart that the clones don't overlap.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "take_A, take_B, take_C"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "take_B",
+   "params": {
+    "track": 2
+   }
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "take_C",
+   "params": {
+    "track": 3
+   }
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "take_B",
+   "capcut_feature": "Mask → Rectangle/Brush",
+   "params": {
+    "shape": "rectangle or brush",
+    "area": "over that clone",
+    "feather": "slight"
+   }
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "take_C",
+   "capcut_feature": "Mask → Rectangle/Brush",
+   "params": {
+    "shape": "rectangle or brush",
+    "area": "over that clone",
+    "feather": "slight"
+   }
+  },
+  {
+   "action": "trim",
+   "channel": "taste",
+   "target": "clips",
+   "params": {
+    "note": "trim so the action lines up, then add audio"
+   }
+  }
+ ],
+ "result": {
+  "description": "All three of you appear simultaneously in one shot.",
+  "success_criteria": [
+   "Three clones visible at once",
+   "No mask seams between regions",
+   "Lighting consistent across all three"
+  ]
+ },
+ "narration_transcript": "",
+ "frames": {
+  "demo": [
+   "assets/3_clones/demoframe_0.jpg",
+   "assets/3_clones/demoframe_1.jpg",
+   "assets/3_clones/demoframe_2.jpg"
+  ],
+  "editing": []
+ }
+}

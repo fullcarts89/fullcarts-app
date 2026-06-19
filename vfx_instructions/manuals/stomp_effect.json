@@ -1,0 +1,143 @@
+{
+ "id": "stomp_effect",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "keyframe_motion",
+ "title": "Stomp Effect",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "Each stomp shoves the centered video down the frame, revealing hook text underneath one line at a time.",
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "inputs": [
+  {
+   "name": "main_clip",
+   "what_to_film": "Walk in and stomp several times then jump, looking up to lead the eye toward the reveal. Filmed widescreen (phone sideways on tripod).",
+   "capture_requirements": {
+    "locked_off": true,
+    "note": "shot widescreen on purpose so it sits centered in a 9:16 frame"
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "min_duration"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "main_clip"
+  },
+  {
+   "action": "transform",
+   "channel": "ui",
+   "target": "project",
+   "capcut_feature": "Aspect Ratio",
+   "params": {
+    "ratio": "9:16"
+   },
+   "note": "set the canvas to vertical 9:16; the widescreen clip sits centered with empty space below"
+  },
+  {
+   "action": "position",
+   "channel": "ui",
+   "target": "main_clip",
+   "capcut_feature": "Position",
+   "params": {
+    "x": 0,
+    "y": 0
+   },
+   "note": "zero out position so the clip snaps to center"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "main_clip",
+   "capcut_feature": "Split",
+   "note": "trim the front and tail so it cuts straight into the action"
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "main_clip",
+   "capcut_feature": "Add Marker",
+   "note": "press M on each stomp frame (audio spikes confirm timing) to mark all stomps"
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "main_clip",
+   "capcut_feature": "Keyframes",
+   "params": {
+    "property": "position"
+   },
+   "note": "two frames before each stomp set a locking keyframe, then on the marker drag the clip down"
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "main_clip",
+   "capcut_feature": "Keyframes",
+   "params": {
+    "property": "position",
+    "small_step_px": 60
+   },
+   "note": "small stomps nudge ~60px each (-60, -120, -180); lock-before-then-move so it only jumps on the stomp"
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "main_clip",
+   "capcut_feature": "Keyframes",
+   "params": {
+    "property": "position",
+    "big_step_px": 600
+   },
+   "note": "big jumps move much more (even numbers like -600, -1200) to clear room for the text"
+  },
+  {
+   "action": "text",
+   "channel": "ui",
+   "target": "timeline",
+   "capcut_feature": "Text",
+   "note": "add the hook text in stacked lines (e.g. black on white) positioned so each reveal exposes one line"
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "target": "main_clip",
+   "capcut_feature": "Copy/Paste",
+   "note": "option+drag a copy of the keyframed clip ABOVE the text, exact same timing, so the video covers the text until each stomp slides it away"
+  },
+  {
+   "action": "text",
+   "channel": "taste",
+   "target": "timeline",
+   "capcut_feature": "Text",
+   "note": "optional CTA line (e.g. read the caption) with an arrow emoji pasted in"
+  }
+ ],
+ "result": {
+  "description": "Stomps drive the centered video downward in keyframed steps, progressively uncovering the hook text.",
+  "success_criteria": [
+   "Video only moves on each stomp (locked between keyframes)",
+   "Each step reveals one line of text",
+   "Top copy keeps the text hidden until its stomp"
+  ]
+ },
+ "narration_transcript": "What's up? What's up guys? Alright, so we're going to work on this stomp effect, where we have the video in the middle of the screen. And as you stomp, it kind of slides down the frame, potentially revealing some text or an object. So let's go ahead and jump in. So this is just a quick test clip that I did right here in my driveway. And we're going to want to drag that down. And the first thing to note, actually, let's undo that. The first thing to note is that I shot this in widescreen, which is against what I usually will be recommending, or what is recommended for Instagram reels, TikTok, Facebook reels, all that stuff that we're making YouTube shorts. That type of formatting usually is going to be vertical. In this case, we're specifically shooting this widescreen. So I just turned my phone sideways on the tripod and did the action here. Okay, so for the filming part, just kind of have like a little simple story where I walk in, stomp, stomp, stomp, jump, jump. And then I look up because I know that I'm going to reveal text. So I wanted me looking up as if to draw your eye up to the text also. So there's just some simple notes with the filming, where I was thinking ahead. So we're going to bring this down to our timeline. And it did default to nine by 16. That's because that's what I was in last. But most likely, it's going to default to this, right? And what we want to do is we want to make sure that we're formatting this for social media. So we're going to come here to this aspect ratio setting, click that, and we want to make sure that we're choosing the vertical, which is nine by 16. This would be for any type of short form content. YouTube shorts, TikTok, Facebook Reels, Instagram Reels, we want it to be vertical. And then this already sets us up for the effect that we're trying to go for. And basically what we're going to do is we're going to use keyframes so that every time we stomp, our video here is going to, where's my position? Clicking is a little weird. So we want to make sure that we have our clips selected. And we can tell that because then it gives us this rotation right here, which we're not going to use right now. I'm just illustrating and it gives us our scale. Little dots right here so that we can adjust it like this. Okay, but what also happens is once we have this selected, then we can move it up as needed. And if you hold the shift on your keyboard, well, hold on. If you start dragging and then you hold shift, it's actually not, there we go. It locks it kind of in place. So you see it's not really, I don't think shift is actually working. So this actually has auto lock on it. So if I hold it close to the edges, it's just kind of like highlighting in blue. So ignore what I just said about the shift key. That's most programs. That's a shortcut, but this one kind of auto does it for you, so it just snaps to it. Okay, and that's because we have some of these snap tools turned on here. All right, so let's go ahead and undo and let's get that back to the center. And if we don't know where center is, we just want to make sure that we come over here to where our position is and just zero all of this out. Okay, and that's going to snap it right to the center. Okay, so I'm going to come down to my timeline. I'm going to zoom in and let's make sure that our clip is tramped. So we want to get rid of anything that's not needed. So I'm going to go ahead and select it and then choose the split tool here and delete the front so that we get right into it. And then as I look up, kind of looking at the text and then not leave too much dead space, I'm going to go ahead and select and then choose the split tool here. And then with the end selected, click the delete button. Or we can always right click and delete here. Okay, so now I'm going to zoom in. I can do that by using control plus or I can use this toggle over here to zoom in as I needed. I usually use the keyboard as much as I can. All right, so what we want to do is go through and kind of mark where our stomps are. Okay, so our first stomp, boom. What we're going to do is with this selected, you can see there's a marker tool right here where it says add marker. My mouse is kind of in the way. But you see there's a parentheses with an M. That parentheses is always going to be your shortcut. Okay, so you can either click this button to add a marker and you see it added a marker right here. Or I can undo that and I can just hit the M button and that's going to put a marker wherever my timeline is. So boom, so it adds a marker there. So that's my first stomp and then I'm going to go through with my arrows. So I'm just hitting the right arrow right now. And right when my foot hits the ground, I'm going to hit M again and mark it. And then when my foot hits the ground again, I'm going to do it like that either or hit M. And then we're going to go hold the arrow to kind of play through. And right when I stomp, I'm going to hit M and then I'm going to jump again. Boom, right when my feet stomp the ground, I'm going to hit M again. So now what we've done is we've timed out the markers. And actually if you look down here, you can also see the audio spikes of my feet hitting the ground. So it's picking up the audio and you can see that our markers are pretty in line with that sound effect. So that's also something that you can use to help cover yourself or you could just go through and mark where all the noises are if you wanted to do that. So that's all the stomps we got. One, two, three, boom, four, five. Cool. So that's the kind of foundation here that's so that we don't have to keep guessing, right? So what we want to do is we want to come and I'm going to zoom in some more because that gives us a lot more flexibility with being accurate. And now as I go through each frame, you can just be more precise with what's happening. Okay, so what I want to do is come like two frames before and then I'm going to set a keyframe. So over here we have our position and I'm going to set a keyframe and then I'm going to come to my marker and I'm going to drag this down just a little bit. Okay, and then we can see what's happening there. Boom. And I might have dragged it a little too much, but I can look at the number right here and go like, okay, negative one nineteen. Let's go like negative sixty, whoops, negative sixty. And the reason I'm doing that is because I know that when I do the big jumps, I'm going to want to move it a lot more and we want these first ones just to feel like a little nudge. And there's going to be three, so we got a little nudge. So we're moving it sixty pixels down and I'm going to come to this second part and go two frames beforehand. Keep in mind that we can slide these keyframes around later, but we don't want to have to go back and when you set a bunch of keyframes, you don't want to ever have to go back and make adjustments to the numbers. Because then you're going to have to adjust all of them and a lot of times it ends up being easier just to start over. So that's why I made that decision, like an even number, negative sixty, because now I know if I set my keyframe there to lock the space and then I come two frames ahead, then I can do this and go negative one twenty. Because now I know I'm moving another sixty, right? Sixty plus sixty is one twenty, and since it's going down, that's a negative. All right, and then same thing. Let's go forward to our next marker and we're going to go back to spaces, lock our keyframe, so it's going to lock our position, because if we don't lock our position, then what happens, actually I'll show you. If I just come to this marker and I go, okay, now we want it to be negative one eighty. Well, what happens is it's slowly moving from one twenty to one eighty over the course of this whole gap right here. But if I come and I add one twenty, which is this one, and I lock it to right before here, it's going to add that keyframe and lock it. So now, in between these keyframes, there's no movement. Right, it's going from one twenty to one twenty, so there's no adjustments being made, but then when we come to these two frames, now we get that movement. So that's how you get that effect. Okay, let me zoom out. I'm just going to show you what's happened so far. So you can see we've got three movements and I can bump up my quality a little bit here. Boom, boom, boom. See that? And then we're going to do a big jump, right, so you can kind of see what's coming here. So I'm just going to go to my marker, it kind of snaps there, and go two frames back, lock my position by adding a keyframe, go back to my marker, and I'm just using my arrows. When I come down here, this thing starts jumping around. I like to use my keyboard as much as possible, especially when I only have to do a couple of clicks. So I can just be using my arrows and the pointer to choose my position up here and set keyframes. So now let's make this jump a lot more. Let's test it and I'll probably actually just go ahead and drag it so that it's really extreme. And we know that we're going to have two, so the second one, I'll probably want it to land like down here. And also keeping in mind, it depends what's happening, right? So if we have text that it's going to reveal, we want to make sure that our movement reveals enough of the middle to reveal the text. So negative eleven hundred, so I don't want that for my first movement. And for these last ones, we can adjust as needed. But let's say I want to go that far, okay, and then I'm going to come to two frames. It could even be one frame. I just like to leave a little bit of gap in case I need to grab these keyframes. So there's two frames here, but they can be right next to each other. I just find that there's a lot more room for error the closer that keyframes are. So it'll give you a different feeling if they're closer or if they're farther apart. So let's see, go back. Let's lock that at negative any know it. Another thing I like to do is it's at negative six oh three. So what I'll do is I'll just go negative six hundred and make it an even number because now I know that I can lock this one at negative six hundred. And then potentially could just double it, right? Maybe that's a little too low. So we saw that it was at eleven hundred before and let's try that. So even numbers are just easier to track, especially if I go back through and I don't like how it's moving, then we need to make adjustments. Then it's easier to kind of remember those numbers and retype them in. So then the next thing would be to put text in and we might need to adjust our movement after our text is there to reveal it a certain way. But I just wanted to get the foundation in there because this is the part that the keyframes, once you get those set and you kind of understand how those are working, now you can be more flexible with the other stuff. So let's come over to text. Let's see, we got a default text and let's see. So the first thing to remember is that this is our hook. We've got our visual hook happening, but in this text it's very important that it creates curiosity. It makes people want to, because we're going to reveal one line at a time. We want to make sure that it's intriguing, that it actually is something that matters to them. So let's say this is why. And don't worry about the fonts, I'm not going to get too picky with that type of stuff, it's just black on white. Let's see, this is why. For this one, I will go with all caps, but that's the minor details that we can adjust later. So this is why, and let me zoom out. And this text is going to cover this whole thing. Okay, so let's snap it to the end and then that will be our middle. Okay, let's make that a little bit bigger just by dragging it here. And then what I want to do is hold option or alt if you're on a Mac, and I want to make three of these. Okay, and since I know where my video is at here, let's go ahead and view the timeline here. So we don't want to adjust it here, which we could, but you'll see why I'm going to do this. Now, I'm going to take my top line and I'm going to move it like that. And I'm going to take my bottom line and I'm going to move it like that. And this is not perfect, we're getting all of the foundation in place and then we can make adjustments from there. So trying to think of a hook off the top of my head. So this is why your views are so low. Okay, so that's just a rough hook there. Something that, you know, might grab attention and we could dial it in a little bit more. Might have a call to action in there because maybe this is a thing where I want them to read the caption below. So we would want them to see this hook. This is why your views are so low and then point them to the caption below and then give them some valuable tips on how to increase views, right? Because that's basically what this video will do so it can work hand in hand. But then we kind of want to see how this is getting revealed. Okay, what I want is when we get to the third tap, we actually want that text to start being visible. So at this point in time, let's go ahead and move that like this and then just make sure it's covered up. Yeah, there we go. So that's what we want. We want to kind of reveal it like that. And then here, that's going to reveal that word. And then this one is going to reveal all of that. Okay. All right, let's play it. Okay. And then this is just subjective at this point, but I might want this to be a little closer here. And really it's just going to depend how it looks on the screen. I think that might be better there. Okay. So now here's the trick. Okay. We take this layer that already has the work. So once we have all of the timing, all of the keyframes, everything in place, how we want it to look, we're going to grab this and we can either copy, paste. Okay. And then we would drag it up above the text and make sure it lines up with the timing or the quicker way is just hold option alt and drag above the text and it just duplicates it. Okay. So there's multiple ways to do that. The main thing is just creating a copy and getting it above the text and making sure that the timing is still in line. So that means that this end frame is at the same as this, otherwise it won't work. But it all snaps together. So it should be pretty straightforward. But now we've put it on top so that layer is now covering our text. Okay. And I don't even think we need that one anymore. But it won't let us just move this layer. You'd have to create a second one. So that's why we went through that process like that. Okay. So let me deselect my clip and then hit play. Like that. Cool. So pretty straightforward. And just a couple of little notes before we wrap it up. This part right here, revealing half of the text, very engaging to the eye where people are like, wait a minute. What is he revealing? What's this going to say? And then on top of that they're like, whoa, what is happening with this video? How are you moving this video? And then it starts to reveal. This is why your views, right? Still kind of a curious thing, which I would probably flesh out this look even more. Okay. And to get it to like in a state where I'd actually want it to be posted, maybe I take a fourth one. Ah. Read the caption. Let's make that way smaller. It's centered. We don't want it too low because it'll get cropped. But I would probably either say read the caption below, or I would put some type of arrow in there. Okay. I'm going to try something real quick. Okay. So here's a little trick that you can use not just in CapCut or editing, but across multiple platforms and use it with Google Docs. I do it all the time. When you need an emoji like I did, just now as I went into WhatsApp, which you don't have to do it WhatsApp, but anywhere that you can type out emojis and send them as a message, and I created the emoji I wanted, and then I just copied it, and then I can just come in and paste it here. So I just control C in the other program, and then control V gives me a paste in here, and then I'm just undoing that with control Z. Keep in mind, I'm saying control because I'm on a PC, not a Mac, but a command would be the other term to use if you're on a Mac. So we want to just make sure that we have something that hits their needs, their desires, their pain point for your book here, and then a call to action to kind of give them something else. Because what happens is then now people will go read the caption, potentially, if it's a good caption, and your video is going to play on loop, you're going to increase your watch time, and then inside of the caption, that's where you can get people to engage with the post or comments, certain words. So we won't get too deep into that, but the point that I'm saying is like, not only am I telling you to read the caption, I'm also pointing down, okay? Very straightforward, but a lot of people miss it, common mistake there. So this is a very, this is a short reel. This is a very simple way to do things, but be very effective if you are speaking to your audience clearly, and you know what you should put here as your hook, and then you get a cool appealing thing going on here, all right? So that's it for there, and I'll see you in the next one.",
+ "frames": {
+  "demo": [],
+  "editing": []
+ }
+}

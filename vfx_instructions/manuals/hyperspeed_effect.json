@@ -1,0 +1,87 @@
+{
+ "schema_version": 1,
+ "manual_type": "effect",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "sparse_source": true,
+ "id": "hyperspeed_effect",
+ "technique_primitive": "speed_ramp_transition",
+ "title": "HyperSpeed Effect",
+ "difficulty": "intermediate",
+ "gear_required": [],
+ "props_required": [],
+ "result_description": "A normal clip suddenly blasts forward at extreme speed with heavy motion blur, then returns to normal — a hyperspeed surge through the middle of the shot.",
+ "inputs": [
+  {
+   "name": "main_clip",
+   "what_to_film": "Any moving clip (walking, driving, running) with a clear start and end for the speed surge.",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_duration"
+   ],
+   "variance_tolerance": {}
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "main_clip"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "main_clip",
+   "capcut_feature": "Split",
+   "params": {
+    "note": "split at the point the speed effect should begin"
+   }
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "main_clip",
+   "capcut_feature": "Split",
+   "params": {
+    "note": "split again where the speed effect should end, isolating the middle section"
+   }
+  },
+  {
+   "action": "speed",
+   "channel": "ui",
+   "target": "middle section",
+   "capcut_feature": "Speed",
+   "params": {
+    "speed": "15x or more"
+   }
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "middle section",
+   "capcut_feature": "Effects",
+   "params": {
+    "effect": "Motion Blur",
+    "blur": "max",
+    "blending": 20,
+    "time": "twice (doubles the blur amount)"
+   }
+  }
+ ],
+ "result": {
+  "description": "The middle section rockets forward with smeared motion blur, bookended by normal-speed footage.",
+  "success_criteria": [
+   "Clear speed surge in the middle section",
+   "Heavy motion blur on the fast section",
+   "Smooth return to normal speed"
+  ]
+ },
+ "narration_transcript": "Import your clip into CapCut. Scroll to the point where you want the speed effect to begin. Tap split then scroll to the point where you want the speed effect to end tap split again. With the middle section selected tap speed then boost it to 15 times or more. Should look like this with the same section selected tap motion blur boost the blur all the way up change the blending to about 20 change the time setting to twice this will double the blur amount and that's it.",
+ "frames": {
+  "demo": [],
+  "editing": []
+ }
+}

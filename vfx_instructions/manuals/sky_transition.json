@@ -1,0 +1,110 @@
+{
+ "id": "sky_transition",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "mask_transition",
+ "title": "Sky Transition",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "gear_required": [],
+ "props_required": [],
+ "result_description": "A whip-pan up to the sky in one location cuts seamlessly into a whip-pan down at a new location, so you appear to teleport between places through the sky.",
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "inputs": [
+  {
+   "name": "scene1_whip_up",
+   "what_to_film": "Film the first location, then whip-pan UP to the sky (fast tilt) at the end of the shot.",
+   "capture_requirements": {
+    "ends_on_sky": true
+   },
+   "acceptance_checks": [
+    "fast_pan_to_plain_sky"
+   ],
+   "variance_tolerance": {}
+  },
+  {
+   "name": "scene2_whip_down",
+   "what_to_film": "Start on the sky and whip-pan DOWN into the new location. Match the pan speed and direction to scene 1.",
+   "capture_requirements": {
+    "starts_on_sky": true,
+    "pan_matches_scene1": true
+   },
+   "acceptance_checks": [
+    "fast_pan_from_plain_sky",
+    "pan_direction_matches"
+   ],
+   "variance_tolerance": {}
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "scene1_whip_up, scene2_whip_down"
+  },
+  {
+   "action": "position",
+   "channel": "structural",
+   "target": "scene2_whip_down",
+   "params": {
+    "note": "place scene 2 directly after scene 1 on the timeline"
+   }
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "scene1_whip_up",
+   "capcut_feature": "Split",
+   "params": {
+    "note": "cut at the fastest, most-blurred frame of the pan, when it points at plain sky"
+   }
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "scene2_whip_down",
+   "capcut_feature": "Split",
+   "params": {
+    "note": "cut at the fastest, most-blurred frame, when it points at plain sky"
+   }
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "the cut",
+   "capcut_feature": "Transitions",
+   "params": {
+    "note": "add a quick blur or directional-blur transition over the cut"
+   }
+  },
+  {
+   "action": "mask",
+   "channel": "taste",
+   "target": "scene2_whip_down",
+   "capcut_feature": "Mask",
+   "params": {
+    "note": "optional: mask the sky so the new scene's sky bleeds in early"
+   }
+  }
+ ],
+ "result": {
+  "description": "The two whip-pans join through the sky with no visible seam.",
+  "success_criteria": [
+   "Pan speed and direction match across the cut",
+   "Cut lands on the blurred plain-sky frame so the seam is hidden"
+  ]
+ },
+ "narration_transcript": "",
+ "frames": {
+  "demo": [
+   "assets/sky_transition/demoframe_0.jpg",
+   "assets/sky_transition/demoframe_1.jpg",
+   "assets/sky_transition/demoframe_2.jpg"
+  ],
+  "editing": []
+ },
+ "sparse_source": true
+}

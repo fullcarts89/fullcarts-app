@@ -11,7 +11,7 @@ import json, os, sys
 import manual_builder as mb
 
 REQUIRED = ["id", "technique_primitive", "title", "difficulty", "inputs", "edit_steps"]
-DIFFICULTIES = {"beginner", "intermediate", "advanced"}
+DIFFICULTIES = {"beginner", "intermediate", "advanced", "foundation"}
 
 
 def validate(path):
@@ -21,6 +21,20 @@ def validate(path):
     except Exception as e:
         return ["cannot parse JSON: %s" % e], []
     draft = bool(m.get("draft"))
+    mtype = m.get("manual_type", "effect")
+    if mtype not in mb.MANUAL_TYPES:
+        errs.append("manual_type '%s' not in %s" % (mtype, sorted(mb.MANUAL_TYPES)))
+
+    # reference / deep_dive / stub entries are not full recipes — only need id + title
+    if mtype != "effect":
+        for k in ("id", "title"):
+            if not m.get(k):
+                errs.append("missing/empty: %s" % k)
+        if m.get("technique_primitive") and m["technique_primitive"] not in mb.TECHNIQUE_PRIMITIVES:
+            errs.append("technique_primitive '%s' not in vocab" % m["technique_primitive"])
+        if os.path.basename(path) != m.get("id", "") + ".json":
+            warns.append("filename does not match id '%s'" % m.get("id"))
+        return errs, warns
 
     for k in REQUIRED:
         if k not in m or m[k] in (None, "", [], {}):

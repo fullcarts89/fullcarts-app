@@ -1,0 +1,152 @@
+{
+ "id": "fly_like_superman",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "keyframe_motion",
+ "title": "Fly like Superman",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "You run, jump, and launch straight up out of frame into the sky like a flying superhero.",
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "inputs": [
+  {
+   "name": "main_clip",
+   "what_to_film": "Run into an open area and jump up; lock exposure on the ground and frame the sky/clouds.",
+   "capture_requirements": {
+    "locked_off": true,
+    "note": "capture on the upward jump, not the descent"
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "min_duration"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "clean_plate",
+   "what_to_film": "Same locked shot with nobody in frame, taken close in time so the clouds match.",
+   "capture_requirements": {
+    "locked_off": true,
+    "subject_exits_frame": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "object_absent"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "main_clip"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "main_clip",
+   "capcut_feature": "Split",
+   "note": "trim to the take you like and cut to the moment the body is rising on the jump"
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "main_clip",
+   "capcut_feature": "Freeze",
+   "note": "create a freeze frame at the top of the jump — this becomes the flying body"
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "freeze frame",
+   "capcut_feature": "Remove Background → Auto Removal",
+   "params": {
+    "mode": "auto"
+   },
+   "note": "cut the frozen body out of the background (Custom Removal is cleaner if Pro)"
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "cutout freeze frame",
+   "capcut_feature": "Keyframes",
+   "params": {
+    "property": "position"
+   },
+   "note": "set a position keyframe at the jump, then drag the cutout straight up and out of frame"
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "clean_plate",
+   "capcut_feature": "Freeze",
+   "note": "freeze a clean-plate frame nearest the action so the clouds line up"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "clean_plate",
+   "capcut_feature": "Overlay",
+   "note": "stack: original on bottom, clean plate in the middle, animated cutout on top"
+  },
+  {
+   "action": "position",
+   "channel": "ui",
+   "target": "clean_plate",
+   "capcut_feature": "Layers",
+   "note": "set the layer order (0/1/2) so the cutout stays on top after rearranging"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "clean_plate",
+   "capcut_feature": "Mask → Rectangle",
+   "note": "thin masks over body and ground shadow with feather to patch the take-off spot"
+  },
+  {
+   "action": "opacity",
+   "channel": "ui",
+   "target": "patch layers",
+   "capcut_feature": "Opacity",
+   "note": "keyframe the patch layers fading 0->100 in sync, not before the launch keyframe starts"
+  },
+  {
+   "action": "audio",
+   "channel": "taste",
+   "target": "timeline",
+   "note": "add a subtle whoosh/shockwave SFX (~ -5 dB background plus a prominent whoosh)"
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "exported clip",
+   "capcut_feature": "Motion Blur",
+   "note": "export, re-import the render, split the launch section and turn Motion Blur up (can't apply to freeze frames)"
+  }
+ ],
+ "result": {
+  "description": "The frozen, cut-out body animates up and off the top of frame over a clean sky.",
+  "success_criteria": [
+   "Body launches smoothly straight up out of frame",
+   "Patched take-off area shows no body/shadow ghost",
+   "Motion blur smooths the launch edges"
+  ]
+ },
+ "narration_transcript": "To create a superhero flying effect we're gonna find a nice open piece of land to work with. Let's rotate camera over here. We're gonna run out into the middle right there. We're gonna jump and we're gonna fly up into the sky.\n\nThe sky is absolutely beautiful here so we wanna make sure we get a nice composition showcasing those clouds in the sky. So I'm gonna lock my exposure on the ground around the area where I might be jumping from and I'll hit record and we'll do our test shot. Usually I wanna try to grab some attention to the camera and I'll start here and run backwards. Let's go back and see how this looks and then we'll make adjustments from there.\n\nOkay so one thing I'm noticing is that I'm pretty far away from the camera so we're gonna do it again and we'll use our marker this time so that we don't travel so far away from the camera and we'll just move it right about here. Okay I can see that that is too close so I'm thinking maybe more like right right there. Do one more test shot. Okay see how that looks and make another adjustment if needed.\n\nOkay I'm happy with that composition but lock our exposure, hit record and I'll do a couple different takes so that I can choose my favorite and post. Alright definitely traveled a little bit there I wanna stay as straight as possible. I'm also gonna split up the clips by stopping and starting recording each time okay exposure is still locked. So I'm going to hit record and try another take.\n\nOkay I think I already like that take better. Let's try one. I'm running backwards. I'm running forwards and we'll do one more.\n\nIt's gonna be a little bit more of a subtle action. I think I should be looking up at the sky the whole time. Come back and review the footage before moving the tripod. Alright that'll work.\n\nOkay let's start a new project and import our footage. Alright so we have our clip here I think it was the next take that I liked. Cool yeah. Let's go with this one so I'm gonna go ahead and split it and delete the left side.\n\nSo what we're gonna do is we're gonna cut ourselves out and at this point use keyframes to animate the position so that we fly up out of the screen. Do you think I can? Let's go ahead and create a freeze frame and drop that down. Then we also wanna duplicate this layer here.\n\nCopy where are you, copy and overlay. Pull it down to the third layer and line it up with that clip so these timings match here. Go forward about here from now on and then we're gonna use this as our cut out. So with it selected here I'll zoom in a little bit with that clip selected go to cut out and remove background.\n\nSo what we're gonna do is set some keyframes. So first I'm gonna set a mask, so I use a rectangle mask to just separate myself from the background. Just in case any of the trees or clouds just in case any of the trees or clouds got pulled into the cutout. Here set a keyframe, go forward, drag him out.\n\nBoom. We can turn the back off of that a little bit. Okay. So we're gonna make it better but let's go ahead and watch this yeah so that works.\n\nAlright so we wanna remove ourselves here right. So what we're gonna do is come to the very end and split then we can overlay this we're gonna use this part to patch the area where I'm standing there so overlay drag it over and then this one this one's gonna need to go on the third layer and our cutout can drop down to the fourth layer. Drop it straight down without adjusting timing little tricky let me see. Zoom in.\n\nNo. Here's a little trick I'll adjust this to the same point. There we go so I can use that Mark to know that I dropped it straight down and it'll snap to the head of this clip here. So those line up then I can pull that back to there if I need it.\n\nCool so that's our cutout on the bottom the fourth layer then we have our clean patch that will pull over and we don't wanna use this as the forkling plate because the clouds are in a different spot. So we're just gonna use it to patch the bottom. So let's see them add a mask, rectangle mask and basically we just wanna cover ourselves. What I can do is I can invert it so that I can see myself.\n\nOpen it up a little bit so that I can feather it. Alright and then click invert again. So now the original clouds are back there and we're just patching ourselves in the foreground. There's a little bit of movement we can fade that in to make it smoother and what's happening is the layer orders off.\n\nSo what we want to do is select our cutout then go to layer where's layer and tap number three. So basically it reorders our layers. to tell her what should be on top of the other. Why is it popping there?\n\nOh I know. Okay so, let's make this these all match the timing here it should snap yeah so what we wanna do is have these two layers completely fade out but not before this keyframe starts because if we do it afterwards it will reveal the original. So we can go to the point where that keyframe is go on this layer set a keyframe go on that layer set a keyframe so they're all at the same point and then when we go back we can use these layers and then choose opacity to fade that one in and capacity on this one to fade that one in put them both at zero so they're going from zero to 100 and fading in in the background the playback is weird when I drag but it'll be fine when it plays.\n\nSo deselect, click play. Boom pretty smooth. Awesome. Alright I'm pretty happy with that. A little bit of it glitches when I'm dragging my finger.\n\nIgnore that. So if I want to I can select this guy, tap motion blur, turn the blur all the way up and just see what happens. Okay it doesn't like that. Okay let's undo that so here's what we're gonna do we're actually gonna export then we'll start a new project select our clip and what we can do is it pops.\n\nLet's try that again. Why is it popping? My keyframes are not there. Interesting I must have clicked undo.\n\nInteresting. Alright well let's try it again. Go back to opacity. We're trouble shooting together here as you can see.\n\nClick that to zero do the same thing here. Click it to zero so those are both fading in as the other one is coming on. Cool alright so now we're gonna export. Done new project.\n\nImport. Awesome. Yeah I'm pretty happy with that. So what we're gonna do is we're gonna split it.\n\nSplit it again. Also go to the end and trim it there delete the end. Excuse me. Okay we're gonna zoom in so what we're gonna do is add motion blur just to this section here and it's gonna help smooth everything out.\n\nSo scroll over, select motion blur and what we can do is just test it. Turn it all the way up and click the check mark and just see how it looks. Looks pretty good.\n\nOkay here we are in the CapCut desktop app and we have our one shot where we pretend to fly up in the sky. Okay so what we're gonna do is right when we jump we're gonna freeze my body and then cut it out and make an animation of it flying up out of the screen. So we wanna make sure it's on the up not coming back down. It's in the up movement.\n\nLet me go ahead and duplicate and then I'm going to create a freeze frame so over here we have a button it says freeze if we click that creates a freeze frame there and I can delete the left side and the right side. We don't need any of that this whole clip right here is just a freeze frame of what we're looking at and then what I wanna do is come over to remove background. Let's go ahead and turn off this bottom layer. So I'll click the eyeball to hide that track with the freeze frame selected.\n\nWe can do auto removal or we can use custom removal. Custom removal is a pro feature it will be more accurate but this one may give us what we need right here yeah. So for what this quick cut out that we need the auto tool works fine usually especially when the object's not moving. Basically what we're gonna do is now take this freeze frame, go back to the video basic tab and on the position will set a keyframe right there and we'll go forward and just drag him straight up and out of frame.\n\nCan shorten that up a little bit. So to let's go and play it first. Yeah so we're gonna need it faster. So what I like about the desktop app is you can grab the keyframes and just move them around so the let me zoom in the closer together these keyframes are the faster the movements gonna happen because we're getting from point A to point B quicker.\n\nSo if we push this over here then flies up super fast. If we push it way over here it's a lot slower. So we want somewhere in the middle of those two and let's go ahead and turn on our original track and go ahead and zoom out a little bit here. Okay so what we need is a clean plate of this so that would be a shot where I'm not standing there.\n\nSo we can go back to our original and drag this down and what we wanna do is just find one of these frames where I'm not in view. I'm gonna go to the closest one I can to the point when that action happened because you could see that our clouds are moving. So we want the clouds to be as close as we can to that spot so if I come like here and then I click freeze delete the left side of that there's my freeze frame I'll delete this right side and what I'm gonna do is just put this in between those two clips. That.\n\nSo to make sure that I move it straight up I'm gonna extend this to the end just to make sure that I don't mess up any timing and that'll that'll snap there. Move this right underneath and let me go ahead and zoom in. Okay so what we have here is at the bottom we have our original then we have our clean plate in the middle and then we have the top layer is our animated cutout where we put our keyframes. You can see the order got a little bit messed up so what we can do there is come over to the basic tab, scroll all the way down and just make sure that it's the number two.\n\nSo we would want this is you can think of this as layer 0, layer 1, layer 2 so this is on layer 1 this should say 2 but sometimes when you're shifting things around it reads it wrong and it'll put it on one so just put it back to two. So this is gonna look a little a little funky here for a minute but we just wanna get the base animation set and then we can go back in and we can patch the issues um the problematic areas. So you want that a little faster and I think I actually froze it too late cause I come to a stop and then I start moving. Okay so I'm gonna save this freeze frame and I'm gonna delete this this one with the cut out.\n\nLet's move this guy over and let's try this again. So I'm gonna get him when he's actually still moving up like right there. I'll duplicate copy command C command V control C control V on a PC and then I come here and do my freeze frame again. Delete the left side delete the right side and then to keep your timing intact just wanna drag that to the end there we can adjust this later.\n\nOkay so let's try this again. I'll go ahead and turn this off just for visual. Remove background and auto removal and there we go. So it's not perfect but afterwards we're gonna add motion blur which will just kind of blend all this uh the edges together and you won't be able to tell but that's not perfect.\n\nI'll show you here let me remove that and I'll show you what the custom removal does so with this pro tool I can make my brush a little bit smaller and I'll show you. Can get more accurate with the shape there so then if I click apply it's it's not perfect but it's much better and then yeah so we'll go ahead and turn that off just cause we don't need it and I'll do the same thing so if I come back to the basic tab go to my position and set a keyframe then just go forward a little bit. Let me zoom, back out and I'm just gonna drag this guy. So if I start dragging in it's moving to the side if you hold spacebar it will move straight kind of locks that vertical line.\n\nOkay so remember we want this actually up here too. Let's see. I think a little bit faster. Tiny bit slower okay.\n\nSo we're gonna bring back our other freeze frame. Make sure that everything still visible so I did the same thing we need to come over here bring it back to layer two and let's just go and watch it. So you're gonna see some weird stuff and we're gonna fix all that. So basically why you're seeing the shift is because we have the freeze frame and the clouds are not in the same spot so to fix that what we're trying to do here and I'll just move this guy out of the way.\n\nOn this we really just wanna put a mask with a rectangle and we just wanna cover as little of a area as we can here. If you do this and there's no clouds it will actually be easier. Always do some type of a feather so you can still see the shadow there. I'm probably gonna do two layers so let's make this super thin and I'll do the ground separately.\n\nOkay so closer already. I miss you man Make sure that we're hiding. Let's move that guy out of the way. Make sure that we're there we go yeah so with the feather you can see the hand up there we just wanna make sure that we extend this enough to cover everything while making it as small as possible and then I'm going to copy paste that and make another one that's just gonna cover our ground shadow here.\n\nOkay so now we'll move our animated freeze frame back up to the top. So right now we have original two patches and are cut out. I like to go back and just play it everyone smile make sure that there's no main issues major issues. Okay not bad.\n\nCool that's pretty good. So the problem that we have now is that I walk out of frame and the mask doesn't cover this part right here. So I think what we can do is at this point we can probably just freeze frame that too. Yep.\n\nDelete that. Drag this over here. Cool. So the only thing that's really missing is motion blur.\n\nLet's see if it's gonna let me do it sometimes when you already have an effect on here and keyframes it doesn't like you to add a second or third effect on there so you might have to export it bring it back in and then add motion blur. Okay I think I know what it is I think because we made freeze frames out of these you can't add motion blur onto an image. So we're gonna have to export it bring it back in and then put the blur on there which is fine cause if I click on this video yeah then we get the option for motion blur over here but these are all freeze frames. So it won't let us do that.\n\nOkay cool so let's go ahead and try to add a nice little sound effect audio and let's go. No. Sonic boom. Yeah something like that.\n\nSo we want like a whoosh shockwave that one could work. Let's try this guy. So there's our audio down here. So I like this as more of a subtle background effect sound effect so we can turn down the volume on that.\n\nLittle bit negative 5 decibels and then we'll add something that's a little more prominent. Let's go whoosh. I like that one yeah let's favorite that one too. So this will be our our main sound effect and then the other one will just kinda carry on in the background.\n\nOkay so our final step is to add motion blur since we can't add it onto these photos. We're gonna export our video so up here in the top right corner we will export. I'll just name this pre render flying version one. Okay so I can export that and then we're gonna wanna import it back in so I'll open this folder and then just drag in that pre render.\n\nI wanna save all of this stuff so I'll import this over here. Just to know if you drop it on track 1 it's gonna use the magnet to slide it all the way over but you have more control if you use these tracks here so I'm gonna keep it up here so I can put it where I want and then I can just go to the first frame hit I to mark the endpoint and then go to here and click O to select the outpoint. So now it's just gonna when we hit export next time it's only gonna render what's in between the in and out point. Okay so pretty simple to add motion blur.\n\nWe're gonna split this section and the basic tab go all the way to the bottom and there's this setting right here click on motion blur wait for it to process. I had the wrong part of this clip selected. So let's turn that off. Select the proper clip and activate motion blur.\n\nThat makes more sense and then after some processing you can see right there the difference between having motion blur off and motion blur on. So now when we hit play here we go feels much smoother and so then we would just export again and that's it.",
+ "frames": {
+  "demo": [],
+  "editing": []
+ }
+}

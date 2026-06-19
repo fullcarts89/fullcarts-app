@@ -1,0 +1,116 @@
+{
+ "schema_version": 1,
+ "manual_type": "effect",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "sparse_source": true,
+ "id": "wall_hologram",
+ "technique_primitive": "keyframe_motion",
+ "title": "Wall Hologram",
+ "difficulty": "intermediate",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "A glowing sci-fi hologram appears on a blank wall and you react to it as if it's really there.",
+ "inputs": [
+  {
+   "name": "reaction_clip",
+   "what_to_film": "Lock the camera on a tripod facing the wall where the hologram will appear. Act out reacting to / interacting with the empty wall so your eyeline and gestures sell it.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "hologram_footage",
+   "what_to_film": "Hologram stock footage on a black background.",
+   "capture_requirements": {}
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "reaction_clip"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "hologram_footage",
+   "params": {
+    "track": 2
+   }
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "hologram_footage",
+   "capcut_feature": "Blend → Screen",
+   "params": {
+    "blend_mode": "Screen",
+    "note": "drops the black background so only the glowing hologram shows"
+   }
+  },
+  {
+   "action": "transform",
+   "channel": "taste",
+   "target": "hologram_footage",
+   "capcut_feature": "Scale",
+   "params": {
+    "note": "scale and position onto the wall"
+   }
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "hologram_footage",
+   "capcut_feature": "Keyframes",
+   "params": {
+    "note": "keyframe position if the camera or subject moves"
+   }
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "hologram_footage",
+   "capcut_feature": "Mask",
+   "params": {
+    "note": "mask if part of the hologram should be hidden behind you"
+   }
+  },
+  {
+   "action": "audio",
+   "channel": "taste",
+   "target": "timeline",
+   "params": {
+    "note": "add a subtle blue glow / sci-fi sound effect to finish"
+   }
+  }
+ ],
+ "result": {
+  "description": "Glowing hologram sits convincingly on the wall and you react to it.",
+  "success_criteria": [
+   "Hologram has no visible black box (Screen blend clean)",
+   "Hologram stays locked to the wall",
+   "Eyeline and reaction match the hologram"
+  ]
+ },
+ "narration_transcript": "",
+ "frames": {
+  "demo": [
+   "assets/wall_hologram/demoframe_0.jpg",
+   "assets/wall_hologram/demoframe_1.jpg",
+   "assets/wall_hologram/demoframe_2.jpg"
+  ],
+  "editing": []
+ }
+}

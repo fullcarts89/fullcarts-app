@@ -1,0 +1,164 @@
+{
+ "id": "object_from_portal",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "mask_transition",
+ "title": "Object from Portal",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "portal overlay clip",
+  "object to reveal"
+ ],
+ "result_description": "A glowing Dr. Strange-style portal opens and you reach in and pull an object out of it.",
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "inputs": [
+  {
+   "name": "main_clip",
+   "what_to_film": "Step toward camera to grab attention, then reach toward the spot where the portal will be; an assistant holds the object out of frame so it floats.",
+   "capture_requirements": {
+    "locked_off": true,
+    "note": "shot may be sideways if filmed on a DSLR — fix in edit"
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "clean_plate",
+   "what_to_film": "A section of the same shot before the assistant/object is in frame, to patch the hand-off.",
+   "capture_requirements": {
+    "locked_off": true,
+    "subject_exits_frame": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "object_absent"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "portal_overlay",
+   "what_to_film": "Pre-made portal stock clip on a black background (e.g. from Production Crate).",
+   "capture_requirements": {
+    "note": "black backdrop for screen blend"
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "main_clip"
+  },
+  {
+   "action": "transform",
+   "channel": "ui",
+   "target": "main_clip",
+   "capcut_feature": "Aspect Ratio",
+   "params": {
+    "from": "16:9",
+    "to": "9:16"
+   },
+   "note": "rotate the sideways DSLR footage and scale up to fill the 9:16 frame"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "main_clip",
+   "capcut_feature": "Split",
+   "note": "trim to the moment with the attention-grabbing step forward"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "portal_overlay",
+   "capcut_feature": "Overlay",
+   "note": "bring the portal clip in on a layer above the footage"
+  },
+  {
+   "action": "transform",
+   "channel": "ui",
+   "target": "portal_overlay",
+   "capcut_feature": "Mirror",
+   "note": "flip/mirror the portal so it lines up with the reaching hand"
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "portal_overlay",
+   "capcut_feature": "Blend Mode",
+   "params": {
+    "blend_mode": "Screen"
+   },
+   "note": "Screen removes the black backdrop; Brighten is an alternative"
+  },
+  {
+   "action": "position",
+   "channel": "taste",
+   "target": "portal_overlay",
+   "note": "scale and place the portal; let its built-in reveal time the opening"
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "target": "portal_overlay",
+   "capcut_feature": "Copy/Paste",
+   "note": "paste the portal on top of itself to double-up and make it brighter"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "clean_plate",
+   "capcut_feature": "Overlay",
+   "note": "add the clean-plate patch over the assistant/sign area"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "clean_plate",
+   "capcut_feature": "Mask → Rectangle",
+   "params": {
+    "feather": 33
+   },
+   "note": "feathered mask hides the assistant and blends the arm fading into the portal"
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "duplicated main_clip",
+   "capcut_feature": "Remove Background → Custom Removal",
+   "note": "optional: cut out the arm so it reads as in front of the portal, then feathered mask to reveal the reaching part"
+  },
+  {
+   "action": "audio",
+   "channel": "taste",
+   "target": "timeline",
+   "note": "add a portal SFX and mute the original clip audio (other voices)"
+  }
+ ],
+ "result": {
+  "description": "A bright portal opens in the scene and the hand reaches through it to pull out the object.",
+  "success_criteria": [
+   "Portal black backdrop fully keyed out via Screen blend",
+   "Portal aligns with the reaching hand",
+   "Arm reads as passing into/through the portal"
+  ]
+ },
+ "narration_transcript": "Okay, so wanted to show a quick little breakdown of how I did this Dr. Strange Portal trick. So let's go ahead and bring the footage in here. This was based on the Dr. Strange Portal effect. What I did was I wanted to pull an object out of a small portal and reveal it to create a eye-catching hook. So let's go ahead and set it up. So when we rotate it properly, also I'll talk through the shooting process. We shot this at a couple of different angles. One of them I was sitting in the chair and then I acted like I was going to reach the portal. We tried it from a different angle and then landed on this angle. I really liked the composition of this line going down and that one going that way and then having the portal kind of overlap the restaurant outdoors right here. So this was the choice for the final shot. I just wanted to say that because don't always just take one shot, take multiple. If you set up a shoot, maximize your time so that you don't ever have to go reshoot and a lot of times you'll think something's going to be good and then you review the footage and you're like, oh, this actually, this other one might look better. So there's a little tip there. The first thing that we want to do, oh, what I was going to say to you is the reason why it was sideways was because we shot it on a DSLR. So my videographer was shooting with me that day and we did a whole bunch of stuff. So if it was on my phone, it wouldn't be sideways like this. So turn it that way. Then we're going to come here to this ratio, okay, ratio button right there. We're going to change it from 16 by 9, which is this black hole area here to 9 by 16 vertical. And then we just want to scale it up to this proper size. And I believe there's a way to snap it to the right size. I can't see it. It's going out of screen there. But anyways, it doesn't really matter at this point. So if we get a full screen there, let's go to I think 178 doesn't need to be perfect. Let's see. So what I did was I had somebody hold it way out of screen. So the idea was that I wanted to make it feel like I was reaching. So it wasn't just sitting right here. And I just grabbed it. I actually like reached deep down into it as if I'm reaching into another dimension. And I just had someone hold it. You could also just place it on something or whatever object is, or you could put it on a different tripod and, you know, hang it from a clothesline, whatever you want to do to make it float there, if you were just shooting by yourself, okay. So let me go ahead and get through the editing. So obviously like we did multiple takes. And then you'll notice on all of these, so I'm just going to share my tips as I go. There's always some type of a movement, right, that I want to grab attention. So instead of just starting and talking, I take a step forward towards the camera, boom, because it's going to grab your attention. So let's go ahead and split here, split tool over here, and we split it on that clip there. Let me go ahead and zoom in. You can also zoom in over here by using this bar, but I used control plus. So as you can see, there's some movement to start the shot, okay. Then let's bring in our portal. So you can see it's on a black backdrop. Also apologies, I grabbed the wrong portal. This one is cut off at the bottom. That's because here I'll show you what I'm talking about. If you look down here, it's meant to sit on the ground. So I use the different portal for this one, which you can grab off of production crate, which is the same place that this one came from. So what we want to do is, first of all, we want to flip it. So where is my flip button in position? I know, so if you left click, sorry, right click, where is, oh, it's under edit, right? And then we're going to mirror it. So what it's going to do is it's going to flip it as if it was looking in a mirror. So it's going to be looking like the opposite. And that's going to be facing the other way. So now you can see it's going to line up with our thing. So the next thing is to come over to blend, which is right here, drop that down and typically to remove the black with something like this, using something like screen is going to work just fine. And you can test different ones. Let's go ahead and move this over here and then make it bigger. Like I said, this one is not the same portal that I used. But you can get the idea here, make it a little bit bigger. Let's play it and see how it's looking. And then if you put it on brighten, you can see the difference in look, okay. So screen is hotter looking. So another thing that you can do, what we'll do afterwards is double it up. So copy and paste this on top. So once we get it adjusted how we want, then we'll just double it up. So let's go ahead and keep in mind that it has a reveal here, okay. So that timing actually works pretty well as is. So we'll go with it. And what we need now is I'm going to copy and paste this guy and what we need is our clean background and I forgot to do that first, but that's okay. So it's going to be at the beginning of the clip. So what I'm doing is going to a different part of my clip before he's there with this sign where we have no sign there and we can use to kind of create a patch, okay. So this whole section here up until that point. So this whole section, this area is clear all of this area and that's what we're looking for because similar to the other effects that I teach, we're going to add a mask here. So first off, let me turn this off and let me turn this off and I'm going to zoom in just so that you can clearly see what I'm doing. So assistant is holding, it's actually a videographer. He's holding the sign right here for me and we're going to use this video to patch and cover that up. That was weird. It jumped. Anyways, so pay attention to this area right here. It's like interesting. Let me undo. Oh, I see what I did. Instead of moving the window, I dragged that. Okay, so to fix that, I just did Ctrl Z. Boom. Cool. So paying attention here, as I turn that on off, just pay attention to that side and obviously it messes with the video on the right hand side. So when we add a mask, I'll turn this one off in the background. Come over to video, mask, and then add mask. And we can use whatever shape makes sense here. Since the paper is a square, it would kind of make sense to use that. And let's go ahead and turn that on to just make sure that we're covering it. And then we're going to feather it to kind of hide to blend our arm too. So we can use this tool to feather it. Let me turn this off. So what we're looking at, it's not letting me, there we go. So as we move this mask over here, you can see that it's basically just going to cover whatever we reveal under there. And then the feathering adjusts the smoothness of the edge here. So it's going to blend it with the other one, just so we don't get any harsh edges or lines that come through. So we can turn this background on, and you can see when I turn that on and off, the mask is just covering that to patch it. So the next thing we need to pay attention to is my arm going through, which that right there is pretty much what we want, because we want it to seem like it's kind of fading into this, right? This is called the portal to 10 seconds of your journey. Okay, so let's watch it at full. So for this one, this portal is a little bit different shaped. I'm going to actually make it a little bit smaller. I think it'll be a more impactful pay attention to my arm like that. And then we are going to copy and paste. So I just did, you can either right click, go to copy, and then you can right click and paste like that, or you can select the clip, do command or control C, I do control because I'm on a Mac, and then V to paste, control V. So if I do control V again, it pastes it over here. So basically what we're doing here is we're just doubling up on this to make it brighter and make it stand out more. If you want it, you can make this one a little bit bigger. No, let's not do that. But what I'll do is I'll change the blending mode, so I'm going to come back over to basic and change it from screen to not overlay to brighten maybe. You can play with these different settings. Depending on how bright the background is, that type of stuff, the lighting will depend on which setting to use. But in general, screen is just fine. Some of these are meant to do the opposite, where they'll get rid of the bright areas, and they'll leave the dark areas. Yeah, so multiply, there we go, that one's looking a little crazy there, a little too much for me. So I'm going to go back to screen. And if we wanted to, we could triple quadruple this up to make it as bright as we want. We could also, if it's not showing up the way we wanted to, we could technically darken the background a little bit behind it. I'm not going to get into that. I'm just kind of sharing some of those, like, the effects secrets that when you're making a prime shot that you really want to put love into, there's a lot of little things you can make adjustments to. This is just a quick little hook, so it doesn't need to be perfect. We just want to get the point across. So let's come back over to the mask, and I want to show you kind of what's happening with the hand, and we're just about finished. So since I can't see my feather tool over there, I can just adjust my feather, or right here. So right now it's at 33, which is pretty strong. You can see if we lower that feather, if you look in this area right here, on my arm, there's a sharp line, or we blend it, and we kind of want to blend right inside of that portal. Cool. All right, last thing, let me make sure everything's good here. There's also a portal sound effect. Okay, I just imported this sound effect. Hopefully this is one that's going to be good, but I figured we should have something in here. This clip here was from another clip, and you can hear us talking, so I'm going to mute that one, because then we won't hear any other voices come in. This is called five to ten seconds of your turn. Okay, so now we're just going to want to watch the clip, and just see what catches our eye. And it's just bombing five to ten seconds of your attention. Yeah, it's great. And then obviously with music or some type of ambiance, some type of a beat in the background, we'll just top it off, and that will depend on what it's actually going to. This will work really well. For an opening hook on a reel or an ad, something to use this effect to grab attention. And then once you have the attention, then it's your job to keep the attention. So the other thing that we can do is, since it looks like it's going behind the portal here, here's another trick, and I'm going to show you a couple different ways to do this. So what we want to do is basically create a cutout of ourselves so that it looks like my arm is in front of that portal. So we don't need the mask. We're going to go to remove background. And for the sake of using free tools, I'm not in CapCut Pro here. You can see this wants me to subscribe to Pro. So I'm showing how to do this in the free version, and we're going to go to custom removal. And if we know we need to remove and it doesn't need to be perfect, this is easy. You just come over and just say, Hey, I don't want this arm. And then just kind of wait for that to process. So we got there we go. And then we want to click apply. And you can see that that is now on top. OK, so now instead of it looking like I'm my arms reaching behind the portal like that, now it's on top. But then we have the issue right here. So what we're going to do is just add a mask and kind of do the same thing that we did here. So come over to the mask tool over here, click mask. And then we would click rectangle, which would probably work here. We could also use a circle. It's not really going to matter on the details here because the feathers going to be so strong. And and then we just want to reveal the part that we want to see. So if we feather here, it's just going to kind of fade that right there. And then we can control where we want our mask to be. So actually, I'm going to lower the feather a little bit and then just kind of cut it off. Let's zoom in here. You can see, so here's our mask layer with the cut out. You can see the whole arm. When I remove it, we cannot see the arm anymore. And then we're just going to kind of bring it over here and reveal how much we want. And what we're trying to do is make it look like my arms actually going through a portal, reaching into something. And then we can choose the feather like that. And I think I'll have it come in something like that, okay. Then we zoom out, make this a little bigger for you. This is called the bottom five to 10 seconds of your attention. Yeah. So let's go ahead and click, add some sound effects maybe, have a purpose, good concept behind it. Just real quick, I will break down the layers, okay. So let me go ahead and turn all of this stuff off. It's not letting me turn it off. Maybe I can only turn off one at a time. Interesting. So top layer, remember think of this like a cake. So in the cap cut desktop, or in any desktop editing software, it would be the same thing. You build from the ground up, okay. So this is our base layer, this is our background, the main footage that usually doesn't get any adjustments on it. Then we have a mask layer here, then we have our portal here, however we decide to build that and stack that. And then on top, we have the final touch, which is the cut out layer. And then obviously the music come over here, split that, delete, and then we'll drag that to the end, so that everything comes up to the end here, zoom in, I like to zoom in so that my, I can see all of my clips, all of my clips kind of across the timeline, rather than working like this and forgetting, it's kind of tight, which sometimes I do, but I forget. But if you zoom in, then you how you can be more precise with how you move the timeline and how you, and then also if you are trying to move frame by frame, I'm using the right and left arrows here to kind of like step through. Okay. All right, last thing I would do, and I should have done this first, is to make sure to name my clip properly. So go portal grab, my kind of philosophy or thinking there. First off, date, so starting, it's not 26, 26, start with the year, because it'll create it in the right sequential order, and then the date. So as you create your projects, the newest ones will be at the top, and then I like to do a noun verb for my description. So portal grab, so it's like a noun, a thing, descriptor, and then an action descriptor. Cool. That's it for this one.",
+ "frames": {
+  "demo": [],
+  "editing": []
+ }
+}

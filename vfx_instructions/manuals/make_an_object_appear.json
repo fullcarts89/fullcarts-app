@@ -1,0 +1,137 @@
+{
+ "id": "make_an_object_appear",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "clean_plate_mask_reveal",
+ "title": "Make an Object Appear",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "cup"
+ ],
+ "result_description": "An object (a cup) pops into the scene the instant you snap your fingers.",
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "inputs": [
+  {
+   "name": "main_clip",
+   "what_to_film": "Snap your fingers, pick up the cup and take a drink, then set it down.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "min_duration"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "clean_plate",
+   "what_to_film": "Same locked shot with the cup removed from the scene — empty countertop.",
+   "capture_requirements": {
+    "locked_off": true,
+    "subject_exits_frame": true,
+    "note": "shoot back-to-back so daylight does not shift"
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "object_absent"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "recorded footage",
+   "note": "single long take containing the action shot and the clean plate"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "footage",
+   "capcut_feature": "Split",
+   "note": "isolate the hero (action) clip and a few seconds of clean-plate countertop; delete the excess"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "clean_plate",
+   "capcut_feature": "Overlay",
+   "params": {
+    "track": 2
+   },
+   "note": "lift the clean plate onto layer two, above the hero clip"
+  },
+  {
+   "action": "trim",
+   "channel": "ui",
+   "target": "clean_plate",
+   "capcut_feature": "Split",
+   "note": "end the clean-plate clip exactly on the finger-snap frame"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "clean_plate",
+   "capcut_feature": "Mask → Rectangle",
+   "params": {
+    "shape": "rectangle"
+   },
+   "note": "shrink the mask just over the cup; match shape to the object"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "clean_plate",
+   "capcut_feature": "Mask → Feather",
+   "note": "feather the edge enough to blend the two clips, but not so much it reveals the cup"
+  },
+  {
+   "action": "opacity",
+   "channel": "ui",
+   "target": "clean_plate",
+   "capcut_feature": "Opacity",
+   "params": {
+    "opacity": 100
+   },
+   "note": "leave the patch fully opaque once the mask is placed"
+  },
+  {
+   "action": "audio",
+   "channel": "taste",
+   "target": "clean_plate",
+   "note": "mute the clean-plate clip so you only hear the action clip's audio"
+  },
+  {
+   "action": "filter",
+   "channel": "taste",
+   "target": "hero clip",
+   "capcut_feature": "Adjustment → Basic / HSL",
+   "note": "optional white-balance fix for warm indoor lighting; pull orange saturation down in HSL"
+  }
+ ],
+ "result": {
+  "description": "The cup is hidden by the masked clean-plate patch until the snap, then instantly appears.",
+  "success_criteria": [
+   "Cup absent before the snap, present after",
+   "No visible mask seam or feather halo",
+   "Lighting matches across the cut"
+  ]
+ },
+ "narration_transcript": "Welcome to your first visual effect. Wanna start you off with something simple but effective. We're gonna make an object appear just by snapping our fingers. So for this we're gonna need two shots.\n\nThe first shot we're gonna snap our fingers, pick up the cup and take a drink and then the second shot we're gonna get with the cup removed from the scene that will create our clean plate. Let's go ahead and do our focus lock and hit record. So shot one then our second shot, we just want our clean plate no cup in the scene. So one thing to know is that when you have natural lighting coming into the window, this can be problematic if we have the sun shifting or clouds moving during the day and you wanna make sure to get your shots just back to back.\n\nSo basically not giving the sun enough time to shift and change the lighting in the scene.\n\nOkay, so here we are inside of the edit app. And we have this long clip that we're working with. So the first thing that I want to do is I want to get rid of as much of this clip as I can, basically all of the excess that I do not need. So I know that we have two shots here. We have the shot of me walking up and interacting with the cup. So let me go ahead and split that at the beginning where I want that to start. And then I'm going to go ahead and select here and delete that because we don't need any of that extra that's at the beginning. So now this is our main clip. Sometimes you'll call it here, call the hero clip. And I know that when we set down the glass, the shot is over. So we'll split that there. Then I'm going to come down farther. And for this second shot, it's going to be our clean plate. We only need a little section that we just have to make sure that there's nothing on the countertop here. So I can just split that there. Get rid of all this middle stuff because we don't need that. And then just get a few seconds of video that we can use for this section and get rid of everything at the end. We don't need any of this stuff either. It's all just extra. So that's going to clean up our timeline a lot. And then what we want to do next is we want to get this clip up onto that layer. So we do that by having it selected and clicking the overlay tool. So overlay and it's going to load. Okay. So now it jumped up there. So it overlaid it on top of this. So this layer is layer one. Now we have layer two. To move this one, we just have to make sure that it's selected and you can tell it's selected because it's yellow when it's not selected. It's like that. And you'll see when I select it, the menu at the bottom will change here because then we'll have a clip menu as opposed to this project menu. So with that selected, I can grab it, drag it over here. So long press, drag it. What we want to do is, first off, I can just shorten this just to keep it simple for right now. And then I'm going to pinch my screen and zoom in just so we have a little bit more viewing space. And we know that right when I snap my fingers, that's when that clip is going to end. So I can grab this handle right here and it's just going to pop right to that line. Pop like a magnet. Okay. Now the only thing that we have to do is we need to add our mask. So with that clip still selected, come all the way over here, find the mask tool. And for this, it doesn't really matter which shape. There's different shapes for different circumstances. I would say in general, I like to use the same shape, similar shape to what the object is. So if I was covering a ball, I might use a circle. If I'm covering a cup like this, then I'm probably going to use a rectangle and just shrink it down as small as I can, but keeping enough room to add that feather in there. So keeping in mind that the feather blends the two clips and if you feather it too much, it's going to reveal. Okay. So to show you what I'm talking about, let me go ahead and select our bottom clip, come over to opacity. And let's turn that, let's just turn it so if it's all the way off, you see black, I'll go ahead and leave it on a little bit just so you can see what's going on. And then this top clip is our mask. So I need to go back over and make sure that the mask tool is selected and I can shrink this down. So I wanted to show you what's going on with the feather tool. So this blending, it blends the two clips together. And that gets rid of any harsh lines that you would get from just slapping a mask on there. And then from there, yeah, let's just go ahead and shrink this down a little bit. If the lighting doesn't change too much, then this won't matter too much. So I can still see my cup a little bit there. Okay. So I'm going to cover it. We can always make fine-tuned adjustments. Later we can adjust the feathering. So I could select that. Now we have our mask in place and then I wanted to go ahead and turn the opacity back up. So opacity is like transparency. You can see if I turn it all the way down, that clip is gone, up. You can see the whole clip. So that's what our opacity is doing, making it basically turned on, turned off. And you can do that for any clip. So we want it at 100%. And then now that we have this mask here that's covering our cup and it comes to an end, when we play through, it's just going to disappear when we have that layer end right there. Okay. So I play to note, see the shot one, when you have a mask. And you can hear my audio from both of them. So for this one, we would actually mute that clip, some shot one, snap reveal. Nice and clean.\n\nOnce we have our footage imported I'm gonna trim it down to just the section that I need. So tap split, delete everything on the left side, pick up the cup, drink, set it down. Okay I'll split it again and then I'll come to a section where the cup is not on the counter. Split and delete that middle section.\n\nSo we're gonna use this part as our patch to cover up the cup, so I'll go ahead and split it here and delete everything on the right side so I have my two clips of my action clip and my clean plate of the countertop. Select the second part of the shot. Have overlay to drop it down resume out a little bit, long press and I'm gonna pull it all the way over to the left. Okay I'll use my mask tool to just select the section that's gonna cover the cup over here.\n\nRotate it, so you can see the mask is covering the cup. We don't want it to overlap our body at all and I'll go ahead and boost the feather a little bit to see how much the feather is adjusting. I like to overlap it straight over the object and then you can adjust the feather and you can see how much effect it's actually having. So if I want just a little bit of feather I can see how much feather there is over the cup that blend and then I can move it into place where I want it.\n\nOkay. So then we just wanna go to the point where we snap our fingers and trim this clip, down to that point. Deselect everything by tapping in the black section and hit play Boom. Magic.\n\nOkay so once we have our footage imported up here drag it down on the timeline so both of our shots are in this one clip. So I'm just gonna trim off the front and back end that I don't need. So select and split. Delete the front part that I don't need.\n\nSnap and then after after this first shot when I pick up the glass I'm gonna split it here. So this will be shot too and just keep a section where this area right here is open and there's no cup. We're gonna use that to basically patch that area. So what I wanna do now I have clip 1, clip 2 drag this on top to be able to see what's going on we're gonna use the mask tool so up here in video mask and I can use a rectangle mask and you can see what's happening is this mask is covering our cup.\n\nSo I'll adjust the feather a little bit just to smooth those edges. I'll put that at . Okay so what we wanna do is let it play and right when we snap our fingers we're gonna trim off the edge of this clip the end of it. Go ahead and mute these.\n\nYou zoom in here. So what's gonna happen is this is this patch on the table is gonna come to an end right when we snap our fingers and it's gonna reveal the cup. Here we go. Magic.\n\nOkay so here's a final adjustment that I made as you can see the clip is pretty yellow. This happens when you're using warm lights from inside the house so a quick way to fix that, is select the clip come up to adjustment appear in the right corner, under basic cause what's happening is the white balance is off. So if you shift it this way it goes to warm if you shift it this way it goes to cool. So what we wanna do is shift it to where it's supposed to be.\n\nWhich is where white things are actually white so I'm looking at the cabinet and my shirt so I can pull that down but I don't want the walls to go too blue. So I'll find a middle ground here and then I can come under HSL which is huge saturation and luminance and I'm going to pick the orange color cause there's still some orange in here. You can see this, still yellow orange and I can just pull down the saturation of just that color. So I like to pull it way down see what it's doing and then bring it back.\n\nSo less is more, but if you look at the before and after of that and what we did here it makes a big difference.",
+ "frames": {
+  "demo": [],
+  "editing": []
+ }
+}

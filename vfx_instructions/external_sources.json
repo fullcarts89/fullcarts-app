@@ -1,8 +1,8 @@
 {
  "source": "External short-form videos ingested into the VFX schema",
- "generated": "2026-06-18",
+ "generated": "2026-06-19",
  "schema_version": 1,
- "effect_count": 15,
+ "effect_count": 16,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -1584,6 +1584,119 @@
    "needs_tripod": true,
    "output_aspect": "9:16",
    "sound_design": "ambient/whoosh"
+  },
+  {
+   "effect": "Jacket Vanish (solo, clean-plate + mask)",
+   "slug": "jacket_vanish",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DQR5_W3Acbz/?igsh=aDc0ZWZndG83a2pm",
+   "source_creator": "Kayo Daniel | Learn, create, monetize, grow (@70269079851)",
+   "tool": "CapCut",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Duplicate",
+    "Keyframes",
+    "Mask",
+    "Overlay",
+    "Remove Background"
+   ],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [
+    "How to do this?",
+    "Start by filming a video where your jacket falls down in front of you.",
+    "Leave the jacket where it is, walk out of the frame and keep recording for a few seconds.",
+    "Open this clip in"
+   ],
+   "editing_steps": [
+    "Make one cut when the jacket starts to fall.",
+    "One when it's on the floor and the last one when you are out of the frame.",
+    "Select the section when you walk out and delete it.",
+    "Next, select the last clip, hit overlay and drag it over the clip where the jacket falls down.",
+    "Select the clip on top and duplicate it and then also overlay it.",
+    "With this clip selected, go to remove background, choose custom removal and paint over the jacket.",
+    "Select this sandwich clip here in the middle of the overlays and go to mask.",
+    "I choose the horizontal mask, drag it up so it aligns raught the jacket and I press this button here to add a keyframe.",
+    "As the jacket falls, adjust the mask's position to follow the movement.",
+    "If you want to learn more, I'll come in master class."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/jacket_vanish/frame_01.jpg",
+   "demo_frames": [
+    "assets/jacket_vanish/frame_01.jpg",
+    "assets/jacket_vanish/frame_02.jpg",
+    "assets/jacket_vanish/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/jacket_vanish/frame_04.jpg",
+    "assets/jacket_vanish/frame_05.jpg",
+    "assets/jacket_vanish/frame_06.jpg",
+    "assets/jacket_vanish/frame_07.jpg",
+    "assets/jacket_vanish/frame_08.jpg",
+    "assets/jacket_vanish/frame_09.jpg",
+    "assets/jacket_vanish/frame_10.jpg",
+    "assets/jacket_vanish/frame_11.jpg",
+    "assets/jacket_vanish/frame_12.jpg",
+    "assets/jacket_vanish/frame_13.jpg",
+    "assets/jacket_vanish/frame_14.jpg",
+    "assets/jacket_vanish/frame_15.jpg",
+    "assets/jacket_vanish/frame_16.jpg",
+    "assets/jacket_vanish/frame_17.jpg",
+    "assets/jacket_vanish/frame_18.jpg",
+    "assets/jacket_vanish/frame_19.jpg",
+    "assets/jacket_vanish/frame_20.jpg"
+   ],
+   "tags": [
+    "auto_bg_removal",
+    "duplicate",
+    "keyframes",
+    "mask",
+    "overlay"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Kayo Daniel | Learn, create, monetize, grow",
+    "creator_handle": "70269079851",
+    "creator_url": null,
+    "caption": "How to create this jacket vanish effect with just your phone! This is a cool effect for all the solo creators out there, that does not require a second person, you can just film it with your tripod. Easy peasy lemon squeezy. \n\nIf you want to learn more editing trips, my whole filming process, editing and much more comment ‘Masterclass’ \n\nYallah!",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 6699,
+    "comment_count": 996,
+    "upload_date": "20251026",
+    "duration_sec": 59.0,
+    "thumbnail": "https://scontent-ord5-1.cdninstagram.com/v/t51.71878-15/571159474_1527493985113993_3085319781744675621_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi42NDAuc2RyLnZpZGVvX25mcmFtZV9jb3Zlcl9mcmFtZS5jMiJ9&_nc_ht=scontent-ord5-1.cdninstagram.com&_nc_cat=101&_nc_oc=Q6cZ2gFCtbJJPrNQLSJKXEqpYBok0jnI4nuyrJs4vXaqycOEkS-S7J1Bw_rKBCK2F8fFqpk&_nc_ohc=zcFsKk0pF78Q7kNvwG4Q2Uj&_nc_gid=clT7q1g1wYVQW7do3gmaPQ&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af9H_hrQy_nlde2Wl35rSPL5ClNwbzbG3jnvQYqmtzzL8A&oe=6A3A8D16&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DQR5_W3Acbz",
+     "title": "Video by learnwithkayo",
+     "role": "tutorial",
+     "duration_sec": 59.1,
+     "wistia_id": null,
+     "transcript": "How to do this? Start by filming a video where your jacket falls down in front of you. Leave the jacket where it is, walk out of the frame and keep recording for a few seconds. Then open this clip in CapCut. Then make one cut when the jacket starts to fall. One when it's on the floor and the last one when you are out of the frame. Select the section when you walk out and delete it. Next, select the last clip, hit overlay and drag it over the clip where the jacket falls down. Select the clip on top and duplicate it and then also overlay it. With this clip selected, go to remove background, choose custom removal and paint over the jacket. Select this sandwich clip here in the middle of the overlays and go to mask. I choose the horizontal mask, drag it up so it aligns raught the jacket and I press this button here to add a keyframe. Now as the jacket falls, adjust the mask's position to follow the movement. If you want to learn more, I'll come in master class.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DQR5_W3Acbz/?igsh=aDc0ZWZndG83a2pm",
+     "video_url": null
+    }
+   ]
   }
  ]
 }

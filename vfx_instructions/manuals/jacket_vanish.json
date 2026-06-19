@@ -1,0 +1,152 @@
+{
+ "id": "jacket_vanish",
+ "schema_version": 1,
+ "draft": true,
+ "needs_authoring": true,
+ "technique_primitive": "keyframe_motion",
+ "title": "Jacket Vanish (solo, clean-plate + mask)",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "gear_required": [],
+ "props_required": [],
+ "result_description": "Jacket Vanish (solo, clean-plate + mask)",
+ "source": "Kayo Daniel | Learn, create, monetize, grow (@70269079851)",
+ "source_url": "https://www.instagram.com/reel/DQR5_W3Acbz/?igsh=aDc0ZWZndG83a2pm",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "clip_1",
+   "what_to_film": "How to do this?",
+   "capture_requirements": {
+    "locked_off": false
+   },
+   "acceptance_checks": [],
+   "variance_tolerance": {}
+  },
+  {
+   "name": "clip_2",
+   "what_to_film": "Start by filming a video where your jacket falls down in front of you.",
+   "capture_requirements": {
+    "locked_off": false
+   },
+   "acceptance_checks": [],
+   "variance_tolerance": {}
+  },
+  {
+   "name": "clip_3",
+   "what_to_film": "Leave the jacket where it is, walk out of the frame and keep recording for a few seconds.",
+   "capture_requirements": {
+    "locked_off": false
+   },
+   "acceptance_checks": [],
+   "variance_tolerance": {}
+  },
+  {
+   "name": "clip_4",
+   "what_to_film": "Open this clip in",
+   "capture_requirements": {
+    "locked_off": false
+   },
+   "acceptance_checks": [],
+   "variance_tolerance": {}
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "position",
+   "channel": "structural",
+   "note": "Make one cut when the jacket starts to fall."
+  },
+  {
+   "action": "position",
+   "channel": "structural",
+   "note": "One when it's on the floor and the last one when you are out of the frame."
+  },
+  {
+   "action": "position",
+   "channel": "structural",
+   "note": "Select the section when you walk out and delete it."
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "note": "Next, select the last clip, hit overlay and drag it over the clip where the jacket falls down.",
+   "capcut_feature": "Overlay"
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "note": "Select the clip on top and duplicate it and then also overlay it.",
+   "capcut_feature": "Duplicate"
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "note": "With this clip selected, go to remove background, choose custom removal and paint over the jacket.",
+   "capcut_feature": "Remove Background"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "note": "Select this sandwich clip here in the middle of the overlays and go to mask.",
+   "capcut_feature": "Mask"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "note": "I choose the horizontal mask, drag it up so it aligns raught the jacket and I press this button here to add a keyframe.",
+   "capcut_feature": "Mask"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "note": "As the jacket falls, adjust the mask's position to follow the movement.",
+   "capcut_feature": "Mask"
+  },
+  {
+   "action": "position",
+   "channel": "structural",
+   "note": "If you want to learn more, I'll come in master class."
+  }
+ ],
+ "result": {
+  "description": "",
+  "success_criteria": []
+ },
+ "narration_transcript": "How to do this? Start by filming a video where your jacket falls down in front of you. Leave the jacket where it is, walk out of the frame and keep recording for a few seconds. Then open this clip in CapCut. Then make one cut when the jacket starts to fall. One when it's on the floor and the last one when you are out of the frame. Select the section when you walk out and delete it. Next, select the last clip, hit overlay and drag it over the clip where the jacket falls down. Select the clip on top and duplicate it and then also overlay it. With this clip selected, go to remove background, choose custom removal and paint over the jacket. Select this sandwich clip here in the middle of the overlays and go to mask. I choose the horizontal mask, drag it up so it aligns raught the jacket and I press this button here to add a keyframe. Now as the jacket falls, adjust the mask's position to follow the movement. If you want to learn more, I'll come in master class.",
+ "frames": {
+  "demo": [
+   "assets/jacket_vanish/frame_01.jpg",
+   "assets/jacket_vanish/frame_02.jpg",
+   "assets/jacket_vanish/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/jacket_vanish/frame_04.jpg",
+   "assets/jacket_vanish/frame_05.jpg",
+   "assets/jacket_vanish/frame_06.jpg",
+   "assets/jacket_vanish/frame_07.jpg",
+   "assets/jacket_vanish/frame_08.jpg",
+   "assets/jacket_vanish/frame_09.jpg",
+   "assets/jacket_vanish/frame_10.jpg",
+   "assets/jacket_vanish/frame_11.jpg",
+   "assets/jacket_vanish/frame_12.jpg",
+   "assets/jacket_vanish/frame_13.jpg",
+   "assets/jacket_vanish/frame_14.jpg",
+   "assets/jacket_vanish/frame_15.jpg",
+   "assets/jacket_vanish/frame_16.jpg",
+   "assets/jacket_vanish/frame_17.jpg",
+   "assets/jacket_vanish/frame_18.jpg",
+   "assets/jacket_vanish/frame_19.jpg",
+   "assets/jacket_vanish/frame_20.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "70269079851",
+  "like_count": 6699,
+  "comment_count": 996,
+  "upload_date": "20251026",
+  "caption": "How to create this jacket vanish effect with just your phone! This is a cool effect for all the solo creators out there, that does not require a second person, you can just film it with your tripod. Easy peasy lemon squeezy. \n\nIf you want to learn more editing trips, my whole filming process, editing and much more comment ‘Masterclass’ \n\nYallah!",
+  "hashtags": []
+ }
+}
