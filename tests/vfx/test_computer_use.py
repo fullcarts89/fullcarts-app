@@ -1,0 +1,91 @@
+from types import SimpleNamespace
+
+from vfx.computer_use import DryRunExecutor, run_task, build_task, gui_steps
+from vfx.computer_use.executor import Action
+from vfx.ingest.manual_schema import load_manual
+
+
+def _text(t):
+    return SimpleNamespace(type="text", text=t)
+
+
+def _tool(id, name, inp):
+    return SimpleNamespace(type="tool_use", id=id, name=name, input=inp)
+
+
+def _resp(content, stop_reason="tool_use"):
+    return SimpleNamespace(content=content, stop_reason=stop_reason)
+
+
+class _ScriptedClient:
+    """Returns a queued list of responses, one per create() call."""
+    def __init__(self, responses):
+        self._responses = list(responses)
+        self.calls = []
+
+    class _Beta:
+        def __init__(self, outer): self.outer = outer
+
+        class _Messages:
+            def __init__(self, outer): self.outer = outer
+            def create(self, **kw):
+                self.outer.calls.append(kw)
+                return self.outer._responses.pop(0)
+
+        @property
+        def messages(self):
+            return _ScriptedClient._Beta._Messages(self.outer)
+
+    @property
+    def beta(self):
+        return _ScriptedClient._Beta(self)
+
+
+def test_loop_performs_action_then_finishes():
+    ex = DryRunExecutor()
+    client = _ScriptedClient([
+        _resp([_text("clicking remove bg"),
+               _tool("t1", "computer", {"action": "left_click", "coordinate": [100, 200]})]),
+        _resp([_text("all done")], stop_reason="end_turn"),
+    ])
+    res = run_task("do the thing", ex, client=client, max_steps=10)
+    assert res.completed and res.steps == 2
+    # the click landed on the executor
+    clicks = [a for a in ex.actions if a.kind == "left_click"]
+    assert clicks and clicks[0].x == 100 and clicks[0].y == 200
+    # tool config + beta header were sent
+    assert client.calls[0]["tools"][0]["type"].startswith("computer_")
+    assert "computer-use" in client.calls[0]["betas"][0]
+
+
+def test_confirm_false_aborts_before_action():
+    ex = DryRunExecutor()
+    client = _ScriptedClient([
+        _resp([_tool("t1", "computer", {"action": "left_click", "coordinate": [5, 5]})]),
+    ])
+    res = run_task("x", ex, client=client, confirm=lambda a: False)
+    assert not res.completed
+    assert not any(a.kind == "left_click" for a in ex.actions)  # never performed
+
+
+def test_max_steps_cap():
+    ex = DryRunExecutor()
+    # always asks for another click -> never ends on its own
+    forever = [_resp([_tool(f"t{i}", "computer",
+                            {"action": "left_click", "coordinate": [1, 1]})])
+               for i in range(10)]
+    res = run_task("loop", ex, client=_ScriptedClient(forever), max_steps=3)
+    assert not res.completed and res.steps == 3
+
+
+def test_build_task_only_includes_gui_steps():
+    recipe = load_manual("vfx_instructions/manuals/package_morph_transition.json")
+    steps = gui_steps(recipe)
+    joined = " ".join(steps).lower()
+    # GUI-only effects present
+    assert any("remove background" in s.lower() for s in steps)
+    assert any("sticker" in s.lower() or "dust" in s.lower() for s in steps)
+    # structural steps (import/overlay/transition/text) excluded
+    assert "import" not in joined and "overlay" not in joined
+    task = build_task(recipe)
+    assert task and "CapCut" in task and "STEPS" in task
