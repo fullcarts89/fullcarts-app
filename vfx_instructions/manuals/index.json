@@ -521,14 +521,18 @@
    "id": "jacket_vanish",
    "title": "Jacket Vanish (solo, clean-plate + mask)",
    "manual_type": "effect",
-   "technique_primitive": "keyframe_motion",
-   "difficulty": "beginner",
+   "technique_primitive": "clean_plate_mask_reveal",
+   "difficulty": "intermediate",
    "is_ai_generated": false,
-   "gear_required": [],
-   "props_required": [],
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [
+    "jacket"
+   ],
    "tool": "CapCut",
    "source": "Kayo Daniel | Learn, create, monetize, grow (@70269079851)",
-   "draft": true,
+   "draft": false,
    "status": null,
    "file": "manuals/jacket_vanish.json"
   },
