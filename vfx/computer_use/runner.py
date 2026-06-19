@@ -18,10 +18,20 @@ from typing import Any, Callable, List, Optional
 
 from vfx.computer_use.executor import Action, Executor
 
-# Anthropic computer-use tool + beta header (Claude 4 family).
-_TOOL_TYPE = "computer_20250124"
-_BETA = "computer-use-2025-01-24"
+# Anthropic computer-use tool. The tool-type string AND its matching beta header
+# depend on the model: Opus 4.5+/4.6/4.7/4.8 and Sonnet 4.6 use the newer
+# computer_20251124 (zoom); older 4.x models use computer_20250124. Pairing the
+# wrong version with a model returns a 400 ("does not support tool types"). Verified
+# against platform.claude.com computer-use-tool docs (2026-06).
+_NEW_TOOL = ("computer_20251124", "computer-use-2025-11-24")
+_OLD_TOOL = ("computer_20250124", "computer-use-2025-01-24")
+_NEW_MODELS = ("opus-4-8", "opus-4-7", "opus-4-6", "opus-4-5", "sonnet-4-6")
 _DEFAULT_MODEL = "claude-opus-4-8"
+
+
+def _computer_tool_for(model: str):
+    m = (model or "").lower()
+    return _NEW_TOOL if any(tag in m for tag in _NEW_MODELS) else _OLD_TOOL
 
 # Map the tool's action names -> our Action.kind (those we execute directly).
 _CLICK_KINDS = {
@@ -101,7 +111,8 @@ def run_task(
     reference_images: Optional[List[tuple]] = None,
 ) -> RunResult:
     width, height = executor.dimensions()
-    tools = [{"type": _TOOL_TYPE, "name": "computer",
+    tool_type, beta = _computer_tool_for(model)
+    tools = [{"type": tool_type, "name": "computer",
               "display_width_px": width, "display_height_px": height}]
 
     def log(msg: str) -> None:
@@ -140,7 +151,7 @@ def run_task(
     while steps < max_steps:
         resp = client.beta.messages.create(
             model=model, max_tokens=max_tokens, tools=tools,
-            betas=[_BETA], messages=messages)
+            betas=[beta], messages=messages)
         assistant_content: List[dict] = []
         tool_results: List[dict] = []
         used_tool = False
