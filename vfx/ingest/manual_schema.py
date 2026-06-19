@@ -139,6 +139,8 @@ def manual_to_recipe(m: Dict[str, Any]) -> VFXRecipe:
         gear=gear,
         reference_images=reference_images,
         ingest_confidence=1.0,
+        is_ai_generated=bool(m.get("is_ai_generated")),
+        ai_generation=m.get("ai_generation") or [],
     )
 
 
