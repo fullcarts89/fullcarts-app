@@ -59,3 +59,18 @@ def test_write_project_creates_openable_layout(tmp_path):
     assert len(root["tracks"]) == 2 and len(inner["tracks"]) == 2
     meta = json.load(open(dest / "draft_meta_info.json"))
     assert meta["draft_name"] == "MyProj" and meta["tm_duration"] == 5_000_000
+
+
+def test_write_project_auto_versions_instead_of_clobbering(tmp_path):
+    # Re-building the same name must never overwrite an existing project
+    # (it may be open in CapCut); it auto-versions to name_2, name_3, ...
+    d1 = write_project(_two_track_timeline(), tmp_path, "MyProj")
+    d2 = write_project(_two_track_timeline(), tmp_path, "MyProj")
+    d3 = write_project(_two_track_timeline(), tmp_path, "MyProj")
+    assert d1.name == "MyProj"
+    assert d2.name == "MyProj_2"
+    assert d3.name == "MyProj_3"
+    assert d1.exists() and d2.exists() and d3.exists()
+    # the versioned project's internal draft name matches its folder
+    meta2 = json.load(open(d2 / "draft_meta_info.json"))
+    assert meta2["draft_name"] == "MyProj_2"

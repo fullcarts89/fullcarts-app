@@ -205,8 +205,19 @@ def _rebuild_draft_materials(
 
 
 def write_project(timeline: Timeline, out_dir: Union[str, Path], name: str) -> Path:
-    """Write a complete CapCut project folder for ``timeline`` and return its path."""
-    dest = Path(out_dir) / name
+    """Write a complete CapCut project folder for ``timeline`` and return its path.
+
+    If a project of ``name`` already exists in ``out_dir`` we never overwrite it
+    (it may be open/edited in CapCut) — we auto-version to ``name_2``, ``name_3``…
+    and adjust the in-project draft name to match.
+    """
+    base = Path(out_dir) / name
+    dest = base
+    n = 2
+    while dest.exists():
+        dest = Path(out_dir) / f"{name}_{n}"
+        n += 1
+    name = dest.name
     shutil.copytree(SKELETON_DIR, dest)
 
     # The skeleton's main-timeline id lives in the root + inner draft_info.json,
