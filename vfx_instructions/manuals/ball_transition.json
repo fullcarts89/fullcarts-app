@@ -1,0 +1,149 @@
+{
+ "id": "ball_transition",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "mask_transition",
+ "title": "Ball Transition",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "ping_pong_ball",
+  "egg",
+  "frying_pan",
+  "soft_cloth",
+  "stove"
+ ],
+ "result_description": "A bounced ping-pong ball lands in a hot pan and appears to turn into a cracked egg, blended with a circular mask on the cut.",
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "inputs": [
+  {
+   "name": "ball_clip",
+   "what_to_film": "Locked-off shot: bounce the ping-pong ball so it lands and stops in the pan (catch it on a soft cloth so it doesn't bounce out).",
+   "capture_requirements": {
+    "locked_off": true,
+    "exposure_focus_locked": true,
+    "framing": "pan handle turned out of frame"
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "min_duration"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8,
+    "min_seconds": 2
+   }
+  },
+  {
+   "name": "egg_clip",
+   "what_to_film": "Without moving the camera, crack an egg into the hot pan at the same center spot; keep arms and shadows clear of the pan for a clean blend.",
+   "capture_requirements": {
+    "locked_off": true,
+    "exposure_focus_locked": true,
+    "note": "egg lands in the same spot the ball landed; no shadows over the pan"
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "ball_clip, egg_clip"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "both clips",
+   "capcut_feature": "Split",
+   "params": {
+    "note": "trim each clip to the needed section; keep extra head on the egg clip to cover the ball clip"
+   }
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "egg_clip",
+   "capcut_feature": "Overlay",
+   "params": {
+    "track": 2,
+    "note": "drop the egg clip onto an overlay track over the ball clip"
+   }
+  },
+  {
+   "action": "opacity",
+   "channel": "ui",
+   "target": "egg_clip",
+   "capcut_feature": "Opacity",
+   "params": {
+    "opacity": 50
+   },
+   "note": "halve opacity to align the ball-bounce hit with the egg hit"
+  },
+  {
+   "action": "trim",
+   "channel": "taste",
+   "target": "egg_clip",
+   "params": {
+    "note": "slip the egg clip so it lands the exact frame the ball lands"
+   }
+  },
+  {
+   "action": "opacity",
+   "channel": "ui",
+   "target": "egg_clip",
+   "capcut_feature": "Opacity",
+   "params": {
+    "opacity": 100
+   },
+   "note": "restore full opacity before masking"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "egg_clip",
+   "capcut_feature": "Mask → Circle",
+   "params": {
+    "shape": "circle",
+    "position": "over the pan",
+    "note": "size the circle to cover the pan/cloth"
+   }
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "egg_clip",
+   "capcut_feature": "Mask → Feather",
+   "params": {
+    "note": "add feather to soften the circle edge for believability"
+   }
+  }
+ ],
+ "result": {
+  "description": "The ball lands and seamlessly becomes the cracked egg sizzling in the pan.",
+  "success_criteria": [
+   "Ball and egg hit on the same frame",
+   "Circle mask hides the cut, no hard edge",
+   "Pan stays static with no exposure shift"
+  ]
+ },
+ "narration_transcript": "Breakfast hack For this we need two shots of our egg or ping pong ball. Our pan and a soft cloth to catch the ball. When actually move the handle out of the way so that it doesn't cross over our body in the camera's view. Maybe right there.\n\nOkay so basically what we're gonna do is bounce the ping pong ball and have it stop and land we don't want it to bounce out and then we're gonna transition to cracking the egg and it's gonna look like the ball turns into the egg. Let me go ahead and do my exposure lock. And we're gonna record. Looks good.\n\nSo we'll establish the ball by bouncing it first. Breakfast hack Do a couple takes so I can choose the best one. Breakfast hack Breakfast hack Okay think that was the one. I'll get one more just in case.\n\nBreakfast hack Breakfast hack Cool I'm gonna go ahead and pause. What I need to do is heat up the pan really hot. So that when I crack the egg we hear that sizzle right away and it starts cooking. Gonna give a better effect.\n\nSo I'm gonna go ahead and pause. Let this heat up for a minute and I'll be right back. Okay that should be hot enough. Now since I didn't clear out of the screen the exposure and focus lock is in the same place.\n\nSo all I have to do is just hit record and be careful not to bump the camera too much. Okay got that. Gonna go ahead and crack my egg drop it on gonna make sure to clear all my arms and any shadows that I'll create as I'm cracking the egg so that when we blend the two clips together that there's no mistakes with the masking. So a lot of shadows.\n\nSo I'll probably drop it from high up here okay Okay Egg is cracked, when we get one shot, right in the center. Let's go. Let's get it. Okay that should work and let's go check it out in the edit.\n\noh pop pop Import my two clips that we got. Just do a quick review. I remember the second one, is the one that I wanted to go with. So let's go ahead and split that and delete the left so we'll get rid of everything in front of that part and then I just need up until after my reaction here.\n\nSo we'll split that and get rid of all these extra takes. So then we can fast forward the part where the egg drops and we're just gonna need enough video at the beginning of this to cover what already happened in the other clip so I'll go ahead and leave some extra there split that delete the left side. Now we have our two clips and what I wanna do is select the egg clip. We're gonna overlay that so it drops it down.\n\ncan I go ahead and shorten that way up. So we can line it up okay so I'll scoot it over little trick I'll turn my opacity down so that I can line up the timing of the two before I start adding my mask, so opacity down to fifty and what we want is the ball to bounce right when it hits we want the egg to also hit. Something like that. I'll zoom in be a little more precise.\n\nHey let's slap that over. Okay. Maybe go ahead and extend front of that there. Let's go ahead and turn the opacity back up to 100.\n\nNow to combine the two clips we're gonna add a mask so we can just throw a mask on there and then change it if we need to. I'll do a circle mask since the pan is kind of in a circle. And we'll worry about the feathering later right now I just wanna cover the napkin. Just get it looking a little bit more believable.\n\nOkay so go ahead play. So we're gonna go ahead and call that one good and I'll see you in the next video.",
+ "frames": {
+  "demo": [
+   "assets/ball_transition/still_38f00e9d.jpg"
+  ],
+  "editing": [
+   "assets/ball_transition/img_e57c270e.jpg"
+  ]
+ }
+}

@@ -1,0 +1,156 @@
+{
+ "id": "dr_strange_portal",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "mask_transition",
+ "title": "Dr. Strange Portal",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "tripod_marker_card",
+  "portal_stock_footage"
+ ],
+ "result_description": "A Dr. Strange-style sparking portal appears beside you via blended stock footage; an optional self-cutout lets you step through it.",
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "inputs": [
+  {
+   "name": "action_clip",
+   "what_to_film": "Locked-off shot: stand in farther from the frame edge (mark the spot with a card) leaving open space on one side for the portal, then run in and perform your action.",
+   "capture_requirements": {
+    "locked_off": true,
+    "exposure_focus_locked": true,
+    "framing": "leave open space on one side for the portal",
+    "note": "do not cross paths with where the portal will sit"
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "min_duration"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8,
+    "min_seconds": 2
+   }
+  },
+  {
+   "name": "portal_stock",
+   "what_to_film": "Source a Dr. Strange-style portal stock-footage clip (sparks on a dark/black background).",
+   "capture_requirements": {
+    "is_stock": true,
+    "note": "dark background blends best"
+   },
+   "acceptance_checks": []
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "action_clip, portal_stock"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "action_clip",
+   "capcut_feature": "Split",
+   "params": {
+    "note": "trim the front and tail; start on a piece of action to hook the viewer"
+   }
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "portal_stock",
+   "capcut_feature": "Overlay",
+   "params": {
+    "track": 2,
+    "note": "drop the portal onto an overlay track and slide it to the open side of frame"
+   }
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "portal_stock",
+   "capcut_feature": "Blend Mode",
+   "params": {
+    "mode": "screen",
+    "note": "Filter / Screen / Lighten all work; Screen or Filter read most realistic"
+   }
+  },
+  {
+   "action": "transform",
+   "channel": "taste",
+   "target": "portal_stock",
+   "capcut_feature": "Scale",
+   "params": {
+    "note": "position/scale the portal to feel grounded in the distance and not overlapping the body"
+   }
+  },
+  {
+   "action": "trim",
+   "channel": "taste",
+   "target": "portal_stock",
+   "params": {
+    "note": "slide the portal so its timing matches the action; align both clips to end together"
+   }
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "target": "action_clip",
+   "capcut_feature": "Copy/Paste",
+   "params": {
+    "to_track": 3,
+    "note": "(advanced step-through) copy the footage above the portal so layers are 0=footage, 1=portal, 2=self-cutout"
+   }
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "duplicated action_clip",
+   "capcut_feature": "Remove Background → Auto Removal",
+   "params": {
+    "mode": "auto"
+   },
+   "note": "cut yourself out so you appear in front of the portal"
+  },
+  {
+   "action": "position",
+   "channel": "ui",
+   "target": "all layers",
+   "capcut_feature": "Layers",
+   "params": {
+    "order": "footage 0, portal 1, cutout 2"
+   },
+   "note": "fix layer order so the cutout sits on top"
+  },
+  {
+   "action": "audio",
+   "channel": "taste",
+   "target": "timeline",
+   "params": {
+    "note": "add electricity/spark SFX, lowered to about -5 to -8 dB"
+   }
+  }
+ ],
+ "result": {
+  "description": "A sparking portal appears in frame and blends naturally; optionally you step through your own cutout.",
+  "success_criteria": [
+   "Portal blends with no visible black box",
+   "Portal does not overlap the body (or cutout sits cleanly on top)",
+   "Spark SFX synced to the portal"
+  ]
+ },
+ "narration_transcript": "This effect we're gonna utilize our superhero powers. So once again we're gonna use our tripod and our cell phone. We're gonna set up our composition so that when we bring in our stock footage effect that we don't cross paths with the effects so we don't have to use any masking tools. Okay so that's a pretty nice composition there.\n\nUse my card to mark a spot and see if I'm happy with that so I can see my card there I can see it's too close to the edge of the frame so I'm gonna scoot it over. I'll put it here so that we can't see it but I'll note that I need to stand on that side of the card. So we're gonna activate AV Lock to lock our exposure and we'll hit record and just do a test shot see how it looks. Okay let's take a look okay.\n\nAs you can see I'm a little too close to the edge of the frame so when we go to do our take I know to step in farther. This will give us a whole open area on the right to add in our portal footage. Okay so block our exposure again. Hit record and run in and do the same action.\n\nAll right let's see how that looks I think this will be the one. We test the shot before we move our tripod and camera so that we don't have to set our equipment back up. Okay we have our clips imported into CapCut. We'll do a quick review. It's good and here's our portal. Let's go and trim off some of the front of this clip so we'll split it there and delete the left side so we just have us running in and we're gonna place our portal on the right hand side over there and for this one it's just a simple edit so we won't have to use any masking techniques and we'll split it there and trim off the right side.\n\nNow we're gonna take our stock footage of the portal. Select that tap overlay to drop it down slide it over to the left and to get it to blend we're gonna select it, tap blend and choose the filter option. Okay so now we just want to adjust the timing. So we'll slide it way over here.\n\nLittle bit later. Let's see how that works. Okay not too bad. I'm gonna zoom in a little bit.\n\nSo I'm gonna shift it a little bit later. Alright there we go so now what we wanna do is adjust the position. So let's go ahead and put it over here make it feel like it's sitting on the ground in the distance a little more and for this one I wanna scoot it over so that my hands are not crossing over. So be a little bit more in that position there.\n\nWe can come to the end we can trim off the end of that and then I'm gonna just slide this to get the end timing to match. I'm trying to use the slider just to get these two to end at the exact same point. Delete that. Okay.\n\nZoom back out and let's watch that through. Run in. Awesome looks pretty good. So you can also adjust the different blending modes.\n\nYou could try overlay no not overlay sorry it would be lightened. Doge and they're gonna give a little bit of a different look to it that one's a little bit too hot but I think it's between lighten and and filter and I think filter is the most realistic looking. Alright and there we go. Okay so we're back in the CapCut desktop app. We've got our piece of footage and our portal. Let me drag the footage in and just go ahead and trim this up. So I like to start it on a piece of action so you can see some movement there that just makes it so that if somebody's watching this video doesn't give them enough time to scroll there's already something happening that can catch their attention.\n\nSo that might be a little a little too much but just wanna make sure that there's some movement happening that can catch the viewer's eye immediately. So that that'll do it and then so this is just a simple portal we're gonna create here first just to make sure that you understand how to bring the footage in and blend it together so I'll split that there delete that then we bring in our portal and to get this to look correct we wanna come over to the basic tag under video and the blend option we're gonna change this from default to screen and then we can just just kind of mess with it. Okay\n\nso the timing is obviously off. Okay so there's a few different things that we can do here so let's get the base set up first and then we'll talk more about it. Okay you can see the portal is overlapping my body so the options here is to shrink the portal or scoot it over so that it doesn't cross paths that makes it so we have less work to do. Okay and then that can be the end of the video right there.\n\nThe other option is we put the portal wherever we want it make it a little bigger and then we can take our our footage and copy paste that so control C , control V and we want this to be up here so we're gonna sandwich it outside of the portal so we have our original footage our portal in between and then the top layer is gonna be a cut out of ourselves. Everything is in line so we'll go to remove background up here in the corner and let's try the auto removal and just see how that does for us. It's pretty good at detecting human movement so can usually rely on it for a lot of different things.\n\nOkay so that's working nice cut out and I'll just go ahead and scale this way up so you can see what's happening. If you have it selected then these lines get in the way so click here in the gray area just to deselect and so it's cut out every part of the human in the scene to place it on top okay so I'm just gonna control Z a couple times to put that back where we had it. Okay pretty simple but then you see we have a little issue if we wanted this to go longer our portal kind of comes to an end so we don't have enough footage so once this fully grows the portal is just kind of looping the animation here so I can actually come and split it and then copy and paste it so it just repeats if I wanted to do that again I could make as many copies as I want and since there's so much movement and it's just going in a looping circle you probably won't be able to tell the cut point.\n\nOkay so the only thing that's a problem is since we made extra layers here they got out of order so they come on top of our person here so we need to make sure that so the the order of our layers would be always be 0, 1, 2. So all of these should be layer 1 and this should be layer 2 so if we come over to the basic tag and make sure that this is layer 2 you see it kind of flip back and forth there. Okay so that should always say 2 and that's it. These all say one.\n\nOkay let's play it one more time and then I'll go ahead and trim trim this down to the point where I wanted to end let's say right there. Cool so it's just the basic creation of the portal there's a lot of different transitions and stuff that you can do and we'll get into more some more stuff let's go ahead and add a sound effect just to finish it off and then we'll be done. Maybe sparks too much These are list to find a lot of my spark my sound effects but for this I'm just gonna try to try to find what we need inside of CapCut. So this this could work as like a secondary sound effect let's go ahead and bring that in and just see how that sounds.\n\nSo I think if we turned that one down let's try negative 5 again. Maybe even more you have eight and then if we can get some sparks. Let's see. Spark sound effects.\n\nIt kind of messes up when I actually click on sound effects and then try to search but if I start on music and then I search I think I have better luck spark sound effects. Okay let's try that sorry about that electricity. Okay this is not what I'm looking for but instead of taking up your time here I'm just gonna go ahead and put it in here. I don't wanna make this tutorial too long.\n\nSo it's a little bit cheesy but it's better than not having sound effect in there and then if I if I turn it down it's gonna hit a five. Yeah definitely want some sparks in there but get the idea. So that's it and I'll see you in the next video.",
+ "frames": {
+  "demo": [
+   "assets/dr_strange_portal/still_299c6a41.jpg"
+  ],
+  "editing": []
+ }
+}

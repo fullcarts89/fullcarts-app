@@ -1,0 +1,169 @@
+{
+ "id": "kick_away",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "keyframe_motion",
+ "title": "Kick Away",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "You kick and a person launches off into the sky, flying away by scaling down and rising on a keyframed motion path with motion blur.",
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "inputs": [
+  {
+   "name": "kick_clip",
+   "what_to_film": "Locked-off shot: perform the kick toward the subject.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "min_duration"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8,
+    "min_seconds": 2
+   }
+  },
+  {
+   "name": "reaction_clip",
+   "what_to_film": "Locked-off shot of the subject's reaction to being kicked; keep arms not spread too wide so background removal cuts cleanly.",
+   "capture_requirements": {
+    "locked_off": true,
+    "note": "arms tucked in for a clean cutout"
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "kick_clip, reaction_clip"
+  },
+  {
+   "action": "speed",
+   "channel": "ui",
+   "target": "kick_clip",
+   "capcut_feature": "Speed",
+   "params": {
+    "note": "slow the kick way down as the base layer"
+   }
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "kick_clip",
+   "capcut_feature": "Split",
+   "params": {
+    "note": "split at the moment the kick lands; delete the right side"
+   }
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "reaction_clip",
+   "capcut_feature": "Overlay",
+   "params": {
+    "track": 2,
+    "note": "drop the reaction cutout onto track 2 at the end of the kick clip"
+   }
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "reaction_clip",
+   "capcut_feature": "Remove Background → Auto Removal",
+   "params": {
+    "mode": "auto"
+   }
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "target": "reaction_clip",
+   "capcut_feature": "Duplicate",
+   "params": {
+    "to_track": 3,
+    "note": "duplicate the cutout to track 3 and match its timing to the layer below"
+   }
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "duplicated reaction_clip",
+   "capcut_feature": "Remove Background → Auto Removal",
+   "params": {
+    "mode": "auto"
+   }
+  },
+  {
+   "action": "trim",
+   "channel": "taste",
+   "target": "reaction layers",
+   "params": {
+    "note": "match the kick foot contact to the split point so the cut hits on the kick"
+   }
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "reaction cutout",
+   "capcut_feature": "Keyframes",
+   "params": {
+    "property": "position+scale",
+    "start": "in place at the kick",
+    "end": "scaled to 0, position up in the sky"
+   },
+   "timing": {
+    "cue": "the moment of the kick"
+   },
+   "note": "first keyframe at the transition, second keyframe sends the figure up and shrinks scale to 0"
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "reaction cutout",
+   "capcut_feature": "Motion Blur",
+   "params": {
+    "note": "select the clip near the end and turn the motion blur all the way up"
+   }
+  },
+  {
+   "action": "keyframe",
+   "channel": "taste",
+   "target": "reaction cutout",
+   "capcut_feature": "Keyframes → Graph",
+   "params": {
+    "curve": "custom ease-out"
+   },
+   "note": "shape the first keyframe's speed curve to smooth the launch"
+  }
+ ],
+ "result": {
+  "description": "On the kick, the person shrinks and rockets up into the sky with a blurred, eased launch.",
+  "success_criteria": [
+   "Launch is triggered exactly on the kick's foot contact",
+   "Clean human cutout with no fringe",
+   "Smooth eased acceleration with motion blur"
+  ]
+ },
+ "narration_transcript": "Okay so here we are in CapCut. We have our one clip and then a few different reactions. I suggest having a reaction where your arms are not too spread out far. Okay and I'll probably choose this one here so I'll go ahead and split that and then I can shrink it down like that.\n\nLet's zoom in so we have this little clip here. The reason I didn't freeze frame is because we can't do the background removal on a freeze frame. So we're gonna take that we'll go to speed and we'll just slow it way down. All right.\n\nSo let's save that okay so we have our kick that's gonna be our base and then we have this section so let's go ahead and select their split and I'm going to overlay this so come down here tap overlay it's gonna drop it down and then we want to grab that and drag it all the way over. Okay so I'm gonna go to the point right when I want that kick to happen. Select this clip, tap split and then delete the right side. Okay so we have our freeze frame over here and we'll go ahead and select that one.\n\nOverlay to drop that down. Scoot it all the way over to the end of that clip. So it cuts from one clip to that one. Okay.\n\nNow on this one we also want to remove the background so let's try auto removal. Alright so there's the basis of our move and I'll show you what's next. Okay so what we need to do is we have the actual kick happening but it's hiding underneath so we want to duplicate this. So duplicate and then if we do overlay it'll drop it down to our third layer and then we're gonna drag this all the way over so that it matches the timing of that one so we have layer 1, 2 and 3.\n\nOkay so now on this clip we want to do the same thing with the background removal. Remove background and auto removal. Wait for that to load and then the only thing we're gonna need to do is match up the timing of the kick with our split point right here okay so if I scoot this clip over and I match my foot. Let me zoom in.\n\nOkay let's see if that that feels right yeah and you'll see what I'm doing in a second okay so then I can shorten the front of this one and then I know that I can just scoot everything all the way back over. Okay. So we have our kick, transitions to the cut out shot and what we wanna do is right when it transitions to that shot we want to add a keyframe then maybe go all the way over here and then basic. We're gonna scale this one way down.\n\nFirst let's move the position. All the way up in the sky. Maybe scoot him over here a little bit and then yeah go into the scale and make that zero. Okay so I can trim the end of that.\n\nOkay so the problem is that it just doesn't happen fast enough. So let's remove that key frame and let's go make those same adjustments. Basic. The Y position will send it up in the sky.\n\nOkay we want to scale it way down. We can just go ahead shrink it way down. Okay then the last little trick here. Select the clip, come all the way towards the end and tap motion blur, turn the blur all the way up.\n\nOkay so to smooth this out a little bit go to this first keys for keyframe hover over the keyframe when it's highlighted, click on this graph you can also choose the ease out setting right here but I'm gonna choose the custom so that I can control the curve a little more and if we make it like this curve it'll smooth out that launch and there you go I'll see you in the next video.",
+ "frames": {
+  "demo": [
+   "assets/kick_away/still_ffbd7079.jpg"
+  ],
+  "editing": []
+ }
+}

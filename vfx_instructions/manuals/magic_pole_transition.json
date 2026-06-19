@@ -1,0 +1,149 @@
+{
+ "id": "magic_pole_transition",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "mask_transition",
+ "title": "Magic Pole Transition",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "pole",
+  "two_outfits"
+ ],
+ "result_description": "You step across a central pole and your outfit instantly changes, hidden by a vertical split mask on the pole.",
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "inputs": [
+  {
+   "name": "outfit_a_clip",
+   "what_to_film": "Locked-off shot with a pole centered in frame: in your first outfit, take one simple step across the pole. Note your standing spot.",
+   "capture_requirements": {
+    "locked_off": true,
+    "exposure_focus_locked": true,
+    "framing": "pole centered"
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "min_duration"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8,
+    "min_seconds": 2
+   }
+  },
+  {
+   "name": "outfit_b_clip",
+   "what_to_film": "Without moving the camera, change outfits, stand in the same spot, and take the same step across the pole.",
+   "capture_requirements": {
+    "locked_off": true,
+    "exposure_focus_locked": true,
+    "note": "match the step path and timing of the first take"
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "outfit_a_clip, outfit_b_clip"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "both clips",
+   "capcut_feature": "Split",
+   "params": {
+    "note": "trim each clip down to the short step-across section"
+   }
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "outfit_b_clip",
+   "capcut_feature": "Overlay",
+   "params": {
+    "track": 2,
+    "note": "drop the second outfit onto an overlay track, dragged to the front so timing lines up"
+   }
+  },
+  {
+   "action": "opacity",
+   "channel": "ui",
+   "target": "outfit_b_clip",
+   "capcut_feature": "Opacity",
+   "params": {
+    "opacity": 50
+   },
+   "note": "halve opacity to align the foot crossing the pole in both takes"
+  },
+  {
+   "action": "trim",
+   "channel": "taste",
+   "target": "outfit_b_clip",
+   "params": {
+    "note": "slip the overlay frame-by-frame so the step crosses the pole at the same moment"
+   }
+  },
+  {
+   "action": "opacity",
+   "channel": "ui",
+   "target": "outfit_b_clip",
+   "capcut_feature": "Opacity",
+   "params": {
+    "opacity": 100
+   },
+   "note": "restore full opacity before masking"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "outfit_b_clip",
+   "capcut_feature": "Mask → Split",
+   "params": {
+    "shape": "split",
+    "orientation": "vertical",
+    "rotation_deg": 90,
+    "position": "centered on the pole"
+   },
+   "note": "rotate the split mask 90 degrees and center it on the pole"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "outfit_b_clip",
+   "capcut_feature": "Mask → Feather",
+   "params": {
+    "feather": 3
+   },
+   "note": "add a small feather (about 3) to hide the harsh line on the floor"
+  }
+ ],
+ "result": {
+  "description": "Outfit swaps the instant you cross the pole, with no visible seam.",
+  "success_criteria": [
+   "Step crosses the pole on the same frame in both halves",
+   "Split mask hidden inside the pole",
+   "Soft, non-harsh seam on the floor"
+  ]
+ },
+ "narration_transcript": "For this transition we have our phone in our tripod. We have our pole in the center and we have our two outfits. I'm gonna use my two t-shirts to transition but you can use whatever outfits you want to. Okay so as always we're gonna wanna use our AV lock to lock the exposure so we don't get any lighting shifts.\n\nRight go ahead and hit record so for a transition like this we want to keep the move very simple okay so I'll make a mental note of where I'm standing and I'm just gonna do one step acrossed. Okay now I'm gonna go back and try to stand in the same spot as I was before and I'm gonna change my shirt. I have my blue shirt and I'm gonna take the same step across the pole. Now my shirt's blue depending on the effect that you're trying to achieve you could just jump across.\n\nOkay so I'll do the same thing change my shirt back. All right and then I'm gonna make the same jump across. Okay so when it happens quick like that sometimes it's a lot easier to hide the transition because it's happening so quick that the eye doesn't catch it but if you're moving slowly past your pole or whatever you're using as your object it's gonna be a lot easier to notice the imperfections. I have my two clips trimmed down to just the sections that I need. We have our red shirt and our blue shirt. The first thing I wanna do is select the blue shirt clip. Tap overlay to drop it down.\n\nWhat we wanna do is stack these layers on top of each other. So that we can line up the timing okay so I'm gonna select my blue clip and use my opacity trick. Turn the opacity down to 50 so that we can see both not working there we go capacity down to 50 so now we can see both layers at the same time and we just wanna slip the blue layer so that this move matches. Okay we'll go the other way a little bit.\n\nZoom in to be more precise. Okay so the main thing we want is the shoot across at the same time so I think I can slip it just one more frame. The opposite way. There we go.\n\nCool. And we can always go back and adjust it. Okay, so what I wanna do is turn my opacity back up on the blue layer and go into our mask tool and we're gonna use a split mask to split it right down the center so we wanna rotate it so that we can see the blue on the right side and the red on the left side. You wanna put it right in the center so that it's hidden inside of your object.\n\nOkay. So the timing is a little bit weird there because our head disappears so I think I'll slip it a little bit more. There we go. That's probably gonna make make more sense okay so what we're seeing here is our red shirt layer on the left side and our blue shirt layer on the right side they're both playing at the same time but our mask is splitting it down the middle so what happens is just to show you if I go to my opacity and I toggle that down and on you can see it's just sitting right on top of the blue layer.\n\nOkay and if I do the same thing with with the red shirt layer it's gonna turn black because there's nothing behind there. All right. Okay so this is a simple transition idea that you can use with just about any object that you put in the middle and you can use it to transition from one outfit to the other or you could even use it as a costume transition and that's it. Once I have my footage imported up here drag it down into the timeline. Just do a quick review. Okay I'm gonna start I'm gonna split it. Get that first shot.\n\nTrim this section. Okay so let me go ahead and zoom in. We have our first shot, call this red shirt. I'm gonna start it there.\n\nKeep it short and sweet and trim it down right there. Okay and then we'll call this blue shirt and there's the end trim that down okay I'll zoom in a little bit more so we have our two clips here. Red shirt, blue shirt. We wanna stack them to our blue shirt I'm gonna put that on top and come over to opacity over here under the basic tab and I'm gonna turn that down to 50%.\n\nNow I can see both shots. What I wanna do is line up the timing right when my foot crosses through. Okay I think one more frame and that should be good. We'll go with that.\n\nWant to make sure to drag this all the way to the front. So that we don't have any popping or weird edits going on so that the timing lines up. Okay so and then I'll go ahead and turn this so that they're the same length. All right I will turn my opacity back up to 100.\n\nI'm right in the center and I'm gonna come over to the mask tool up here in the right and we can do a horizontal. Then we need to grab this guy and rotate it. I know that that's a vertical line so I can come in here and just type in 90 degrees and then we just wanna make sure that it's right in the center of that pole. Okay so what we wanna do once we get it in the center is just increase the feather a little bit.\n\nYou'll notice it more on the carpet that there will be a harsh line right here so if we just add a little bit of feather 5 might be too much, let's go 3 and then click away. Review. Turn off the sound. I'm just gonna shift it one more frame.\n\nSo I'll pull that side right there one frame back and then scoot it over and I think that will. There you go that's it.",
+ "frames": {
+  "demo": [
+   "assets/magic_pole_transition/still_9c8da125.jpg"
+  ],
+  "editing": [
+   "assets/magic_pole_transition/img_c6d6cd6f.jpg"
+  ]
+ }
+}

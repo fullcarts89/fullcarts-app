@@ -1,0 +1,106 @@
+{
+ "schema_version": 1,
+ "manual_type": "effect",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "sparse_source": true,
+ "id": "storm_clouds",
+ "technique_primitive": "blend_composite",
+ "title": "Storm Clouds",
+ "difficulty": "intermediate",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "The existing sky in your shot is replaced with dramatic drifting storm clouds.",
+ "inputs": [
+  {
+   "name": "sky_clip",
+   "what_to_film": "Lock the camera on a tripod with the sky visible in frame. A static shot makes the sky replacement far easier.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "storm_footage",
+   "what_to_film": "Storm-cloud stock footage.",
+   "capture_requirements": {}
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "sky_clip"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "storm_footage",
+   "params": {
+    "track": 2
+   }
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "storm_footage",
+   "capcut_feature": "Mask",
+   "params": {
+    "note": "mask the overlay to the sky region, or use Cutout if there's a clean horizon"
+   }
+  },
+  {
+   "action": "opacity",
+   "channel": "taste",
+   "target": "storm_footage",
+   "capcut_feature": "Opacity",
+   "params": {
+    "note": "set blend/opacity so the new clouds sit naturally"
+   }
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "storm_footage",
+   "capcut_feature": "Keyframes",
+   "params": {
+    "note": "keyframe a slow drift"
+   }
+  },
+  {
+   "action": "filter",
+   "channel": "taste",
+   "target": "timeline",
+   "params": {
+    "note": "cool the color grade and add wind/thunder SFX"
+   }
+  }
+ ],
+ "result": {
+  "description": "Original sky is replaced with moving storm clouds.",
+  "success_criteria": [
+   "Clouds confined to the sky region",
+   "Clean horizon edge",
+   "Slow natural drift"
+  ]
+ },
+ "narration_transcript": "",
+ "frames": {
+  "demo": [
+   "assets/storm_clouds/demoframe_0.jpg",
+   "assets/storm_clouds/demoframe_1.jpg",
+   "assets/storm_clouds/demoframe_2.jpg"
+  ],
+  "editing": []
+ }
+}

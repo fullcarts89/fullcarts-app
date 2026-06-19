@@ -1,0 +1,147 @@
+{
+ "id": "your_1st_cloning_video",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "overlay_bg_removal_clone",
+ "title": "Your 1st Cloning Video",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "tripod_markers"
+ ],
+ "result_description": "Two copies of you stand on opposite sides of a central pole and interact, combined from two takes with a vertical split mask hidden on the pole.",
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "inputs": [
+  {
+   "name": "shot_one",
+   "what_to_film": "Lock the camera off on a wide frame with a central pole; place two ground markers. Walk in and act as the first clone, staying on one side of the pole.",
+   "capture_requirements": {
+    "locked_off": true,
+    "exposure_focus_locked": true,
+    "framing": "wide, central pole, two ground markers",
+    "note": "stay on one side, never cross the pole"
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "min_duration"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8,
+    "min_seconds": 2
+   }
+  },
+  {
+   "name": "shot_two",
+   "what_to_film": "Without moving the tripod, walk in as the second clone on the opposite side of the pole and react to the first clone.",
+   "capture_requirements": {
+    "locked_off": true,
+    "exposure_focus_locked": true,
+    "note": "stay on the other side of the pole"
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "shot_one, shot_two"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "both clips",
+   "capcut_feature": "Split",
+   "params": {
+    "note": "split out the keeper section of each shot and delete the unneeded sides"
+   }
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "shot_two",
+   "capcut_feature": "Overlay",
+   "params": {
+    "track": 2,
+    "note": "drop second clip onto an overlay track, stacked over shot_one"
+   }
+  },
+  {
+   "action": "opacity",
+   "channel": "ui",
+   "target": "shot_two",
+   "capcut_feature": "Opacity",
+   "params": {
+    "opacity": 50
+   },
+   "note": "temporarily halve opacity so both motions are visible while aligning timing"
+  },
+  {
+   "action": "trim",
+   "channel": "taste",
+   "target": "shot_two",
+   "params": {
+    "note": "slip the overlay to line up the timing of the two clones"
+   }
+  },
+  {
+   "action": "opacity",
+   "channel": "ui",
+   "target": "shot_two",
+   "capcut_feature": "Opacity",
+   "params": {
+    "opacity": 100
+   },
+   "note": "restore full opacity before masking"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "shot_two",
+   "capcut_feature": "Mask → Split",
+   "params": {
+    "shape": "split",
+    "orientation": "vertical",
+    "position": "centered on the pole"
+   },
+   "note": "rotate the split mask vertical and align it to the pole to hide the seam"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "shot_two",
+   "capcut_feature": "Mask → Feather",
+   "params": {
+    "note": "drag the feather arrow to soften the split edge"
+   }
+  }
+ ],
+ "result": {
+  "description": "Two clones walk in from opposite sides and interact in one continuous-looking shot.",
+  "success_criteria": [
+   "Both clones visible at once",
+   "Split seam hidden on the pole with no visible line",
+   "No lighting/exposure shift between halves"
+  ]
+ },
+ "narration_transcript": "Anytime I come out to shoot the first thing I'm gonna think about is the lighting situation. I've chosen a nice shady spot to help avoid the shadows and harsh lighting. We're gonna find a nice central location to set up our tripod. Now we're recording with our phone so we're gonna set this on the tripod and get our composition, the way that we like it.\n\nSo nice wide frame and what I'm gonna do is I'm going to take one long shot. So we go ahead and record here. I'm gonna test my composition first and what I wanna do is find two places and use a marker I'm using playing cards here for this demonstration. So I'm gonna place them on the ground.\n\nI'm gonna come back and look at my camera to review the spots and see if that's what I'm happy with I'm gonna shift my tripod to the right a little bit and make a slight adjustment. So I know that when I shoot my clone video one clone will be on this side the other clone will be on that side and I can just kind of leave those markers there just to make sure I don't cross and I can see them out of the corner of my eye without having to look at the post. Okay so gonna come over here and stop recording and then I'll start what I wanna always do is hold my finger down on the ground to activate a V lock that's gonna make it so that the lighting doesn't shift over time, the exposure and the focus is all locked.\n\nNow we're gonna hit record and we will call this shot one. I'm gonna walk into the scene and I'm gonna interact with my clone and I'm gonna run to this side continue recording and we're gonna call this shot 2 and then this clone is gonna react to that clone and then I and then we'll come over here and we will stop recording and review our footage. Speed through it make sure I'm standing in a good spot, for this one and yeah looks good. We can split it right down the middle no issues.\n\nYou can see there's no problems with the shadows on the ground because we're in the shade. And we'll come clean up our mess. Okay so this is a simple cloning technique where we're using two shots to combine them into one shot using a simple mask that's gonna be split down the middle. Let's go check it out and then edit. Alright so we're gonna open up CapCut. Start a new project. Select our clip and import that into our new project. Scroll through to the part that we need.\n\nSelect the clip and we're gonna tap split. Then delete the left side here that we don't need. So there is shot one so we can split that there then we'll all scroll forward to the next shot which is right here and we're gonna split it again right there. You can delete the left side we don't need that.\n\nScroll forward to about here. I'll go ahead and split it again and delete the right side. So we don't need that and we're left with our two clips. Okay, so we're gonna want to stack these on top of each other.\n\nTo do that we select the second clip. Tap overlay to drop it down, long press with my finger and pull it over to the left. Now to be able to see these at the same time. Gonna select the clip I'm gonna go to opacity.\n\nBring it down to 50 which is gonna make it halfway transparent. So now we can see both of our motions at the same time. I'm just gonna adjust the timing a little bit here. Okay so the timing looks pretty good.\n\nWe can always go back and adjust it so I'm going to bring the opacity back up to 100 and we're gonna add a mask so we're gonna split it down the middle. So tap mask, choose split and we're gonna rotate our mask vertically and we're gonna put it right on the middle of the pole that's gonna help us hide the the line right there. Then we can add a little bit of feather by dragging this white arrow. And that's it.\n\nSo we have our two clones walking in. Interacting with each other. Yeah, simple clone effect",
+ "frames": {
+  "demo": [
+   "assets/your_1st_cloning_video/still_709701bc.jpg"
+  ],
+  "editing": [
+   "assets/your_1st_cloning_video/img_e3a80d20.jpg"
+  ]
+ }
+}

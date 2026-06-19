@@ -1,0 +1,153 @@
+{
+ "id": "time_warp",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "keyframe_motion",
+ "title": "Time Warp",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "You snap your fingers and time accelerates: you stay normal speed in the foreground while the clouds/sky behind you race past in a fast time-lapse.",
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "inputs": [
+  {
+   "name": "action_clip",
+   "what_to_film": "On a locked-off, exposure-locked camera with a moving-cloud sky, do your action and snap your fingers, then let the camera keep rolling for several minutes to capture a long time-lapse of the same scene.",
+   "capture_requirements": {
+    "locked_off": true,
+    "note": "one continuous take: action + snap, then long static hold; the slower the clouds, the longer you record"
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "min_duration"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8,
+    "min_seconds": 60
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "action_clip"
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "target": "action_clip",
+   "params": {
+    "note": "two stacked copies sharing identical timing; bottom = foreground cutout, top/base = sky time-lapse"
+   }
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "duplicated clip",
+   "params": {
+    "track": 2,
+    "note": "slide so both copies line up exactly"
+   }
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "sky (background) clip",
+   "capcut_feature": "Split",
+   "params": {
+    "note": "split at the finger snap so the time-lapse starts there"
+   },
+   "timing": {
+    "cue": "the finger snap"
+   }
+  },
+  {
+   "action": "speed",
+   "channel": "ui",
+   "target": "sky clip after the snap",
+   "capcut_feature": "Speed",
+   "params": {
+    "note": "speed up the post-snap section a lot to make the clouds fly; tune to taste (creator used roughly 80x)"
+   }
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "foreground clip",
+   "capcut_feature": "Remove Background → Custom Removal",
+   "params": {
+    "mode": "smart_brush",
+    "note": "PRO: brush over yourself/foreground to cut out from the sky"
+   }
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "foreground clip",
+   "capcut_feature": "Mask → Horizontal",
+   "params": {
+    "shape": "horizontal",
+    "orientation": "along the treeline",
+    "reverse": true,
+    "note": "FREE alternative to Custom Removal: cover the foreground so only the sky speeds up"
+   }
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "horizontal mask",
+   "capcut_feature": "Mask → Feather",
+   "params": {
+    "feather": 3,
+    "note": "blend the mask edge along the treeline"
+   }
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "foreground clip",
+   "capcut_feature": "Mask → Circle",
+   "params": {
+    "shape": "circle",
+    "note": "add a second mask to fill in trees the horizontal mask misses; small feather"
+   }
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "timeline",
+   "capcut_feature": "Split",
+   "params": {
+    "note": "trim the sped-up end so foreground and sky end together"
+   }
+  },
+  {
+   "action": "audio",
+   "channel": "taste",
+   "target": "background clip",
+   "params": {
+    "note": "mute the sped-up sky layer"
+   }
+  }
+ ],
+ "result": {
+  "description": "Foreground stays normal while the sky rockets past in time-lapse after the snap.",
+  "success_criteria": [
+   "Clouds visibly accelerate at the snap",
+   "Foreground subject unaffected by the speed change",
+   "Cutout/mask edge hidden along the treeline"
+  ]
+ },
+ "narration_transcript": "So I think what I wanna do is I wanna hide behind the trees. Wanna hide behind the trees over there. So let's lock this screen on the left side over here. So our exposure stays locked right there.\n\nAnd we'll hit record. I'll be this way. Okay so this is just a touch shot. Just to see how our placement looks in the scene.\n\nLet's go ahead and review that. You can see the clouds are already moving fast so this is gonna be easy. All right. This little work I can actually stay closer to camera.\n\nWhat I'll do is I'll stay standing and do my action there. Not loving how much grass is showing on the bottom frame. So let's work on our framing a little bit. Maybe a little more like this.\n\nGo ahead and lock our exposure again and at this time I'm gonna let the camera continue to record after I move out of frame. Okay so there's one take let's try a different one. And run straight out and snap. Okay let's try that again.\n\nI'm not gonna pause so long this time. I'm gonna run straight out and snap my fingers. Let's see. Run out right here.\n\nOkay before we let it record for too long let's make sure that we're not too close to the camera. Yeah we are. Alright so we're gonna do a retake and this one I'll travel a little bit farther away from the camera. Snap my fingers and we'll be good to go.\n\nAs I move out of frame I'm gonna continue to let the camera record and just get a whole time lapse that we can speed up later of the clouds movement. So we've got about a minute of footage. I'm gonna let it record for about five minutes since there's so much movement. Just to note that the slower the clouds are moving the longer that you wanna record so that you can speed that up and get really fast time lapse while you're standing still in the scene.\n\nGive a quick review okay so here's what our time lapse is gonna look like. Lots of clouds moving. Awesome. All right.\n\nI'm gonna go ahead and zoom out, that's a huge clip. And let's go ahead and split it. I'm gonna duplicate it so I'll copy it then overlay to drop it down we're gonna slide that all the way over so that the timings match. Awesome.\n\nAlright. On the bottom one I'm gonna separate myself using a mask. I'll go for rectangle and let's see how that works. Add a little bit of feather.\n\nOkay. So right when we snap our fingers that's gonna be the moment. Snap when the time lapse starts. So I'm gonna split the top clip right at the snap and then hit speed.\n\nAnd let's just pump it way up, let's try 10 times. Maybe more. Let's go about twenty. Boom.\n\nOkay I'm gonna switch couple things here. I'm gonna change my mask so actually instead of using a mask let's remove that and if I use the cut out I can have a little bit more control over the shape of my my cut out mask. So we'll go to customize and just use the brush. Bump it up size a little bit and basically everything that's red is gonna be our mask.\n\nSo I'm gonna color all of this in the foreground and we can always adjust it later so I don't have to make it perfect right now and we'll apply that. Let's go ahead and trim the end here. So we know how much clip we're working with. Okay so I'll split that and then I'm gonna delete the right side.\n\nSo that's our whole video and through there. Something weird going on oh it's still loading. Maybe because the clip was so long. It was trying to load the entire thing.\n\nSo let's go ahead and do it again. Brush. Brush the foreground. So basically what we're doing is separating the foreground which is me from the background so that we can speed up the background clip while not affecting the foreground.\n\nSo I'm gonna snap my fingers the clouds will start flying by and create our time lapse effect. A few more seconds here. See how that looks. Okay so we're gonna speed it up more and I'm also gonna mute that.\n\nI wanted to move very fast so let's go in here adjust speed and let's see what we got. Let's put it up to like fifty. Awesome. So the longer you let it record the more you can speed it up.\n\nI let it record for five minutes so that's giving us see if I speed it up 50 let's go even a little bit more so if I went to like eighty yeah that still works and then we'll go ahead and end it Over here so I'll split it here. Delete the right side and then I'll use this little slider and it should snap to the timing there so they match up at the end. And then also I'm gonna start it a little bit later. Right here and right there.\n\nDelete. Delete the left sides of those. And we're gonna have to slide this timing back over all the way to the left. Alright that should be good.\n\nHere we are in CapCut desktop. I've got my one long clip up here. Gonna drag that onto our timeline. So we have the snapping action and then we just let it record for a long time to capture that time lapse.\n\nSo to start I'm gonna duplicate my clip. Put this over here for now and what I want to happen let's zoom in a little bit. Have it start, mid action right there and then let me zoom in some more. This is a long clip so bear with me.\n\nWe're gonna wait right until the snap happens. Boom right there. And to market I'm just gonna select this clip and split it. So now I know at this split point that's when we want our time lapse to start.\n\nOkay. So from there we can just take this whole clip and really just speed it up so with that long part of the clip selected will come up to the top and click speed and I know we want to speed this up a lot. So let's see. I think I did it something like eighty.\n\nSo 77. It'll be different depending on how long your shot is. So you kind of just have to play with it and how long you want it to go. The idea is that we get the clouds to look like they're moving fast enough to really sell the effect.\n\nOkay so we have our duplicate up here and the one thing I did wrong was I trimmed the front of this. So let's go ahead and extend that back out so it matches the timing of this original. And then what we can do is to make these match I'll split it there and split it there so then I know if I delete these front parts that these two clips match timing. Okay so what we're gonna do is we're gonna use this as our cutout and use this in the foreground and down here is our time lapse so that'll be the sky.\n\nLet's see. Let's make this hold on. Move that out of the way, see if that's yeah that's a good speed okay. So then what we wanna do is just trim this clip here so I'll split it delete that and then with this selected I can just drag this out so that they match up right here.\n\nNow I'll zoom in so we can see what's going on here. Okay so on this top clip we haven't done anything to this yet except match the timing. So if we come over to remove background we can go to this this is a pro effect here. So I'll show you how to do it with the pro effect and then we'll do it with with the free tools also.\n\nSo we gotta go to video remove background then custom removal and then here we have our smart brush. This is a great tool. So if you can pull for the Pro version this tool right here is worth it by itself and basically just come in and whatever you paint it selects it and it's gonna use that as our mask. So this is a big time saver.\n\nAnd it's pretty accurate because it gets the the edges of the trees right here. So with that then we just click apply. And that is it. Then we just let me turn off the sound here.\n\nClick play. Turned off the sound on the wrong one bottom layer. Easy peasy, okay. So let me show you what's happening here.\n\nSo on the bottom this is what we set up first. This is our time lapse. And then we take this and put it on top and it's basically just a layer just to cover the foreground while we have that time lapse happening in the background. Okay.\n\nSo if you don't have access to these tools you don't have the Pro version let me go ahead and duplicate this and I'll bring this one back up and I'm going to turn off the custom removal and what we can do is we can use masks instead. So to be a little bit less accurate but for something like this we can use feathering and and still make it work. So I'll come up here under video and instead of remove background will come up to the mask. Select mask and we want as much of these trees in there as possible.\n\nSo let's start with a horizontal mask. So you can just kind of see what's going on here. We wanna make sure the mask is facing the right way so we either rotate it like this so that we can see the foreground or right up here. There's a reverse button in the mobile app this would be called invert but if we reverse it it basically just flips the mask so that we're seeing the other side.\n\nOkay so I'll keep this rough for a second and I'll hit play so you can see what's happening. Okay if we move our mask okay so what we wanna try to do is get this to just cover this edge as much as possible. So what we can do is blend it a little bit with the feather not too much and bring that up there along the trees and then since we're missing some of the trees here what we can do is just create another one and instead of the horizontal mask I will use a circle mask and I'll widen it a little bit and let's see let's rotate it and just get it to fill in these trees right here and then just a little bit of feather so we put our feather up at 7 I'll move that down to 5 right here and then on this layer I'll move our feather up a little bit to two.\n\nSo if we deselect okay so there's how you do it with the free tools and just real quick to get a visual. You can see the difference of this cutout the accuracy here versus the masks which you know if you separate them like this you could come in even when they're up here you can turn off this bottom layer by hitting the eyeball. So that we can view what these look like together and then adjust our mask as needed so that feather is actually too much but I actually bring it down to like 3 maybe and we just wanted to be right at the top of the trees there Okay and turn our bottom layer back on deselect everything hit play and boom Yeah that's better.\n\nCool and that's it.",
+ "frames": {
+  "demo": [],
+  "editing": []
+ }
+}

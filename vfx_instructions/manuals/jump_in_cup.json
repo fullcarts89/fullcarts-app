@@ -1,0 +1,150 @@
+{
+ "id": "jump_in_cup",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "speed_ramp_transition",
+ "title": "Jump in Cup",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "coffee cup",
+  "beach ball (alignment marker)"
+ ],
+ "result_description": "You jump and disappear behind a coffee cup, and the cup splashes as if you dove inside it.",
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "inputs": [
+  {
+   "name": "jump_clip",
+   "what_to_film": "Act out jumping, lining your jump up exactly behind where the cup sits (use a distant ball as a center marker).",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "cup_plate",
+   "what_to_film": "Clean shot of just the cup in place with you out of frame — the foreground cup to cut out.",
+   "capture_requirements": {
+    "locked_off": true,
+    "subject_exits_frame": true,
+    "note": "shoot all three in one continuous take to keep framing identical"
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "splash_clip",
+   "what_to_film": "A splash from/around the cup to trigger on the jump landing.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ]
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "jump_clip, cup_plate, splash_clip"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "jump_clip",
+   "capcut_feature": "Split",
+   "note": "cut the jump so it ends on the frame you disappear behind the cup"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "splash_clip",
+   "capcut_feature": "Split",
+   "note": "start the splash on its first splash frame; jump-cut it straight after the jump"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "cup_plate",
+   "capcut_feature": "Overlay",
+   "note": "stack the clean cup clip on the layer above so it can be the foreground"
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "cup_plate",
+   "capcut_feature": "Remove Background → Custom Removal",
+   "params": {
+    "mode": "custom"
+   },
+   "note": "smart-brush the cup (and its handle) to cut it out as a foreground object; rectangle mask is the free fallback"
+  },
+  {
+   "action": "speed",
+   "channel": "ui",
+   "target": "splash_clip",
+   "capcut_feature": "Speed",
+   "params": {
+    "speed": 1.5,
+    "note": "creator tried 2.0, settled ~1.5 to feel natural"
+   },
+   "note": "speed up the splash so it lands closer to the jump timing; re-trim the tail after"
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "target": "cup_plate",
+   "capcut_feature": "Copy/Paste",
+   "note": "optional seam fix: copy the clean cup clip to patch the grass that moved underfoot"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "patch copy",
+   "capcut_feature": "Mask → Rectangle",
+   "note": "feathered rectangle over the moving-grass corner so the ground stays static through the splash"
+  },
+  {
+   "action": "audio",
+   "channel": "taste",
+   "target": "timeline",
+   "note": "add a small water-splash SFX, nudged slightly earlier than the visual splash"
+  },
+  {
+   "action": "text",
+   "channel": "taste",
+   "target": "opening",
+   "capcut_feature": "Text",
+   "note": "optional teaser text (e.g. a hook) and start the clip right before the jump to cut dead space"
+  }
+ ],
+ "result": {
+  "description": "A clean jump-cut hides you behind the cut-out cup, then a sped-up splash sells the dive into the cup.",
+  "success_criteria": [
+   "Cup reads as a foreground object over the splash",
+   "Jump and splash timing feel continuous",
+   "No moving-grass seam at the transition"
+  ]
+ },
+ "narration_transcript": "What's up, what's up. So, this one is the jumping in the coffee cup. So you can use any cup for this. I'm using a coffee cup.\n\nAnd here we are in CapCut Desktop. We need our three shots to get this done. So our first shot is basically us acting as if we're jumping in the cup. For this one, you want to make sure that you jump behind exactly where it lines up.\n\nYou can test this out by doing multiple takes and just going back to your phone. Or camera. And, like, looking at the screen and figuring out where to line it up. Uhm, if you see right here, I have this beach ball here.\n\nThat's what I used as my cue so that I went and put it in the distance and I knew that that was going to be the spot that I needed to jump. So, obviously, I didn't jump on the ball, but I jumped in the same, uh, line. In line with where that ball is at going this way. If that makes sense.\n\nSo, let's watch it again. Here, I'll bring it down here. Get my head out of the way. And when I hit play, you see I'm going to jump right behind that ball.\n\nSo, that's like my marker because I knew that that ball was in the center of where my coffee cup was. Okay, so that's for the first shot. Then, the second shot is just a clean shot. Clean plate, we'll call it that.\n\nWhere I'm not in the shot. You don't see the ball, obviously it's hiding behind the cup. But, this is going to be where we're going to use the cup as our foreground object and cut it out. Whichever method we use to do that.\n\nSo, this could even be an image, but use a video because then the framing will be the same. And it's something that you can get by just taking this video. And then grab yourself, put the coffee cup there, keep it recording so you don't have to start and stop. You can get all three of these shots in the same take if you plan it out so you don't want to, uh, so if you don't want to bump the camera or anything like that.\n\nOkay, so, let's pull these in. And then, uh, control minus, I'll go ahead and zoom out there for you. So, we've got Shot one, the jump, let's go. So, we've action shot, we've got our clean shot of the cup, and then we've got our splash.\n\nOkay, so we're just going to combine these together. Okay, so the first thing that I want to do is really just get the foundation set up and that would be the timing. Okay, so, getting the jump and the splash timed out right and then we can kind of fine tune everything. The way that these will be stacked is this layer will be up here and then this layer can stay down here or it can be up here, but let's, ah, let's start with it like this.\n\nSo, we'll go ahead and turn that one off for now and then I'll zoom back in, command or control plus to zoom and basically what we're doing is getting to a point where we disappear and then let's go ahead and split that and get rid of this so, split tool, select that part and then just hit delete there and then this part we would just want to go to the first frame where there's a splash, split that there, we don't want to get rid of any of the splash, this will start right on there, so if we line it up right we'll see that first frame, we don't really need this one because it's empty and I'm just using my left and right, um, keys on the left and right arrows on the keyboard.\n\nkeyboard to go back and forth, so let's go ahead and delete this first part because we don't need that, ok, so let's go ahead and turn this layer back on, here, I'll play that just so you can see, kind of how the timing, the timing is not perfect but we did get rid of a lot of the parts that we're not going to need, ok, so we'll probably end up trimming off. A little bit more off of this one, uhm, but we can do that in a little bit, so I'm going to turn this layer back on, show track by clicking the eyeball right there, and I can zoom in a little bit more, you can also use this over here to zoom in, on the right side where we have the, uh, plus and negative zoom tool, or you can drag this guy, and really we just want to be able to see all these frames in here and then this will be the layer will come to an end snap right to that one.\n\nBoom. So those will play seamlessly, and then on this one, we have a couple of different options. Um, I'll show you the rough way to do it, this is if you don't want to use the cutout tool, so if you're not using a pro account, then you can use masking for this too, and let's say we use the rectangle mask, and I'll, I'll do this rough first, just so you can use kind of get the idea of what's happening, because you can always go back in and fine tune a mask, so we'll just rotate it a little bit there. And, yeah, this, doing it like this cuts out the shadow on the table, so, um, we'll fix, we'll fix all that stuff afterwards, because I think, uh, we'll yeah, in this case, I, here, I'll zoom in, so you can see what I'm talking about.\n\nBut, if my shoes were to cross this line right here, then we wouldn't really want the mask there, because it's gonna cut us off, but I think in this case, we can have our mask right there, and then, um, we'll use a different tool to do this too. But, um, this, this might work for the way that I jump, because I clear it, yeah, it does- The ideal way to do this is to use the cutout tool, the- and, um, basically remove the background, and just cut out this cup, and use what we need. But, uh, this is the free way to do it first, and I'll just show you that that works just fine. So, if we zoom back out.\n\nYeah, pretty. straight forward there. So, when deciding how much of this clip is gonna work, um, I kind of have this opening here, where I make it very intriguing, to kind of watch and see what's gonna happen, but in general, I would probably want to start the clip, like- like right here, where it's just peeking some curiosity. In the viewer, and they're like, hey, wait, what's- what's he gonna do?\n\nAnd then maybe having, um, a text on screen to kind of give a little bit of a teaser. So, like, my other version that I did this, it said Coffee Hack. And, um, I started my clip, basically, right there. Boom, and that thing blew up.\n\nIt went viral. So, it's just different things to test, you know, different audiences. But for the most part, there is a lot of dead space right here. And, um, just wanted to mention that- Okay.\n\nGives a lot of people room to just keep scrolling. So, I'm a big fan of starting right when this is about to happen. Boom. Happens within the first two, three seconds.\n\nAnd there's our effect. So, let's go ahead and trim it there. So I can practice what I preach here. And then we can delete those.\n\nAnd then this thing needs to just shift back over. The timing will line up because of the in-and-out points. of this. Next clip, are still there.\n\nYeah, so there's a little bit of a delay from the time that I jump to the time that, that splash happens. So what I actually, there's a couple of things that we can do here. That's not too bad. Uhm, but right off the bat, I'm going to say that once I get to , , , to this point, I'm going to split this and then speed up this clip.\n\nSo if we go to speed up here, and then go to 2.0, that's just going to double our speed. So it shortened it a little bit. So we're going to need to also bring the tail end of this shorter to match that.\n\nBecause when you speed something up, it happens twice as fast in this case. So it's going to be half the length. And then, yeah, maybe that's a little too fast, but you can see what happens is, uh, it makes the effect feel a little bit more natural. So I'd say finding a little bit of a middle ground here.\n\nAnd maybe go 1.5. And then again, we'll extend this back out. Hit and play. Okay.\n\nLet me zoom out. And let's play it from the beginning. Boom. Done. So we can go ahead and split that.\n\nSo that's the main effect there. I'll show you real quick if we want to get rid of this mask. And if you have the pro version of CapCut, then you would want to come up here to video and remove background. The And then go to custom removal.\n\nOkay. And then this tool here is our smart brush. And all you have to do is just paint inside of this cup. We could actually paint the whole table.\n\nCause we want the arm of the cup too. But then to get rid of this, uh, a grass over here. Let me zoom in. So you can see what's happening.\n\nSo if you're painting something, it turns blue to show you where you're making that mask. If it disappears because I went to another setting like this, then you would just want to come back up here to custom removal. And click, sorry, click, click the tool back on for the smart brush. And then it's going to show you.\n\nSo basically this is using AI to make a smart cut out of your object. Works really good for detailed objects because as you can see we were using an . Uh, rectangle mask before. And this isn't a perfect rectangle.\n\nSo, you know, this, this is definitely the ideal way to go if you can. And then we have the smart eraser. So if we click the smart eraser, we can get rid of this grass. In this case, it doesn't really matter because nothing happens here.\n\nSo you're not going to know that. But it is good to know that that tool's there. And then, yeah, we can zoom back out. So if I click my tool again, this is our foreground cut out.\n\nAnd then we would just click apply. And now you're going to see, you might not notice because we're not zoomed in on these edges, but it's going to be a lot cleaner of a cut out there. Okay, so one thing that I'll point out, if you want to take the extra step here, you don't really need to. But to make this feel even more seamless, you notice the grass.\n\nLook in this area down here. . . . When the transition happens, you can see the grass moves, right? And that's from me walking on it. So, what we could do is we could take this third clip and copy and paste it, so control C, control V, or command on a, um, Mac.\n\nAnd then what I would basically do is just create . . . I could use the video from this. . . Or I could freeze frame it. So, I could create a freeze frame here, but since nothing is moving, I'll just leave the video.\n\nAnd then we'll come in with a mask. I'll use a rectangle mask. And you can see that I'm just going to patch this area right here. . . . So that the grass never moves.\n\nAnd then we'll up the feather on it just to, um, blend those. . . . together. Okay, so I'll show you in a second what all this is actually looking like. But now, if you pay attention to this corner right here, basically we've made a patch so that it's completely seamless the whole time.\n\nAnd it never changes. So when you see that splash. Yeah. It's a minor detail, but these little things can help if you really want to go in there and, and fine tune it, you can see that we did that really fast.\n\nSo if it was going to take me an hour to do that, then I probably wouldn't . I've wasted my time because most people won't notice. But when it's a quick fix and you, you know how to do it, um, it's definitely worth it and . . . yeah, sorry, it's definitely worth it and it's a good practice to, uh, work on those little things so that when you do get in a bind and you need to be able to do them, you have some practice doing them.\n\nSo, it's a good practice to get into. Thank you. Alright. So, from here, let's just see if we can . . .\n\nI usually don't get my sound effects from in here, but, um . . let's find a splash sound . . . so that that could work . . . doesn't . .\n\nthat's music, that's not good. Splash . . splash sound here . . . oh, that's a splash drum . . .\n\nso that's like a symbol of a drum that's named splash . . so that's not what we would want . . . um . . so you might want to be more specific searching if you're not getting what you want . .\n\num . . like splash water sounds . . effect, something like that. This one right here is not too bad . .\n\nwe could . . we could use that. I would like something that sounded a little bit more like a . . like a bloop , you know, like favorable . .\n\na more of a . . . small splash rather than umm . . . rather than a big splash . . and actually, Actually, now that I'm mentioning that, okay, there's no, there's no- sound in this clip . . .\n\nbecause this isn't the original . . umm . . I chopped these clips up already into three pieces . . so just to note that it was one long clip . . .\n\nand I chopped them up already . . so that I could provide them in this course . . umm . . that you wouldn't have to . . .\n\nand then I just used these . . so I removed the sound . . when I did that to . . . Alright, so . . .\n\nlet's go . . . so if you click sound effects here . . I usually have worse luck . . I'm not trying to spend too much time . . .\n\nlet's see . . . running water splash . . . water splash . . . makes sense to kind of put that in there . . . . . .\n\nUmm, I'm uhm, I'm gonna go back . . . to the first one. Because . . . and I can usually find it really quick in their high quality, and they have a lot of different options for them.\n\nSo, anyways, for this video right here . . . because I don't, um, expect everybody to have those subscriptions. So, you want to use the freesound effect as much as possible. Umm, and yeah, so that's that.\n\nSo, it's not the best sound . . . But just showing you how I can kind of like line that up in here and how to set that up I would probably bring it a little bit earlier. And then let's see if there's a water drop. up.\n\nOkay. I'm definitely not finding what I want in here. And I probably could if I kept searching and stuff, but I'm not gonna extend this tutorial longer than I need to. I want you to just be able to get the results in here.\n\nAnd then obviously, like, you can do what you need to do to find the sound effects. Okay. So, let's take a quick look. And, um, I'll go ahead and break down these layers real quick.\n\nOkay. So, if I turn off these two layers, that's how that looks. We have a jump cut to this scene here. And we sped up this clip here just to help motivate that splash, because the splash happens a lot faster than my jump, which is a little bit slower in the background.\n\nUm, and then on top we have the cutout of our cup. So that's what that looks like. . . . And then, over here, we have our patch. So if I turn off the cup, we've patched in the grass there, which if we wanted to, we could have just patched, um, this whole section.\n\nAnd then, I'm just showing you this in case you didn't need all of this. You can come back in here and you can actually erase the table. of the the shadow painted in and then click apply so that you just have the cutout of that. And then when you turn this layer on, which is the patch, you have this whole thing here.\n\nSo, I just want to show you the different ways that you can layer these together and kind of break it down a lot deeper because really, when you're building stuff like this, you want to think about how you're gonna layer it before you start layering it. And like I always say, think of it as a cake where you're building it from the bottom up. And it really is like that. It's like, a puzzle where you're taking a little piece and you're putting it on top of this piece to hide something or to fix something.\n\nAnd it's kind of just patching it together with these little puzzle pieces. So, if you really break it down, you can make it look however you okay, So that's it for this one and I'll see you in the next video.",
+ "frames": {
+  "demo": [],
+  "editing": []
+ }
+}

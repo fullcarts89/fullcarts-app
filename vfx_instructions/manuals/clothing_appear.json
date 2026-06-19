@@ -1,0 +1,96 @@
+{
+ "id": "clothing_appear",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "clean_plate_mask_reveal",
+ "title": "Clothing Appear",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "jacket"
+ ],
+ "result_description": "Your outfit changes at the snap of a finger — a jacket appears on you instantly on the snap.",
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "inputs": [
+  {
+   "name": "single_take",
+   "what_to_film": "One long take with the camera and exposure locked: start with the jacket ON, do your motion / say your line, snap your fingers; then take the jacket OFF and repeat the same motion and snap in the same body position. (Taking the jacket off is easier to hold position than putting it on — the two halves get reversed in editing.)",
+   "capture_requirements": {
+    "locked_off": true,
+    "exposure_locked": true,
+    "same_body_position_each_snap": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "head_and_shoulders_aligned_on_snap"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "single_take"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "single_take",
+   "capcut_feature": "Split",
+   "params": {
+    "note": "split into the jacket-off half and the jacket-on half at the snap frames"
+   }
+  },
+  {
+   "action": "position",
+   "channel": "structural",
+   "target": "halves",
+   "params": {
+    "note": "order so playback runs jacket-off then jacket-on (the take is reversed in time)"
+   }
+  },
+  {
+   "action": "split",
+   "channel": "taste",
+   "target": "the cut",
+   "capcut_feature": "Split",
+   "params": {
+    "note": "place the cut on the finger-snap frame where head and shoulders line up between halves"
+   }
+  },
+  {
+   "action": "audio",
+   "channel": "taste",
+   "target": "the snap",
+   "params": {
+    "note": "add a snap / whoosh SFX on the clothing change"
+   }
+  }
+ ],
+ "result": {
+  "description": "The jacket appears on the snap with the body in the same position across the cut.",
+  "success_criteria": [
+   "Head and shoulders aligned across the snap cut",
+   "Background identical (locked off + locked exposure)"
+  ]
+ },
+ "narration_transcript": "Okay, so to create this clothing transition, we really just need to record one long shot. I'm going to start out with my jacket on, and I'm going to do my motion, say my line, just snap my fingers, and then I'll take the jacket off and do the same thing. I like to do that because if we're trying to stay in the same position, it's a lot harder to put the jacket on and stay in position than it is to take the jacket off. That's a trick. It is like doing the two shots in reverse that I like to do, and it makes it a lot more seamless. We'll lock our exposure and hit record. Here's how to change your clothes at the snap of a finger. I'll do a few takes just to try to get some options to work with. I'll do a quick review of my shots and just make sure that I got what I need. I'm really just trying to pay attention where the framing of my body is. Stop on the frame. I can just look at when I snap my fingers kind of where my head and shoulders are. All right, looks good.",
+ "frames": {
+  "demo": [
+   "assets/clothing_appear/demoframe_0.jpg",
+   "assets/clothing_appear/demoframe_1.jpg",
+   "assets/clothing_appear/demoframe_2.jpg"
+  ],
+  "editing": []
+ },
+ "sparse_source": true
+}

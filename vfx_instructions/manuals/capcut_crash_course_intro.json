@@ -1,0 +1,16 @@
+{
+ "id": "capcut_crash_course_intro",
+ "schema_version": 1,
+ "manual_type": "reference",
+ "status": "course_lesson",
+ "technique_primitive": null,
+ "title": "Capcut Crash Course - Intro",
+ "difficulty": "foundation",
+ "source_dataset": "viral_vfx_vault",
+ "note": "CapCut course/foundation lesson — educational, not a single recreatable effect. Kept as a technique reference.",
+ "narration_transcript": "I'm so excited to guide you through the basics of CapCut and help you get up and running in no time. If you're new to video editing, CapCut is the perfect choice. It's simple, powerful, and doesn't require the endless hours of running complicated software. In one of the best parts, you can choose to use CapCut on your desktop or use the mobile version on your phone or tablet. The CapCut mobile is amazing for on-the-go edits and quick changes. While CapCut Desktop gives you a lot more screen space for detailed editing. Try both, see which one fits your style and workflow and just stick with what feels best. Just remember, don't get caught up on overthinking and just keep moving forward because things will become clearer as you take action. CapCut also offers a free version that's packed with features. If you're just starting out, the free version has everything you need. But of course, the big question I always get is do I need the pro version? The answer is no. If you don't want it, then you don't need it. The pro version comes with extra perks, but trust me, most of what you need to create eye-catching videos is already there for free. The courses are not reliant on the pro version. If you ever see me demonstrating a pro effect like the background removal, I'll always have a free alternative solution for you. Whether you're building a brand, boosting your business, or you just want to get creative, CapCut makes it easy to make stunning videos without all the hassle. Grab your device and let's get started.",
+ "frames": {
+  "demo": [],
+  "editing": []
+ }
+}

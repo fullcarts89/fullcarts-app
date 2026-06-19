@@ -23,12 +23,31 @@ SCHEMA_VERSION = 1
 TECHNIQUE_PRIMITIVES = {
     "overlay_bg_removal_clone",   # duplicate + auto background removal -> clone
     "chroma_key",                 # green/white screen composite
+    "clean_plate_mask_reveal",    # appear/disappear/object-reveal via empty plate + mask
+    "mask_transition",            # scene-to-scene reveal via an animated mask (portals, wipes)
+    "keyframe_motion",            # element animated via keyframed transform (float, fly, rise)
+    "speed_ramp_transition",      # transition driven by a speed change / cut on motion
+    "blend_composite",            # blended overlay (liquid, smoke, clouds, fire, reflection)
     "text_reveal",                # text behind/synced/3D, keyframed reveal
-    "keyframe_motion",            # element animated via keyframed transform
-    "clean_plate_mask_reveal",    # appear/disappear against an empty plate
     "match_cut",                  # in-camera cut hidden by matched motion
-    "other",                      # catch-all (e.g. pure-AI generations)
+    "other",                      # catch-all
 }
+# rough technique family per known vault slug (agents may override within the vocab)
+PRIMITIVE_HINTS = {
+    "make_an_object_appear": "clean_plate_mask_reveal", "your_1st_cloning_video": "overlay_bg_removal_clone",
+    "liquid_from_an_object": "blend_composite", "ball_transition": "mask_transition",
+    "magic_pole_transition": "mask_transition", "time_warp": "keyframe_motion",
+    "object_reveal": "clean_plate_mask_reveal", "floating_book": "chroma_key", "flying_book": "chroma_key",
+    "kick_away": "keyframe_motion", "fly_like_superman": "keyframe_motion", "object_from_portal": "mask_transition",
+    "dr_strange_portal": "mask_transition", "hyperspeed_effect": "speed_ramp_transition",
+    "jump_in_cup": "keyframe_motion", "wall_hologram": "keyframe_motion", "3_clones": "overlay_bg_removal_clone",
+    "house_pond": "blend_composite", "storm_clouds": "blend_composite", "building_jump": "speed_ramp_transition",
+    "3_product_reveal": "mask_transition", "sky_transition": "mask_transition", "object_switch": "clean_plate_mask_reveal",
+    "moving_object": "keyframe_motion", "stomp_effect": "keyframe_motion", "appear_bonus": "clean_plate_mask_reveal",
+    "clothing_appear": "clean_plate_mask_reveal", "jump_cuts": "match_cut",
+}
+# manual_type — distinguishes recreatable effects from non-recipe entries
+MANUAL_TYPES = {"effect", "reference", "deep_dive", "stub"}
 # verbs an edit_step may use
 ACTIONS = {
     "import", "overlay", "position", "duplicate", "remove_background", "chroma_key",
@@ -200,10 +219,12 @@ def rebuild_index(manuals_dir=MANUALS_DIR):
         m = json.load(open(os.path.join(manuals_dir, fn)))
         rows.append({
             "id": m["id"], "title": m.get("title"),
+            "manual_type": m.get("manual_type", "effect"),
             "technique_primitive": m.get("technique_primitive"),
             "difficulty": m.get("difficulty"), "is_ai_generated": bool(m.get("is_ai_generated")),
             "gear_required": m.get("gear_required", []), "props_required": m.get("props_required", []),
-            "tool": m.get("tool"), "draft": bool(m.get("draft")),
+            "tool": m.get("tool"), "source": m.get("source_dataset") or m.get("source"),
+            "draft": bool(m.get("draft")), "status": m.get("status"),
             "file": "manuals/%s" % fn,
         })
     idx = {"schema_version": SCHEMA_VERSION, "count": len(rows), "manuals": rows}

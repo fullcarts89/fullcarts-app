@@ -1,0 +1,92 @@
+{
+ "id": "jump_cuts",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "match_cut",
+ "title": "Jump Cuts",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "You snap between several positions in frame in a fast, glitchy jump-cut sequence, landing on your opening line.",
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "inputs": [
+  {
+   "name": "single_take",
+   "what_to_film": "One long take with the camera locked off: stand in a few different positions for a few seconds each, moving left to right and back so the jumps feel abrupt. Save your opening hook / line for the last position, not too close to camera. (Exposure lock is optional — the jumps are fast enough that lighting shifts don't read.)",
+   "capture_requirements": {
+    "locked_off": true,
+    "multiple_positions": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "distinct_positions_present"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "single_take"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "single_take",
+   "capcut_feature": "Split",
+   "params": {
+    "note": "split out each position into its own clip"
+   }
+  },
+  {
+   "action": "trim",
+   "channel": "taste",
+   "target": "each clip",
+   "params": {
+    "note": "shorten each position to a short beat; the shorter the clips, the more abrupt the jump"
+   }
+  },
+  {
+   "action": "position",
+   "channel": "structural",
+   "target": "clips",
+   "params": {
+    "note": "order the position clips back to back, ending on the clip with the spoken line"
+   }
+  },
+  {
+   "action": "audio",
+   "channel": "taste",
+   "target": "the cuts",
+   "params": {
+    "note": "optional glitch / whoosh SFX on the jumps"
+   }
+  }
+ ],
+ "result": {
+  "description": "Rapid hard cuts between positions read as a glitchy jump-cut sequence ending on the hook.",
+  "success_criteria": [
+   "Position changes abruptly across each cut",
+   "Background stays locked so only you jump"
+  ]
+ },
+ "narration_transcript": "Okay, so to create this cool glitch effect, we're just gonna record one long shot. We're just gonna stand in different positions and in the last position we're just gonna say our line or our opening hook. For this one, I'm not gonna do my exposure lock because I don't really care if the lighting changes — it's gonna jump so fast that it won't make a difference. I'll go ahead and hit record. I have my external monitor down here so I can see where I'm standing. So I'll just stand in a few different positions for a few seconds, come over here. We can make it kind of funny too, and I'm trying to go left to right back and forth because the jump will feel a lot more abrupt and really grab attention, and I want to make it seem like I'm getting ready to talk — that will also create a little bit of curiosity. The last one I don't want to be too close, but I'm gonna go ahead and save my line. Here's how to create this jump cut effect using just your phone. If I was outside I could make the distance a lot farther so that jump cut will feel a lot more abrupt because there's a lot more distance being traveled, but if you shorten the clips enough you'll get the same effect. Let me go ahead and stop recording and for that one that is all we need.",
+ "frames": {
+  "demo": [
+   "assets/jump_cuts/demoframe_0.jpg",
+   "assets/jump_cuts/demoframe_1.jpg",
+   "assets/jump_cuts/demoframe_2.jpg"
+  ],
+  "editing": []
+ },
+ "sparse_source": true
+}

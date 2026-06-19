@@ -1,0 +1,94 @@
+{
+ "id": "appear_bonus",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "clean_plate_mask_reveal",
+ "title": "Appear (Bonus)",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "You pop into an empty frame out of nowhere, landing a small jump so the impact sells the appearance.",
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "inputs": [
+  {
+   "name": "single_take",
+   "what_to_film": "One long take with the camera locked off and exposure locked: first do your reaction shot standing in the center of frame (a small jump so the impact when you land sells the transition), then step out of the way and let it roll a few seconds for the clean plate.",
+   "capture_requirements": {
+    "locked_off": true,
+    "subject_exits_frame": true,
+    "exposure_locked": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "clean_plate_segment_present"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "single_take"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "single_take",
+   "capcut_feature": "Split",
+   "params": {
+    "note": "separate the clean-plate (empty) segment from the segment where you are in frame"
+   }
+  },
+  {
+   "action": "position",
+   "channel": "structural",
+   "target": "clean_plate_segment",
+   "params": {
+    "note": "lead with the empty clean plate, then cut to the in-frame segment so you appear"
+   }
+  },
+  {
+   "action": "split",
+   "channel": "taste",
+   "target": "the cut",
+   "capcut_feature": "Split",
+   "params": {
+    "note": "place the cut on the frame you land the jump so the impact masks the appearance"
+   }
+  },
+  {
+   "action": "audio",
+   "channel": "taste",
+   "target": "the appearance",
+   "params": {
+    "note": "add an impact / whoosh SFX on the landing"
+   }
+  }
+ ],
+ "result": {
+  "description": "You appear in the previously empty frame on the jump landing.",
+  "success_criteria": [
+   "Background is identical across the cut (locked off + locked exposure)",
+   "Appearance lands on the jump impact"
+  ]
+ },
+ "narration_transcript": "Okay, so to do this appearing effect super simple all we need is one shot. We've got our phone right here with our camera already set up, framed up where we wanted to, and all we're gonna do is just get one long take. First we're gonna do our reaction shot and then we're just gonna step out of the way and get our clean plate. One thing to note is as always I'm gonna lock my exposure just so that the lighting and the focus doesn't shift at all. I'll hit record and I'm gonna come over here and stand in the center of my frame, and what I'm gonna do is just a little bit of a jump so that the impact when I come down helps the transition feel a little bit more natural, and then I'll save my hook. Here's how to create this appearing effect using just your phone. Okay, so we got that and what I'm gonna do is just step out of the way. So now what we're doing is recording our clean plate. Just let that roll for a few seconds. Okay, so we'll stop recording and we'll take these clips into our editor and I'll show you how to cut them together to make that effect happen.",
+ "frames": {
+  "demo": [
+   "assets/appear_bonus/demoframe_0.jpg",
+   "assets/appear_bonus/demoframe_1.jpg",
+   "assets/appear_bonus/demoframe_2.jpg"
+  ],
+  "editing": []
+ },
+ "sparse_source": true
+}

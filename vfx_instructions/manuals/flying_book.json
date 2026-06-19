@@ -1,0 +1,194 @@
+{
+ "id": "flying_book",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "chroma_key",
+ "title": "Flying Book",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "gear_required": [
+  "tripod",
+  "green_screen"
+ ],
+ "props_required": [
+  "book",
+  "fishing line",
+  "tape",
+  "soft box / single light source"
+ ],
+ "result_description": "You mime throwing a book; it spins toward camera, slows so you can read it, then spins back and you catch it — the spinning book is a green-screen composite scaled in over the throw.",
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "inputs": [
+  {
+   "name": "throw_clip",
+   "what_to_film": "Locked-off, exposure-locked shot: hold the book thin in your hand, mime throwing it, freeze in motion, then mime catching it. Leave extra time (you can speed up later). Match your lighting to the green-screen shot.",
+   "capture_requirements": {
+    "locked_off": true,
+    "note": "single light source; hold book edge-on so the composite can hide it"
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "min_duration"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8,
+    "min_seconds": 5
+   }
+  },
+  {
+   "name": "greenscreen_book",
+   "what_to_film": "The book hung on fishing line in front of a green screen, lit to match the throw shot; spin it (let it unwind for the smoothest rotation). Shoot at 60fps; keep the book inside the green frame at all times.",
+   "capture_requirements": {
+    "green_screen": true,
+    "fps": 60,
+    "note": "no shadows/hotspots on the green; object never leaves the green frame"
+   },
+   "acceptance_checks": [
+    "has_green_screen"
+   ],
+   "variance_tolerance": {
+    "green_ratio": 0.3
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "throw_clip, greenscreen_book"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "throw_clip",
+   "capcut_feature": "Split",
+   "params": {
+    "note": "split at the throw and right before the catch to mark the in/out of the fly section"
+   },
+   "timing": {
+    "cue": "throw start and catch"
+   }
+  },
+  {
+   "action": "reverse",
+   "channel": "ui",
+   "target": "greenscreen_book",
+   "capcut_feature": "Reverse",
+   "params": {
+    "note": "the unwind was filmed spinning the wrong way; reverse so it spins toward camera; aim for ~2 full rotations"
+   }
+  },
+  {
+   "action": "chroma_key",
+   "channel": "ui",
+   "target": "greenscreen_book",
+   "capcut_feature": "Remove Background → Chroma Key",
+   "params": {
+    "key_color": "green",
+    "intensity": 9,
+    "note": "mid-tone green; boost intensity to kill the fishing line; boost shadow to fill holes"
+   }
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "greenscreen_book",
+   "capcut_feature": "Mask → Rectangle",
+   "params": {
+    "shape": "rectangle",
+    "feather": 2,
+    "note": "crop the green-screen edges; keep the book from crossing the mask edge while it spins"
+   }
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "greenscreen_book",
+   "params": {
+    "track": 2,
+    "note": "place over the throw to hide the real book in your hand"
+   }
+  },
+  {
+   "action": "speed",
+   "channel": "ui",
+   "target": "greenscreen_book sections",
+   "capcut_feature": "Speed",
+   "params": {
+    "slow_motion": 0.5,
+    "fast": 2.0,
+    "note": "fast spin in, 0.5x slow-mo in the middle to read it, fast spin back; fit all of it inside the marked in/out"
+   }
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "greenscreen_book (first section)",
+   "capcut_feature": "Keyframes",
+   "params": {
+    "property": "scale+position",
+    "scale_to": 170,
+    "note": "small at the throw, scaling up to 170 as it flies toward camera"
+   },
+   "timing": {
+    "cue": "throw → camera"
+   }
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "greenscreen_book (last section)",
+   "capcut_feature": "Keyframes",
+   "params": {
+    "property": "scale+position",
+    "scale_from": 170,
+    "note": "reverse of the in-move: 170 down to book size as it flies back to your hand"
+   },
+   "timing": {
+    "cue": "camera → catch"
+   }
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "green-screen book sections",
+   "capcut_feature": "Compound Clip + Motion Blur",
+   "params": {
+    "note": "right-click the green clips → create compound clip, then apply Motion Blur (won't apply correctly over a raw speed change) to smooth the spin edges"
+   }
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "adjustment layer (over all)",
+   "capcut_feature": "Adjustment → Custom Adjustment",
+   "params": {
+    "note": "brighten exposure, lift shadows, cool slightly to match the scene"
+   }
+  },
+  {
+   "action": "audio",
+   "channel": "taste",
+   "target": "timeline",
+   "params": {
+    "note": "add whoosh SFX at throw / slow-mo / catch (slow to 0.5x, ~ -3dB) + a trending track with a beat drop aligned to the throw"
+   }
+  }
+ ],
+ "result": {
+  "description": "Book flies from your hand, spins toward camera, slows to read, spins back, and you catch it.",
+  "success_criteria": [
+   "Real book stays hidden behind the composite the whole flight",
+   "Clean green key (fishing line gone) with the book never crossing the mask edge",
+   "Smooth scale + spin with motion blur, slow-mo readable in the middle"
+  ]
+ },
+ "narration_transcript": "Okay so for this effect we're gonna create a flying object as it's flying though it's gonna spin towards camera and it's gonna come back to us. So we're gonna act as if we're throwing it. When we throw it it's gonna appear to spin towards camera. Slow down so you get a good look at it and then it's gonna come back to us and we're going to catch it okay.\n\nSo the way that we're gonna do this is we're gonna stand in one place we're gonna have the object in our hand and we're gonna throw it make it look like we're throwing it and we're gonna freeze for a second. Then we're gonna have another shot that we're gonna take with the spinning object in front of a green screen and will composite that in have it scale up as it spins and most of this will come in the editing side but it will appear to come right in front of the camera and then as it comes back then we unfreeze and we catch it. Okay, so a couple things that all note about my scene here I've killed the fluorescent lighting in the garage don't ever rely on fluorescent lighting for your projects it creates nasty flickering and the colors just really aren't that nice.\n\nSo for instance right here we have a window with some natural light coming in so if that were to mix with like the yellow coming from the fluorescent it would just look really nasty our skin colors would not be correct and we wouldn't be able to edit it the way that we want to. So we wanna just really rely on one light source um right now for this tutorial I've actually closed off the garage and I have a big soft box right here just lighting me and the whole scene that's to make sure that you can see me well. Another option that we could do for this video is I could just open up the garage and let the sunlight in and that would be like a nice natural light there that would just fill the scene it would remove a lot of the shadows and um wouldn't be too difficult okay.\n\nSo let's get to it okay. So before I hit record on my phone what I'm gonna do is I'm gonna lock my focus point and exposure somewhere right here on the ground because that is in line with where I'm standing so we know that will be sharp and focus and the exposure won't shift over time okay. So I come over to my phone and I'll do is hold my finger right about where I'm gonna be standing doesn't have to be perfect but getting it locked is very important. Okay so that's locked we're gonna hit record.\n\nLet's just take a couple practice shots at our throw. So let's get our book and my center point just want to kind of know where my center point is. A little mark on the ground there okay so I'll keep that in mind. So what I'm gonna do is I'm gonna create a little bit of a story out of this and then I can edit it how I want but I always wanna make sure that I'm leaving some type of beginning middle and end right so make sure that you can define those three things so that you can build a story throughout your project no matter how simple it is.\n\nSo in this we would have me walking in and picking up a book right so there's a beginning then I'm going to look at the book look at the camera, throw the book there's the middle books gonna come back and we're gonna open it read it and walk off and there's the end. So if I do like a practice run right now. So if I threw this book the way that I wanted to move. One two three one two three okay So about five six seconds right there.\n\nSo, throw one two three one two three, okay. It's better to have a little bit more time because you can speed it up rather than having to slow it down if it's too short. Okay so that's what I'm gonna do I'm gonna set the book down when I pick it up I'm gonna look at it and just throw it I'm gonna count as I kind of freeze in motion and then I'm gonna act as if I catch it. What I'm gonna do when I throw it is I'm gonna hold it thin like this so that it looks like it's not in my hand and we can actually hide it behind the edit.\n\nSo if I have that and then I put a book right there spinning it might hide it's gonna hide it from my hand right there okay. And action. 1 2 1 2 3 Getting quite turn the book there let me try again. 2 3 1 2 3 Okay so that might be what we need I'll go ahead and do a couple different ones.\n\nSo I did that one a little bit faster less time and I'll go and do 3. Usually do at least 3 just so that I have some options to choose from. Okay so now for the next shot we're gonna shoot this book in front of a green screen okay so whenever compositing two shots together it's really good to match the lighting. So I have this light here and it hasn't changed so that means that the light that's hitting me in the first shot is gonna be the same angle of the lighting that's hitting the book in the second shot.\n\nSo it's a lot easier to match the scene together rather than once one scene the lighting is coming from the left and the other scene the lighting is coming from the right and so forth. So what we're gonna do is take this guy. Doesn't have to be perfect as long as it encompasses the entire book so you can see that with this big bright light it's just filling it up so this is nice and illuminated there's no harsh shadows there's no hotspots you know if I were to stand right here you can see there's a shadow so that is what we do not want. So we have to keep our object far enough ahead of it so that it's not casting any shadows.\n\nSo I'm gonna go ahead and move my camera it doesn't have to match it's gonna be better if actually I just create a new scene here. The lighting still matches and then what I'm gonna do is I'm gonna hook a string to it with some tape some fishing line so you can't see it and I'm just gonna hang it in front of the green screen and then we're gonna spin it. So I'll just go ahead and keep that recording I have. Fishing line, tape, wire, cutters and this is pretty simple you can come up with your own contraption or use this.\n\nFishing line is good it's nice and see through and then probably put it somewhere in the middle of the book. What you gotta do is you gotta so it doesn't slip out enough to have enough to tie it. Let's put her tape down and then hopefully when we close it it's gonna keep that tight enough okay so what I did was I just made a little loop, tied a knot in the and then put the tape in between that so that it can't just slip out okay so there's a lot of different ways that you can do this I like fishing line it's very see through and it will remove once we cut the key the green out. Careful slipping a little bit what I wanna do here is get rid of my exposure lock that we set on the ground.\n\nNow we have a new object and I wanna make sure that it never goes out of the frame and it never leaves the frame of the green screen. So I'm gonna stop recording for a second so that I can have a separate shot to work with and what I'm gonna do is change it to 60 frames per second and this is so that it we can slow it down and kind of have more frames to work with when we're editing. So I'll just do a couple different spins and we'll see which one looks the best so that's our spot right there and we wanna make sure that it's not it's not spinning too fast so that we do get a chance to read the object okay.\n\nReady and Slipping my fingers a little bit there too. Okay it is recording in slow motion so this one I'm gonna speed it up a little bit so we can slow it down. One more. It's getting a little wobbly when you hold it with your hand that can definitely be an issue.\n\nSo now that we have it wound up we can actually just let it unwind. If you did have something to hang it from it would be a little bit more stable. So ready and let's let it unwind. Try and get it from not shaking and just let it unwind and this will probably be our move right there that we'll use.\n\nYeah that's cool. Alright so that's the two shots that we need. I think we got everything covered and let's go put it together.\n\nOkay so we've got both of our clips up here. The main clip and the green screenshot. I'm gonna import the main clip. What we wanna do is separate out just the little sections that we're gonna use for this edit.\n\nSo if I zoom in I believe this is the one. So I'll come to the beginning with a little extra and I'm gonna tap split and I can delete everything on the left side I don't need any of that and then we'll go to the end of that take and with the clip selected I will tap split again and delete everything on the right side. Let me zoom in some more so command plus to zoom in and here's our main clip. So before we get started with the effect let's clean this up a little bit I can drag this right here to kind of trim off some of the head and and then I'll turn that right there alright.\n\nSo my plan here is to bring the book in and overlay it on top to hide this book. Cause we never actually got rid of the book. So we're gonna use our new book to hide this book here and there's gonna be a little bit of speed changes that we need to do so right when we go to throw it I'm gonna go ahead and split this clip to mark the point where the book starts flying. Then we'll go forward and right before I catch it I'm gonna split it there too.\n\nSo now what we've done is we've created this middle section and we've marked kind of the in and out point of where the book is gonna be flying at camera and then when it disappears. Okay so that'll make more sense in a minute. Let's go ahead and bring the book green screen clip in and so I know I remember what we did here we spun the book a few times but the smoothest one was at the end when we let it unwind and that was this part. So since it's unwinding it's actually spinning in the wrong direction.\n\nSo we're gonna end up reversing it. But as you can see this movement once it's once it gets going. Let me play that. That spin is a lot smoother than this one.\n\nOkay so we'll grab some of the middle section here. When it kind of levels out a little bit and let me go ahead and trim that down and I know that I counted out five or six seconds I think I assumed that it would rotate two times and then coming back it would rotate two times also. So let's let's zoom in so we can see what we're doing here. Okay so what I wanna do is with this clip selected, tap the reverse button right here and that's gonna reverse the timing.\n\nSo now it's gonna be spinning the direction that we needed to and what we want is two full rotations out of the book. So if we have the binding facing camera let's try that and start there. We go 1 2 3 4 and we'll leave a little extra for now. Okay so what we want to happen is we want to speed up the beginning and the end of this clip and then have a slow motion part in the center.\n\nOkay so you remember we split up this clip down here. So let's zoom in and we need to get this entire clip to fit in between this in and out point right here. So right there and right there. Okay so with our green screen clip selected we're gonna come up here to the video tab and remove background we wanna select chroma key and with the color picker select that and what we wanna do is pick one of these mid tone greens.\n\nso it's a little bit brighter on this side and it's a little darker over here so I like to go somewhere in the middle and as we boost this intensity you will see the green just start to disappear. What we wanna do is we wanna boost the intensity as much as we can without damaging any of the edges or the picture on the book. We wanna make sure that we get rid of this entire fishing line. So let's start to boost it and just watch the fishing line as that disappears and about right there so that's a 10.\n\nOkay let's try a 9 and then let's spin it around and see what the other side is looking like. So you can see some yeah so if we boost the shadow it's gonna fill in some of those holes. Okay and then to get rid of this outer part we're gonna use a mask so come up here select mask and rectangle and you can see what that's doing is cutting out just the part of this clip that we need and since we kept the book fairly in the same spot the the mask doesn't have to be too wide but we just needed to get rid of the edges of the green screen and we can add a little bit of feather here to smooth those edges so if I put that at 2 you can see what's happening here where it's blending the edge right there.\n\nSo we want that make sure that the book doesn't cross that edge and then we can kind of scrub through this to make sure that the book does not cross any of those edges while it's flying. Okay let's go with that for now. So we've got our book cut out now what we want to do is as we throw it we want the book to spin around fast and then once it hits this point we want it to slow down so we're gonna split it there have it spin around enough to where we get to read it split it again and then it's gonna spin full rotations back to me before I catch it and we'll split there. It's a little bit of trial and error here but if you get the middle part the way you like it you can adjust the in and out points of these as you go.\n\nSo just worry about mostly the slow motion clip. So let's go ahead and change the speed of this so up here under speed and we'll slow it down to point five so that's gonna make it twice as slow and then these guys let's speed them up twice as fast so that's gonna shorten those and what we're trying to do is just fit all of this inside of this area here. Okay. Let's play it and just see how it looks.\n\nNot bad. We have a little bit of a gap here so we just need to adjust our settings so that this fills up this last little bit here. So I think to do that I will slow this down a little bit more and you'll see everything shift to the right and then we should be able to just drag that in. Okay so you see what's happening.\n\nWe can turn off our main layer so you can just see what's happening with the book oh this also just revealed a mask error there so this is a good way to check for errors also let's go back to video and mask. You can see we wanna get rid of all of that there so we need it to be just a little bit thinner and maybe shrink the top and bottom a little bit still see it there. Same issue here to avoid this issue we could have just shot it a little bit better where the edges of our green screen were in view but simple fix there okay so you can see fast spin slows down then fast spin and flies back to me.\n\nOkay let's turn our main layer back on and so now how the effect works is we're going to. First we're gonna make this bigger so we're gonna scale this up and kind of decide when we when it's in slow motion how we how close we want it to be to camera. So that can work right there. So we're at 1:60 eight scale I'll just choose an even No.\n\n170 and that is so that when we come to this first one let me zoom in here. We want it to scale up from being small and scale up to 170. So what we're gonna do is we're gonna set keyframes on our scale and our position on the last frame of this first clip and I can just go ahead and type in that 170. Okay so it goes right in line with the position and scale there.\n\nSo we're gonna work backwards a little bit we know where we wanted it at this point and don't worry too much about the rough edges there we're gonna add motion blur that's gonna smooth all that out. So if we go to the front of the clip then we can come and we wanna shrink it down to about the size that the book is could be a little bit bigger to help hide it and then I also moved the position which is gonna automatically set a keyframe for us there because we set a position keyframe here. So now what we have is this book getting bigger and moving position at the same time. So we've got a pretty dynamic move there because it's already spinning too.\n\nOkay and then we're gonna go to the last clip and we're gonna do the opposite. So the first frame of this last green screen clip we're gonna type in the 170 on the scale. We're gonna set a keyframe on the scale and a keyframe on the position over here then we're gonna go to the last frame right here and scale it way down to the a little bit bigger than the size of the book there and then we're gonna hide that book and see how that looks so if we scroll back what we wanna make sure is happening is that the real book is hidden the whole time. It looks like it is.\n\nYeah cool. That alright So let's watch this till we get to the next step and turn off the sound. Yeah so looks a little rough around the edges so what we're gonna do is select all these green clips. Green screen clips, right click and create a compound clip.\n\nWhat this is gonna do is it's basically gonna nest them together so that we can so that they won't have the split points but we can add effects on top of it. So motion blur for instance if we go to select this and we try to add motion blur which is gonna blur all the edges it's not gonna work right because we already have a speed change on here but what happens is if we create a compound clip it's grouped all of the effects together. So now it's just treats it like a new piece of footage and if we come over here we can add motion blur and it will work properly. So you see these edges here if I turn off Motion Blur you see the difference.\n\nSo it just makes it a lot more smooth for the eye and seamless for the spinning effect. Cool. Alright so that's pretty good for that and then to top it off we're gonna add some sound effects. So up here in audio whoosh guess what we have so that's a good one that's a good one.\n\nI'm gonna go ahead and mark those as favorites too. Okay this one here kind of sounds like something being thrown and I think that we'll have it repeat a few times. So we're gonna duplicate this there's a couple ways to do that you can hold option and drag and it will duplicate it like that. You can select it to control C control V to paste.\n\nSo let's have one initial whoosh when we throw it. One in the center and then one right before we throw and catch it. We can probably slow these down too. So let's select the speed the speed effect up here and we'll do two times no sorry point five and with this 1.5\n\nand .5. Sounds a little late. So I just want to kind of use my eyes and ears to see what sounds good here. So that one can go a little bit earlier too when I initially throw it maybe even a little earlier and then the second one right when that slow motion starts.\n\nIt's probably when I want to hear that. Okay and I think maybe even the The volume can go down a little bit on these two. Just go like just negative 3 just so they're a little more subtle. Negative 3 and negative three and then another thing that I like to do.\n\nIs just gonna brighten up my scene a little bit and see if there's any color adjustments that are needed so let's see if we come up to adjustments. Custom adjustment and click the plus sign. It drops this adjustment layer right here and that's gonna be on top of everything. So if we extend it to the end now anything that we do on this layer is gonna affect everything underneath.\n\nSo if we start adjusting colors brightness and that's kind of my goal here is just to brighten up the clip a little bit. So maybe boost our exposure and it's a little dark down here so if we lift lift the shadows it will brighten up those areas without blowing out the white areas too much and then you can click, let's see. Deactivate the clip to see the before and after. V is the sort of shortcut for that and I think it's a little too much we'll bring the shadows back.\n\nIt's a little warm you can cool it down a little bit and let's add some music. That's it. So let's just start with what's trending right here in CapCut. I usually go for hip hop I usually like the beats and just kind of cute.\n\nChoose the the subtle ones that make a back a good background music. I like this one I'm gonna mark it but it's not right for this video. That's cool too favorite that one for later. Okay I like this one here how that one save those favorites and okay.\n\nSo the trick here is to find a song that has a little bit of a buildup and then there's a beat drop or some type of a hit that we can line up the music to. So we're gonna listen to it and wait for that moment. So right there you hear that and I'm gonna split it to mark that spot let me zoom in so you can see what's going on and then we can go ahead and just kind of get rid of some of this in part but what we want either that beat drop to happen right when the slow motion happens or right when we catch it. So I'm gonna shorten this part up but I'm gonna leave these two edges the same because these match up and let's just try to get that beat drop in the right spot first and see where it should be.\n\nSo if it was gonna go there maybe even right when we throw it. Yeah so I like that as an option otherwise put it right here. So that works too let's see full context how it sounds. Okay I definitely like it at the front better because it's more engaging so as far as capturing attention and getting people to continue to watch and get them to stop scrolling.\n\nWe kind of want those hit points to be as soon as possible so I'm actually just gonna undo control Z control Z and we know that that lines up already and then let's watch the whole thing. Cool and then it kind of has another beat drop right before that works let's trim the end and since the layers come to an end right here when we export it'll automatically export it to this point. So we don't have to set our in and out points. Okay so come up to the top and click export.\n\nAlways put a version number in there. I'll put it in my expert folder.",
+ "frames": {
+  "demo": [],
+  "editing": []
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "id": "costume_fly_in",
+ "schema_version": 1,
+ "manual_type": "stub",
+ "status": "no_source_steps",
+ "technique_primitive": null,
+ "title": "Costume Fly-in Effect",
+ "difficulty": "intermediate",
+ "source_dataset": "viral_vfx_vault",
+ "note": "No editing/filming steps were captured for this effect; needs source re-ingestion before it can be authored into a recipe.",
+ "narration_transcript": null,
+ "frames": {
+  "demo": [
+   "assets/costume_fly_in/demoframe_0.jpg",
+   "assets/costume_fly_in/demoframe_1.jpg",
+   "assets/costume_fly_in/demoframe_2.jpg"
+  ],
+  "editing": []
+ }
+}

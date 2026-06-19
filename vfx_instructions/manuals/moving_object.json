@@ -1,0 +1,127 @@
+{
+ "id": "moving_object",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "keyframe_motion",
+ "title": "Moving Object",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "object"
+ ],
+ "result_description": "A still object appears to slide or creep across the scene on its own while you react to it.",
+ "source": "Viral VFX Vault",
+ "source_dataset": "viral_vfx_vault",
+ "inputs": [
+  {
+   "name": "object_clip",
+   "what_to_film": "Lock the camera and film the scene WITH the object sitting still.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "clean_plate",
+   "what_to_film": "Film a clean plate of the same scene WITHOUT the object (for patching).",
+   "capture_requirements": {
+    "locked_off": true,
+    "subject_exits_frame": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "object_absent"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "reaction_clip",
+   "what_to_film": "Optionally film yourself reacting to the 'moving' object.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [],
+   "variance_tolerance": {}
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "clean_plate, object_clip"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "object_clip",
+   "params": {
+    "track": 2,
+    "note": "clean_plate on the main track, object clip as the overlay"
+   }
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "object_clip",
+   "capcut_feature": "Mask",
+   "params": {
+    "note": "mask / cut out just the object from the overlay"
+   }
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "object_clip",
+   "capcut_feature": "Keyframes",
+   "params": {
+    "property": "position",
+    "note": "animate the object sliding / creeping across the scene"
+   }
+  },
+  {
+   "action": "filter",
+   "channel": "taste",
+   "target": "object_clip",
+   "params": {
+    "note": "add ease on the keyframes and a subtle shadow that moves with the object"
+   }
+  },
+  {
+   "action": "audio",
+   "channel": "taste",
+   "target": "timeline",
+   "params": {
+    "note": "finish with an eerie SFX"
+   }
+  }
+ ],
+ "result": {
+  "description": "The masked object drifts across the locked-off scene with a matching shadow.",
+  "success_criteria": [
+   "Object moves smoothly via keyframes while the background stays still",
+   "Clean plate hides the object's original resting spot"
+  ]
+ },
+ "narration_transcript": "",
+ "frames": {
+  "demo": [
+   "assets/moving_object/demoframe_0.jpg",
+   "assets/moving_object/demoframe_1.jpg",
+   "assets/moving_object/demoframe_2.jpg"
+  ],
+  "editing": []
+ },
+ "sparse_source": true
+}

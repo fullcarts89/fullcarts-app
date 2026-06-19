@@ -1,0 +1,16 @@
+{
+ "id": "spray_reveal",
+ "schema_version": 1,
+ "manual_type": "stub",
+ "status": "no_source_steps",
+ "technique_primitive": null,
+ "title": "Spray Reveal",
+ "difficulty": "intermediate",
+ "source_dataset": "viral_vfx_vault",
+ "note": "No editing/filming steps were captured for this effect; needs source re-ingestion before it can be authored into a recipe.",
+ "narration_transcript": null,
+ "frames": {
+  "demo": [],
+  "editing": []
+ }
+}
