@@ -1,118 +1,127 @@
 {
  "id": "jacket_vanish",
  "schema_version": 1,
- "draft": true,
- "needs_authoring": true,
- "technique_primitive": "keyframe_motion",
+ "manual_type": "effect",
+ "technique_primitive": "clean_plate_mask_reveal",
  "title": "Jacket Vanish (solo, clean-plate + mask)",
- "difficulty": "beginner",
+ "difficulty": "intermediate",
  "aspect_ratio": "9:16",
- "gear_required": [],
- "props_required": [],
- "result_description": "Jacket Vanish (solo, clean-plate + mask)",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "jacket"
+ ],
+ "result_description": "Your jacket drops in front of you and vanishes mid-fall — a solo, single-take effect that needs no second person.",
  "source": "Kayo Daniel | Learn, create, monetize, grow (@70269079851)",
  "source_url": "https://www.instagram.com/reel/DQR5_W3Acbz/?igsh=aDc0ZWZndG83a2pm",
  "is_ai_generated": false,
  "tool": "CapCut",
  "inputs": [
   {
-   "name": "clip_1",
-   "what_to_film": "How to do this?",
+   "name": "single_take",
+   "what_to_film": "One continuous locked-off take: stand in frame, let the jacket drop in front of you, then walk out of frame and keep recording a few seconds with the jacket still on the floor.",
    "capture_requirements": {
-    "locked_off": false
+    "locked_off": true,
+    "single_take": true,
+    "subject_exits_frame": true
    },
-   "acceptance_checks": [],
-   "variance_tolerance": {}
-  },
-  {
-   "name": "clip_2",
-   "what_to_film": "Start by filming a video where your jacket falls down in front of you.",
-   "capture_requirements": {
-    "locked_off": false
-   },
-   "acceptance_checks": [],
-   "variance_tolerance": {}
-  },
-  {
-   "name": "clip_3",
-   "what_to_film": "Leave the jacket where it is, walk out of the frame and keep recording for a few seconds.",
-   "capture_requirements": {
-    "locked_off": false
-   },
-   "acceptance_checks": [],
-   "variance_tolerance": {}
-  },
-  {
-   "name": "clip_4",
-   "what_to_film": "Open this clip in",
-   "capture_requirements": {
-    "locked_off": false
-   },
-   "acceptance_checks": [],
-   "variance_tolerance": {}
+   "acceptance_checks": [
+    "camera_locked_off",
+    "subject_exits_frame",
+    "min_duration"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8,
+    "min_seconds": 3
+   }
   }
  ],
  "edit_steps": [
   {
-   "action": "position",
+   "action": "import",
    "channel": "structural",
-   "note": "Make one cut when the jacket starts to fall."
+   "target": "single_take"
   },
   {
-   "action": "position",
+   "action": "split",
    "channel": "structural",
-   "note": "One when it's on the floor and the last one when you are out of the frame."
+   "target": "single_take",
+   "capcut_feature": "Split",
+   "timing": {
+    "cues": [
+     "jacket starts to fall",
+     "jacket lands on floor",
+     "you exit frame"
+    ]
+   },
+   "note": "three cuts → falling / on-floor / walked-out sections"
   },
   {
-   "action": "position",
+   "action": "trim",
    "channel": "structural",
-   "note": "Select the section when you walk out and delete it."
+   "target": "walk-out section",
+   "capcut_feature": "Delete",
+   "note": "delete the section where you walk out"
   },
   {
    "action": "overlay",
    "channel": "structural",
-   "note": "Next, select the last clip, hit overlay and drag it over the clip where the jacket falls down.",
-   "capcut_feature": "Overlay"
+   "target": "empty-scene clip",
+   "params": {
+    "track": 2
+   },
+   "note": "the post-exit clip (jacket on floor) goes over the jacket-falls clip"
   },
   {
    "action": "duplicate",
    "channel": "structural",
-   "note": "Select the clip on top and duplicate it and then also overlay it.",
-   "capcut_feature": "Duplicate"
+   "target": "overlay clip",
+   "params": {
+    "to_track": 3
+   },
+   "note": "duplicate + overlay again → 3-layer 'sandwich'"
   },
   {
    "action": "remove_background",
    "channel": "ui",
-   "note": "With this clip selected, go to remove background, choose custom removal and paint over the jacket.",
-   "capcut_feature": "Remove Background"
+   "target": "top clip",
+   "capcut_feature": "Remove Background → Custom Removal",
+   "params": {
+    "mode": "custom",
+    "paint": "the jacket"
+   }
   },
   {
    "action": "mask",
    "channel": "ui",
-   "note": "Select this sandwich clip here in the middle of the overlays and go to mask.",
-   "capcut_feature": "Mask"
+   "target": "middle 'sandwich' clip",
+   "capcut_feature": "Mask → Horizontal",
+   "params": {
+    "orientation": "horizontal",
+    "align": "to the jacket"
+   }
   },
   {
-   "action": "mask",
+   "action": "keyframe",
    "channel": "ui",
-   "note": "I choose the horizontal mask, drag it up so it aligns raught the jacket and I press this button here to add a keyframe.",
-   "capcut_feature": "Mask"
-  },
-  {
-   "action": "mask",
-   "channel": "ui",
-   "note": "As the jacket falls, adjust the mask's position to follow the movement.",
-   "capcut_feature": "Mask"
-  },
-  {
-   "action": "position",
-   "channel": "structural",
-   "note": "If you want to learn more, I'll come in master class."
+   "target": "middle clip mask",
+   "params": {
+    "property": "mask_position"
+   },
+   "timing": {
+    "cue": "each frame as the jacket falls"
+   },
+   "note": "move the mask line to follow the jacket down so it progressively vanishes"
   }
  ],
  "result": {
-  "description": "",
-  "success_criteria": []
+  "description": "The jacket disappears as it falls; the floor/background stays seamless.",
+  "success_criteria": [
+   "Jacket fully gone by the end of the fall",
+   "Mask edge tracks the falling jacket with no visible seam",
+   "Background identical across all layers (locked-off pays off)"
+  ]
  },
  "narration_transcript": "How to do this? Start by filming a video where your jacket falls down in front of you. Leave the jacket where it is, walk out of the frame and keep recording for a few seconds. Then open this clip in CapCut. Then make one cut when the jacket starts to fall. One when it's on the floor and the last one when you are out of the frame. Select the section when you walk out and delete it. Next, select the last clip, hit overlay and drag it over the clip where the jacket falls down. Select the clip on top and duplicate it and then also overlay it. With this clip selected, go to remove background, choose custom removal and paint over the jacket. Select this sandwich clip here in the middle of the overlays and go to mask. I choose the horizontal mask, drag it up so it aligns raught the jacket and I press this button here to add a keyframe. Now as the jacket falls, adjust the mask's position to follow the movement. If you want to learn more, I'll come in master class.",
  "frames": {
