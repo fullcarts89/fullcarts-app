@@ -1,0 +1,125 @@
+{
+ "id": "perspective_compound_clip",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "text_reveal",
+ "title": "Perspective Text/Image via Compound Clip (Player 3)",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "gear_required": [],
+ "props_required": [],
+ "result_description": "Make text or an image sit inside your shot at a matched 3D perspective, using a compound clip so the Player 3 effect only affects that element.",
+ "source": "Olamide (@38564779531)",
+ "source_url": "https://www.instagram.com/reel/DWmMwjcDXT6/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "related_to": "perspective_effect",
+ "note": "Player 3 may be region-locked; a VPN unlocks it and you can save it as a preset for reuse.",
+ "inputs": [
+  {
+   "name": "main_clip",
+   "what_to_film": "Your main shot the 3D text/image will sit in.",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_duration"
+   ],
+   "variance_tolerance": {}
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "main_clip"
+  },
+  {
+   "action": "text",
+   "channel": "ui",
+   "target": "text or image",
+   "capcut_feature": "Text / Overlay",
+   "note": "add the text or image you want to embed"
+  },
+  {
+   "action": "duplicate",
+   "channel": "ui",
+   "target": "text/image",
+   "capcut_feature": "Create Compound Clip",
+   "note": "long-press → Create Compound Clip (isolates effects to this element only)"
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "inside compound clip",
+   "capcut_feature": "Effects → Player 3",
+   "note": "open the compound clip, search Player 3, drag it onto the text/image"
+  },
+  {
+   "action": "adjustment",
+   "channel": "ui",
+   "target": "Player 3 effect",
+   "capcut_feature": "Player 3 settings",
+   "params": {
+    "texture": 0,
+    "glow": "reduce"
+   },
+   "note": "set Texture to 0 so the image/texture disappears, leaving clean text"
+  },
+  {
+   "action": "transform",
+   "channel": "ui",
+   "target": "Player 3 effect",
+   "capcut_feature": "Rotate",
+   "params": {
+    "property": "rotate"
+   },
+   "note": "use the rotate slider to match the perspective to your shot"
+  },
+  {
+   "action": "filter",
+   "channel": "taste",
+   "target": "inside compound clip",
+   "capcut_feature": "Blur / other effects",
+   "note": "optional — anything added inside affects only this element"
+  }
+ ],
+ "result": {
+  "description": "Text/image composited at a matched 3D angle, effects contained to the element.",
+  "success_criteria": [
+   "Texture 0 leaves clean text/image",
+   "Rotation matches the scene's perspective",
+   "Effects stay isolated (compound clip) — rest of video unaffected"
+  ]
+ },
+ "narration_transcript": "Now this is exactly how you're going to make a text or image full part of your video. Now open the cup cup app and add your text or image. Select it and right click or long press and select create compound clip. This part is very important because anything you do inside the compound clip will only affect that element and not your entire video. Now open the compound clip, go to effect search for player 3 and drag it directly on top of your text or image. Then click on the effect, set text shot to 0 so that this image disappears. Now use the rotate slider to match the perspective to your shot. You can also reduce the glow and play around with other settings here. You can even add blur or other effects inside the compound clip and it only affects that element. I guess this is your sign to start playing around with compound clips. Save this for your next edit and now get to work!",
+ "frames": {
+  "demo": [
+   "assets/perspective_compound_clip/frame_01.jpg",
+   "assets/perspective_compound_clip/frame_02.jpg",
+   "assets/perspective_compound_clip/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/perspective_compound_clip/frame_04.jpg",
+   "assets/perspective_compound_clip/frame_05.jpg",
+   "assets/perspective_compound_clip/frame_06.jpg",
+   "assets/perspective_compound_clip/frame_07.jpg",
+   "assets/perspective_compound_clip/frame_08.jpg",
+   "assets/perspective_compound_clip/frame_09.jpg",
+   "assets/perspective_compound_clip/frame_10.jpg",
+   "assets/perspective_compound_clip/frame_11.jpg",
+   "assets/perspective_compound_clip/frame_12.jpg",
+   "assets/perspective_compound_clip/frame_13.jpg",
+   "assets/perspective_compound_clip/frame_14.jpg",
+   "assets/perspective_compound_clip/frame_15.jpg",
+   "assets/perspective_compound_clip/frame_16.jpg",
+   "assets/perspective_compound_clip/frame_17.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "38564779531",
+  "like_count": 14940,
+  "comment_count": 239,
+  "upload_date": "20260401",
+  "caption": "How to create the perspective effect in CapCut? Here you go ☺️\n\nSome countries may not have the Player 3 effect. You can use a VPN to access it, then save it as a preset so you don’t need the VPN every time\n\nBonus tip: Film with this edit in mind so you can choose angles that make the perspective look natural\n\nIf you haven’t explored “compound clip” yet, you should. There’s a lot you can do with them ✌🏽\n\nWill you be trying this?\n\nShot on @sonyalpha A7CII\n@sonyalpha 35mm F1.8\nEdited on @capcutapp",
+  "hashtags": []
+ }
+}
