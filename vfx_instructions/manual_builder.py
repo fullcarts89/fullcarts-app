@@ -30,6 +30,7 @@ TECHNIQUE_PRIMITIVES = {
     "blend_composite",            # blended overlay (liquid, smoke, clouds, fire, reflection)
     "text_reveal",                # text behind/synced/3D, keyframed reveal
     "match_cut",                  # in-camera cut hidden by matched motion
+    "object_transition",          # one object morphs/transitions into another (lens-flip + scale)
     "other",                      # catch-all
 }
 # rough technique family per known vault slug (agents may override within the vocab)
@@ -52,7 +53,7 @@ MANUAL_TYPES = {"effect", "reference", "deep_dive", "stub"}
 ACTIONS = {
     "import", "overlay", "position", "duplicate", "remove_background", "chroma_key",
     "mask", "keyframe", "text", "transform", "filter", "split", "speed", "reverse",
-    "trim", "opacity", "audio", "ai_generate",
+    "trim", "opacity", "audio", "ai_generate", "adjustment",
 }
 # every step (and ai_generation step) is tagged with one channel
 CHANNELS = {

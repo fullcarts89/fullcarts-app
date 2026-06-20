@@ -1,0 +1,125 @@
+{
+ "id": "glitch_intro",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "aspect_ratio": "9:16",
+ "title": "Glitch Intro Effect",
+ "source": "Emma Persson (@61654377232)",
+ "source_url": "https://www.instagram.com/reel/DUqYED9gSGu/",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "narration_transcript": "This is the glitch intro effect, an easy way to grab attention fast. First, grab a clip of just your background, make sure to match your settings in both clips. Now record your intro for your second clip. Now in CapCut, add your background as the main clip and your intro clip as an overlay under it. Zoom in, then on the overlay, tap split for every 2 or so frames, then delete every other clip. Finally, add a glitch sound to really sell the effect. And that's the edit. Follow for more easy mobile edits that actually work.",
+ "frames": {
+  "demo": [
+   "assets/glitch_intro/frame_01.jpg",
+   "assets/glitch_intro/frame_02.jpg",
+   "assets/glitch_intro/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/glitch_intro/frame_04.jpg",
+   "assets/glitch_intro/frame_05.jpg",
+   "assets/glitch_intro/frame_06.jpg",
+   "assets/glitch_intro/frame_07.jpg",
+   "assets/glitch_intro/frame_08.jpg",
+   "assets/glitch_intro/frame_09.jpg",
+   "assets/glitch_intro/frame_10.jpg",
+   "assets/glitch_intro/frame_11.jpg",
+   "assets/glitch_intro/frame_12.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "61654377232",
+  "like_count": 2275,
+  "comment_count": 51,
+  "upload_date": "20260212",
+  "caption": "This glitch intro is such an easy way to grab attention fast ⚡️⁠\n⁠\nHow it works (simple):⁠\n→ Film a clean background clip⁠\n→ Film your intro (same camera settings)⁠\n→ Stack them in CapCut⁠\n→ Split the overlay every couple of frames⁠\n→ Delete every other slice⁠\n→ Add a glitch sound to sell it⁠\n⁠\n📌 Save this to try later⁠\n📲 Follow for easy mobile edits that actually work⁠\n💬 Comment THAT CREATOR to get my CapCut Crash Course⁠\n⁠\n#capcuttutorial #mobileediting #glitcheffect #editinghacks",
+  "hashtags": [
+   "capcuttutorial",
+   "editinghacks",
+   "glitcheffect",
+   "mobileediting"
+  ]
+ },
+ "technique_primitive": "other",
+ "difficulty": "beginner",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "A fast strobing glitch intro: your intro shot stutters against a clean background plate to grab attention.",
+ "inputs": [
+  {
+   "name": "background_clip",
+   "what_to_film": "A clean background plate (no subject), matching your camera settings.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "intro_clip",
+   "what_to_film": "Your intro, same framing and camera settings.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "background_clip, intro_clip"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "intro_clip",
+   "params": {
+    "track": 2
+   },
+   "note": "background as main clip, intro as overlay underneath"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "intro overlay",
+   "capcut_feature": "Split",
+   "params": {
+    "interval_frames": 2
+   },
+   "note": "zoom in on the timeline and split every ~2 frames"
+  },
+  {
+   "action": "trim",
+   "channel": "structural",
+   "target": "intro overlay",
+   "capcut_feature": "Delete",
+   "note": "delete every other split clip → strobe between intro and background"
+  },
+  {
+   "action": "audio",
+   "channel": "taste",
+   "target": "glitch SFX",
+   "note": "add a glitch sound to sell it"
+  }
+ ],
+ "result": {
+  "description": "Strobing glitch intro.",
+  "success_criteria": [
+   "Even ~2-frame stutter cadence",
+   "Background & intro framing match so only the subject flickers",
+   "Glitch SFX lands with the stutter"
+  ]
+ }
+}
