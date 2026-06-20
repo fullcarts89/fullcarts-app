@@ -1,0 +1,14 @@
+{
+  "coverTitle": ["you can't", "*switch* your", "way out"],
+  "coverSub": "the brands you swapped to dodge shrinkflation? same handful of owners — and they shrank all of them. swipe →",
+  "items": [
+    { "rank": "5", "brand": "P&G — Tide · Crest · Charmin", "product": "Crest Toothpaste", "before": 4.1, "after": 3.8, "unit": "oz", "pct": 7.3 },
+    { "rank": "4", "brand": "Unilever — Dove · Axe · Knorr", "product": "Dove Body Wash", "before": 24, "after": 22, "unit": "fl oz", "pct": 8.3 },
+    { "rank": "3", "brand": "Mars — Snickers · M&M's · Galaxy", "product": "Galaxy Chocolate Bar", "before": 110, "after": 100, "unit": "g", "pct": 9.1 },
+    { "rank": "2", "brand": "PepsiCo — Lay's · Gatorade", "product": "Gatorade Sports Drink", "before": 32, "after": 28, "unit": "fl oz", "pct": 12.5 },
+    { "rank": "1", "brand": "Mondelez — Cadbury · Oreo · Ritz", "product": "Cadbury Freddo Easter Egg", "before": 122, "after": 99, "unit": "g", "pct": 18.9 }
+  ],
+  "ctaHeadline": "check who *owns* yours",
+  "ctaSub": "search any product — *free* — at fullcarts.org",
+  "ctaPersona": "Tired dad, sick of getting ripped off — so I built the receipts. 2,300+ documented cuts across 900+ brands. No ads."
+}
