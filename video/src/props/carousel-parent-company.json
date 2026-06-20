@@ -1,32 +1,161 @@
 {
-  "coverTitle": ["you can't", "*switch* your", "way out"],
+  "coverTitle": [
+    "you can't",
+    "*switch* your",
+    "way out"
+  ],
   "coverSub": "the brands you swapped to dodge shrinkflation? same few owners — and they shrank all of them. swipe →",
   "companies": [
-    { "name": "P&G", "tag": "+ 24 more of their brands in our data", "cuts": [
-      { "brand": "Crest", "before": 4.1, "after": 3.8, "unit": "oz", "pct": 7.3 },
-      { "brand": "Charmin", "before": 264, "after": 244, "unit": "ct", "pct": 7.6 },
-      { "brand": "Tide", "before": 254, "after": 232, "unit": "oz", "pct": 8.7 }
-    ] },
-    { "name": "Unilever", "tag": "+ 9 more of their brands in our data", "cuts": [
-      { "brand": "Dove", "before": 24, "after": 22, "unit": "fl oz", "pct": 8.3 },
-      { "brand": "Ben & Jerry's", "before": 473, "after": 430, "unit": "ml", "pct": 9.1 },
-      { "brand": "Lipton", "before": 1.5, "after": 1.25, "unit": "L", "pct": 16.7 }
-    ] },
-    { "name": "Mars", "tag": "+ 23 more of their brands in our data", "cuts": [
-      { "brand": "Galaxy", "before": 110, "after": 100, "unit": "g", "pct": 9.1 },
-      { "brand": "Mars Bar", "before": 53, "after": 47, "unit": "g", "pct": 11.3 },
-      { "brand": "Snickers", "before": 1.86, "after": 1.63, "unit": "oz", "pct": 12.4 }
-    ] },
-    { "name": "PepsiCo", "tag": "+ 23 more of their brands in our data", "cuts": [
-      { "brand": "Doritos", "before": 9.75, "after": 9.25, "unit": "oz", "pct": 5.1 },
-      { "brand": "Tropicana", "before": 52, "after": 46, "unit": "fl oz", "pct": 11.5 },
-      { "brand": "Gatorade", "before": 32, "after": 28, "unit": "fl oz", "pct": 12.5 }
-    ] },
-    { "name": "Mondelez", "tag": "+ 32 more of their brands in our data", "cuts": [
-      { "brand": "Oreo", "before": 20, "after": 18.71, "unit": "oz", "pct": 6.5 },
-      { "brand": "Cadbury Freddo", "before": 122, "after": 99, "unit": "g", "pct": 18.9 },
-      { "brand": "Ritz", "before": 300, "after": 227, "unit": "g", "pct": 24.3 }
-    ] }
+    {
+      "name": "P&G",
+      "tag": "+ 24 more of their brands caught shrinking in the FullCarts database",
+      "cuts": [
+        {
+          "brand": "Crest",
+          "before": 4.1,
+          "after": 3.8,
+          "unit": "oz",
+          "pct": 7.3,
+          "image": "parent-company/crest.webp"
+        },
+        {
+          "brand": "Charmin",
+          "before": 264,
+          "after": 244,
+          "unit": "ct",
+          "pct": 7.6,
+          "image": "parent-company/charmin.webp"
+        },
+        {
+          "brand": "Tide",
+          "before": 254,
+          "after": 232,
+          "unit": "oz",
+          "pct": 8.7,
+          "image": "parent-company/tide.webp"
+        }
+      ]
+    },
+    {
+      "name": "Unilever",
+      "tag": "+ 9 more of their brands caught shrinking in the FullCarts database",
+      "cuts": [
+        {
+          "brand": "Dove",
+          "before": 24,
+          "after": 22,
+          "unit": "fl oz",
+          "pct": 8.3,
+          "image": "parent-company/dove.webp"
+        },
+        {
+          "brand": "Ben & Jerry's",
+          "before": 473,
+          "after": 430,
+          "unit": "ml",
+          "pct": 9.1,
+          "image": "parent-company/benjerry.webp"
+        },
+        {
+          "brand": "Lipton",
+          "before": 1.5,
+          "after": 1.25,
+          "unit": "L",
+          "pct": 16.7,
+          "image": "parent-company/lipton.webp"
+        }
+      ]
+    },
+    {
+      "name": "Mars",
+      "tag": "+ 23 more of their brands caught shrinking in the FullCarts database",
+      "cuts": [
+        {
+          "brand": "Galaxy",
+          "before": 110,
+          "after": 100,
+          "unit": "g",
+          "pct": 9.1,
+          "image": "parent-company/galaxy.jpg"
+        },
+        {
+          "brand": "Mars Bar",
+          "before": 53,
+          "after": 47,
+          "unit": "g",
+          "pct": 11.3,
+          "image": "parent-company/marsbar.webp"
+        },
+        {
+          "brand": "Snickers",
+          "before": 1.86,
+          "after": 1.63,
+          "unit": "oz",
+          "pct": 12.4,
+          "image": "parent-company/snickers.jpg"
+        }
+      ]
+    },
+    {
+      "name": "PepsiCo",
+      "tag": "+ 23 more of their brands caught shrinking in the FullCarts database",
+      "cuts": [
+        {
+          "brand": "Doritos",
+          "before": 9.75,
+          "after": 9.25,
+          "unit": "oz",
+          "pct": 5.1,
+          "image": "parent-company/doritos.webp"
+        },
+        {
+          "brand": "Tropicana",
+          "before": 52,
+          "after": 46,
+          "unit": "fl oz",
+          "pct": 11.5,
+          "image": "parent-company/tropicana.webp"
+        },
+        {
+          "brand": "Gatorade",
+          "before": 32,
+          "after": 28,
+          "unit": "fl oz",
+          "pct": 12.5,
+          "image": "parent-company/gatorade.webp"
+        }
+      ]
+    },
+    {
+      "name": "Mondelez",
+      "tag": "+ 32 more of their brands caught shrinking in the FullCarts database",
+      "cuts": [
+        {
+          "brand": "Oreo",
+          "before": 20,
+          "after": 18.71,
+          "unit": "oz",
+          "pct": 6.5,
+          "image": "parent-company/oreo.jpg"
+        },
+        {
+          "brand": "Cadbury Freddo",
+          "before": 122,
+          "after": 99,
+          "unit": "g",
+          "pct": 18.9,
+          "image": "parent-company/cadbury.webp"
+        },
+        {
+          "brand": "Ritz",
+          "before": 300,
+          "after": 227,
+          "unit": "g",
+          "pct": 24.3,
+          "image": "parent-company/ritz.webp"
+        }
+      ]
+    }
   ],
   "ctaHeadline": "check who *owns* yours",
   "ctaSub": "search any product — *free* — at fullcarts.org",

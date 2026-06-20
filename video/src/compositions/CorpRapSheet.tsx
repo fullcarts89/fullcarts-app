@@ -1,6 +1,6 @@
 import React from "react";
 import { z } from "zod";
-import { AbsoluteFill, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Img, staticFile, useCurrentFrame } from "remotion";
 import { theme } from "../lib/theme";
 import { headline, mono, body } from "../lib/fonts";
 import { GridTexture } from "../components/GridTexture";
@@ -12,6 +12,7 @@ const cut = z.object({
   after: z.number(),
   unit: z.string(),
   pct: z.number(),
+  image: z.string().optional(), // real product photo (Bucket-1) — http or local public/ path
 });
 
 const company = z.object({
@@ -74,33 +75,57 @@ const Cover: React.FC<{ title: string[]; sub: string }> = ({ title, sub }) => (
   </Frame>
 );
 
-// Each row's bar is normalized to its OWN before→after (the red fill = what's LEFT, the gap on
-// the right = what they took). Per-row so mixed units (oz / ct / ml) never get cross-compared.
-const CutRow: React.FC<{ c: Cut }> = ({ c }) => (
-  <div style={{ borderTop: `1px solid ${theme.color.textTertiary}33`, padding: "26px 0 22px" }}>
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24 }}>
-      <span style={{ fontFamily: headline, fontWeight: 700, fontSize: 50, color: theme.color.textPrimary, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.brand}</span>
-      <div style={{ display: "flex", alignItems: "center", gap: 22, flexShrink: 0 }}>
-        <span style={{ fontFamily: mono, fontWeight: 700, fontSize: 38, color: theme.color.textSecondary, whiteSpace: "nowrap" }}>
-          {c.before} → {c.after} {c.unit}
-        </span>
-        <div style={{ background: theme.color.red, color: theme.color.textPrimary, fontFamily: mono, fontWeight: 700, fontSize: 44, borderRadius: 14, padding: "4px 18px", whiteSpace: "nowrap" }}>−{c.pct}%</div>
+const resolve = (s?: string) => (s ? (s.startsWith("http") ? s : staticFile(s)) : null);
+
+// Real product photo (Bucket-1). Falls back to a clean brand-initial monogram when no photo is
+// available or it fails to load in-sandbox — never a broken image.
+const Thumb: React.FC<{ src?: string; brand: string }> = ({ src, brand }) => {
+  const r = resolve(src);
+  if (r) {
+    return (
+      <div style={{ width: 150, height: 150, flexShrink: 0, background: "#fff", borderRadius: 18, overflow: "hidden" }}>
+        <Img src={r} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
       </div>
+    );
+  }
+  return (
+    <div style={{ width: 150, height: 150, flexShrink: 0, background: `${theme.color.textTertiary}22`, borderRadius: 18, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <span style={{ fontFamily: headline, fontWeight: 700, fontSize: 70, color: theme.color.textTertiary }}>{brand.slice(0, 1)}</span>
     </div>
-    <div style={{ marginTop: 16, height: 18, background: `${theme.color.textTertiary}22`, borderRadius: 6, overflow: "hidden" }}>
-      <div style={{ width: `${(c.after / c.before) * 100}%`, height: "100%", background: theme.color.red, borderRadius: 6 }} />
+  );
+};
+
+// Photo + name + cut + per-row shrink bar. The bar is normalized to its OWN before→after (red fill
+// = what's LEFT, the gap on the right = what they took) so mixed units (oz / ct / ml) never get
+// cross-compared.
+const CutRow: React.FC<{ c: Cut }> = ({ c }) => (
+  <div style={{ borderTop: `1px solid ${theme.color.textTertiary}33`, padding: "22px 0" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 28 }}>
+      <Thumb src={c.image} brand={c.brand} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 20 }}>
+          <span style={{ fontFamily: headline, fontWeight: 700, fontSize: 50, color: theme.color.textPrimary, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.brand}</span>
+          <div style={{ background: theme.color.red, color: theme.color.textPrimary, fontFamily: mono, fontWeight: 700, fontSize: 44, borderRadius: 14, padding: "4px 18px", whiteSpace: "nowrap", flexShrink: 0 }}>−{c.pct}%</div>
+        </div>
+        <div style={{ fontFamily: mono, fontWeight: 700, fontSize: 36, color: theme.color.textSecondary, marginTop: 8 }}>
+          {c.before} → {c.after} {c.unit}
+        </div>
+        <div style={{ marginTop: 12, height: 16, background: `${theme.color.textTertiary}22`, borderRadius: 6, overflow: "hidden" }}>
+          <div style={{ width: `${(c.after / c.before) * 100}%`, height: "100%", background: theme.color.red, borderRadius: 6 }} />
+        </div>
+      </div>
     </div>
   </div>
 );
 
 const CompanySlide: React.FC<{ co: Company }> = ({ co }) => (
   <Frame footer>
-    <div style={{ position: "absolute", top: 96, left: 80, right: 80 }}>
+    <div style={{ position: "absolute", top: 88, left: 80, right: 80 }}>
       <div style={{ fontFamily: mono, fontSize: 30, letterSpacing: 4, textTransform: "uppercase", color: theme.color.red }}>corporate rap sheet</div>
-      <div style={{ fontFamily: headline, fontWeight: 700, fontSize: 116, lineHeight: 0.96, letterSpacing: -2, color: theme.color.textPrimary, textTransform: "uppercase", marginTop: 8 }}>{co.name}</div>
-      <div style={{ fontFamily: mono, fontSize: 32, color: theme.color.textSecondary, marginTop: 14 }}>{co.tag}</div>
+      <div style={{ fontFamily: headline, fontWeight: 700, fontSize: 110, lineHeight: 0.96, letterSpacing: -2, color: theme.color.textPrimary, textTransform: "uppercase", marginTop: 8 }}>{co.name}</div>
+      <div style={{ fontFamily: mono, fontSize: 30, color: theme.color.textSecondary, marginTop: 14, lineHeight: 1.3, maxWidth: 880 }}>{co.tag}</div>
     </div>
-    <div style={{ position: "absolute", top: 420, bottom: 150, left: 80, right: 80, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+    <div style={{ position: "absolute", top: 430, bottom: 140, left: 80, right: 80, display: "flex", flexDirection: "column", justifyContent: "center" }}>
       {co.cuts.map((c, i) => (
         <CutRow key={i} c={c} />
       ))}

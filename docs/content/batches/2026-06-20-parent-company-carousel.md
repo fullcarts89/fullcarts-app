@@ -32,9 +32,16 @@ sourced cut for *every* brand named on the slide** (not one example standing in 
 2. **Approved-claims** — ✅ All 15 cuts are specific, in-DB entries. Banner uses the safe "2,300+".
    **Ownership claims are all current & true** (hand-verified, NOT from `corporate_tree`). No §3 claims.
 3. **Three-bucket evidence** — ✅ Each named brand shows its **own** documented cut (no example stands in
-   for unproven brands). Bars are **per-row** `after/before` (the gap = what they took) so mixed units
-   (oz / ct / ml / L) are never cross-compared — the bug that made the first cut's bar misleading is gone.
-   No AI charts/photos.
+   for unproven brands) **plus its real product photo** (Bucket-1, pulled from `product_entities.image_url`).
+   Bars are **per-row** `after/before` (the gap = what they took) so mixed units (oz / ct / ml / L) are
+   never cross-compared — the bug that made the first cut's bar misleading is gone. No AI charts/photos.
+   - **Photo provenance:** real product images, downloaded to `video/public/parent-company/` so renders
+     work **offline** (the sandbox's TLS proxy makes headless Chrome reject remote image hosts —
+     `ERR_CERT_AUTHORITY_INVALID` — and external hosts 403 anyway; local static files dodge both).
+   - **A few are brand-representative, not the exact SKU** (e.g. Mars Bar / Snickers photos are the bar,
+     not the specific multipack measured). The photo says "this brand"; the numbers are the evidence.
+     Swap any via `video/public/parent-company/` + the `image` field. Missing/failed photo → clean
+     brand-initial monogram (never a broken image).
 
 ---
 
@@ -60,8 +67,9 @@ sourced cut for *every* brand named on the slide** (not one example standing in 
 **Cover (frame 0):** **YOU CAN'T / *SWITCH* YOUR / WAY OUT** ·
 sub: "the brands you swapped to dodge shrinkflation? same few owners — and they shrank all of them. swipe →"
 
-**Frames 1–5 — one company each.** Header = "CORPORATE RAP SHEET" + company + "+ N more brands in our data";
-body = a row per brand (name · before → after · −% · per-row shrink bar).
+**Frames 1–5 — one company each.** Header = "CORPORATE RAP SHEET" + company +
+"+ N more of their brands caught shrinking in the FullCarts database" (engaging context for a first-time
+viewer); body = a row per brand (**product photo** · name · before → after · −% · per-row shrink bar).
 
 | Frame | Company | Brand | Cut | −% | Evidence |
 |---|---|---|---|---|---|
