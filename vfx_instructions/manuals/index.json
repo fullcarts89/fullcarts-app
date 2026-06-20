@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 73,
+ "count": 74,
  "manuals": [
   {
    "id": "3_clones",
@@ -1138,6 +1138,24 @@
    "status": null,
    "virality_candidate": false,
    "file": "manuals/storm_clouds.json"
+  },
+  {
+   "id": "sunglasses_lens_text",
+   "title": "Text In Sunglasses Lenses",
+   "manual_type": "effect",
+   "technique_primitive": "text_reveal",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [
+    "sunglasses"
+   ],
+   "tool": "CapCut",
+   "source": "Mitch (@64709545476)",
+   "draft": false,
+   "status": null,
+   "virality_candidate": false,
+   "file": "manuals/sunglasses_lens_text.json"
   },
   {
    "id": "sunrise_hand_swipe",

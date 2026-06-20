@@ -82,6 +82,7 @@ def ingest(url, slug=None, difficulty="Beginner", do_transcribe=True, frame_ever
     j = {}
     try: j = json.loads(mj.stdout)
     except Exception: pass
+    if not isinstance(j, dict): j = {}   # yt-dlp can return null (login wall / rate limit / empty response)
     uploader=j.get("uploader") or ""; uid=j.get("uploader_id") or ""
     title=j.get("title") or ""; vid=j.get("id") or ""
     platform=(j.get("extractor_key") or "web")

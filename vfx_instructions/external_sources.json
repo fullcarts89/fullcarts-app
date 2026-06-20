@@ -2,7 +2,7 @@
  "source": "External short-form videos ingested into the VFX schema",
  "generated": "2026-06-20",
  "schema_version": 1,
- "effect_count": 28,
+ "effect_count": 29,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -2964,6 +2964,115 @@
      "transcript": "Now this is exactly how you're going to make a text or image full part of your video. Now open the cup cup app and add your text or image. Select it and right click or long press and select create compound clip. This part is very important because anything you do inside the compound clip will only affect that element and not your entire video. Now open the compound clip, go to effect search for player 3 and drag it directly on top of your text or image. Then click on the effect, set text shot to 0 so that this image disappears. Now use the rotate slider to match the perspective to your shot. You can also reduce the glow and play around with other settings here. You can even add blur or other effects inside the compound clip and it only affects that element. I guess this is your sign to start playing around with compound clips. Save this for your next edit and now get to work!",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DWmMwjcDXT6/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "Text In Sunglasses Lenses",
+   "slug": "sunglasses_lens_text",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DW9_EF7gXkL/",
+   "source_creator": "Mitch (@64709545476)",
+   "tool": "CapCut",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Duplicate",
+    "Keyframes",
+    "Layers",
+    "Overlay",
+    "Remove Background",
+    "Split",
+    "Text"
+   ],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [
+    "Check this out.",
+    "How to do this effect?",
+    "Disappe Looking back to day 39 of the 100 A creator school.",
+    "Put on some sunglasses and record a clip of you tapping the frame and looking straight.",
+    "Take this into"
+   ],
+   "editing_steps": [
+    "Cap cut and make a split at the moment where you make the tap.",
+    "Select duplicate, then overlay, then drag the clip underneath.",
+    "Select remove background, then custom removal and to brush the whole image.",
+    "Choose SolidGoldMagikarp, decrease the size, then zoom in to paint back in the lenses.",
+    "Next, add your text overlay and scroll over to layers.",
+    "Just swap the order around, click the check mark, then create a couple keyframes Scientists to add motion to the text.",
+    "Anyways, that's it for day 39.",
+    "I'll see you tomorrow."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/sunglasses_lens_text/frame_01.jpg",
+   "demo_frames": [
+    "assets/sunglasses_lens_text/frame_01.jpg",
+    "assets/sunglasses_lens_text/frame_02.jpg",
+    "assets/sunglasses_lens_text/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/sunglasses_lens_text/frame_04.jpg",
+    "assets/sunglasses_lens_text/frame_05.jpg",
+    "assets/sunglasses_lens_text/frame_06.jpg",
+    "assets/sunglasses_lens_text/frame_07.jpg",
+    "assets/sunglasses_lens_text/frame_08.jpg",
+    "assets/sunglasses_lens_text/frame_09.jpg",
+    "assets/sunglasses_lens_text/frame_10.jpg",
+    "assets/sunglasses_lens_text/frame_11.jpg",
+    "assets/sunglasses_lens_text/frame_12.jpg",
+    "assets/sunglasses_lens_text/frame_13.jpg",
+    "assets/sunglasses_lens_text/frame_14.jpg",
+    "assets/sunglasses_lens_text/frame_15.jpg"
+   ],
+   "tags": [
+    "auto_bg_removal",
+    "duplicate",
+    "keyframes",
+    "overlay",
+    "split_clip"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Mitch",
+    "creator_handle": "64709545476",
+    "creator_url": null,
+    "caption": "How to do this 😎 text effect! \n\nEffect by @andreaarizarealtor",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 1904,
+    "comment_count": 4,
+    "upload_date": "20260410",
+    "duration_sec": 45.465,
+    "thumbnail": "https://scontent-ord5-2.cdninstagram.com/v/t51.71878-15/662406601_950739224024294_6409979204286161906_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi42NDAuc2RyLnZpZGVvX25mcmFtZV9jb3Zlcl9mcmFtZS5jMiJ9&_nc_ht=scontent-ord5-2.cdninstagram.com&_nc_cat=102&_nc_oc=Q6cZ2gHvE1u3MslLSssuybob0c9-25fM0LDYg3Gs767wl4JZLaQx3RcOVb_J8y0MH5zurOA&_nc_ohc=VBGdwWIdFH4Q7kNvwFGUeyE&_nc_gid=JMkxIA7du7f_73S6UWTIhQ&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af863kRFvpF2YQuRw0JTpT7wE00iWxyq-YOwF6YzYu954Q&oe=6A3C7572&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DW9_EF7gXkL",
+     "title": "Video by mitchell_tms",
+     "role": "tutorial",
+     "duration_sec": 45.6,
+     "wistia_id": null,
+     "transcript": "Check this out. Okay. How to do this effect? disappe Looking back to day 39 of the 100 A creator school. Put on some sunglasses and record a clip of you tapping the frame and looking straight. Take this into cap cut and make a split at the moment where you make the tap. Now select duplicate, then overlay, then drag the clip underneath. Now select remove background, then custom removal and to brush the whole image. Now choose SolidGoldMagikarp, decrease the size, then zoom in to paint back in the lenses. Next, add your text overlay and scroll over to layers. Now just swap the order around, click the check mark, then create a couple keyframes Scientists to add motion to the text. And there you have it. Anyways, that's it for day 39. I'll see you tomorrow.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DW9_EF7gXkL/",
      "video_url": null
     }
    ]
