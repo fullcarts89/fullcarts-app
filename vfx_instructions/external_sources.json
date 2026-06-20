@@ -2,7 +2,7 @@
  "source": "External short-form videos ingested into the VFX schema",
  "generated": "2026-06-20",
  "schema_version": 1,
- "effect_count": 26,
+ "effect_count": 27,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -2755,6 +2755,119 @@
      "transcript": "Doesn't this look insanely cool? It was created using CDAM's 2.0 inside CapCut and I'll show you how. Open CapCut and tap on AILab to open CDAM's 2.0, upload the image and add this prompt. Now your 2D sticker video is ready. Try it yourself on CapCut now.",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DYXc6lANbxv/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "3D Text Walk-Out (\"Can’t Stop Me\")",
+   "slug": "walk_out_of_frame_text",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DT8ehY_jHjN/",
+   "source_creator": "Steven Wommack (@549671804)",
+   "tool": "CapCut",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Duplicate",
+    "Layers",
+    "Mask",
+    "Overlay",
+    "Remove Background",
+    "Split",
+    "Text"
+   ],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [
+    "Set up your phone and have a chair or a little table in the front.",
+    "Film yourself walking in, ducking, bumping your head and falling over the chair.",
+    "Next open this clip in the"
+   ],
+   "editing_steps": [
+    "CapCut app, duplicate it, hit remove background auto removal, overlay that clip and pull it to the beginning.",
+    "Select the original clip, hit mask, rectangle and line the bottom up with the back of the chair.",
+    "The fall now looks like this.",
+    "For the text, add text in the beginning, write out your sentence and line it up with the head bump.",
+    "I also want to bump up that EX here.",
+    "Select the head bump moment, hit split, select that second part and space out the EX between the T's.",
+    "It should now look like this.",
+    "Duplicate that second text clip, only type EX, place it slightly above the T's and it looks like this.",
+    "Finally, you want to appear in front of the text, so hit layers and drag the overlay to the left.",
+    "Export your video and that's it."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/walk_out_of_frame_text/frame_01.jpg",
+   "demo_frames": [
+    "assets/walk_out_of_frame_text/frame_01.jpg",
+    "assets/walk_out_of_frame_text/frame_02.jpg",
+    "assets/walk_out_of_frame_text/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/walk_out_of_frame_text/frame_04.jpg",
+    "assets/walk_out_of_frame_text/frame_05.jpg",
+    "assets/walk_out_of_frame_text/frame_06.jpg",
+    "assets/walk_out_of_frame_text/frame_07.jpg",
+    "assets/walk_out_of_frame_text/frame_08.jpg",
+    "assets/walk_out_of_frame_text/frame_09.jpg",
+    "assets/walk_out_of_frame_text/frame_10.jpg",
+    "assets/walk_out_of_frame_text/frame_11.jpg",
+    "assets/walk_out_of_frame_text/frame_12.jpg",
+    "assets/walk_out_of_frame_text/frame_13.jpg",
+    "assets/walk_out_of_frame_text/frame_14.jpg",
+    "assets/walk_out_of_frame_text/frame_15.jpg",
+    "assets/walk_out_of_frame_text/frame_16.jpg",
+    "assets/walk_out_of_frame_text/frame_17.jpg",
+    "assets/walk_out_of_frame_text/frame_18.jpg",
+    "assets/walk_out_of_frame_text/frame_19.jpg"
+   ],
+   "tags": [
+    "auto_bg_removal",
+    "duplicate",
+    "mask",
+    "overlay",
+    "split_clip"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Steven Wommack",
+    "creator_handle": "549671804",
+    "creator_url": null,
+    "caption": "Here is a tutorial on how you can do this creative 3D “text can’t stop me” video edit walking out of the frame of your reels like seanyo9229 🎥😅 have fun creating!!",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 128543,
+    "comment_count": 272,
+    "upload_date": "20260125",
+    "duration_sec": 58.033,
+    "thumbnail": "https://scontent-ord5-2.cdninstagram.com/v/t51.82787-15/622097741_18554005102039805_8926481661377104709_n.jpg?stp=dst-jpg_e35_p1080x1080_sh2.08_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4zMjE2LnNkci52aWRlb19kZWZhdWx0X2NvdmVyX2ZyYW1lLmMyIn0&_nc_ht=scontent-ord5-2.cdninstagram.com&_nc_cat=105&_nc_oc=Q6cZ2gHXbBBd7VOLFpYkbkONQK-0PUK2rs0Fmlh4m7WABCSWF-RVFa8nm2mtrTcFVGlKDbY&_nc_ohc=6JvOqYA41OQQ7kNvwHi4vE5&_nc_gid=GHblPZdc42SZOD8fPUD8Dw&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af9QiVLKvzzgnz9GjH9X5db1yc3v7mdjTSvj_3agb6ZzJw&oe=6A3BC69A&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DT8ehY_jHjN",
+     "title": "Video by stevenwommack",
+     "role": "tutorial",
+     "duration_sec": 58.1,
+     "wistia_id": null,
+     "transcript": "Set up your phone and have a chair or a little table in the front. Film yourself walking in, ducking, bumping your head and falling over the chair. Next open this clip in the CapCut app, duplicate it, hit remove background auto removal, overlay that clip and pull it to the beginning. Then select the original clip, hit mask, rectangle and line the bottom up with the back of the chair. The fall now looks like this. For the text, add text in the beginning, write out your sentence and line it up with the head bump. I also want to bump up that EX here. Select the head bump moment, hit split, select that second part and space out the EX between the T's. It should now look like this. Then duplicate that second text clip, only type EX, place it slightly above the T's and it looks like this. Finally, you want to appear in front of the text, so hit layers and drag the overlay to the left. Then export your video and that's it.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DT8ehY_jHjN/",
      "video_url": null
     }
    ]

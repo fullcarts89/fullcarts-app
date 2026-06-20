@@ -226,6 +226,7 @@ def rebuild_index(manuals_dir=MANUALS_DIR):
             "gear_required": m.get("gear_required", []), "props_required": m.get("props_required", []),
             "tool": m.get("tool"), "source": m.get("source_dataset") or m.get("source"),
             "draft": bool(m.get("draft")), "status": m.get("status"),
+            "virality_candidate": bool(m.get("virality_candidate")),
             "file": "manuals/%s" % fn,
         })
     idx = {"schema_version": SCHEMA_VERSION, "count": len(rows), "manuals": rows}

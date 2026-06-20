@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 71,
+ "count": 72,
  "manuals": [
   {
    "id": "3_clones",
@@ -17,6 +17,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/3_clones.json"
   },
   {
@@ -34,6 +35,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/3_product_reveal.json"
   },
   {
@@ -49,6 +51,7 @@
    "source": "Karen X (@169385)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/ai_location_transition.json"
   },
   {
@@ -64,6 +67,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": "no_source_steps",
+   "virality_candidate": false,
    "file": "manuals/animating_text.json"
   },
   {
@@ -81,6 +85,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/appear_bonus.json"
   },
   {
@@ -104,6 +109,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/ball_transition.json"
   },
   {
@@ -121,6 +127,7 @@
    "source": "Frank itom (@1267357316)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/before_after_freeze.json"
   },
   {
@@ -136,6 +143,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/building_jump.json"
   },
   {
@@ -151,6 +159,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": "course_lesson",
+   "virality_candidate": false,
    "file": "manuals/capcut_crash_course_desktop_app.json"
   },
   {
@@ -166,6 +175,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": "course_lesson",
+   "virality_candidate": false,
    "file": "manuals/capcut_crash_course_intro.json"
   },
   {
@@ -181,6 +191,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": "course_lesson",
+   "virality_candidate": false,
    "file": "manuals/capcut_crash_course_layers_masking.json"
   },
   {
@@ -196,6 +207,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": "course_lesson",
+   "virality_candidate": false,
    "file": "manuals/capcut_crash_course_mobile_app.json"
   },
   {
@@ -216,6 +228,7 @@
    "source": "Elly Walton (@elly.walton)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/clone_effect_talking_head.json"
   },
   {
@@ -235,6 +248,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/clothing_appear.json"
   },
   {
@@ -250,6 +264,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": "no_source_steps",
+   "virality_candidate": false,
    "file": "manuals/costume_fly_in.json"
   },
   {
@@ -265,6 +280,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": "commentary",
+   "virality_candidate": false,
    "file": "manuals/deepdive_cloning_level_02.json"
   },
   {
@@ -280,6 +296,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": "commentary",
+   "virality_candidate": false,
    "file": "manuals/deepdive_cloning_level_03.json"
   },
   {
@@ -295,6 +312,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": "commentary",
+   "virality_candidate": false,
    "file": "manuals/deepdive_floating_object_level_01.json"
   },
   {
@@ -310,6 +328,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": "commentary",
+   "virality_candidate": false,
    "file": "manuals/deepdive_keyframes_full_live_demo.json"
   },
   {
@@ -330,6 +349,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/dr_strange_portal.json"
   },
   {
@@ -345,6 +365,7 @@
    "source": "NQtutorials (@77452664349)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/dramatic_zoom_reveal.json"
   },
   {
@@ -362,6 +383,7 @@
    "source": "Harry Allsop | VFX Creator (@67795363025)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/flash_effect_clean_plate.json"
   },
   {
@@ -377,6 +399,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": "no_source_steps",
+   "virality_candidate": false,
    "file": "manuals/flashlight_costume_change.json"
   },
   {
@@ -398,6 +421,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/floating_book.json"
   },
   {
@@ -415,6 +439,7 @@
    "source": "Horla_dap0 Visualz (@14772383154)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/floating_mini_clone.json"
   },
   {
@@ -430,6 +455,7 @@
    "source": "Karen X (@169385)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/floating_outfit_effect.json"
   },
   {
@@ -447,6 +473,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/fly_like_superman.json"
   },
   {
@@ -470,6 +497,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/flying_book.json"
   },
   {
@@ -487,6 +515,7 @@
    "source": "Sampada | AI Video & Tech (@246413352)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/frozen_jump_float.json"
   },
   {
@@ -502,6 +531,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": "course_lesson",
+   "virality_candidate": false,
    "file": "manuals/getting_started.json"
   },
   {
@@ -517,6 +547,7 @@
    "source": "Francesca ✨ creative phone content (@77606021734)",
    "draft": true,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/ghost_drink.json"
   },
   {
@@ -532,6 +563,7 @@
    "source": "Karen X (@169385)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/giant_effect_ai.json"
   },
   {
@@ -549,6 +581,7 @@
    "source": "Emma Persson (@61654377232)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/glitch_intro.json"
   },
   {
@@ -566,6 +599,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/house_pond.json"
   },
   {
@@ -581,6 +615,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/hyperspeed_effect.json"
   },
   {
@@ -596,6 +631,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": "course_lesson",
+   "virality_candidate": false,
    "file": "manuals/intro_to_keyframes.json"
   },
   {
@@ -615,6 +651,7 @@
    "source": "Kayo Daniel | Learn, create, monetize, grow (@70269079851)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/jacket_vanish.json"
   },
   {
@@ -632,6 +669,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/jump_cuts.json"
   },
   {
@@ -652,6 +690,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/jump_in_cup.json"
   },
   {
@@ -669,6 +708,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/kick_away.json"
   },
   {
@@ -690,6 +730,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/liquid_from_an_object.json"
   },
   {
@@ -710,6 +751,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/magic_pole_transition.json"
   },
   {
@@ -729,6 +771,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/make_an_object_appear.json"
   },
   {
@@ -744,6 +787,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": "no_source_steps",
+   "virality_candidate": false,
    "file": "manuals/mirror_costume_change.json"
   },
   {
@@ -763,6 +807,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/moving_object.json"
   },
   {
@@ -783,6 +828,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/object_from_portal.json"
   },
   {
@@ -800,6 +846,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/object_reveal.json"
   },
   {
@@ -820,6 +867,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/object_switch.json"
   },
   {
@@ -840,6 +888,7 @@
    "source": "Mandu Editsx (tutorial) — adapted for FullCarts Grocery Store Time Machine",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/package_morph_transition.json"
   },
   {
@@ -855,6 +904,7 @@
    "source": "Karen X (@169385)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/pendulum_effect_ai.json"
   },
   {
@@ -870,6 +920,7 @@
    "source": "inmenta (@69529759015)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/perspective_effect.json"
   },
   {
@@ -889,6 +940,7 @@
    "source": "Harry Allsop | VFX Creator (@67795363025)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/phone_hologram.json"
   },
   {
@@ -911,6 +963,7 @@
    "source": "Steven Wommack (@549671804)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/printed_sticker_flying_object.json"
   },
   {
@@ -926,6 +979,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": "no_source_steps",
+   "virality_candidate": false,
    "file": "manuals/screen_pop_out.json"
   },
   {
@@ -943,6 +997,7 @@
    "source": "˗ˏˋ celina ˎˊ˗ (@8887399639)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/screen_pop_out_push.json"
   },
   {
@@ -963,6 +1018,7 @@
    "source": "˗ˏˋ celina ˎˊ˗ (@8887399639)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/scrunch_paper_reveal.json"
   },
   {
@@ -978,6 +1034,7 @@
    "source": "Fernanda Linhares (@259925523)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/seedance_2d_sticker.json"
   },
   {
@@ -993,6 +1050,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/sky_transition.json"
   },
   {
@@ -1008,6 +1066,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": "no_source_steps",
+   "virality_candidate": false,
    "file": "manuals/spray_reveal.json"
   },
   {
@@ -1025,6 +1084,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/stomp_effect.json"
   },
   {
@@ -1042,6 +1102,7 @@
    "source": "Steven Wommack (@549671804)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/stop_motion_teleport.json"
   },
   {
@@ -1059,6 +1120,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/storm_clouds.json"
   },
   {
@@ -1078,6 +1140,7 @@
    "source": "Harry Allsop | VFX Creator (@67795363025)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/sunrise_hand_swipe.json"
   },
   {
@@ -1095,6 +1158,7 @@
    "source": "Julia Gao Miller (@183501901)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/talking_head_match_cut.json"
   },
   {
@@ -1112,6 +1176,7 @@
    "source": "Colin Pomeroy (@321857083)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/tap_synced_text.json"
   },
   {
@@ -1129,6 +1194,7 @@
    "source": "Sydney Mohni 🏳️‍🌈 UGC Creator & Coach (@53585408420)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/text_behind_subject.json"
   },
   {
@@ -1144,6 +1210,7 @@
    "source": "Joe Anderson | Viral VFX (@70214543852)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/text_kick.json"
   },
   {
@@ -1161,6 +1228,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/time_warp.json"
   },
   {
@@ -1181,7 +1249,28 @@
    "source": "Joe Anderson | Viral VFX (@70214543852)",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/toss_object_transform.json"
+  },
+  {
+   "id": "walk_out_of_frame_text",
+   "title": "3D Text Walk-Out (\"Can’t Stop Me\")",
+   "manual_type": "effect",
+   "technique_primitive": "text_reveal",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [
+    "chair or low table"
+   ],
+   "tool": "CapCut",
+   "source": "Steven Wommack (@549671804)",
+   "draft": false,
+   "status": null,
+   "virality_candidate": true,
+   "file": "manuals/walk_out_of_frame_text.json"
   },
   {
    "id": "wall_hologram",
@@ -1198,6 +1287,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/wall_hologram.json"
   },
   {
@@ -1217,6 +1307,7 @@
    "source": "viral_vfx_vault",
    "draft": false,
    "status": null,
+   "virality_candidate": false,
    "file": "manuals/your_1st_cloning_video.json"
   }
  ]
