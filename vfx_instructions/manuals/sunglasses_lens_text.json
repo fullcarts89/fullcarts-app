@@ -1,0 +1,124 @@
+{
+ "id": "sunglasses_lens_text",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "text_reveal",
+ "title": "Text In Sunglasses Lenses",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [],
+ "props_required": [
+  "sunglasses"
+ ],
+ "result_description": "You tap your sunglasses and animated text appears inside the lenses.",
+ "source": "Mitch (@64709545476)",
+ "source_url": "https://www.instagram.com/reel/DW9_EF7gXkL/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "sunglasses_clip",
+   "what_to_film": "Wearing sunglasses, tap the frame of the glasses, then look straight at camera.",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_duration"
+   ],
+   "variance_tolerance": {}
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "sunglasses_clip"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "sunglasses_clip",
+   "capcut_feature": "Split",
+   "timing": {
+    "cue": "the tap moment"
+   }
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "target": "sunglasses_clip",
+   "params": {
+    "to_track": 2
+   },
+   "note": "duplicate, overlay, drag underneath"
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "overlay",
+   "capcut_feature": "Remove Background → Custom Removal",
+   "params": {
+    "mode": "custom"
+   },
+   "note": "brush the whole image out, then shrink the brush, zoom in and paint back ONLY the lenses"
+  },
+  {
+   "action": "text",
+   "channel": "ui",
+   "target": "text overlay",
+   "capcut_feature": "Text"
+  },
+  {
+   "action": "position",
+   "channel": "ui",
+   "target": "layer order",
+   "capcut_feature": "Layers",
+   "note": "swap order so the text sits behind the lens cutout, then confirm"
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "text overlay",
+   "params": {
+    "property": "position/scale"
+   },
+   "note": "add a couple of keyframes to give the text motion"
+  }
+ ],
+ "result": {
+  "description": "Animated text revealed inside the sunglasses lenses on the tap.",
+  "success_criteria": [
+   "Text visible only through the lenses",
+   "Lens cutout edges clean",
+   "Text motion lands with the tap"
+  ]
+ },
+ "narration_transcript": "Check this out. Okay. How to do this effect? disappe Looking back to day 39 of the 100 A creator school. Put on some sunglasses and record a clip of you tapping the frame and looking straight. Take this into cap cut and make a split at the moment where you make the tap. Now select duplicate, then overlay, then drag the clip underneath. Now select remove background, then custom removal and to brush the whole image. Now choose SolidGoldMagikarp, decrease the size, then zoom in to paint back in the lenses. Next, add your text overlay and scroll over to layers. Now just swap the order around, click the check mark, then create a couple keyframes Scientists to add motion to the text. And there you have it. Anyways, that's it for day 39. I'll see you tomorrow.",
+ "frames": {
+  "demo": [
+   "assets/sunglasses_lens_text/frame_01.jpg",
+   "assets/sunglasses_lens_text/frame_02.jpg",
+   "assets/sunglasses_lens_text/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/sunglasses_lens_text/frame_04.jpg",
+   "assets/sunglasses_lens_text/frame_05.jpg",
+   "assets/sunglasses_lens_text/frame_06.jpg",
+   "assets/sunglasses_lens_text/frame_07.jpg",
+   "assets/sunglasses_lens_text/frame_08.jpg",
+   "assets/sunglasses_lens_text/frame_09.jpg",
+   "assets/sunglasses_lens_text/frame_10.jpg",
+   "assets/sunglasses_lens_text/frame_11.jpg",
+   "assets/sunglasses_lens_text/frame_12.jpg",
+   "assets/sunglasses_lens_text/frame_13.jpg",
+   "assets/sunglasses_lens_text/frame_14.jpg",
+   "assets/sunglasses_lens_text/frame_15.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "64709545476",
+  "like_count": 1904,
+  "comment_count": 4,
+  "upload_date": "20260410",
+  "caption": "How to do this 😎 text effect! \n\nEffect by @andreaarizarealtor",
+  "hashtags": []
+ }
+}
