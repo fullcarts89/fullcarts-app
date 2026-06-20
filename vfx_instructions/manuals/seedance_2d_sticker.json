@@ -1,0 +1,82 @@
+{
+ "id": "seedance_2d_sticker",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "aspect_ratio": "9:16",
+ "title": "AI 2D Sticker Video (Seedance 2.0)",
+ "source": "Fernanda Linhares (@259925523)",
+ "source_url": "https://www.instagram.com/reel/DYXc6lANbxv/",
+ "tool": "CapCut AILab (Seedance 2.0)",
+ "is_ai_generated": true,
+ "narration_transcript": "Doesn't this look insanely cool? It was created using CDAM's 2.0 inside CapCut and I'll show you how. Open CapCut and tap on AILab to open CDAM's 2.0, upload the image and add this prompt. Now your 2D sticker video is ready. Try it yourself on CapCut now.",
+ "frames": {
+  "demo": [
+   "assets/seedance_2d_sticker/frame_01.jpg",
+   "assets/seedance_2d_sticker/frame_02.jpg",
+   "assets/seedance_2d_sticker/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/seedance_2d_sticker/frame_04.jpg",
+   "assets/seedance_2d_sticker/frame_05.jpg",
+   "assets/seedance_2d_sticker/frame_06.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "259925523",
+  "like_count": 6252,
+  "comment_count": 238,
+  "upload_date": "20260515",
+  "caption": "AD| Try seedance 2.0 on CapCut 🤍\n\n#dreaminaseedance2 #capcutai #capcut #capcutpioneer",
+  "hashtags": [
+   "capcut",
+   "capcutai",
+   "capcutpioneer",
+   "dreaminaseedance2"
+  ]
+ },
+ "technique_primitive": "other",
+ "difficulty": "beginner",
+ "gear_required": [],
+ "props_required": [],
+ "result_description": "Turn a still image into a stylized animated '2D sticker' video using CapCut's built-in AILab (Seedance 2.0).",
+ "inputs": [
+  {
+   "name": "source_image",
+   "what_to_film": "The still image you want to animate into a 2D sticker video.",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_resolution"
+   ],
+   "variance_tolerance": {}
+  }
+ ],
+ "ai_generation": [
+  {
+   "provider": "capcut_ailab",
+   "mcp_server": null,
+   "tool": "Seedance 2.0",
+   "operation": "image_to_video",
+   "inputs": [
+    "source_image"
+   ],
+   "prompt_strategy": "author at runtime (creator's exact prompt is gated)",
+   "note": "In CapCut: tap AILab → Seedance 2.0 → upload the image → add a prompt → generate.",
+   "settings": {},
+   "channel": "ai_gen"
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "generated 2D-sticker clip"
+  }
+ ],
+ "result": {
+  "description": "Animated 2D-sticker video from one image.",
+  "success_criteria": [
+   "Subject animates in the 2D sticker style",
+   "Clean edges / consistent character"
+  ]
+ }
+}

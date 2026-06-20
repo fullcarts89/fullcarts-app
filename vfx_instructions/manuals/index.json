@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 68,
+ "count": 71,
  "manuals": [
   {
    "id": "3_clones",
@@ -535,6 +535,23 @@
    "file": "manuals/giant_effect_ai.json"
   },
   {
+   "id": "glitch_intro",
+   "title": "Glitch Intro Effect",
+   "manual_type": "effect",
+   "technique_primitive": "other",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "Emma Persson (@61654377232)",
+   "draft": false,
+   "status": null,
+   "file": "manuals/glitch_intro.json"
+  },
+  {
    "id": "house_pond",
    "title": "House Pond",
    "manual_type": "effect",
@@ -817,10 +834,10 @@
    ],
    "props_required": [
     "current product package (smaller / newer)",
-    "older product package (larger / original)"
+    "older product package (larger / original) — filmed, or a real sourced photo"
    ],
    "tool": "CapCut",
-   "source": "Mandu Editsx (tutorial)",
+   "source": "Mandu Editsx (tutorial) — adapted for FullCarts Grocery Store Time Machine",
    "draft": false,
    "status": null,
    "file": "manuals/package_morph_transition.json"
@@ -947,6 +964,21 @@
    "draft": false,
    "status": null,
    "file": "manuals/scrunch_paper_reveal.json"
+  },
+  {
+   "id": "seedance_2d_sticker",
+   "title": "AI 2D Sticker Video (Seedance 2.0)",
+   "manual_type": "effect",
+   "technique_primitive": "other",
+   "difficulty": "beginner",
+   "is_ai_generated": true,
+   "gear_required": [],
+   "props_required": [],
+   "tool": "CapCut AILab (Seedance 2.0)",
+   "source": "Fernanda Linhares (@259925523)",
+   "draft": false,
+   "status": null,
+   "file": "manuals/seedance_2d_sticker.json"
   },
   {
    "id": "sky_transition",
@@ -1098,6 +1130,21 @@
    "draft": false,
    "status": null,
    "file": "manuals/text_behind_subject.json"
+  },
+  {
+   "id": "text_kick",
+   "title": "Text Kick Effect",
+   "manual_type": "effect",
+   "technique_primitive": "text_reveal",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "Joe Anderson | Viral VFX (@70214543852)",
+   "draft": false,
+   "status": null,
+   "file": "manuals/text_kick.json"
   },
   {
    "id": "time_warp",

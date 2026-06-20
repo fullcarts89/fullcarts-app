@@ -1,8 +1,8 @@
 {
  "source": "External short-form videos ingested into the VFX schema",
- "generated": "2026-06-19",
+ "generated": "2026-06-20",
  "schema_version": 1,
- "effect_count": 23,
+ "effect_count": 26,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -2485,6 +2485,276 @@
      "transcript": "This is the ghost drink effect and here's how to do it in cap cut. Get a shot of an empty glass and then a drink being poured in. Now reverse shot two so that it's moving backwards. Then turn this into an overlay and drop it underneath. Add a horizontal mask and then flip this. Take the line of the mask up to the top of the full drink. Set a keyframe then move forward slightly and track the drink as it moves down. This will automatically set more keyframes and that's it you're all done.",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DXu05chjPg9/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "Video by iamjoeanderson",
+   "slug": "text_kick",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DV_XE9mkXwy/",
+   "source_creator": "Joe Anderson | Viral VFX (@70214543852)",
+   "tool": "CapCut",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": false,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Keyframes",
+    "Text"
+   ],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [],
+   "editing_steps": [
+    "This is the text kick effect.",
+    "You'll need only one recording of you pretending to kick the text.",
+    "In the edit tab, tap text, type out your text and select your style.",
+    "Extend the text to the length of the video and find the exact moment where your kick hits the text.",
+    "Resize and reposition the text to that spot.",
+    "Add a keyframe, scroll a few frames forward and enlarge the text.",
+    "You can ease the movement by tapping graph and selecting E's in.",
+    "That's it."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/text_kick/frame_01.jpg",
+   "demo_frames": [
+    "assets/text_kick/frame_01.jpg",
+    "assets/text_kick/frame_02.jpg",
+    "assets/text_kick/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/text_kick/frame_04.jpg",
+    "assets/text_kick/frame_05.jpg",
+    "assets/text_kick/frame_06.jpg",
+    "assets/text_kick/frame_07.jpg",
+    "assets/text_kick/frame_08.jpg",
+    "assets/text_kick/frame_09.jpg",
+    "assets/text_kick/frame_10.jpg"
+   ],
+   "tags": [
+    "keyframes"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Joe Anderson | Viral VFX",
+    "creator_handle": "70214543852",
+    "creator_url": null,
+    "caption": "The Text Kick Effect 👟💥\n\nThat tiny text on the ground?\n\nThat’s your content right now…\n\nSmall. Ignored. Skipped.\n\nWatch what happens when I kick it.\n\nIt explodes toward the camera and takes over everything.\n\nThat’s what your videos are missing—\n\na moment that forces attention.\n\nNo movement → no interruption\n\nNo interruption → no watch time\n\nNo watch time → no growth\n\nBuilt in the Edits app using clean animated text, precise keyframes, and simple VFX…\n\nbut it completely changes how your content performs.\n\nIf you’re tired of posting and getting nothing back—this is the shift.\n\nFollow for VFX that actually get you more views\n\nSave this so your next edit hits harder\n\nShare this with someone stuck spinning their wheels 🚀",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 4920,
+    "comment_count": 77,
+    "upload_date": "20260317",
+    "duration_sec": 31.233,
+    "thumbnail": "https://scontent-ord5-2.cdninstagram.com/v/t51.82787-15/653073072_17912582952343853_5420874334935458851_n.jpg?stp=dst-jpg_e35_p1080x1080_sh2.08_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xMjc2LnNkci52aWRlb19kZWZhdWx0X2NvdmVyX2ZyYW1lLmMyIn0&_nc_ht=scontent-ord5-2.cdninstagram.com&_nc_cat=105&_nc_oc=Q6cZ2gGSQXI-VcyFKn1Mj4CpRoz5bE8DzhSag3BFuvN_RICy9v7tn-z3u2l6A4wbC-hqQH4&_nc_ohc=C4fuDRPWkzoQ7kNvwG8vVtU&_nc_gid=QhZHG7cq0GA5ooteeiTlAA&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af_HFsohFyZBskpiAFdXUjOE51BI8ILKT7qgojPP-Ipi6g&oe=6A3BC8ED&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1917
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DV_XE9mkXwy",
+     "title": "Video by iamjoeanderson",
+     "role": "tutorial",
+     "duration_sec": 31.3,
+     "wistia_id": null,
+     "transcript": "This is the text kick effect. You'll need only one recording of you pretending to kick the text. In the edit tab, tap text, type out your text and select your style. Extend the text to the length of the video and find the exact moment where your kick hits the text. Then resize and reposition the text to that spot. Add a keyframe, scroll a few frames forward and enlarge the text. You can ease the movement by tapping graph and selecting E's in. And that's it. Follow for more editing tips, tap export, and it should look like this.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DV_XE9mkXwy/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "Glitch Intro Effect",
+   "slug": "glitch_intro",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DUqYED9gSGu/",
+   "source_creator": "Emma Persson (@61654377232)",
+   "tool": "CapCut",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Overlay",
+    "Split"
+   ],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [
+    "This is the glitch intro effect, an easy way to grab attention fast.",
+    "First, grab a clip of just your background, make sure to match your settings in both clips.",
+    "Record your intro for your second clip."
+   ],
+   "editing_steps": [
+    "CapCut, add your background as the main clip and your intro clip as an overlay under it.",
+    "Zoom in, then on the overlay, tap split for every 2 or so frames, then delete every other clip.",
+    "Finally, add a glitch sound to really sell the effect.",
+    "That's the edit."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/glitch_intro/frame_01.jpg",
+   "demo_frames": [
+    "assets/glitch_intro/frame_01.jpg",
+    "assets/glitch_intro/frame_02.jpg",
+    "assets/glitch_intro/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/glitch_intro/frame_04.jpg",
+    "assets/glitch_intro/frame_05.jpg",
+    "assets/glitch_intro/frame_06.jpg",
+    "assets/glitch_intro/frame_07.jpg",
+    "assets/glitch_intro/frame_08.jpg",
+    "assets/glitch_intro/frame_09.jpg",
+    "assets/glitch_intro/frame_10.jpg",
+    "assets/glitch_intro/frame_11.jpg",
+    "assets/glitch_intro/frame_12.jpg"
+   ],
+   "tags": [
+    "overlay",
+    "split_clip"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Emma Persson",
+    "creator_handle": "61654377232",
+    "creator_url": null,
+    "caption": "This glitch intro is such an easy way to grab attention fast ⚡️⁠\n⁠\nHow it works (simple):⁠\n→ Film a clean background clip⁠\n→ Film your intro (same camera settings)⁠\n→ Stack them in CapCut⁠\n→ Split the overlay every couple of frames⁠\n→ Delete every other slice⁠\n→ Add a glitch sound to sell it⁠\n⁠\n📌 Save this to try later⁠\n📲 Follow for easy mobile edits that actually work⁠\n💬 Comment THAT CREATOR to get my CapCut Crash Course⁠\n⁠\n#capcuttutorial #mobileediting #glitcheffect #editinghacks",
+    "hashtags": [
+     "capcuttutorial",
+     "editinghacks",
+     "glitcheffect",
+     "mobileediting"
+    ],
+    "view_count": null,
+    "like_count": 2275,
+    "comment_count": 51,
+    "upload_date": "20260212",
+    "duration_sec": 35.5,
+    "thumbnail": "https://scontent-ord5-3.cdninstagram.com/v/t51.82787-15/628398110_17960410908049233_4790933769089658672_n.jpg?stp=dst-jpg_e15_fr_p1080x1080_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xMDgwLnNkci52aWRlb19kZWZhdWx0X2NvdmVyX2ZyYW1lLmMyIn0&_nc_ht=scontent-ord5-3.cdninstagram.com&_nc_cat=109&_nc_oc=Q6cZ2gE9tnO07ZfajQF7jREAEVEDYF-x5U_6mIgpAz6fV-S03dsTJHVVLzq7w66IqoOlhTw&_nc_ohc=LAIJ3hdwvWMQ7kNvwG1V2-e&_nc_gid=HQeKKeCloqa8hBrLdtOMVQ&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af_w8CK6SBvzK78QHa1BnX4uWfGQ6rk2s-E59-RMbaYdbw&oe=6A3BDBD2&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DUqYED9gSGu",
+     "title": "Video by thesocialcreativesclub",
+     "role": "tutorial",
+     "duration_sec": 35.6,
+     "wistia_id": null,
+     "transcript": "This is the glitch intro effect, an easy way to grab attention fast. First, grab a clip of just your background, make sure to match your settings in both clips. Now record your intro for your second clip. Now in CapCut, add your background as the main clip and your intro clip as an overlay under it. Zoom in, then on the overlay, tap split for every 2 or so frames, then delete every other clip. Finally, add a glitch sound to really sell the effect. And that's the edit. Follow for more easy mobile edits that actually work.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DUqYED9gSGu/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "AI 2D Sticker Video (Seedance 2.0)",
+   "slug": "seedance_2d_sticker",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DYXc6lANbxv/",
+   "source_creator": "Fernanda Linhares (@259925523)",
+   "tool": null,
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [
+    "Doesn't this look insanely cool?",
+    "It was created using CDAM's 2.0 inside"
+   ],
+   "editing_steps": [
+    "CapCut and I'll show you how.",
+    "Open CapCut and tap on AILab to open CDAM's 2.0, upload the image and add this prompt.",
+    "Your 2D sticker video is ready.",
+    "Try it yourself on CapCut now."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/seedance_2d_sticker/frame_01.jpg",
+   "demo_frames": [
+    "assets/seedance_2d_sticker/frame_01.jpg",
+    "assets/seedance_2d_sticker/frame_02.jpg",
+    "assets/seedance_2d_sticker/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/seedance_2d_sticker/frame_04.jpg",
+    "assets/seedance_2d_sticker/frame_05.jpg",
+    "assets/seedance_2d_sticker/frame_06.jpg"
+   ],
+   "tags": [],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Fernanda Linhares",
+    "creator_handle": "259925523",
+    "creator_url": null,
+    "caption": "AD| Try seedance 2.0 on CapCut 🤍\n\n#dreaminaseedance2 #capcutai #capcut #capcutpioneer",
+    "hashtags": [
+     "capcut",
+     "capcutai",
+     "capcutpioneer",
+     "dreaminaseedance2"
+    ],
+    "view_count": null,
+    "like_count": 6252,
+    "comment_count": 238,
+    "upload_date": "20260515",
+    "duration_sec": 17.276,
+    "thumbnail": "https://scontent-ord5-3.cdninstagram.com/v/t51.82787-15/698658705_18593745871021524_8804101628195595037_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi45MTAuc2RyLnZpZGVvX2RlZmF1bHRfY292ZXJfZnJhbWUuYzIifQ&_nc_ht=scontent-ord5-3.cdninstagram.com&_nc_cat=100&_nc_oc=Q6cZ2gHPIPqT_ncc9ZHB8S29_6v868A9OKHBLUz7N8luHZ0bk4mnh80mVJ0d_eO4omRxuDY&_nc_ohc=IAcenLBWLr8Q7kNvwH_5Ydo&_nc_gid=MVy1YO7V-F2_c7KPgnA8SA&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af8hLr2Wq7rmBijNiwYBaVxlHT8vudddaFSqqCbTSVBP8A&oe=6A3BD70B&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1910
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DYXc6lANbxv",
+     "title": "Video by hhfernanda",
+     "role": "tutorial",
+     "duration_sec": 17.4,
+     "wistia_id": null,
+     "transcript": "Doesn't this look insanely cool? It was created using CDAM's 2.0 inside CapCut and I'll show you how. Open CapCut and tap on AILab to open CDAM's 2.0, upload the image and add this prompt. Now your 2D sticker video is ready. Try it yourself on CapCut now.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DYXc6lANbxv/",
      "video_url": null
     }
    ]

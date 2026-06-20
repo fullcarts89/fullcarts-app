@@ -1,0 +1,114 @@
+{
+ "id": "text_kick",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "text_reveal",
+ "title": "Text Kick Effect",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "gear_required": [],
+ "props_required": [],
+ "result_description": "You kick a line of text on the ground and it explodes toward the camera, filling the frame.",
+ "source": "Joe Anderson | Viral VFX (@70214543852)",
+ "source_url": "https://www.instagram.com/reel/DV_XE9mkXwy/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "kick_clip",
+   "what_to_film": "One take of you pretending to kick the text on the ground.",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_duration"
+   ],
+   "variance_tolerance": {}
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "kick_clip"
+  },
+  {
+   "action": "text",
+   "channel": "ui",
+   "target": "new text layer",
+   "capcut_feature": "Text",
+   "params": {
+    "action": "type text, pick a style"
+   }
+  },
+  {
+   "action": "trim",
+   "channel": "structural",
+   "target": "text layer",
+   "note": "extend the text to the full length of the video"
+  },
+  {
+   "action": "transform",
+   "channel": "ui",
+   "target": "text layer",
+   "capcut_feature": "Scale/Position",
+   "timing": {
+    "cue": "the exact frame the kick connects"
+   },
+   "note": "resize & reposition the text onto the spot you kick"
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "text layer",
+   "params": {
+    "property": "scale"
+   },
+   "timing": {
+    "cue": "the kick moment"
+   },
+   "note": "keyframe, scroll a few frames forward, then enlarge the text toward camera"
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "text keyframes",
+   "capcut_feature": "Graph → Ease In",
+   "params": {
+    "easing": "Ease In"
+   },
+   "note": "tap Graph and choose Ease In to smooth the burst"
+  }
+ ],
+ "result": {
+  "description": "Text launches toward the camera on the kick.",
+  "success_criteria": [
+   "Text enlarges exactly on the kick contact",
+   "Ease-in makes the burst feel like an impact",
+   "Text legible at both small (ground) and large (full-frame) scale"
+  ]
+ },
+ "narration_transcript": "This is the text kick effect. You'll need only one recording of you pretending to kick the text. In the edit tab, tap text, type out your text and select your style. Extend the text to the length of the video and find the exact moment where your kick hits the text. Then resize and reposition the text to that spot. Add a keyframe, scroll a few frames forward and enlarge the text. You can ease the movement by tapping graph and selecting E's in. And that's it. Follow for more editing tips, tap export, and it should look like this.",
+ "frames": {
+  "demo": [
+   "assets/text_kick/frame_01.jpg",
+   "assets/text_kick/frame_02.jpg",
+   "assets/text_kick/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/text_kick/frame_04.jpg",
+   "assets/text_kick/frame_05.jpg",
+   "assets/text_kick/frame_06.jpg",
+   "assets/text_kick/frame_07.jpg",
+   "assets/text_kick/frame_08.jpg",
+   "assets/text_kick/frame_09.jpg",
+   "assets/text_kick/frame_10.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "70214543852",
+  "like_count": 4920,
+  "comment_count": 77,
+  "upload_date": "20260317",
+  "caption": "The Text Kick Effect 👟💥\n\nThat tiny text on the ground?\n\nThat’s your content right now…\n\nSmall. Ignored. Skipped.\n\nWatch what happens when I kick it.\n\nIt explodes toward the camera and takes over everything.\n\nThat’s what your videos are missing—\n\na moment that forces attention.\n\nNo movement → no interruption\n\nNo interruption → no watch time\n\nNo watch time → no growth\n\nBuilt in the Edits app using clean animated text, precise keyframes, and simple VFX…\n\nbut it completely changes how your content performs.\n\nIf you’re tired of posting and getting nothing back—this is the shift.\n\nFollow for VFX that actually get you more views\n\nSave this so your next edit hits harder\n\nShare this with someone stuck spinning their wheels 🚀",
+  "hashtags": []
+ }
+}
