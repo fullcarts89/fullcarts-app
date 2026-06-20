@@ -54,3 +54,7 @@ top50_image_posts.json
 API\ Key.numbers
 App\ Screenshots/
 /out/
+
+# local morph generator engine + assets (not committed)
+vendor/
+vfx_assets/

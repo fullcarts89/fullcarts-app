@@ -1,0 +1,240 @@
+{
+ "id": "package_morph_transition",
+ "schema_version": 1,
+ "technique_primitive": "object_transition",
+ "title": "Package Morph Transition (Shrink Time-Machine)",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "current product package (smaller / newer)",
+  "older product package (larger / original) — filmed, or a real sourced photo"
+ ],
+ "result_description": "Two locked-off clips of the same product a few years apart. The older/larger package morphs (Tawel Flip lens effect) and shrinks (keyframed scale) down onto the spot the current/smaller one occupies, with a glitch + digital-error SFX on the cut and a typewriter year/weight reveal — the 'grocery store time machine'.",
+ "source": "Mandu Editsx (tutorial) — adapted for FullCarts Grocery Store Time Machine",
+ "source_url": "",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "current_pack",
+   "what_to_film": "Clip A. Tripod, locked-off. Hold the CURRENT (smaller/newer) package centered in frame and say the current year line (e.g. 'This is 2026'). Hold ~2s. Plain background, even light.",
+   "capture_requirements": {
+    "locked_off": true,
+    "green_screen": false,
+    "framing": "package centered, same distance + same spot as old_pack",
+    "lighting": "even, no window behind; identical to old_pack"
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "min_duration",
+    "min_resolution"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8,
+    "min_seconds": 2,
+    "min_w": 1080,
+    "min_h": 1920
+   }
+  },
+  {
+   "name": "old_pack",
+   "what_to_film": "Clip B. SAME tripod position — do not move the camera. Hold the OLDER (larger/original) package in the EXACT same spot and say the old year line (e.g. 'And this is 2022'). Hold ~2s. If you can't get the old package, a real sourced PHOTO of it works as a held still (must be real — never AI-generated or faked packaging).",
+   "capture_requirements": {
+    "locked_off": true,
+    "green_screen": false,
+    "real_evidence": true,
+    "ai_generated": false,
+    "framing": "older package centered on the EXACT spot current_pack occupies"
+   },
+   "acceptance_checks": [
+    "min_resolution",
+    "product_matches_reference"
+   ],
+   "variance_tolerance": {
+    "min_w": 800,
+    "min_h": 800,
+    "reference_asset": "current_pack"
+   }
+  },
+  {
+   "name": "operator_endcard",
+   "what_to_film": "Optional FullCarts end card: you, deadpan, delivering the CTA. Plain background so Remove Background cuts you cleanly. 3-5s.",
+   "capture_requirements": {
+    "locked_off": true,
+    "green_screen": false,
+    "framing": "head-and-shoulders, centered, room to place text beside you",
+    "lighting": "even front light"
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "min_duration"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 10,
+    "min_seconds": 3
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "current_pack, old_pack, operator_endcard"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "old_pack",
+   "params": {
+    "track": 2,
+    "note": "Clip A (current) on track 1; Clip B (old) on track 2 directly above"
+   }
+  },
+  {
+   "action": "split",
+   "channel": "structural",
+   "target": "current_pack and old_pack",
+   "capcut_feature": "Split (Ctrl/Cmd+B)",
+   "params": {
+    "note": "cut both clips on the spoken word 'this'; delete the front half of Clip B and the back half of Clip A so playback runs A -> B"
+   },
+   "timing": {"cue": "the spoken word 'this'"}
+  },
+  {
+   "action": "position",
+   "channel": "structural",
+   "target": "old_pack",
+   "params": {
+    "align_to": "current_pack",
+    "note": "Clip B begins exactly where Clip A ends so the morph lands on one spot"
+   }
+  },
+  {
+   "action": "opacity",
+   "channel": "ui",
+   "target": "old_pack (Clip B)",
+   "capcut_feature": "Basic -> Opacity (temporarily 50%), then Basic -> Position (X/Y)",
+   "reference_screenshot": "assets/package_morph_transition/step_match_position.jpg",
+   "params": {
+    "opacity_temp": 50,
+    "then": "nudge Position X/Y until the older package overlaps the current one perfectly, then set Opacity back to 100"
+   }
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "old_pack (Clip B)",
+   "capcut_feature": "Video Effects -> Lens -> search 'Tawel Flip' -> drag onto Clip B",
+   "reference_screenshot": "assets/package_morph_transition/step_tawel_flip.jpg",
+   "params": {
+    "effect": "Tawel Flip",
+    "duration_frames": 7,
+    "note": "the morph itself; set effect duration to ~6-8 frames"
+   }
+  },
+  {
+   "action": "transform",
+   "channel": "ui",
+   "target": "old_pack (Clip B)",
+   "capcut_feature": "Basic -> Scale -> Keyframe (diamond)",
+   "reference_screenshot": "assets/package_morph_transition/step_keyframe_scale.jpg",
+   "params": {
+    "keyframes": [
+     {"at_frame": 0, "scale_pct": 125},
+     {"at_frame": 8, "scale_pct": 100}
+    ],
+    "note": "at the first frame of the effect set Scale 125% + keyframe; 8 frames later keyframe Scale 100% so the big package shrinks to match"
+   }
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "the 3-frame overlap between Clip A and Clip B",
+   "capcut_feature": "Effects -> Glitch -> 'Bad Signal' -> drag onto the overlap",
+   "reference_screenshot": "assets/package_morph_transition/step_bad_signal_glitch.jpg",
+   "params": {
+    "effect": "Bad Signal",
+    "duration_frames": 3,
+    "note": "trim it to the last 3 frames of the transition"
+   }
+  },
+  {
+   "action": "audio",
+   "channel": "ui",
+   "target": "under the transition",
+   "capcut_feature": "Audio -> Sound Effects -> search 'Glitch' or 'Digital Error'",
+   "params": {
+    "note": "drop a glitch/digital-error SFX under the morph cut"
+   }
+  },
+  {
+   "action": "text",
+   "channel": "ui",
+   "target": "year label that pops on the morph",
+   "capcut_feature": "Text -> Default Text, then Animation -> In -> Typewriter",
+   "reference_screenshot": "assets/package_morph_transition/step_text_typewriter.jpg",
+   "params": {
+    "content": "2022",
+    "animation_in": "Typewriter",
+    "timing": {"cue": "pop up when the package morphs"},
+    "note": "year/era label per the tutorial; swap to the real older year for the episode"
+   }
+  },
+  {
+   "action": "text",
+   "channel": "structural",
+   "target": "weight/price reveal overlay",
+   "params": {
+    "content": "225 g -> 200 g   ·   -11.1%   ·   same price",
+    "style": "alert-red highlight on the delta",
+    "timing": {"cue": "on/after the morph reveal"},
+    "note": "FullCarts data reveal — numbers are the Kraft Mac & Cheese (Kraft Dinner) anchor; swap per episode"
+   }
+  },
+  {
+   "action": "text",
+   "channel": "structural",
+   "target": "lower-third source tag",
+   "params": {
+    "content": "9 sources · fullcarts.org",
+    "style": "small mono, low-opacity",
+    "timing": {"cue": "hold through the reveal + end card"}
+   }
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "operator_endcard",
+   "capcut_feature": "Remove Background -> Auto Removal",
+   "reference_screenshot": "assets/package_morph_transition/step_remove_bg.jpg",
+   "params": {
+    "mode": "auto"
+   }
+  },
+  {
+   "action": "adjustment",
+   "channel": "taste",
+   "target": "whole timeline",
+   "params": {
+    "note": "match grade across Clip A + Clip B so only size/weight differs, not color/temperature"
+   }
+  }
+ ],
+ "result": {
+  "description": "Clip A (current/smaller) cuts on the spoken word to Clip B (older/larger), which morphs via Tawel Flip and scales 125%->100% to land on the same spot, with a Bad Signal glitch + digital-error SFX on the cut and a typewriter year reveal; FullCarts adds the weight/price delta + source tag and an optional operator end card.",
+  "success_criteria": [
+   "Both packages land on the exact same spot (no jump)",
+   "Size difference reads instantly; color/light match so only size changed",
+   "Glitch + SFX hit on the cut frame",
+   "Every on-screen number traces to the data anchor"
+  ]
+ },
+ "narration_transcript": "This is 2026. (cut) And this is 2022.",
+ "source_meta": {
+  "format": "Grocery Store Time Machine",
+  "notes": "Faithful to the Mandu Editsx tutorial: Tawel Flip is a Video Effects > Lens effect applied to Clip B (NOT a transition), plus a Bad Signal glitch, glitch SFX, and a Typewriter year label. FullCarts layers the weight/price reveal + source tag + optional operator end card. Per-episode: swap the year + the weight/price numbers for the documented shrink."
+ }
+}

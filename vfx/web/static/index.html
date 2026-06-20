@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Viral VFX &rarr; CapCut</title>
+<style>
+  :root { --bg:#14161a; --panel:#1d2026; --line:#2c313a; --text:#e6e8ec;
+          --muted:#9aa3af; --accent:#4f8cff; --ok:#2faf63; --amber:#d9962a;
+          --bad:#d9533f; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+         font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+         line-height:1.45; }
+  .wrap { max-width:760px; margin:0 auto; padding:24px 18px 60px; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  .sub { color:var(--muted); font-size:13px; margin:0 0 20px; }
+  .steps { display:flex; gap:6px; flex-wrap:wrap; font-size:12px;
+           color:var(--muted); margin-bottom:18px; }
+  .steps span { padding:3px 8px; border:1px solid var(--line); border-radius:12px; }
+  .steps span.active { color:var(--text); border-color:var(--accent); }
+  .step { display:none; }
+  .step.active { display:block; }
+  label { display:block; font-size:13px; color:var(--muted); margin:12px 0 4px; }
+  textarea, input[type=text] { width:100%; background:var(--panel);
+    border:1px solid var(--line); color:var(--text); border-radius:6px;
+    padding:9px 10px; font-size:14px; font-family:inherit; }
+  textarea { min-height:160px; resize:vertical; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:6px;
+    padding:9px 16px; font-size:14px; cursor:pointer; margin-top:14px; }
+  button.secondary { background:#333a45; }
+  button:disabled { opacity:.45; cursor:not-allowed; }
+  .card { background:var(--panel); border:1px solid var(--line);
+    border-radius:8px; padding:14px; margin:12px 0; }
+  .card h3 { margin:0 0 4px; font-size:16px; }
+  .prim { font-family:ui-monospace,Menlo,monospace; font-size:12px;
+    color:var(--accent); }
+  .why { color:var(--muted); font-size:13px; margin:8px 0; }
+  .badge { display:inline-block; font-size:12px; padding:2px 9px;
+    border-radius:11px; font-weight:600; }
+  .badge.ok { background:rgba(47,175,99,.18); color:var(--ok); }
+  .badge.miss { background:rgba(217,150,42,.18); color:var(--amber); }
+  .asset { border-bottom:1px solid var(--line); padding:12px 0; }
+  .asset:last-child { border-bottom:0; }
+  .asset .what { font-size:13px; color:var(--muted); margin:4px 0; }
+  .asset ul { margin:6px 0; padding-left:18px; font-size:12px; color:var(--muted); }
+  .asset .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap;
+    margin-top:8px; }
+  .asset input[type=file] { font-size:12px; }
+  .verdict { font-size:13px; margin-top:8px; }
+  .verdict.ok { color:var(--ok); }
+  .verdict.bad { color:var(--bad); }
+  .verdict ul { color:var(--bad); }
+  #error { display:none; background:rgba(217,83,63,.15);
+    border:1px solid var(--bad); color:#ffd5cd; padding:10px 12px;
+    border-radius:6px; margin-bottom:16px; font-size:13px;
+    white-space:pre-wrap; }
+  .success { background:rgba(47,175,99,.12); border:1px solid var(--ok);
+    border-radius:8px; padding:14px; }
+  .mono { font-family:ui-monospace,Menlo,monospace; font-size:12px;
+    word-break:break-all; }
+  .instruct { margin-top:14px; font-weight:600; }
+  .muted { color:var(--muted); font-size:12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Viral VFX &rarr; CapCut</h1>
+  <p class="sub">Script &rarr; pick an effect &rarr; film &amp; QA your clips &rarr; build an openable CapCut project.</p>
+
+  <div class="steps">
+    <span id="dot1">1 &middot; Script</span>
+    <span id="dot2">2 &middot; Intake</span>
+    <span id="dot3">3 &middot; Top 3</span>
+    <span id="dot4">4 &middot; Assets</span>
+    <span id="dot5">5 &middot; Build</span>
+  </div>
+
+  <div id="error"></div>
+
+  <!-- Step 1 -->
+  <section class="step" id="step1">
+    <label for="script">Your video script</label>
+    <textarea id="script" placeholder="Paste or write your video script"></textarea>
+    <button onclick="go(2)">Next</button>
+  </section>
+
+  <!-- Step 2 -->
+  <section class="step" id="step2">
+    <label for="equipment">Equipment (comma-separated)</label>
+    <input type="text" id="equipment" placeholder="tripod, lighting, phone">
+    <label for="location">Location</label>
+    <input type="text" id="location" placeholder="bedroom, kitchen, outdoors...">
+    <label for="props">Items / props (comma-separated)</label>
+    <input type="text" id="props" placeholder="mirror, ball, sheet...">
+    <div>
+      <button class="secondary" onclick="go(1)">Back</button>
+      <button onclick="findEffects()">Find effects</button>
+    </div>
+  </section>
+
+  <!-- Step 3 -->
+  <section class="step" id="step3">
+    <h3 style="margin-bottom:0">Top 3 effects for your script</h3>
+    <div id="candidates"></div>
+    <button class="secondary" onclick="go(2)">Back</button>
+  </section>
+
+  <!-- Step 4 -->
+  <section class="step" id="step4">
+    <div class="card">
+      <h3 id="planTitle"></h3>
+      <div class="muted" id="planGear"></div>
+    </div>
+    <div id="assets"></div>
+    <button class="secondary" onclick="go(3)">Back</button>
+    <button id="buildBtn" disabled onclick="go(5)">All clips accepted &rarr; continue to Build</button>
+  </section>
+
+  <!-- Step 5 -->
+  <section class="step" id="step5">
+    <button id="doBuild" onclick="doBuild()">Build CapCut project</button>
+    <div id="buildResult"></div>
+    <div><button class="secondary" onclick="go(4)">Back</button></div>
+  </section>
+</div>
+
+<script>
+// ---- simple state ----
+var selectedSlug = null;
+var inputs = [];          // [{name, what_to_film, requirements, acceptance_checks}]
+var accepted = {};        // set of accepted asset names
+
+function showError(msg) {
+  var e = document.getElementById("error");
+  e.textContent = msg;
+  e.style.display = "block";
+}
+function clearError() {
+  var e = document.getElementById("error");
+  e.style.display = "none";
+  e.textContent = "";
+}
+
+async function postJSON(url, body) {
+  var r = await fetch(url, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(body)
+  });
+  var text = await r.text();
+  if (!r.ok) { showError("Error " + r.status + ": " + text); throw new Error(text); }
+  clearError();
+  return JSON.parse(text);
+}
+
+function go(n) {
+  for (var i = 1; i <= 5; i++) {
+    document.getElementById("step" + i).classList.toggle("active", i === n);
+    document.getElementById("dot" + i).classList.toggle("active", i === n);
+  }
+}
+
+function splitList(s) {
+  return (s || "").split(",").map(function(x){ return x.trim(); })
+                  .filter(function(x){ return x.length > 0; });
+}
+
+// ---- Step 2 -> recommend ----
+async function findEffects() {
+  var body = {
+    script: document.getElementById("script").value,
+    equipment: splitList(document.getElementById("equipment").value),
+    props: splitList(document.getElementById("props").value),
+    location: document.getElementById("location").value.trim(),
+    k: 3
+  };
+  var data = await postJSON("/api/recommend", body);
+  renderCandidates(data.candidates || []);
+  go(3);
+}
+
+function renderCandidates(cands) {
+  var box = document.getElementById("candidates");
+  box.innerHTML = "";
+  if (!cands.length) {
+    box.innerHTML = "<p class='muted'>No matching effects found. Try different gear.</p>";
+    return;
+  }
+  cands.forEach(function(c) {
+    var card = document.createElement("div");
+    card.className = "card";
+    var badge = c.feasible
+      ? "<span class='badge ok'>gear OK</span>"
+      : "<span class='badge miss'>missing gear</span>";
+    card.innerHTML =
+      "<h3>" + esc(c.title) + " " + badge + "</h3>" +
+      "<div class='prim'>" + esc(c.technique_primitive) + "</div>" +
+      "<p class='why'>" + esc(c.why) + "</p>";
+    var btn = document.createElement("button");
+    btn.textContent = "Choose";
+    btn.onclick = function(){ choose(c.slug); };
+    card.appendChild(btn);
+    box.appendChild(card);
+  });
+}
+
+// ---- Step 3 -> plan ----
+async function choose(slug) {
+  var data = await postJSON("/api/plan", {slug: slug});
+  selectedSlug = data.slug;
+  inputs = data.inputs || [];
+  accepted = {};
+  document.getElementById("planTitle").textContent = data.title;
+  var gear = (data.gear || []);
+  document.getElementById("planGear").textContent =
+    gear.length ? "Gear: " + gear.join(", ") : "";
+  renderAssets();
+  go(4);
+}
+
+function renderAssets() {
+  var box = document.getElementById("assets");
+  box.innerHTML = "";
+  inputs.forEach(function(inp) {
+    var card = document.createElement("div");
+    card.className = "asset";
+    var reqs = (inp.requirements || []).map(function(r){ return "<li>" + esc(r) + "</li>"; }).join("");
+    var checks = (inp.acceptance_checks || []).map(function(r){ return "<li>" + esc(r) + "</li>"; }).join("");
+    card.innerHTML =
+      "<strong>" + esc(inp.name) + "</strong>" +
+      "<div class='what'>" + esc(inp.what_to_film || "(film this clip)") + "</div>" +
+      (reqs ? "<div class='muted'>Requirements:</div><ul>" + reqs + "</ul>" : "") +
+      (checks ? "<div class='muted'>Checks:</div><ul>" + checks + "</ul>" : "");
+    var row = document.createElement("div");
+    row.className = "row";
+    var file = document.createElement("input");
+    file.type = "file";
+    var btn = document.createElement("button");
+    btn.textContent = "Upload & check";
+    btn.style.marginTop = "0";
+    var verdict = document.createElement("div");
+    verdict.className = "verdict";
+    btn.onclick = function(){ uploadAsset(inp.name, file, verdict, btn); };
+    row.appendChild(file);
+    row.appendChild(btn);
+    card.appendChild(row);
+    card.appendChild(verdict);
+    box.appendChild(card);
+  });
+  updateBuildBtn();
+}
+
+// ---- Step 4 -> upload ----
+async function uploadAsset(name, fileEl, verdictEl, btn) {
+  if (!fileEl.files || !fileEl.files.length) {
+    verdictEl.className = "verdict bad";
+    verdictEl.textContent = "Pick a file first.";
+    return;
+  }
+  var fd = new FormData();
+  fd.append("file", fileEl.files[0]);
+  fd.append("slug", selectedSlug);
+  fd.append("asset_name", name);
+  btn.disabled = true;
+  try {
+    var r = await fetch("/api/upload", {method: "POST", body: fd});
+    var text = await r.text();
+    if (!r.ok) { showError("Error " + r.status + ": " + text); return; }
+    clearError();
+    var data = JSON.parse(text);
+    if (data.accepted) {
+      accepted[name] = true;
+      verdictEl.className = "verdict ok";
+      verdictEl.innerHTML = "&#10004; accepted";
+    } else {
+      delete accepted[name];
+      var fails = (data.failures || []).map(function(f){ return "<li>" + esc(f) + "</li>"; }).join("");
+      verdictEl.className = "verdict bad";
+      verdictEl.innerHTML = "&#10008; not accepted &mdash; re-shoot / re-upload:<ul>" +
+        (fails || "<li>QA check failed</li>") + "</ul>";
+    }
+    updateBuildBtn();
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function updateBuildBtn() {
+  var all = inputs.length > 0 && inputs.every(function(i){ return accepted[i.name]; });
+  document.getElementById("buildBtn").disabled = !all;
+}
+
+// ---- Step 5 -> build ----
+async function doBuild() {
+  var btn = document.getElementById("doBuild");
+  btn.disabled = true;
+  try {
+    var data = await postJSON("/api/build", {slug: selectedSlug});
+    var checklist = (data.checklist || []).map(function(c){ return "<li>" + esc(c) + "</li>"; }).join("");
+    document.getElementById("buildResult").innerHTML =
+      "<div class='success'>" +
+      "<h3>&#10004; Project built</h3>" +
+      "<div class='muted'>Project path</div><div class='mono'>" + esc(data.project_path) + "</div>" +
+      "<div class='muted' style='margin-top:8px'>Output folder</div><div class='mono'>" + esc(data.out_dir) + "</div>" +
+      "<div class='muted' style='margin-top:8px'>Finish by hand:</div>" +
+      "<ul>" + (checklist || "<li>Nothing flagged &mdash; the draft assembled cleanly.</li>") + "</ul>" +
+      "<p class='instruct'>Quit &amp; reopen CapCut, open this project, then do the checklist steps above.</p>" +
+      "</div>";
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function esc(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+go(1);
+</script>
+</body>
+</html>

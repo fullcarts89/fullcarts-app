@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 67,
+ "count": 68,
  "manuals": [
   {
    "id": "3_clones",
@@ -804,6 +804,26 @@
    "draft": false,
    "status": null,
    "file": "manuals/object_switch.json"
+  },
+  {
+   "id": "package_morph_transition",
+   "title": "Package Morph Transition (Shrink Time-Machine)",
+   "manual_type": "effect",
+   "technique_primitive": "object_transition",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [
+    "current product package (smaller / newer)",
+    "older product package (larger / original)"
+   ],
+   "tool": "CapCut",
+   "source": "Mandu Editsx (tutorial)",
+   "draft": false,
+   "status": null,
+   "file": "manuals/package_morph_transition.json"
   },
   {
    "id": "pendulum_effect_ai",

@@ -1,0 +1,240 @@
+V I R A L V F X VA U LT · R E C R E AT I O N G U I D E
+
+Make an Object Appear
+📘 Beginner
+
+🎬 6 video lessons
+
+📱 Shot on phone
+
+✂️ CapCut
+
+What you'll make
+Recreate the Make an Object Appear effect entirely on your phone. Film a couple of simple shots, then
+build the illusion in CapCut using the steps below.
+
+The finished effect (still from the demo)
+
+🎥 Part 1 — Filming
+
+1
+
+Welcome to your first visual effect.
+
+2
+
+Wanna start you off with something simple but effective.
+
+3
+
+We're gonna make an object appear just by snapping our fingers.
+
+4
+
+For this we're gonna need two shots.
+
+5
+
+The first shot we're gonna snap our fingers, pick up the cup and take a drink and then the second
+shot we're gonna get with the cup removed from the scene that will create our clean plate.
+
+6
+
+Let's go ahead and do our focus lock and hit record.
+
+7
+
+Shot one then our second shot, we just want our clean plate no cup in the scene.
+
+8
+
+One thing to know is that when you have natural lighting coming into the window, this can be
+problematic if we have the sun shifting or clouds moving during the day and you wanna make sure
+to get your shots just back to back.
+
+9
+
+Basically not giving the sun enough time to shift and change the lighting in the scene.
+
+✂️ Part 2 — Editing in CapCut
+1
+
+Once we have our footage imported I'm gonna trim it down to just the section that I need.
+
+2
+
+Tap split, delete everything on the left side, pick up the cup, drink, set it down.
+
+3
+
+I'll split it again and then I'll come to a section where the cup is not on the counter.
+
+4
+
+Split and delete that middle section.
+
+5
+
+We're gonna use this part as our patch to cover up the cup, so I'll go ahead and split it here and
+delete everything on the right side so I have my two clips of my action clip and my clean plate of
+the countertop.
+
+6
+
+Select the second part of the shot.
+
+7
+
+Have overlay to drop it down resume out a little bit, long press and I'm gonna pull it all the way
+over to the left.
+
+8
+
+I'll use my mask tool to just select the section that's gonna cover the cup over here.
+
+9
+
+Rotate it, so you can see the mask is covering the cup.
+
+10
+
+We don't want it to overlap our body at all and I'll go ahead and boost the feather a little bit to see
+how much the feather is adjusting.
+
+11
+
+I like to overlap it straight over the object and then you can adjust the feather and you can see
+how much effect it's actually having.
+
+12
+
+If I want just a little bit of feather I can see how much feather there is over the cup that blend and
+then I can move it into place where I want it.
+
+13
+
+Then we just wanna go to the point where we snap our fingers and trim this clip, down to that
+point.
+
+14
+
+Deselect everything by tapping in the black section and hit play Boom.
+
+15
+
+So once we have our footage imported up here drag it down on the timeline so both of our shots
+are in this one clip.
+
+16
+
+I'm just gonna trim off the front and back end that I don't need.
+
+17
+
+Select and split.
+
+18
+
+Delete the front part that I don't need.
+
+19
+
+Snap and then after after this first shot when I pick up the glass I'm gonna split it here.
+
+20
+
+This will be shot too and just keep a section where this area right here is open and there's no cup.
+
+21
+
+We're gonna use that to basically patch that area.
+
+22
+
+What I wanna do now I have clip 1, clip 2 drag this on top to be able to see what's going on we're
+gonna use the mask tool so up here in video mask and I can use a rectangle mask and you can
+see what's happening is this mask is covering our cup.
+
+23
+
+I'll adjust the feather a little bit just to smooth those edges.
+
+24
+
+I'll put that at .
+
+25
+
+So what we wanna do is let it play and right when we snap our fingers we're gonna trim off the
+edge of this clip the end of it.
+
+26
+
+Go ahead and mute these.
+
+27
+
+You zoom in here.
+
+28
+
+What's gonna happen is this is this patch on the table is gonna come to an end right when we
+snap our fingers and it's gonna reveal the cup.
+
+29
+
+Here we go.
+
+30
+
+So here's a final adjustment that I made as you can see the clip is pretty yellow.
+
+31
+
+This happens when you're using warm lights from inside the house so a quick way to fix that, is
+select the clip come up to adjustment appear in the right corner, under basic cause what's
+happening is the white balance is off.
+
+32
+
+If you shift it this way it goes to warm if you shift it this way it goes to cool.
+
+33
+
+What we wanna do is shift it to where it's supposed to be.
+
+34
+
+Which is where white things are actually white so I'm looking at the cabinet and my shirt so I can
+pull that down but I don't want the walls to go too blue.
+
+35
+
+I'll find a middle ground here and then I can come under HSL which is huge saturation and
+luminance and I'm going to pick the orange color cause there's still some orange in here.
+
+36
+
+You can see this, still yellow orange and I can just pull down the saturation of just that color.
+
+37
+
+I like to pull it way down see what it's doing and then bring it back.
+
+38
+
+Less is more, but if you look at the before and after of that and what we did here it makes a big
+difference.
+
+Official visual step-by-step:
+
+🧱 Layers reference
+
+📝 Full narration (reference)
+Object Appear - Filming
+
+📱 Object Appear - Edit - Capcut Mobile
+🖥️ Object Appear - Edit - Capcut Desktop
+Recreation guide generated from the Viral VFX Vault for personal study. Effect: Make an Object Appear.
+
+
