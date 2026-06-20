@@ -1,0 +1,155 @@
+{
+ "id": "walk_out_of_frame_text",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "text_reveal",
+ "title": "3D Text Walk-Out (\"Can’t Stop Me\")",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "chair or low table"
+ ],
+ "virality_candidate": true,
+ "result_description": "You walk out of the reel's frame and collide with giant 3D text — bumping your head on it and falling over a chair, while standing in front of the letters.",
+ "source": "Steven Wommack (@549671804)",
+ "source_url": "https://www.instagram.com/reel/DT8ehY_jHjN/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "action_clip",
+   "what_to_film": "Set up the phone with a chair/low table in front. Walk in, duck, bump your head, and fall over the chair.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "min_duration"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "action_clip"
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "target": "action_clip",
+   "params": {
+    "to_track": 2
+   }
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "duplicate",
+   "capcut_feature": "Remove Background → Auto Removal",
+   "params": {
+    "mode": "auto"
+   },
+   "note": "overlay it, pull to the beginning — this cutout is the 'in front of text' layer"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "original clip",
+   "capcut_feature": "Mask → Rectangle",
+   "params": {
+    "shape": "rectangle",
+    "align": "bottom edge to the back of the chair"
+   },
+   "note": "lets the fall drop below the frame line"
+  },
+  {
+   "action": "text",
+   "channel": "ui",
+   "target": "headline text",
+   "capcut_feature": "Text",
+   "timing": {
+    "cue": "line up with the head bump"
+   },
+   "note": "add at the start, write the sentence"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "headline text",
+   "capcut_feature": "Split",
+   "timing": {
+    "cue": "the head-bump moment"
+   },
+   "note": "on the second part, space the 'EX' out between the T's"
+  },
+  {
+   "action": "duplicate",
+   "channel": "ui",
+   "target": "second text clip",
+   "params": {
+    "text": "EX",
+    "position": "slightly above the T's"
+   },
+   "note": "duplicate, retype only EX, nudge up"
+  },
+  {
+   "action": "position",
+   "channel": "ui",
+   "target": "layer order",
+   "capcut_feature": "Layers",
+   "params": {
+    "note": "drag the cutout overlay to the front"
+   },
+   "note": "so you appear in front of the text"
+  }
+ ],
+ "result": {
+  "description": "Subject collides with and stands in front of 3D text, then falls out of frame.",
+  "success_criteria": [
+   "Cutout subject reads as in front of the letters",
+   "Rectangle mask hides the fall below the frame edge cleanly",
+   "Text 'bump' lands exactly on the head contact"
+  ]
+ },
+ "narration_transcript": "Set up your phone and have a chair or a little table in the front. Film yourself walking in, ducking, bumping your head and falling over the chair. Next open this clip in the CapCut app, duplicate it, hit remove background auto removal, overlay that clip and pull it to the beginning. Then select the original clip, hit mask, rectangle and line the bottom up with the back of the chair. The fall now looks like this. For the text, add text in the beginning, write out your sentence and line it up with the head bump. I also want to bump up that EX here. Select the head bump moment, hit split, select that second part and space out the EX between the T's. It should now look like this. Then duplicate that second text clip, only type EX, place it slightly above the T's and it looks like this. Finally, you want to appear in front of the text, so hit layers and drag the overlay to the left. Then export your video and that's it.",
+ "frames": {
+  "demo": [
+   "assets/walk_out_of_frame_text/frame_01.jpg",
+   "assets/walk_out_of_frame_text/frame_02.jpg",
+   "assets/walk_out_of_frame_text/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/walk_out_of_frame_text/frame_04.jpg",
+   "assets/walk_out_of_frame_text/frame_05.jpg",
+   "assets/walk_out_of_frame_text/frame_06.jpg",
+   "assets/walk_out_of_frame_text/frame_07.jpg",
+   "assets/walk_out_of_frame_text/frame_08.jpg",
+   "assets/walk_out_of_frame_text/frame_09.jpg",
+   "assets/walk_out_of_frame_text/frame_10.jpg",
+   "assets/walk_out_of_frame_text/frame_11.jpg",
+   "assets/walk_out_of_frame_text/frame_12.jpg",
+   "assets/walk_out_of_frame_text/frame_13.jpg",
+   "assets/walk_out_of_frame_text/frame_14.jpg",
+   "assets/walk_out_of_frame_text/frame_15.jpg",
+   "assets/walk_out_of_frame_text/frame_16.jpg",
+   "assets/walk_out_of_frame_text/frame_17.jpg",
+   "assets/walk_out_of_frame_text/frame_18.jpg",
+   "assets/walk_out_of_frame_text/frame_19.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "549671804",
+  "like_count": 128543,
+  "comment_count": 272,
+  "upload_date": "20260125",
+  "caption": "Here is a tutorial on how you can do this creative 3D “text can’t stop me” video edit walking out of the frame of your reels like seanyo9229 🎥😅 have fun creating!!",
+  "hashtags": []
+ }
+}
