@@ -9,115 +9,118 @@
 
 ## The one-liner
 
-**Theme:** *"You can't switch your way out."* Five corporate parents quietly own the brands you swapped
-**to** — and they shrank all of them. One slide per parent: the portfolio reveal + one verified receipt.
+**Theme:** *"You can't switch your way out."* A handful of corporate parents own the brands you swapped
+**to** — and shrank them too. **One company per slide, shown as a "corporate rap sheet": a documented,
+sourced cut for *every* brand named on the slide** (not one example standing in for the rest).
 
 | Field | Value |
 |---|---|
-| **Format** | `Carousel` (ranked engine) — off the shelf, no new composition. 4:5, 1080×1350, one slide/frame. |
+| **Format** | `CorpRapSheet` — **new composition** (`video/src/compositions/CorpRapSheet.tsx`). 4:5, 1080×1350, one slide/frame. |
+| **Why new** | The stock `Carousel` item holds only one before→after per slide. Naming 3 brands but proving 1 is exactly the unbacked-implication the evidence gate forbids — so the slide now carries a cut per brand. |
 | **Series** | Worst Offenders / accountability thread (net-new sibling: *"Who Owns Your Cart"*) |
-| **Music lane** | **Lane 6 — Newsjack** (broadcast tension, "worst revealed last" build); Lane 1 alt. Carousel stills are silent; the bed is for the Reel/TikTok cross-post cut. |
-| **Platforms** | IG carousel (primary) → cross-post the auto-advancing `CarouselVideo` cut to TikTok/Reels/Shorts; static image to X. |
+| **Music lane** | **Lane 6 — Newsjack** (broadcast tension); Lane 1 alt. Stills are silent; bed is for the Reel/TikTok cross-post cut. |
+| **Platforms** | IG carousel (primary) → cross-post a `CarouselVideo`-style auto-advance cut to TikTok/Reels/Shorts; static slide to X. |
 | **Props** | `video/src/props/carousel-parent-company.json` |
-| **Render** | `Carousel`, stills `0..6` (cover + 5 + CTA) |
+| **Render** | `CorpRapSheet`, stills `0..6` (cover + 5 companies + CTA) |
 
 ---
 
-## Gate pass (all three — required before this ships)
+## Gate pass (all three)
 
-1. **5 non-negotiables** — ✅ data-driven (every figure from the DB) · ✅ interesting (the "same owner" twist) ·
-   ✅ credible (each on-camera cut has **evidence ≥ 12**) · ✅ relatable (everyday brands) · ✅ reaction-evoking
-   ("wait, they own *that* too?!").
-2. **Approved-claims** — ✅ All five cuts are specific, in-DB, evidence-backed (see table). Banner uses the
-   safe "2,300+". **Ownership claims are all current & true** (verified, not from `corporate_tree` —
-   see "Data integrity" below). No §3 forbidden claims.
-3. **Three-bucket evidence** — ✅ Bars are data-viz of the **real cited numbers** (allowed), not a fabricated
-   chart of a claim. No AI product photos, no invented figures. If you add product photos later they must be
-   **Bucket-1** (a real listing screenshot or your own photo), never AI.
+1. **5 non-negotiables** — ✅ data-driven · ✅ interesting (the "same owner" twist) · ✅ credible (every
+   cut is real & sourced; see evidence column) · ✅ relatable · ✅ reaction-evoking.
+2. **Approved-claims** — ✅ All 15 cuts are specific, in-DB entries. Banner uses the safe "2,300+".
+   **Ownership claims are all current & true** (hand-verified, NOT from `corporate_tree`). No §3 claims.
+3. **Three-bucket evidence** — ✅ Each named brand shows its **own** documented cut (no example stands in
+   for unproven brands). Bars are **per-row** `after/before` (the gap = what they took) so mixed units
+   (oz / ct / ml / L) are never cross-compared — the bug that made the first cut's bar misleading is gone.
+   No AI charts/photos.
 
 ---
 
 ## Data integrity notes (read before posting)
 
-- **Ranking axis = "the biggest cut we could verify for that parent."** The on-screen `#5…#1` is justified by
-  the −% on each slide itself (self-evident, no external ranking claim to defend). It is **not** "which
-  conglomerate is worst overall" — don't let the caption imply that. (By raw event count P&G actually leads;
-  we deliberately don't make that claim because the per-event counts in `published_changes` double-count
-  re-scrapes.)
-- **We did NOT use the `corporate_tree` view's parent labels.** That view lists "BlackRock owns Nestlé"
-  (a *shareholder*, not a parent) — using it would torch the credibility gate. Every "owns" line below is a
-  hand-verified, current corporate-ownership fact.
-- **Two "Dove"s exist:** Dove *personal care* = **Unilever** (what we feature); Dove *chocolate* = Mars.
-  We list Snickers/M&M's/Galaxy under Mars to avoid the collision.
-- **Featured the gate-safe cut, not the worst outlier.** e.g. Cadbury's −57% sits in the AI unit-parse danger
-  zone; we feature the **Freddo −18.9% (ev 72)** instead — famous *and* bulletproof.
+- **No competitive #1–#5 severity ranking.** With multiple cuts per company there's no honest single
+  number to rank parents by (raw event counts in `published_changes` double-count re-scrapes). Slides are
+  **sequenced**, not ranked — the cover carries the thesis; we end on Mondelez for the famous Cadbury cut.
+- **The "+ N more brands" line is real:** `corporate_tree.distinct_brands` minus the 3 shown
+  (P&G 27→+24 · Unilever 12→+9 · Mars 26→+23 · PepsiCo 26→+23 · Mondelez 35→+32).
+- **Did NOT use `corporate_tree` parent labels** ("BlackRock owns Nestlé" = a shareholder). Every "owns"
+  line is hand-verified current ownership.
+- **Two "Dove"s:** Dove *personal care* = Unilever (featured); Dove *chocolate* = Mars (we use
+  Snickers/Galaxy/Mars Bar for Mars to avoid the collision).
+- **Evidence depth varies** (column below). Every company leads with an `ev ≥ 11` anchor; some secondary
+  cuts are `ev 2–5` — real, sourced, but thinner. If you want max defensibility, swap a thin one for a
+  higher-ev cut from the same parent before posting (alternates on request).
 
 ---
 
 ## The slides
 
-**Cover (frame 0)**
-- Title (Space Grotesk, uppercase, red on "SWITCH"): **YOU CAN'T / *SWITCH* YOUR / WAY OUT**
-- Sub: "the brands you swapped to dodge shrinkflation? same handful of owners — and they shrank all of them. swipe →"
+**Cover (frame 0):** **YOU CAN'T / *SWITCH* YOUR / WAY OUT** ·
+sub: "the brands you swapped to dodge shrinkflation? same few owners — and they shrank all of them. swipe →"
 
-**Frames 1–5 — countdown #5 → #1.** Each slide: big red `#rank` · small mono line = **PARENT — owns X · Y · Z**
-(the reveal) · headline = the specific proof product · data row = `before → after` + `−%` badge.
+**Frames 1–5 — one company each.** Header = "CORPORATE RAP SHEET" + company + "+ N more brands in our data";
+body = a row per brand (name · before → after · −% · per-row shrink bar).
 
-| Frame | # | Parent (small line) | Proof product (headline) | Cut | Evidence |
+| Frame | Company | Brand | Cut | −% | Evidence |
 |---|---|---|---|---|---|
-| 1 | 5 | **P&G** — Tide · Crest · Charmin | Crest Toothpaste | 4.1 → 3.8 oz · **−7.3%** | 21 |
-| 2 | 4 | **Unilever** — Dove · Axe · Knorr | Dove Body Wash | 24 → 22 fl oz · **−8.3%** | 16 |
-| 3 | 3 | **Mars** — Snickers · M&M's · Galaxy | Galaxy Chocolate Bar | 110 → 100 g · **−9.1%** | 12 |
-| 4 | 2 | **PepsiCo** — Lay's · Gatorade | Gatorade Sports Drink | 32 → 28 fl oz · **−12.5%** | 28 |
-| 5 | 1 | **Mondelez** — Cadbury · Oreo · Ritz | Cadbury Freddo Easter Egg | 122 → 99 g · **−18.9%** | 72 |
+| 1 | **P&G** (+24 more) | Crest | 4.1 → 3.8 oz | 7.3 | 21 |
+| | | Charmin | 264 → 244 ct | 7.6 | 11 |
+| | | Tide | 254 → 232 oz | 8.7 | 6 |
+| 2 | **Unilever** (+9 more) | Dove | 24 → 22 fl oz | 8.3 | 16 |
+| | | Ben & Jerry's | 473 → 430 ml | 9.1 | 2 |
+| | | Lipton | 1.5 → 1.25 L | 16.7 | 5 |
+| 3 | **Mars** (+23 more) | Galaxy | 110 → 100 g | 9.1 | 12 |
+| | | Mars Bar | 53 → 47 g | 11.3 | 2 |
+| | | Snickers | 1.86 → 1.63 oz | 12.4 | 2 |
+| 4 | **PepsiCo** (+23 more) | Doritos | 9.75 → 9.25 oz | 5.1 | 14 |
+| | | Tropicana | 52 → 46 fl oz | 11.5 | 12 |
+| | | Gatorade | 32 → 28 fl oz | 12.5 | 28 |
+| 5 | **Mondelez** (+32 more) | Oreo | 20 → 18.71 oz | 6.5 | 2 |
+| | | Cadbury Freddo | 122 → 99 g | 18.9 | 72 |
+| | | Ritz | 300 → 227 g | 24.3 | 3 |
 
-**CTA (frame 6)**
-- Headline: "check who *owns* yours" · Sub: "search any product — *free* — at fullcarts.org"
-- Persona: "Tired dad, sick of getting ripped off — so I built the receipts. 2,300+ documented cuts across 900+ brands. No ads."
-
-> **Composition limitation (logged):** the stock `Carousel` item has no "portfolio" field, so the "owns X·Y·Z"
-> reveal currently rides the **small label line**. It reads clean and stays gate-safe (the specific product is
-> the headline, so the −% is never an ambiguous group-wide claim). If we want the portfolio to *pop bigger*,
-> the only change is adding an optional `owns` string to `carouselSchema` + one rendered line — a 4-line,
-> backward-compatible toolkit tweak. Flagged, not done (out of scope for content).
+**CTA (frame 6):** "check who *owns* yours" · "search any product — *free* — at fullcarts.org" ·
+persona: "Tired dad, sick of getting ripped off — so I built the receipts. 2,300+ documented cuts across 900+ brands. No ads."
 
 ---
 
-## Render (sandbox + laptop)
+## Render
 
 ```bash
 cd video && npm ci   # if node_modules is cold
 CHROME=/opt/pw-browsers/chromium_headless_shell-*/chrome-linux/headless_shell  # sandbox local chromium
 for f in 0 1 2 3 4 5 6; do
-  npx remotion still Carousel "out/parent-company/slide-0$f.png" --frame=$f \
+  npx remotion still CorpRapSheet "out/parent-company/slide-0$f.png" --frame=$f \
     --props=src/props/carousel-parent-company.json --browser-executable=$CHROME
 done
 ```
-- No product photos in this cut → **bars fallback**, which renders fully offline (no 403 risk).
-- For the cross-post Reel: render `CarouselVideo` with these same items + a Lane-6 `.mp3` in `video/public/audio/`
-  (`music` prop, volume ~0.22).
+Renders fully offline (no photos → no 403). For the cross-post Reel: an auto-advancing variant + a Lane-6
+`.mp3` in `video/public/audio/` (volume ~0.22).
 
 ---
 
 ## Copy for posting
 
-**IG caption:** "You switched brands to dodge shrinkflation. Plot twist: same five companies own the
-shelf — and shrank all of it. 🛒 Crest, Dove, Galaxy, Gatorade, Cadbury — all documented, all sourced.
-Ranked by the biggest cut we could verify for each. Check who owns *your* cart, free, at fullcarts.org."
+**IG caption:** "You switched brands to dodge shrinkflation. Plot twist: the same few companies own the
+shelf — and shrank all of it. 🛒 Swipe through the rap sheets: P&G, Unilever, Mars, PepsiCo, Mondelez —
+every number documented and sourced. Check who owns *your* cart, free, at fullcarts.org."
 
 **Hashtags:** #shrinkflation #groceries #shrinktok #bigfood #pepsico #mondelez #consumer #inflation #fullcarts
 
-**X version:** "The brands you 'switched to' to escape shrinkflation? Owned by the same 5 companies — P&G,
-Unilever, Mars, PepsiCo, Mondelez — and every one got smaller. Receipts: fullcarts.org" + slide 5 image.
+**X version:** "The brands you 'switched to' to escape shrinkflation are owned by the same 5 companies —
+P&G, Unilever, Mars, PepsiCo, Mondelez — and every one got smaller. Receipts: fullcarts.org" + Mondelez slide.
 
-**Cross-post / music:** master Reel uses the **Lane 6 royalty-free bed** (legal on TT/RE/SH/X + ads).
-Optional discovery add-on: re-cut natively in-app with a Lane-6 "trending equivalent" (tense/broadcast) —
-TikTok/IG only, never on the master or X.
+**Cross-post / music:** master Reel uses the **Lane 6 royalty-free bed** (legal on TT/RE/SH/X + ads);
+optional native trending-sound add-on on the TikTok/IG discovery cut only.
 
 ---
 
 ## After it posts — log it
 
-Add to `docs/content/content-log.md` (dedup keys below so these don't repeat):
-`Crest 4.1→3.8oz` · `Dove 24→22floz` · `Galaxy 110→100g` · `Gatorade 32→28floz` · `Cadbury Freddo 122→99g`.
+Add to `docs/content/content-log.md` (dedup keys, one per featured cut):
+`Crest 4.1→3.8oz` · `Charmin 264→244ct` · `Tide 254→232oz` · `Dove 24→22floz` · `Ben&Jerry's 473→430ml` ·
+`Lipton 1.5→1.25L` · `Galaxy 110→100g` · `Mars Bar 53→47g` · `Snickers 1.86→1.63oz` · `Doritos 9.75→9.25oz` ·
+`Tropicana 52→46floz` · `Gatorade 32→28floz` · `Oreo 20→18.71oz` · `Cadbury Freddo 122→99g` · `Ritz 300→227g`.
 Series: *Who Owns Your Cart*. Fill Views/Follows in a day or two for the 10-post review.

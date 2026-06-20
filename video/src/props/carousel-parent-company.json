@@ -1,12 +1,32 @@
 {
   "coverTitle": ["you can't", "*switch* your", "way out"],
-  "coverSub": "the brands you swapped to dodge shrinkflation? same handful of owners — and they shrank all of them. swipe →",
-  "items": [
-    { "rank": "5", "brand": "P&G — Tide · Crest · Charmin", "product": "Crest Toothpaste", "before": 4.1, "after": 3.8, "unit": "oz", "pct": 7.3 },
-    { "rank": "4", "brand": "Unilever — Dove · Axe · Knorr", "product": "Dove Body Wash", "before": 24, "after": 22, "unit": "fl oz", "pct": 8.3 },
-    { "rank": "3", "brand": "Mars — Snickers · M&M's · Galaxy", "product": "Galaxy Chocolate Bar", "before": 110, "after": 100, "unit": "g", "pct": 9.1 },
-    { "rank": "2", "brand": "PepsiCo — Lay's · Gatorade", "product": "Gatorade Sports Drink", "before": 32, "after": 28, "unit": "fl oz", "pct": 12.5 },
-    { "rank": "1", "brand": "Mondelez — Cadbury · Oreo · Ritz", "product": "Cadbury Freddo Easter Egg", "before": 122, "after": 99, "unit": "g", "pct": 18.9 }
+  "coverSub": "the brands you swapped to dodge shrinkflation? same few owners — and they shrank all of them. swipe →",
+  "companies": [
+    { "name": "P&G", "tag": "+ 24 more of their brands in our data", "cuts": [
+      { "brand": "Crest", "before": 4.1, "after": 3.8, "unit": "oz", "pct": 7.3 },
+      { "brand": "Charmin", "before": 264, "after": 244, "unit": "ct", "pct": 7.6 },
+      { "brand": "Tide", "before": 254, "after": 232, "unit": "oz", "pct": 8.7 }
+    ] },
+    { "name": "Unilever", "tag": "+ 9 more of their brands in our data", "cuts": [
+      { "brand": "Dove", "before": 24, "after": 22, "unit": "fl oz", "pct": 8.3 },
+      { "brand": "Ben & Jerry's", "before": 473, "after": 430, "unit": "ml", "pct": 9.1 },
+      { "brand": "Lipton", "before": 1.5, "after": 1.25, "unit": "L", "pct": 16.7 }
+    ] },
+    { "name": "Mars", "tag": "+ 23 more of their brands in our data", "cuts": [
+      { "brand": "Galaxy", "before": 110, "after": 100, "unit": "g", "pct": 9.1 },
+      { "brand": "Mars Bar", "before": 53, "after": 47, "unit": "g", "pct": 11.3 },
+      { "brand": "Snickers", "before": 1.86, "after": 1.63, "unit": "oz", "pct": 12.4 }
+    ] },
+    { "name": "PepsiCo", "tag": "+ 23 more of their brands in our data", "cuts": [
+      { "brand": "Doritos", "before": 9.75, "after": 9.25, "unit": "oz", "pct": 5.1 },
+      { "brand": "Tropicana", "before": 52, "after": 46, "unit": "fl oz", "pct": 11.5 },
+      { "brand": "Gatorade", "before": 32, "after": 28, "unit": "fl oz", "pct": 12.5 }
+    ] },
+    { "name": "Mondelez", "tag": "+ 32 more of their brands in our data", "cuts": [
+      { "brand": "Oreo", "before": 20, "after": 18.71, "unit": "oz", "pct": 6.5 },
+      { "brand": "Cadbury Freddo", "before": 122, "after": 99, "unit": "g", "pct": 18.9 },
+      { "brand": "Ritz", "before": 300, "after": 227, "unit": "g", "pct": 24.3 }
+    ] }
   ],
   "ctaHeadline": "check who *owns* yours",
   "ctaSub": "search any product — *free* — at fullcarts.org",

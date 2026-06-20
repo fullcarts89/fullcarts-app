@@ -22,6 +22,7 @@ import { Carousel, carouselSchema } from "./compositions/Carousel";
 import { TierList, tierListSchema } from "./compositions/TierList";
 import { CarouselVideo, carouselVideoSchema, calcCarouselVideoMeta } from "./compositions/CarouselVideo";
 import { GuessTheCut, guessTheCutSchema } from "./compositions/GuessTheCut";
+import { CorpRapSheet, corpRapSheetSchema } from "./compositions/CorpRapSheet";
 import { ItsNotYou, itsNotYouSchema } from "./compositions/ItsNotYou";
 import { CPIvsReality, cpiVsRealitySchema } from "./compositions/CPIvsReality";
 import { CaughtBeforeAfter, caughtBeforeAfterSchema } from "./compositions/CaughtBeforeAfter";
@@ -472,6 +473,52 @@ export const RemotionRoot: React.FC = () => {
           ctaHeadline: "you lowballed it, *didn't you?*",
           ctaSub: "search any product — *free* — at fullcarts.org",
           ctaPersona: "Tired dad, sick of getting ripped off — so I built the receipts. 2,200+ documented cuts, no ads.",
+        }}
+      />
+
+      {/* Corporate Rap Sheet — one parent company per slide, a documented cut per named brand.
+          Proves the "they shrank ALL of them" thesis. Render stills 0..(companies+1). */}
+      <Composition
+        id="CorpRapSheet"
+        component={CorpRapSheet}
+        durationInFrames={7}
+        fps={FPS}
+        width={1080}
+        height={1350}
+        schema={corpRapSheetSchema}
+        defaultProps={{
+          coverTitle: ["you can't", "*switch* your", "way out"],
+          coverSub: "the brands you swapped to dodge shrinkflation? same few owners — and they shrank all of them. swipe →",
+          companies: [
+            { name: "P&G", tag: "+ 24 more of their brands in our data", cuts: [
+              { brand: "Crest Toothpaste", before: 4.1, after: 3.8, unit: "oz", pct: 7.3 },
+              { brand: "Charmin Ultra Soft", before: 264, after: 244, unit: "ct", pct: 7.6 },
+              { brand: "Tide Detergent", before: 254, after: 232, unit: "oz", pct: 8.7 },
+            ] },
+            { name: "Unilever", tag: "+ 9 more of their brands in our data", cuts: [
+              { brand: "Dove Body Wash", before: 24, after: 22, unit: "fl oz", pct: 8.3 },
+              { brand: "Ben & Jerry's", before: 473, after: 430, unit: "ml", pct: 9.1 },
+              { brand: "Lipton Iced Tea", before: 1.5, after: 1.25, unit: "L", pct: 16.7 },
+            ] },
+            { name: "Mars", tag: "+ 23 more of their brands in our data", cuts: [
+              { brand: "Galaxy Bar", before: 110, after: 100, unit: "g", pct: 9.1 },
+              { brand: "Mars Bar", before: 53, after: 47, unit: "g", pct: 11.3 },
+              { brand: "Snickers", before: 1.86, after: 1.63, unit: "oz", pct: 12.4 },
+            ] },
+            { name: "PepsiCo", tag: "+ 23 more of their brands in our data", cuts: [
+              { brand: "Doritos", before: 9.75, after: 9.25, unit: "oz", pct: 5.1 },
+              { brand: "Tropicana OJ", before: 52, after: 46, unit: "fl oz", pct: 11.5 },
+              { brand: "Gatorade", before: 32, after: 28, unit: "fl oz", pct: 12.5 },
+            ] },
+            { name: "Mondelez", tag: "+ 32 more of their brands in our data", cuts: [
+              { brand: "Oreo Double Stuf", before: 20, after: 18.71, unit: "oz", pct: 6.5 },
+              { brand: "Cadbury Freddo Egg", before: 122, after: 99, unit: "g", pct: 18.9 },
+              { brand: "Ritz Crackers", before: 300, after: 227, unit: "g", pct: 24.3 },
+            ] },
+          ],
+          ctaHeadline: "check who *owns* yours",
+          ctaSub: "search any product — *free* — at fullcarts.org",
+          ctaPersona: "Tired dad, sick of getting ripped off — so I built the receipts. 2,300+ documented cuts across 900+ brands. No ads.",
         }}
       />
 
