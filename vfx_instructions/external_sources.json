@@ -2,7 +2,7 @@
  "source": "External short-form videos ingested into the VFX schema",
  "generated": "2026-06-20",
  "schema_version": 1,
- "effect_count": 27,
+ "effect_count": 28,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -2868,6 +2868,102 @@
      "transcript": "Set up your phone and have a chair or a little table in the front. Film yourself walking in, ducking, bumping your head and falling over the chair. Next open this clip in the CapCut app, duplicate it, hit remove background auto removal, overlay that clip and pull it to the beginning. Then select the original clip, hit mask, rectangle and line the bottom up with the back of the chair. The fall now looks like this. For the text, add text in the beginning, write out your sentence and line it up with the head bump. I also want to bump up that EX here. Select the head bump moment, hit split, select that second part and space out the EX between the T's. It should now look like this. Then duplicate that second text clip, only type EX, place it slightly above the T's and it looks like this. Finally, you want to appear in front of the text, so hit layers and drag the overlay to the left. Then export your video and that's it.",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DT8ehY_jHjN/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "Perspective Text/Image via Compound Clip (Player 3)",
+   "slug": "perspective_compound_clip",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DWmMwjcDXT6/",
+   "source_creator": "Olamide (@38564779531)",
+   "tool": "CapCut",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": false,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Rotate",
+    "Text"
+   ],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [],
+   "editing_steps": [
+    "This is exactly how you're going to make a text or image full part of your video.",
+    "Open the cup cup app and add your text or image.",
+    "Select it and right click or long press and select create compound clip.",
+    "This part is very important because anything you do inside the compound clip will only affect that element and not your entire video.",
+    "Open the compound clip, go to effect search for player 3 and drag it directly on top of your text or image.",
+    "Click on the effect, set text shot to 0 so that this image disappears.",
+    "Use the rotate slider to match the perspective to your shot.",
+    "You can also reduce the glow and play around with other settings here.",
+    "You can even add blur or other effects inside the compound clip and it only affects that element.",
+    "I guess this is your sign to start playing around with compound clips."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/perspective_compound_clip/frame_01.jpg",
+   "demo_frames": [
+    "assets/perspective_compound_clip/frame_01.jpg",
+    "assets/perspective_compound_clip/frame_02.jpg",
+    "assets/perspective_compound_clip/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/perspective_compound_clip/frame_04.jpg",
+    "assets/perspective_compound_clip/frame_05.jpg",
+    "assets/perspective_compound_clip/frame_06.jpg",
+    "assets/perspective_compound_clip/frame_07.jpg",
+    "assets/perspective_compound_clip/frame_08.jpg",
+    "assets/perspective_compound_clip/frame_09.jpg",
+    "assets/perspective_compound_clip/frame_10.jpg",
+    "assets/perspective_compound_clip/frame_11.jpg",
+    "assets/perspective_compound_clip/frame_12.jpg",
+    "assets/perspective_compound_clip/frame_13.jpg",
+    "assets/perspective_compound_clip/frame_14.jpg",
+    "assets/perspective_compound_clip/frame_15.jpg",
+    "assets/perspective_compound_clip/frame_16.jpg",
+    "assets/perspective_compound_clip/frame_17.jpg"
+   ],
+   "tags": [],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Olamide",
+    "creator_handle": "38564779531",
+    "creator_url": null,
+    "caption": "How to create the perspective effect in CapCut? Here you go ☺️\n\nSome countries may not have the Player 3 effect. You can use a VPN to access it, then save it as a preset so you don’t need the VPN every time\n\nBonus tip: Film with this edit in mind so you can choose angles that make the perspective look natural\n\nIf you haven’t explored “compound clip” yet, you should. There’s a lot you can do with them ✌🏽\n\nWill you be trying this?\n\nShot on @sonyalpha A7CII\n@sonyalpha 35mm F1.8\nEdited on @capcutapp",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 14940,
+    "comment_count": 239,
+    "upload_date": "20260401",
+    "duration_sec": 51.25,
+    "thumbnail": "https://scontent-ord5-2.cdninstagram.com/v/t51.82787-15/658626994_18099366599283532_6968309553246075890_n.jpg?stp=dst-jpg_e35_p1080x1080_sh2.08_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4yMzA0LnNkci52aWRlb19kZWZhdWx0X2NvdmVyX2ZyYW1lLmMyIn0&_nc_ht=scontent-ord5-2.cdninstagram.com&_nc_cat=104&_nc_oc=Q6cZ2gEz0T0CQhT2q8OaA3ZFGhFqPXT4LlEwm9Tdvl2Sg2Xb1_ddSts6rgFKCJ-5Jnk5gzI&_nc_ohc=1gGV8vjBL_QQ7kNvwGwd50x&_nc_gid=7aPJFM0L6MVCZQNDsN-uEw&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af-5pasfnpK35s0T5TmBdLGVZ86GuuQap1b6IMiDheOhmQ&oe=6A3BF002&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DWmMwjcDXT6",
+     "title": "Video by themediaanswer",
+     "role": "tutorial",
+     "duration_sec": 51.3,
+     "wistia_id": null,
+     "transcript": "Now this is exactly how you're going to make a text or image full part of your video. Now open the cup cup app and add your text or image. Select it and right click or long press and select create compound clip. This part is very important because anything you do inside the compound clip will only affect that element and not your entire video. Now open the compound clip, go to effect search for player 3 and drag it directly on top of your text or image. Then click on the effect, set text shot to 0 so that this image disappears. Now use the rotate slider to match the perspective to your shot. You can also reduce the glow and play around with other settings here. You can even add blur or other effects inside the compound clip and it only affects that element. I guess this is your sign to start playing around with compound clips. Save this for your next edit and now get to work!",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DWmMwjcDXT6/",
      "video_url": null
     }
    ]

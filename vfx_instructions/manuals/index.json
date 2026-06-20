@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 72,
+ "count": 73,
  "manuals": [
   {
    "id": "3_clones",
@@ -906,6 +906,22 @@
    "status": null,
    "virality_candidate": false,
    "file": "manuals/pendulum_effect_ai.json"
+  },
+  {
+   "id": "perspective_compound_clip",
+   "title": "Perspective Text/Image via Compound Clip (Player 3)",
+   "manual_type": "effect",
+   "technique_primitive": "text_reveal",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "Olamide (@38564779531)",
+   "draft": false,
+   "status": null,
+   "virality_candidate": false,
+   "file": "manuals/perspective_compound_clip.json"
   },
   {
    "id": "perspective_effect",
