@@ -17,7 +17,9 @@ const cut = z.object({
 
 const company = z.object({
   name: z.string(),       // parent company, e.g. "Mondelez"
-  tag: z.string(),        // honest breadth line, e.g. "+ 32 more of their brands in our data"
+  tier: z.enum(["S", "A", "B", "C", "D"]), // grade by # of brands caught shrinking
+  tierLabel: z.string(),  // fun label, e.g. "Serial Shrinker"
+  brands: z.number(),     // distinct brands of theirs we've caught shrinking
   cuts: z.array(cut),     // one documented cut per named brand (2–3)
 });
 
@@ -118,12 +120,36 @@ const CutRow: React.FC<{ c: Cut }> = ({ c }) => (
   </div>
 );
 
+const TIER_COLORS: Record<string, string> = {
+  S: theme.color.red,
+  A: theme.color.amber,
+  B: theme.color.blue,
+  C: theme.color.green,
+  D: theme.color.textTertiary,
+};
+
+// Big "grade stamp" — the engagement hook. Colored square with the tier letter + fun label.
+const TierBadge: React.FC<{ tier: string; label: string }> = ({ tier, label }) => {
+  const color = TIER_COLORS[tier] ?? theme.color.textTertiary;
+  return (
+    <div style={{ position: "absolute", top: 84, right: 80, display: "flex", flexDirection: "column", alignItems: "center", width: 200 }}>
+      <div style={{ width: 150, height: 150, background: color, borderRadius: 26, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 0 0 4px ${color}33` }}>
+        <span style={{ fontFamily: headline, fontWeight: 700, fontSize: 116, lineHeight: 1, color: theme.color.textPrimary }}>{tier}</span>
+      </div>
+      <div style={{ fontFamily: mono, fontWeight: 700, fontSize: 23, letterSpacing: 1.5, textTransform: "uppercase", color, marginTop: 12, textAlign: "center", lineHeight: 1.15 }}>{label}</div>
+    </div>
+  );
+};
+
 const CompanySlide: React.FC<{ co: Company }> = ({ co }) => (
   <Frame footer>
-    <div style={{ position: "absolute", top: 88, left: 80, right: 80 }}>
+    <TierBadge tier={co.tier} label={co.tierLabel} />
+    <div style={{ position: "absolute", top: 88, left: 80, right: 300 }}>
       <div style={{ fontFamily: mono, fontSize: 30, letterSpacing: 4, textTransform: "uppercase", color: theme.color.red }}>corporate rap sheet</div>
-      <div style={{ fontFamily: headline, fontWeight: 700, fontSize: 110, lineHeight: 0.96, letterSpacing: -2, color: theme.color.textPrimary, textTransform: "uppercase", marginTop: 8 }}>{co.name}</div>
-      <div style={{ fontFamily: mono, fontSize: 30, color: theme.color.textSecondary, marginTop: 14, lineHeight: 1.3, maxWidth: 880 }}>{co.tag}</div>
+      <div style={{ fontFamily: headline, fontWeight: 700, fontSize: 104, lineHeight: 0.96, letterSpacing: -2, color: theme.color.textPrimary, textTransform: "uppercase", marginTop: 8 }}>{co.name}</div>
+    </div>
+    <div style={{ position: "absolute", top: 290, left: 80, right: 80, fontFamily: mono, fontSize: 30, color: theme.color.textSecondary, lineHeight: 1.3, maxWidth: 920 }}>
+      <span style={{ color: theme.color.textPrimary, fontWeight: 700 }}>{co.brands}</span> of their brands caught shrinking in the FullCarts database — here are {co.cuts.length}:
     </div>
     <div style={{ position: "absolute", top: 430, bottom: 140, left: 80, right: 80, display: "flex", flexDirection: "column", justifyContent: "center" }}>
       {co.cuts.map((c, i) => (
