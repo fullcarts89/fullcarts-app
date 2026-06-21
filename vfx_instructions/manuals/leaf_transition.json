@@ -1,0 +1,115 @@
+{
+ "id": "leaf_transition",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "chroma_key",
+ "title": "Green Leaf Transition",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "gear_required": [],
+ "props_required": [
+  "green leaf"
+ ],
+ "result_description": "A green leaf brushed across the lens chroma-keys out to reveal the next scene — a natural-looking transition.",
+ "source": "Nick Castro | Viral Video Creator (@73061447651)",
+ "source_url": "https://www.instagram.com/reel/DTjJkfvkdsq/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "leaf_clip",
+   "what_to_film": "Film yourself bringing a green leaf up to cover the camera lens.",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_duration"
+   ],
+   "variance_tolerance": {}
+  },
+  {
+   "name": "second_clip",
+   "what_to_film": "The clip you want to transition into.",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_duration"
+   ],
+   "variance_tolerance": {}
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "leaf_clip, second_clip"
+  },
+  {
+   "action": "chroma_key",
+   "channel": "ui",
+   "target": "leaf_clip",
+   "capcut_feature": "Remove Background → Chroma Key",
+   "params": {
+    "key_color": "green (tap the leaf)"
+   }
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "leaf_clip",
+   "params": {
+    "track": 2
+   },
+   "note": "place the keyed leaf over the second clip"
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "second_clip",
+   "params": {
+    "property": "scale"
+   },
+   "timing": {
+    "keys": [
+     "start",
+     "end: slight zoom-in"
+    ]
+   },
+   "note": "optional — if the second clip is a still shot, add a small zoom for motion"
+  }
+ ],
+ "result": {
+  "description": "Leaf wipe reveals the next scene.",
+  "success_criteria": [
+   "Green leaf fully keyed (no spill)",
+   "Reveal lands as the leaf covers frame",
+   "Optional zoom adds life to a static second shot"
+  ]
+ },
+ "narration_transcript": "How to do this, the only thing you need is a green leaf, then just film yourself bringing it up to the camera like this. Open up CapCut, throw in that clip, and the one that you want to transition into. Tap on the leaf clip, go to remove background, chrome a key, and tap on the green part. While still selected, set it as an overlay. Now the transition is pretty much done, but if your second clip is just a steel shot like mine, add a keyframe in the start, go to the end, and do a little zoom in. Just to add a little motion, export it, and pull by all done.",
+ "frames": {
+  "demo": [
+   "assets/leaf_transition/frame_01.jpg",
+   "assets/leaf_transition/frame_02.jpg",
+   "assets/leaf_transition/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/leaf_transition/frame_04.jpg",
+   "assets/leaf_transition/frame_05.jpg",
+   "assets/leaf_transition/frame_06.jpg",
+   "assets/leaf_transition/frame_07.jpg",
+   "assets/leaf_transition/frame_08.jpg",
+   "assets/leaf_transition/frame_09.jpg",
+   "assets/leaf_transition/frame_10.jpg",
+   "assets/leaf_transition/frame_11.jpg",
+   "assets/leaf_transition/frame_12.jpg",
+   "assets/leaf_transition/frame_13.jpg",
+   "assets/leaf_transition/frame_14.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "73061447651",
+  "like_count": 12306,
+  "comment_count": 266,
+  "upload_date": "20260115",
+  "caption": "Comment “edit” if you want to level up your videos 🤳",
+  "hashtags": []
+ }
+}
