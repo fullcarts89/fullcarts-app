@@ -25,20 +25,20 @@ engagement hook: "is your brand's parent an S-tier shrinker?").
 
 ---
 
-## ⚠️ Database action taken (2026-06-20)
+## Database actions (2026-06-20)
 
-The **Cadbury "Dairy Milk Freddo Faces Easter Egg" 122→99 g (−18.9%, ev 72)** event was **retracted** from
-the public site at the founder's request and its **72 backing claims flipped to `status='pending'`** for
-re-review (mirrors `POST /api/admin/retract-event`):
-- `published_changes.id = 8b08eb9f-07aa-48c4-b459-63a6c8b418e8` → `is_retracted=true`, `retracted_at` set.
-- 72 claims → `status='pending'`, `matched_entity_id`/`matched_variant_id` nulled (audit-logged via the
-  `claim_status_log` trigger). Confirmed gone from `event_evidence_summary` (public view).
-- It was pulled from the Mondelez slide and replaced with **Toblerone**.
+**Cadbury Freddo retraction — done, then REVERTED.** The Freddo 122→99 g event
+(`published_changes.id = 8b08eb9f…`, ev 72) was briefly retracted, then **restored** at the founder's
+follow-up: `is_retracted=false`, `retracted_at=null`, and its 72 claims back to `status='evidence'`
+matched to entity `ea606fb4…`. Confirmed live again in `event_evidence_summary`. **Net DB change: none.**
+Freddo is back on the Mondelez slide (Toblerone removed).
 
-> **Still live — needs a decision:** a near-duplicate **"...Freddo Faces Easter egg (Small)" 122→99 g
-> (ev 9)** exists on a *separate* entity (`published_changes.id = 2500bb64-…`, entity `0e747d6c-…`). It's
-> the same real-world cut (a dedup miss). Left untouched since you said "that claim" (singular) — say the
-> word and I'll retract it too so Freddo 122→99 g is fully off fullcarts.org.
+**Open item — "Mondelez" mis-filed as a brand.** The site is organized by shelf brand/product, not by
+ownership, but **57 entities carry the parent name in `brand`** (`Mondelez` 48 · `Mondelez International`
+8 · `Mondelēz` 1) — of which **23 are live** on `/brands`. Their real brand (Cadbury, Oreo, Milka, Sour
+Patch Kids, Wheat Thins, Toblerone, Ritz, Chips Ahoy, Clif Bar, Good Thins, Prince) is buried in the name.
+The `manufacturer` column is also polluted with shareholders ("Capital Group Companies", like the BlackRock
+case). **Cleanup approach pending founder sign-off** (re-brand vs merge-into-existing; see chat).
 
 ---
 
@@ -76,15 +76,15 @@ body = a row per brand (**product photo** · name · before → after · −% ·
 | | | | Charmin | 264 → 244 ct | 7.6 | 11 |
 | | | | Tide | 254 → 232 oz | 8.7 | 6 |
 | 5 | **Mondelez** | **S** · Serial Shrinker (35) | Oreo | 20 → 18.71 oz | 6.5 | 2 |
+| | | | Cadbury Freddo | 122 → 99 g | 18.9 | 72 |
 | | | | Ritz | 300 → 227 g | 24.3 | 3 |
-| | | | Toblerone | 200 → 150 g | 25.0 | 2 |
 
 **CTA (frame 6):** "agree with the *grades?*" · "search any brand — *free* — at fullcarts.org" ·
 persona: "Tired dad, sick of getting ripped off — so I built the receipts. 2,300+ documented cuts across 900+ brands. No ads."
 
-> **Evidence depth varies.** Each company leads with a strong anchor (Dove 16, Galaxy 12, Gatorade 28,
-> Crest 21) but the Mondelez slide is now all-thin (Oreo 2 / Ritz 3 / Toblerone 2) after the Cadbury
-> retraction — Cadbury was Mondelez's only deeply-evidenced brand. Sturdier alternates available on request.
+> **Evidence depth varies.** Each company leads with a strong anchor — Dove 16, Galaxy 12, Gatorade 28,
+> Crest 21, and **Cadbury Freddo 72** (Mondelez's heavyweight, restored). Some secondary cuts are ev 2–5
+> (real & sourced, just thinner); sturdier alternates available on request.
 
 ---
 
@@ -124,6 +124,6 @@ optional native trending sound on the TikTok/IG discovery cut only. Engagement p
 Add to `docs/content/content-log.md` (dedup keys, one per featured cut):
 `Dove 24→22floz` · `Ben&Jerry's 473→430ml` · `Lipton 1.5→1.25L` · `Galaxy 110→100g` · `Mars Bar 53→47g` ·
 `Snickers 1.86→1.63oz` · `Doritos 9.75→9.25oz` · `Tropicana 52→46floz` · `Gatorade 32→28floz` ·
-`Oreo 20→18.71oz` · `Ritz 300→227g` · `Toblerone 200→150g` · `Crest 4.1→3.8oz` · `Charmin 264→244ct` · `Tide 254→232oz`.
-Series: *Who Owns Your Cart / Tier List*. (Cadbury Freddo 122→99 g was **retracted**, not posted.)
+`Oreo 20→18.71oz` · `Cadbury Freddo 122→99g` · `Ritz 300→227g` · `Crest 4.1→3.8oz` · `Charmin 264→244ct` · `Tide 254→232oz`.
+Series: *Who Owns Your Cart / Tier List*.
 Fill Views/Follows in a day or two for the 10-post review.

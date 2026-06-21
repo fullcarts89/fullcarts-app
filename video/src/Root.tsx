@@ -512,8 +512,8 @@ export const RemotionRoot: React.FC = () => {
             ] },
             { name: "Mondelez", tier: "S" as const, tierLabel: "Serial Shrinker", brands: 35, cuts: [
               { brand: "Oreo", before: 20, after: 18.71, unit: "oz", pct: 6.5, image: "parent-company/oreo.jpg" },
+              { brand: "Cadbury Freddo", before: 122, after: 99, unit: "g", pct: 18.9, image: "parent-company/cadbury.webp" },
               { brand: "Ritz", before: 300, after: 227, unit: "g", pct: 24.3, image: "parent-company/ritz.webp" },
-              { brand: "Toblerone", before: 200, after: 150, unit: "g", pct: 25.0, image: "parent-company/toblerone.jpg" },
             ] },
           ],
           ctaHeadline: "agree with the *grades?*",
