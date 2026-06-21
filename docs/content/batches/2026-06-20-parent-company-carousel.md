@@ -33,12 +33,28 @@ follow-up: `is_retracted=false`, `retracted_at=null`, and its 72 claims back to 
 matched to entity `ea606fb4…`. Confirmed live again in `event_evidence_summary`. **Net DB change: none.**
 Freddo is back on the Mondelez slide (Toblerone removed).
 
-**Open item — "Mondelez" mis-filed as a brand.** The site is organized by shelf brand/product, not by
-ownership, but **57 entities carry the parent name in `brand`** (`Mondelez` 48 · `Mondelez International`
-8 · `Mondelēz` 1) — of which **23 are live** on `/brands`. Their real brand (Cadbury, Oreo, Milka, Sour
-Patch Kids, Wheat Thins, Toblerone, Ritz, Chips Ahoy, Clif Bar, Good Thins, Prince) is buried in the name.
-The `manufacturer` column is also polluted with shareholders ("Capital Group Companies", like the BlackRock
-case). **Cleanup approach pending founder sign-off** (re-brand vs merge-into-existing; see chat).
+**Parent-company-as-brand sweep — DONE (2026-06-20).** The site is organized by shelf brand/product, not
+ownership, so parent/holding-company names were purged from the `brand` column across the DB (re-brand +
+merge-dupes, founder-approved):
+- **Scope:** 15 pure holding-company `brand` values (`Mondelez`/`Mondelez International`/`Mondelēz`,
+  `PepsiCo`/`Pepsico`, `Procter & Gamble`/`P&G`, `Unilever`, `Kraft Heinz`, `Conagra`/`Conagra Brands`,
+  `Kellanova`, `The Hershey Company`, `The Coca-Cola Company`, `Colgate-Palmolive`) — 99 entities.
+- **Actions:** **13 merged** into the existing real-brand entity (`merge_entities` RPC, cascades
+  brand/product_name to `published_changes`, source retracted, logged to `entity_merge_log`); **63
+  rebranded** to the real shelf brand (`set_entity_field` + `published_changes.brand` cascade, logged to
+  `entity_edit_log`). Real brands restored: Cadbury, Oreo, Milka, Sour Patch Kids, Wheat Thins, Triscuit,
+  Ritz, Toblerone, Chips Ahoy, Clif Bar, Good Thins, Prince, Crest, Charmin, Tide, Dawn, Cascade, Dove,
+  Lipton, Magnum, Hellmann's, Comfort, Viennetta, Philadelphia, Miracle Whip, Heinz, Mountain Dew,
+  Coca-Cola, Hershey's, Ice Breakers, Jolly Rancher, Softsoap, Honey Maid, Nilla, Trebor.
+- **Verified:** `published_changes.brand` drift check = **0**; the invariant holds.
+- **Left flagged (5 live, junk/generic — names too vague to assign a brand):** Mondelez "Poor",
+  "Chocolate sandwich cookies", "Mini chocolate chip cookies go-pak"; PepsiCo "potato chips"; Conagra
+  "Made with Tender Beef & Broccoli". ("Poor" looks like junk — candidate for retraction.)
+- **NOT touched (dual-use names that are legit shelf brands):** Nestlé/Nestle (151), Mars (68), Danone
+  (57), General Mills (63), plus Kraft/Heinz/Hershey/Kellogg's/Coca-Cola. These need per-entity judgment —
+  separate pass if wanted.
+- **Still open:** `manufacturer` column pollution (shareholders like "Capital Group Companies"/BlackRock) —
+  deferred (not in this scope).
 
 ---
 
