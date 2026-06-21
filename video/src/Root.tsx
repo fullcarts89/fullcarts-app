@@ -23,6 +23,8 @@ import { TierList, tierListSchema } from "./compositions/TierList";
 import { CarouselVideo, carouselVideoSchema, calcCarouselVideoMeta } from "./compositions/CarouselVideo";
 import { GuessTheCut, guessTheCutSchema } from "./compositions/GuessTheCut";
 import { CorpRapSheet, corpRapSheetSchema } from "./compositions/CorpRapSheet";
+import { CorpRapSheetVideo, corpRapSheetVideoSchema, calcCorpRapSheetVideoMeta } from "./compositions/CorpRapSheetVideo";
+import corpRapProps from "./props/carousel-parent-company.json";
 import { ItsNotYou, itsNotYouSchema } from "./compositions/ItsNotYou";
 import { CPIvsReality, cpiVsRealitySchema } from "./compositions/CPIvsReality";
 import { CaughtBeforeAfter, caughtBeforeAfterSchema } from "./compositions/CaughtBeforeAfter";
@@ -520,6 +522,20 @@ export const RemotionRoot: React.FC = () => {
           ctaSub: "search any brand — *free* — at fullcarts.org",
           ctaPersona: "Tired dad, sick of getting ripped off — so I built the receipts. 2,300+ documented cuts across 900+ brands. No ads.",
         }}
+      />
+
+      {/* Animated vertical (Shorts/Reels/TikTok) cut of the Corporate Rap Sheet —
+          shrinking bars, tier-stamp slams, staggered rows, popping % chips. */}
+      <Composition
+        id="CorpRapSheetVideo"
+        component={CorpRapSheetVideo}
+        durationInFrames={750}
+        fps={FPS}
+        width={1080}
+        height={1920}
+        schema={corpRapSheetVideoSchema}
+        calculateMetadata={calcCorpRapSheetVideoMeta}
+        defaultProps={corpRapProps as unknown as React.ComponentProps<typeof CorpRapSheetVideo>}
       />
 
       {/* It's Not You — emotional cold open → receipts → resolution. Stills 0..receipts+3. */}
