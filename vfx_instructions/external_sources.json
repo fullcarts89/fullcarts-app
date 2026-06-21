@@ -1,8 +1,8 @@
 {
  "source": "External short-form videos ingested into the VFX schema",
- "generated": "2026-06-20",
+ "generated": "2026-06-21",
  "schema_version": 1,
- "effect_count": 29,
+ "effect_count": 30,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -3073,6 +3073,102 @@
      "transcript": "Check this out. Okay. How to do this effect? disappe Looking back to day 39 of the 100 A creator school. Put on some sunglasses and record a clip of you tapping the frame and looking straight. Take this into cap cut and make a split at the moment where you make the tap. Now select duplicate, then overlay, then drag the clip underneath. Now select remove background, then custom removal and to brush the whole image. Now choose SolidGoldMagikarp, decrease the size, then zoom in to paint back in the lenses. Next, add your text overlay and scroll over to layers. Now just swap the order around, click the check mark, then create a couple keyframes Scientists to add motion to the text. And there you have it. Anyways, that's it for day 39. I'll see you tomorrow.",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DW9_EF7gXkL/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "Green Leaf Transition",
+   "slug": "leaf_transition",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DTjJkfvkdsq/",
+   "source_creator": "Nick Castro | Viral Video Creator (@73061447651)",
+   "tool": "CapCut",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Keyframes",
+    "Overlay",
+    "Remove Background"
+   ],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [
+    "How to do this, the only thing you need is a green leaf, then just film yourself bringing it up to the camera like this."
+   ],
+   "editing_steps": [
+    "Open up CapCut, throw in that clip, and the one that you want to transition into.",
+    "Tap on the leaf clip, go to remove background, chrome a key, and tap on the green part.",
+    "While still selected, set it as an overlay.",
+    "The transition is pretty much done, but if your second clip is just a steel shot like mine, add a keyframe in the start, go to the end, and do a little zoom in.",
+    "Just to add a little motion, export it, and pull by all done."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/leaf_transition/frame_01.jpg",
+   "demo_frames": [
+    "assets/leaf_transition/frame_01.jpg",
+    "assets/leaf_transition/frame_02.jpg",
+    "assets/leaf_transition/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/leaf_transition/frame_04.jpg",
+    "assets/leaf_transition/frame_05.jpg",
+    "assets/leaf_transition/frame_06.jpg",
+    "assets/leaf_transition/frame_07.jpg",
+    "assets/leaf_transition/frame_08.jpg",
+    "assets/leaf_transition/frame_09.jpg",
+    "assets/leaf_transition/frame_10.jpg",
+    "assets/leaf_transition/frame_11.jpg",
+    "assets/leaf_transition/frame_12.jpg",
+    "assets/leaf_transition/frame_13.jpg",
+    "assets/leaf_transition/frame_14.jpg"
+   ],
+   "tags": [
+    "auto_bg_removal",
+    "keyframes",
+    "overlay",
+    "transition"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Nick Castro | Viral Video Creator",
+    "creator_handle": "73061447651",
+    "creator_url": null,
+    "caption": "Comment “edit” if you want to level up your videos 🤳",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 12306,
+    "comment_count": 266,
+    "upload_date": "20260115",
+    "duration_sec": 41.266,
+    "thumbnail": "https://scontent-ord5-1.cdninstagram.com/v/t51.82787-15/616786233_17883462513439652_978132288815760592_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi44NDQuc2RyLnZpZGVvX2RlZmF1bHRfY292ZXJfZnJhbWUuYzIifQ&_nc_ht=scontent-ord5-1.cdninstagram.com&_nc_cat=108&_nc_oc=Q6cZ2gGI4Y4af72ZPMxM2hRLbNigdpy-hQLM78zpMKIRTRkmH2JXisRF5iZT1vMkX0H25to&_nc_ohc=13EHjqtP9TUQ7kNvwGSkNn6&_nc_gid=H4TYEbKvCchzVZ5QQ62-gg&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af_nDWyM5d3FNnyYgyde7bKoN9jj1ANWlYELRnSEcN1Gag&oe=6A3D44C7&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1919
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DTjJkfvkdsq",
+     "title": "Video by nickzcreative",
+     "role": "tutorial",
+     "duration_sec": 41.3,
+     "wistia_id": null,
+     "transcript": "How to do this, the only thing you need is a green leaf, then just film yourself bringing it up to the camera like this. Open up CapCut, throw in that clip, and the one that you want to transition into. Tap on the leaf clip, go to remove background, chrome a key, and tap on the green part. While still selected, set it as an overlay. Now the transition is pretty much done, but if your second clip is just a steel shot like mine, add a keyframe in the start, go to the end, and do a little zoom in. Just to add a little motion, export it, and pull by all done.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DTjJkfvkdsq/",
      "video_url": null
     }
    ]

@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 74,
+ "count": 75,
  "manuals": [
   {
    "id": "3_clones",
@@ -710,6 +710,24 @@
    "status": null,
    "virality_candidate": false,
    "file": "manuals/kick_away.json"
+  },
+  {
+   "id": "leaf_transition",
+   "title": "Green Leaf Transition",
+   "manual_type": "effect",
+   "technique_primitive": "chroma_key",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [
+    "green leaf"
+   ],
+   "tool": "CapCut",
+   "source": "Nick Castro | Viral Video Creator (@73061447651)",
+   "draft": false,
+   "status": null,
+   "virality_candidate": false,
+   "file": "manuals/leaf_transition.json"
   },
   {
    "id": "liquid_from_an_object",
