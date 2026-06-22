@@ -1,0 +1,123 @@
+{
+ "id": "masking_multi_clone",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "overlay_bg_removal_clone",
+ "title": "Masking Multi-Clone",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "Multiple clones of you stand/walk in different parts of one shot, composited with masks (optional slow-mo).",
+ "source": "Colin Pomeroy (@321857083)",
+ "source_url": "https://www.instagram.com/reel/DZtiYPLNXL_/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "clone_takes",
+   "what_to_film": "From a high, locked-off tripod, film several takes of yourself standing/walking in DIFFERENT areas of the frame. Shoot 60fps and lock exposure (tap screen, slide the sun down slightly) so color doesn't shift between takes.",
+   "capture_requirements": {
+    "locked_off": true,
+    "fps": 60,
+    "locked_exposure": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "subjects_in_different_regions"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 6
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "all takes"
+  },
+  {
+   "action": "split",
+   "channel": "structural",
+   "target": "each take",
+   "capcut_feature": "Split",
+   "note": "split each walking portion into its own clip"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "each clip",
+   "params": {
+    "stack": true
+   },
+   "note": "stack them on top of one another"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "each clip",
+   "capcut_feature": "Mask → Circle/Square",
+   "params": {
+    "shape": "circle or square"
+   },
+   "note": "draw the mask around you AND your shadow"
+  },
+  {
+   "action": "speed",
+   "channel": "ui",
+   "target": "each clip (optional)",
+   "capcut_feature": "Speed → Curve → Custom",
+   "params": {
+    "curve": "custom",
+    "smooth_slow_mo": true,
+    "quality": "better"
+   },
+   "note": "bonus slow-mo: draw the speed graph, enable smooth slow mo + better quality"
+  }
+ ],
+ "result": {
+  "description": "One frame with several masked clones of you.",
+  "success_criteria": [
+   "Each clone occupies a distinct region",
+   "Masks include each clone's shadow (no floating look)",
+   "Locked exposure keeps color consistent across clones"
+  ]
+ },
+ "narration_transcript": "Welcome back to another episode of how to edit like a six figure creator where we get so good at editing brands cannot help the throw money at you. Today's lesson, you're gonna learn masking and specifically how to do this effect. Using a tripod, set your camera or phone up somewhere high. I'm using a balcony. I'm also using the newer travel tripod that makes some of the best video gear out there. Set your camera to 60 frames per second if you want the slow motion effect and lock your exposure by tapping the screen and sliding up the sun slightly. This way the color doesn't shift too much between the shots. Then stand in the center of the shot. Then get another shot of you walking in all different areas of the screen like this. Then pour these shots into your editor. I'm using cap cut. Split each walking portion so it's an individual clip. And then tap overlay to put them on top of one another. Then for each clip select mask, circle or square. Then draw the mask around you and your shadow. For the bonus slow motion effect, you can tap speed, curve, custom, then draw your graph something like this and then tap smooth slow mo and better quality. Then repeat that for the remaining walking clips and you're done, you now have this.",
+ "frames": {
+  "demo": [
+   "assets/masking_multi_clone/frame_01.jpg",
+   "assets/masking_multi_clone/frame_02.jpg",
+   "assets/masking_multi_clone/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/masking_multi_clone/frame_04.jpg",
+   "assets/masking_multi_clone/frame_05.jpg",
+   "assets/masking_multi_clone/frame_06.jpg",
+   "assets/masking_multi_clone/frame_07.jpg",
+   "assets/masking_multi_clone/frame_08.jpg",
+   "assets/masking_multi_clone/frame_09.jpg",
+   "assets/masking_multi_clone/frame_10.jpg",
+   "assets/masking_multi_clone/frame_11.jpg",
+   "assets/masking_multi_clone/frame_12.jpg",
+   "assets/masking_multi_clone/frame_13.jpg",
+   "assets/masking_multi_clone/frame_14.jpg",
+   "assets/masking_multi_clone/frame_15.jpg",
+   "assets/masking_multi_clone/frame_16.jpg",
+   "assets/masking_multi_clone/frame_17.jpg",
+   "assets/masking_multi_clone/frame_18.jpg",
+   "assets/masking_multi_clone/frame_19.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "321857083",
+  "like_count": 1468,
+  "comment_count": 7,
+  "upload_date": "20260618",
+  "caption": "Episode 2: Edit like a 6-figure creator. A series where we’ll start with the basics and progres from there, and you’ll learn how to edit so you can get more attention and earn more money from your content \n\nToday’s lesson: masking\n\nCredit: @qfroost",
+  "hashtags": []
+ }
+}

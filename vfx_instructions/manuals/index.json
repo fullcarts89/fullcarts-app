@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 75,
+ "count": 76,
  "manuals": [
   {
    "id": "3_clones",
@@ -791,6 +791,24 @@
    "status": null,
    "virality_candidate": false,
    "file": "manuals/make_an_object_appear.json"
+  },
+  {
+   "id": "masking_multi_clone",
+   "title": "Masking Multi-Clone",
+   "manual_type": "effect",
+   "technique_primitive": "overlay_bg_removal_clone",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "Colin Pomeroy (@321857083)",
+   "draft": false,
+   "status": null,
+   "virality_candidate": false,
+   "file": "manuals/masking_multi_clone.json"
   },
   {
    "id": "mirror_costume_change",
