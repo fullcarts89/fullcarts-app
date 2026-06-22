@@ -1,0 +1,174 @@
+{
+ "id": "split_screen_freeze",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "other",
+ "title": "Split-Screen + Freeze Clone",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "result_description": "A split-screen joining two movement clips down the center, with a frozen cutout of you composited in for a surreal multi-layer shot.",
+ "source": "Raoul van Mullem | Viral Video Coach (@260484679)",
+ "source_url": "https://www.instagram.com/reel/DYegGtwI-XA/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "movement_clip_1",
+   "what_to_film": "A clip with movement (you or the environment).",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "movement_clip_2",
+   "what_to_film": "A second clip with movement.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "fall_clip",
+   "what_to_film": "A clip where you fall (used for the frozen cutout).",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "movement_clip_1, movement_clip_2, fall_clip"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "movement_clip_2",
+   "params": {
+    "track": 2
+   },
+   "note": "place the two movement clips as clip 1 & 2, overlay the second"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "movement_clip_2",
+   "capcut_feature": "Mask → Horizontal (rotated to vertical 'curtain')",
+   "params": {
+    "rotation": 90,
+    "position": "center of frame"
+   },
+   "note": "splits the frame down the middle"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "movement_clip_2",
+   "capcut_feature": "Mask → Feather",
+   "params": {
+    "feather": "blend the seam (two feather arrows)"
+   },
+   "note": "hide color differences between the two clips"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "fall_clip",
+   "params": {
+    "track": 3,
+    "note": "underneath the other two"
+   }
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "fall_clip",
+   "capcut_feature": "Freeze",
+   "timing": {
+    "cue": "the moment to freeze"
+   }
+  },
+  {
+   "action": "trim",
+   "channel": "structural",
+   "target": "fall_clip",
+   "capcut_feature": "Delete",
+   "note": "delete the clip before AND after the frozen frame so only the freeze remains"
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "frozen frame",
+   "capcut_feature": "Remove Background → Auto Removal",
+   "params": {
+    "mode": "auto"
+   }
+  }
+ ],
+ "result": {
+  "description": "Split-screen of two movement clips + a frozen cutout clone.",
+  "success_criteria": [
+   "Center mask seam invisible (feathered)",
+   "Two halves color-match",
+   "Frozen cutout cleanly composited over the split"
+  ]
+ },
+ "narration_transcript": "Wait! What?! That! That's actually dope! I think I've got an idea how to recreate this. First, bracket 3 clips. One clip like this and for the other two make sure there's movement from either yourself or the environment to make the effect pop. This is the 22 of creating cool content without the eye. Let's go! Now, input all your clips into GABGOT. Place the clips with movement as your first and second clip, next, select your second clip and turn it into an overlay. Go to Mask, Horizontal, Rotator, Mask, Curtain, and positionagascar in the center of the frame. Use two feather arrows to blend both clips shortly so you don't notice any color differences. Now, take the clip where you fall, turn it into an overlay as well and place it underneath the other two clips. Scroll to the exact moment where you want the frame to freeze and hit freeze. Then, delete the clip before and after the frozen frame so only the freeze remains. Finally, select the frozen frame, go to Remove Background and choose all the removal. Export and you end up with something like this. Go crazy!",
+ "frames": {
+  "demo": [
+   "assets/split_screen_freeze/frame_01.jpg",
+   "assets/split_screen_freeze/frame_02.jpg",
+   "assets/split_screen_freeze/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/split_screen_freeze/frame_04.jpg",
+   "assets/split_screen_freeze/frame_05.jpg",
+   "assets/split_screen_freeze/frame_06.jpg",
+   "assets/split_screen_freeze/frame_07.jpg",
+   "assets/split_screen_freeze/frame_08.jpg",
+   "assets/split_screen_freeze/frame_09.jpg",
+   "assets/split_screen_freeze/frame_10.jpg",
+   "assets/split_screen_freeze/frame_11.jpg",
+   "assets/split_screen_freeze/frame_12.jpg",
+   "assets/split_screen_freeze/frame_13.jpg",
+   "assets/split_screen_freeze/frame_14.jpg",
+   "assets/split_screen_freeze/frame_15.jpg",
+   "assets/split_screen_freeze/frame_16.jpg",
+   "assets/split_screen_freeze/frame_17.jpg",
+   "assets/split_screen_freeze/frame_18.jpg",
+   "assets/split_screen_freeze/frame_19.jpg",
+   "assets/split_screen_freeze/frame_20.jpg",
+   "assets/split_screen_freeze/frame_21.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "260484679",
+  "like_count": 5522,
+  "comment_count": 28,
+  "upload_date": "20260518",
+  "caption": "Day 22 — no AI, just creativity 👇\n\nSaw this effect and instantly wanted to recreate it 😅\n\nHere’s the setup.\n\nRecord 3 clips.\nOne normal shot like this…\n\nand for the other two, make sure there’s movement from either yourself or the environment so the transition feels alive.\n\nNow open CapCut.\n\nPlace the movement clips first → turn the second clip into an overlay → apply a horizontal mask and rotate it vertically.\n\nUse the feather sliders to blend both clips together smoothly.\n\nNext, take the clip where you fall, turn it into another overlay, and freeze the exact frame you want to hold.\n\nDelete everything before and after the freeze frame.\n\nFinal touch:\nuse Auto Removal so only the frozen subject remains in frame.\n\nExport…\n\nand you get something like this.\n\nSimple setup → super clean effect.\n\nSee you in day 23 👀",
+  "hashtags": []
+ }
+}

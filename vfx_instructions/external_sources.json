@@ -2,7 +2,7 @@
  "source": "External short-form videos ingested into the VFX schema",
  "generated": "2026-06-22",
  "schema_version": 1,
- "effect_count": 37,
+ "effect_count": 38,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -3886,6 +3886,117 @@
      "transcript": "Lock focus on a drink and start filming. Now walk around, pass by and tap on the drink. Then walk away. Open this clip in the edits app. Go to the sequence where you tap on the drink. Click on split and select the first part of the clip. Then go to adjust and set the situation to 0. Also add a bit of contrast. Lastly go 🙂 to the colorful clip and trim theGAME to your liking. Now export the video.",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DW39szTDEal/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "Split-Screen + Freeze Clone",
+   "slug": "split_screen_freeze",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DYegGtwI-XA/",
+   "source_creator": "Raoul van Mullem | Viral Video Coach (@260484679)",
+   "tool": "CapCut",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": false,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Feather",
+    "Mask",
+    "Overlay",
+    "Remove Background"
+   ],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [],
+   "editing_steps": [
+    "That's actually dope!",
+    "I think I've got an idea how to recreate this.",
+    "First, bracket 3 clips.",
+    "One clip like this and for the other two make sure there's movement from either yourself or the environment to make the effect pop.",
+    "This is the 22 of creating cool content without the eye.",
+    "Input all your clips into GABGOT.",
+    "Place the clips with movement as your first and second clip, next, select your second clip and turn it into an overlay.",
+    "Go to Mask, Horizontal, Rotator, Mask, Curtain, and positionagascar in the center of the frame.",
+    "Use two feather arrows to blend both clips shortly so you don't notice any color differences.",
+    "Take the clip where you fall, turn it into an overlay as well and place it underneath the other two clips.",
+    "Scroll to the exact moment where you want the frame to freeze and hit freeze.",
+    "Delete the clip before and after the frozen frame so only the freeze remains.",
+    "Finally, select the frozen frame, go to Remove Background and choose all the removal.",
+    "Export and you end up with something like this."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/split_screen_freeze/frame_01.jpg",
+   "demo_frames": [
+    "assets/split_screen_freeze/frame_01.jpg",
+    "assets/split_screen_freeze/frame_02.jpg",
+    "assets/split_screen_freeze/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/split_screen_freeze/frame_04.jpg",
+    "assets/split_screen_freeze/frame_05.jpg",
+    "assets/split_screen_freeze/frame_06.jpg",
+    "assets/split_screen_freeze/frame_07.jpg",
+    "assets/split_screen_freeze/frame_08.jpg",
+    "assets/split_screen_freeze/frame_09.jpg",
+    "assets/split_screen_freeze/frame_10.jpg",
+    "assets/split_screen_freeze/frame_11.jpg",
+    "assets/split_screen_freeze/frame_12.jpg",
+    "assets/split_screen_freeze/frame_13.jpg",
+    "assets/split_screen_freeze/frame_14.jpg",
+    "assets/split_screen_freeze/frame_15.jpg",
+    "assets/split_screen_freeze/frame_16.jpg",
+    "assets/split_screen_freeze/frame_17.jpg",
+    "assets/split_screen_freeze/frame_18.jpg",
+    "assets/split_screen_freeze/frame_19.jpg",
+    "assets/split_screen_freeze/frame_20.jpg",
+    "assets/split_screen_freeze/frame_21.jpg"
+   ],
+   "tags": [
+    "auto_bg_removal",
+    "blend_mode",
+    "mask",
+    "overlay"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Raoul van Mullem | Viral Video Coach",
+    "creator_handle": "260484679",
+    "creator_url": null,
+    "caption": "Day 22 — no AI, just creativity 👇\n\nSaw this effect and instantly wanted to recreate it 😅\n\nHere’s the setup.\n\nRecord 3 clips.\nOne normal shot like this…\n\nand for the other two, make sure there’s movement from either yourself or the environment so the transition feels alive.\n\nNow open CapCut.\n\nPlace the movement clips first → turn the second clip into an overlay → apply a horizontal mask and rotate it vertically.\n\nUse the feather sliders to blend both clips together smoothly.\n\nNext, take the clip where you fall, turn it into another overlay, and freeze the exact frame you want to hold.\n\nDelete everything before and after the freeze frame.\n\nFinal touch:\nuse Auto Removal so only the frozen subject remains in frame.\n\nExport…\n\nand you get something like this.\n\nSimple setup → super clean effect.\n\nSee you in day 23 👀",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 5522,
+    "comment_count": 28,
+    "upload_date": "20260518",
+    "duration_sec": 61.81,
+    "thumbnail": "https://scontent-ord5-1.cdninstagram.com/v/t51.71878-15/702107048_986724644056292_6856389602496952475_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi42NDAuc2RyLnZpZGVvX25mcmFtZV9jb3Zlcl9mcmFtZS5jMiJ9&_nc_ht=scontent-ord5-1.cdninstagram.com&_nc_cat=108&_nc_oc=Q6cZ2gHoT8cSQ9zC_BssmNwxVQRg5wRdDpCspQE7ZPcj1tFse9kYAGmKwt8aC2s3o-71pzM&_nc_ohc=3daK38Rf9VMQ7kNvwGM6Onu&_nc_gid=7O9dkNqF_6u2umkfEcM2oA&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af-pGk4MTXMXlkdnyuhc8EEaCMC6VO_rRG854jGV6_D37A&oe=6A3F376C&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DYegGtwI-XA",
+     "title": "Video by byrvm_contentcreation",
+     "role": "tutorial",
+     "duration_sec": 61.9,
+     "wistia_id": null,
+     "transcript": "Wait! What?! That! That's actually dope! I think I've got an idea how to recreate this. First, bracket 3 clips. One clip like this and for the other two make sure there's movement from either yourself or the environment to make the effect pop. This is the 22 of creating cool content without the eye. Let's go! Now, input all your clips into GABGOT. Place the clips with movement as your first and second clip, next, select your second clip and turn it into an overlay. Go to Mask, Horizontal, Rotator, Mask, Curtain, and positionagascar in the center of the frame. Use two feather arrows to blend both clips shortly so you don't notice any color differences. Now, take the clip where you fall, turn it into an overlay as well and place it underneath the other two clips. Scroll to the exact moment where you want the frame to freeze and hit freeze. Then, delete the clip before and after the frozen frame so only the freeze remains. Finally, select the frozen frame, go to Remove Background and choose all the removal. Export and you end up with something like this. Go crazy!",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DYegGtwI-XA/",
      "video_url": null
     }
    ]

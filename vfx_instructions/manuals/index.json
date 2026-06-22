@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 82,
+ "count": 83,
  "manuals": [
   {
    "id": "3_clones",
@@ -1156,6 +1156,24 @@
    "status": null,
    "virality_candidate": false,
    "file": "manuals/sky_transition.json"
+  },
+  {
+   "id": "split_screen_freeze",
+   "title": "Split-Screen + Freeze Clone",
+   "manual_type": "effect",
+   "technique_primitive": "other",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "Raoul van Mullem | Viral Video Coach (@260484679)",
+   "draft": false,
+   "status": null,
+   "virality_candidate": false,
+   "file": "manuals/split_screen_freeze.json"
   },
   {
    "id": "spray_reveal",
