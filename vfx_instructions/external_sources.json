@@ -2,7 +2,7 @@
  "source": "External short-form videos ingested into the VFX schema",
  "generated": "2026-06-22",
  "schema_version": 1,
- "effect_count": 31,
+ "effect_count": 32,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -3280,6 +3280,117 @@
      "transcript": "Welcome back to another episode of how to edit like a six figure creator where we get so good at editing brands cannot help the throw money at you. Today's lesson, you're gonna learn masking and specifically how to do this effect. Using a tripod, set your camera or phone up somewhere high. I'm using a balcony. I'm also using the newer travel tripod that makes some of the best video gear out there. Set your camera to 60 frames per second if you want the slow motion effect and lock your exposure by tapping the screen and sliding up the sun slightly. This way the color doesn't shift too much between the shots. Then stand in the center of the shot. Then get another shot of you walking in all different areas of the screen like this. Then pour these shots into your editor. I'm using cap cut. Split each walking portion so it's an individual clip. And then tap overlay to put them on top of one another. Then for each clip select mask, circle or square. Then draw the mask around you and your shadow. For the bonus slow motion effect, you can tap speed, curve, custom, then draw your graph something like this and then tap smooth slow mo and better quality. Then repeat that for the remaining walking clips and you're done, you now have this.",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DZtiYPLNXL_/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "Walking Clones (moving-mask, multi-outfit)",
+   "slug": "walking_clones",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DLQduXtTVTK/",
+   "source_creator": "Colin Pomeroy (@321857083)",
+   "tool": "CapCut",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Feather",
+    "Keyframes",
+    "Mask",
+    "Opacity",
+    "Overlay"
+   ],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": true,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [
+    "The other day I saw this video got 1.5 million views and I was like, could I make that with my phone?",
+    "Using a tripod, I got a few shots of me walking across the screen in different outfits.",
+    "I imported those shots into"
+   ],
+   "editing_steps": [
+    "Cap cut and stair stacked them one on top of another.",
+    "I turned the opacity of each clip down to 50 so I could line up each walking shot to come one after another.",
+    "I turned the opacity back up to 100, I selected each one of the overlay shots, tapped mask then horizontal, lined it up to be 90 degrees on the side of the shot.",
+    "Went to the very start of the clip and tapped the keyframe button.",
+    "I tapped the first overlay shot, scrolled forward and moved the mask so it stayed in between the two clones.",
+    "I repeated that for the remaining shots.",
+    "If the lines were obvious where the mask was, I increased the feather to hide that line.",
+    "We're done, here's how it turned out.",
+    "If you want to get over 90 plus viral tutorial templates like this, just comment and vault and I'll send you the link."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/walking_clones/frame_01.jpg",
+   "demo_frames": [
+    "assets/walking_clones/frame_01.jpg",
+    "assets/walking_clones/frame_02.jpg",
+    "assets/walking_clones/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/walking_clones/frame_04.jpg",
+    "assets/walking_clones/frame_05.jpg",
+    "assets/walking_clones/frame_06.jpg",
+    "assets/walking_clones/frame_07.jpg",
+    "assets/walking_clones/frame_08.jpg",
+    "assets/walking_clones/frame_09.jpg",
+    "assets/walking_clones/frame_10.jpg",
+    "assets/walking_clones/frame_11.jpg",
+    "assets/walking_clones/frame_12.jpg",
+    "assets/walking_clones/frame_13.jpg",
+    "assets/walking_clones/frame_14.jpg",
+    "assets/walking_clones/frame_15.jpg",
+    "assets/walking_clones/frame_16.jpg",
+    "assets/walking_clones/frame_17.jpg",
+    "assets/walking_clones/frame_18.jpg"
+   ],
+   "tags": [
+    "cloning",
+    "keyframes",
+    "locked_off",
+    "mask",
+    "overlay"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Colin Pomeroy",
+    "creator_handle": "321857083",
+    "creator_url": null,
+    "caption": "How to get 1.5M views with this effect and your phone 📱 featuring @biasiqueira \n\nAnd if you want to get over 90+ viral tutorial templates likes thid comment Vault and I”ll send you more info\n\n#tutorial",
+    "hashtags": [
+     "tutorial"
+    ],
+    "view_count": null,
+    "like_count": 49560,
+    "comment_count": 14724,
+    "upload_date": "20250623",
+    "duration_sec": 55.333,
+    "thumbnail": "https://scontent-ord5-3.cdninstagram.com/v/t51.71878-15/509755789_1134976681990077_6660572585449063182_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi42NDAuc2RyLnZpZGVvX25mcmFtZV9jb3Zlcl9mcmFtZS5jMiJ9&_nc_ht=scontent-ord5-3.cdninstagram.com&_nc_cat=109&_nc_oc=Q6cZ2gFSCGq3OiXr7F-MahlwzVKAxU4yzCNdqjz3HGLS6b9ih5xB3qgNaIn0VrsqkYMKR74&_nc_ohc=9qy7jT8nt_gQ7kNvwHQ5BcD&_nc_gid=TbPP95s3O0lW-avOuWNEeA&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af_LFks0Ko4_Q4HpjcusU0U2Mxjjt3R8rtHMKnaEntlh2A&oe=6A3F30AE&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DLQduXtTVTK",
+     "title": "Video by colinpomeroyyy",
+     "role": "tutorial",
+     "duration_sec": 55.4,
+     "wistia_id": null,
+     "transcript": "So the other day I saw this video got 1.5 million views and I was like, could I make that with my phone? So using a tripod, I got a few shots of me walking across the screen in different outfits. Then I imported those shots into cap cut and stair stacked them one on top of another. Then I turned the opacity of each clip down to 50 so I could line up each walking shot to come one after another. Then I turned the opacity back up to 100, I selected each one of the overlay shots, tapped mask then horizontal, lined it up to be 90 degrees on the side of the shot. Went to the very start of the clip and tapped the keyframe button. Then I tapped the first overlay shot, scrolled forward and moved the mask so it stayed in between the two clones. Then I repeated that for the remaining shots. If the lines were obvious where the mask was, I increased the feather to hide that line. And we're done, here's how it turned out. And if you want to get over 90 plus viral tutorial templates like this, just comment and vault and I'll send you the link.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DLQduXtTVTK/",
      "video_url": null
     }
    ]

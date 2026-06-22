@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 76,
+ "count": 77,
  "manuals": [
   {
    "id": "3_clones",
@@ -1341,6 +1341,26 @@
    "status": null,
    "virality_candidate": true,
    "file": "manuals/walk_out_of_frame_text.json"
+  },
+  {
+   "id": "walking_clones",
+   "title": "Walking Clones (moving-mask, multi-outfit)",
+   "manual_type": "effect",
+   "technique_primitive": "overlay_bg_removal_clone",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [
+    "multiple outfits"
+   ],
+   "tool": "CapCut",
+   "source": "Colin Pomeroy (@321857083)",
+   "draft": false,
+   "status": null,
+   "virality_candidate": false,
+   "file": "manuals/walking_clones.json"
   },
   {
    "id": "wall_hologram",
