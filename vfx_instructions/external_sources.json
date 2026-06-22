@@ -2,7 +2,7 @@
  "source": "External short-form videos ingested into the VFX schema",
  "generated": "2026-06-22",
  "schema_version": 1,
- "effect_count": 38,
+ "effect_count": 39,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -3997,6 +3997,120 @@
      "transcript": "Wait! What?! That! That's actually dope! I think I've got an idea how to recreate this. First, bracket 3 clips. One clip like this and for the other two make sure there's movement from either yourself or the environment to make the effect pop. This is the 22 of creating cool content without the eye. Let's go! Now, input all your clips into GABGOT. Place the clips with movement as your first and second clip, next, select your second clip and turn it into an overlay. Go to Mask, Horizontal, Rotator, Mask, Curtain, and positionagascar in the center of the frame. Use two feather arrows to blend both clips shortly so you don't notice any color differences. Now, take the clip where you fall, turn it into an overlay as well and place it underneath the other two clips. Scroll to the exact moment where you want the frame to freeze and hit freeze. Then, delete the clip before and after the frozen frame so only the freeze remains. Finally, select the frozen frame, go to Remove Background and choose all the removal. Export and you end up with something like this. Go crazy!",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DYegGtwI-XA/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "Travel Text Reveal (text behind mountains)",
+   "slug": "travel_text_reveal",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DZc6dK2xQzo/",
+   "source_creator": "Enrique Beli (@39782403455)",
+   "tool": "CapCut",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": false,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Duplicate",
+    "Keyframes",
+    "Layers",
+    "Overlay",
+    "Remove Background",
+    "Text"
+   ],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [],
+   "editing_steps": [
+    "For the first shot, record yourself standing in front of a mountain range and slowly raising your arms.",
+    "Open this clip in the cap pad appIslamic.",
+    "First, add a text layer, for example the name of replace you are travelling to, customize it to a liking.",
+    "Position the text where you want it to end up and extend its duration so it remains visible by clicking here.",
+    "Move to the point where you begin raising your arms.",
+    "Add another keyframe and drag the text downwards so it's hidden behind the mountains.",
+    "Duplicate the main clip and tap overlay.",
+    "Drag the duplicated clip to the beginning of the project.",
+    "Go to remove background and select the custom removal mode.",
+    "Use the quick brush and select everything except the sky.",
+    "Confirm your selection when you're finished, finally go to layers and move the overlay above the text layer."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/travel_text_reveal/frame_01.jpg",
+   "demo_frames": [
+    "assets/travel_text_reveal/frame_01.jpg",
+    "assets/travel_text_reveal/frame_02.jpg",
+    "assets/travel_text_reveal/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/travel_text_reveal/frame_04.jpg",
+    "assets/travel_text_reveal/frame_05.jpg",
+    "assets/travel_text_reveal/frame_06.jpg",
+    "assets/travel_text_reveal/frame_07.jpg",
+    "assets/travel_text_reveal/frame_08.jpg",
+    "assets/travel_text_reveal/frame_09.jpg",
+    "assets/travel_text_reveal/frame_10.jpg",
+    "assets/travel_text_reveal/frame_11.jpg",
+    "assets/travel_text_reveal/frame_12.jpg",
+    "assets/travel_text_reveal/frame_13.jpg",
+    "assets/travel_text_reveal/frame_14.jpg",
+    "assets/travel_text_reveal/frame_15.jpg",
+    "assets/travel_text_reveal/frame_16.jpg",
+    "assets/travel_text_reveal/frame_17.jpg",
+    "assets/travel_text_reveal/frame_18.jpg",
+    "assets/travel_text_reveal/frame_19.jpg",
+    "assets/travel_text_reveal/frame_20.jpg",
+    "assets/travel_text_reveal/frame_21.jpg"
+   ],
+   "tags": [
+    "auto_bg_removal",
+    "duplicate",
+    "keyframes",
+    "overlay"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Enrique Beli",
+    "creator_handle": "39782403455",
+    "creator_url": null,
+    "caption": "I’ve been getting a lot of questions about this amazing travel trend🏔️, so here’s the full step-by-step  breakdown 🧡\n\nSave this tutorial and try it for your next creative video! 👇🏽\n\nStack: Record Clip → Text → Keyframes → Duplicate → Overlay → Remove Background\n\nTools: your Phone, CapCut\n\nJust try it out. It’s worth it!\n\nVideo inspiration by: @vishal.sahu18 \n\n#tutorial #creativity #effect",
+    "hashtags": [
+     "creativity",
+     "effect",
+     "tutorial"
+    ],
+    "view_count": null,
+    "like_count": 20701,
+    "comment_count": 107,
+    "upload_date": "20260611",
+    "duration_sec": 61.787,
+    "thumbnail": "https://scontent-ord5-2.cdninstagram.com/v/t51.71878-15/720206061_1678035246794068_2351485425659299634_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi42NDAuc2RyLnZpZGVvX25mcmFtZV9jb3Zlcl9mcmFtZS5jMiJ9&_nc_ht=scontent-ord5-2.cdninstagram.com&_nc_cat=104&_nc_oc=Q6cZ2gGh1OdD8gVU50v6RnZ10hLOJteS1HBCGFZiHO5Fsk52kFKmZNbqnkBA7v1-oMwv7-w&_nc_ohc=21q5SDKiWwoQ7kNvwHOtu0G&_nc_gid=i-98iahbmf5RdHfld63Uaw&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af-YENieVnvqS2e80M40z9WttxUtUjs0IBcnWTpZnHXA6w&oe=6A3F441D&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DZc6dK2xQzo",
+     "title": "Video by enriquestories",
+     "role": "tutorial",
+     "duration_sec": 61.9,
+     "wistia_id": null,
+     "transcript": "For the first shot, record yourself standing in front of a mountain range and slowly raising your arms. Open this clip in the cap pad appIslamic. First, add a text layer, for example the name of replace you are travelling to, customize it to a liking. Position the text where you want it to end up and extend its duration so it remains visible by clicking here. Then move to the point where you begin raising your arms. Add another keyframe and drag the text downwards so it's hidden behind the mountains. Now duplicate the main clip and tap overlay. Drag the duplicated clip to the beginning of the project. Go to remove background and select the custom removal mode. Use the quick brush and select everything except the sky. Confirm your selection when you're finished, finally go to layers and move the overlay above the text layer.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DZc6dK2xQzo/",
      "video_url": null
     }
    ]
