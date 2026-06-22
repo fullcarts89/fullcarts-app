@@ -2,7 +2,7 @@
  "source": "External short-form videos ingested into the VFX schema",
  "generated": "2026-06-22",
  "schema_version": 1,
- "effect_count": 33,
+ "effect_count": 34,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -3486,6 +3486,105 @@
      "transcript": "This is called a Match Cut, and you can do all sorts of creative effects with it. Today, I'm gonna teach you how to do it with your phone. This is episode one of an edit like a six figure creator series, where we'll start with the basics and progress from there. For this type of Match Cut, just get at least two shots in separate locations where your subject is roughly the same distance from the camera in the same position. If we're your footage into your editor, I'm using CapCut, and you can also use the Edit to apps, pretty much the same. One at a time, hit Overlay on each shot, drag it under your first shot, and then turn Opacity down to 50 so you can see both clips. Then adjust the size and position of the second shot so it matches the first. Increase the Opacity back to 100, then just cut or trim the clips to where you want the transition to happen, repeat those steps for any remaining clips, and you're done. And now you know that.",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DZrMdXENvOm/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "Superhero Shoe Catch (reverse + flame)",
+   "slug": "superhero_shoe_catch",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DYr05wssctC/",
+   "source_creator": "Steven Wommack (@549671804)",
+   "tool": "CapCut",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Reverse",
+    "Split",
+    "Video Effects"
+   ],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [
+    "Set up your phone and film yourself taking a few steps back.",
+    "You're taking off your shoe, throwing it out to the side with a straight arm, and then looking up.",
+    "Next, open that video in the"
+   ],
+   "editing_steps": [
+    "CapCut app, select it, and hit reverse.",
+    "This reverses the whole clip, making it look like the shoe is actually flying in.",
+    "Scroll to right when the shoe isAdding in, hit split here, then go to Effects, Video Effects, and search for Color Flame.",
+    "Select that effect and adjust the color and intensity of that aura around your body.",
+    "Finally, add your Stravastamp, pull it out to the side, scroll to when you catch the shoe, and pull the Stravastamp in the frame.",
+    "Just export andaliation."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/superhero_shoe_catch/frame_01.jpg",
+   "demo_frames": [
+    "assets/superhero_shoe_catch/frame_01.jpg",
+    "assets/superhero_shoe_catch/frame_02.jpg",
+    "assets/superhero_shoe_catch/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/superhero_shoe_catch/frame_04.jpg",
+    "assets/superhero_shoe_catch/frame_05.jpg",
+    "assets/superhero_shoe_catch/frame_06.jpg",
+    "assets/superhero_shoe_catch/frame_07.jpg",
+    "assets/superhero_shoe_catch/frame_08.jpg",
+    "assets/superhero_shoe_catch/frame_09.jpg",
+    "assets/superhero_shoe_catch/frame_10.jpg",
+    "assets/superhero_shoe_catch/frame_11.jpg",
+    "assets/superhero_shoe_catch/frame_12.jpg",
+    "assets/superhero_shoe_catch/frame_13.jpg",
+    "assets/superhero_shoe_catch/frame_14.jpg",
+    "assets/superhero_shoe_catch/frame_15.jpg",
+    "assets/superhero_shoe_catch/frame_16.jpg",
+    "assets/superhero_shoe_catch/frame_17.jpg"
+   ],
+   "tags": [
+    "split_clip"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Steven Wommack",
+    "creator_handle": "549671804",
+    "creator_url": null,
+    "caption": "Here is another creative Strava trend tutorial on how you can create this exciting superhero shoe catch Strava video for your next running reel 🎥🏃‍♀️🏃 inspiration by @run_houng 😍 enjoy creating! 🫶🏼",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 175999,
+    "comment_count": 1098,
+    "upload_date": "20260523",
+    "duration_sec": 50.0,
+    "thumbnail": "https://scontent-ord5-3.cdninstagram.com/v/t51.71878-15/703861492_998845532651433_8727055106367204825_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi42NDAuc2RyLnZpZGVvX25mcmFtZV9jb3Zlcl9mcmFtZS5jMiJ9&_nc_ht=scontent-ord5-3.cdninstagram.com&_nc_cat=109&_nc_oc=Q6cZ2gGyV5Apy0yuVEPbI-o1Y0T5QthpqnocGArKvZdQi1Lh1h3o83HbTRUxrxgZC8pFJb4&_nc_ohc=0VkQt_WDXmcQ7kNvwHSIplO&_nc_gid=isaLtSh5rxXYcqlbl6IIQg&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af84jPhwdJ_wdi0yJ4y4oJwp4te9nKd8B9Pk30e70CxAdg&oe=6A3F2653&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DYr05wssctC",
+     "title": "Video by stevenwommack",
+     "role": "tutorial",
+     "duration_sec": 50.1,
+     "wistia_id": null,
+     "transcript": "Set up your phone and film yourself taking a few steps back. You're taking off your shoe, throwing it out to the side with a straight arm, and then looking up. Next, open that video in the CapCut app, select it, and hit reverse. This reverses the whole clip, making it look like the shoe is actually flying in. Scroll to right when the shoe isAdding in, hit split here, then go to Effects, Video Effects, and search for Color Flame. Select that effect and adjust the color and intensity of that aura around your body. Finally, add your Stravastamp, pull it out to the side, scroll to when you catch the shoe, and pull the Stravastamp in the frame. Then just export andaliation.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DYr05wssctC/",
      "video_url": null
     }
    ]

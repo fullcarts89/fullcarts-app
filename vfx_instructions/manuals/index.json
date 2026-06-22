@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 78,
+ "count": 79,
  "manuals": [
   {
    "id": "3_clones",
@@ -1228,6 +1228,26 @@
    "status": null,
    "virality_candidate": false,
    "file": "manuals/sunrise_hand_swipe.json"
+  },
+  {
+   "id": "superhero_shoe_catch",
+   "title": "Superhero Shoe Catch (reverse + flame)",
+   "manual_type": "effect",
+   "technique_primitive": "other",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [
+    "shoe"
+   ],
+   "tool": "CapCut",
+   "source": "Steven Wommack (@549671804)",
+   "draft": false,
+   "status": null,
+   "virality_candidate": false,
+   "file": "manuals/superhero_shoe_catch.json"
   },
   {
    "id": "talking_head_match_cut",

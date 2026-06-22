@@ -1,0 +1,130 @@
+{
+ "id": "superhero_shoe_catch",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "other",
+ "title": "Superhero Shoe Catch (reverse + flame)",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "shoe"
+ ],
+ "result_description": "A superhero-style running clip: your shoe flies into your hand (reverse motion) and a flame aura glows around you, finished with a Strava stamp.",
+ "source": "Steven Wommack (@549671804)",
+ "source_url": "https://www.instagram.com/reel/DYr05wssctC/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "throw_clip",
+   "what_to_film": "Take a few steps back, take off your shoe and throw it out to the side with a straight arm, then look up.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "min_duration"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "throw_clip"
+  },
+  {
+   "action": "reverse",
+   "channel": "ui",
+   "target": "throw_clip",
+   "capcut_feature": "Reverse",
+   "note": "reverses the whole clip so the shoe flies IN instead of out"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "throw_clip",
+   "capcut_feature": "Split",
+   "timing": {
+    "cue": "right when the shoe arrives in hand"
+   }
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "second section",
+   "capcut_feature": "Effects → Video Effects → Color Flame",
+   "params": {
+    "adjust": "color + intensity of the aura"
+   },
+   "note": "flame aura around your body"
+  },
+  {
+   "action": "overlay",
+   "channel": "ui",
+   "target": "Strava stamp",
+   "params": {
+    "track": 2
+   },
+   "note": "add the Strava stamp, parked out to the side"
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "Strava stamp",
+   "params": {
+    "property": "position"
+   },
+   "timing": {
+    "cue": "when you catch the shoe"
+   },
+   "note": "pull the stamp into frame on the catch"
+  }
+ ],
+ "result": {
+  "description": "Reverse-motion superhero shoe catch with flame aura + Strava stamp.",
+  "success_criteria": [
+   "Shoe reads as flying into your hand (reverse)",
+   "Color Flame aura lands on the catch",
+   "Strava stamp animates in on the catch beat"
+  ]
+ },
+ "narration_transcript": "Set up your phone and film yourself taking a few steps back. You're taking off your shoe, throwing it out to the side with a straight arm, and then looking up. Next, open that video in the CapCut app, select it, and hit reverse. This reverses the whole clip, making it look like the shoe is actually flying in. Scroll to right when the shoe isAdding in, hit split here, then go to Effects, Video Effects, and search for Color Flame. Select that effect and adjust the color and intensity of that aura around your body. Finally, add your Stravastamp, pull it out to the side, scroll to when you catch the shoe, and pull the Stravastamp in the frame. Then just export andaliation.",
+ "frames": {
+  "demo": [
+   "assets/superhero_shoe_catch/frame_01.jpg",
+   "assets/superhero_shoe_catch/frame_02.jpg",
+   "assets/superhero_shoe_catch/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/superhero_shoe_catch/frame_04.jpg",
+   "assets/superhero_shoe_catch/frame_05.jpg",
+   "assets/superhero_shoe_catch/frame_06.jpg",
+   "assets/superhero_shoe_catch/frame_07.jpg",
+   "assets/superhero_shoe_catch/frame_08.jpg",
+   "assets/superhero_shoe_catch/frame_09.jpg",
+   "assets/superhero_shoe_catch/frame_10.jpg",
+   "assets/superhero_shoe_catch/frame_11.jpg",
+   "assets/superhero_shoe_catch/frame_12.jpg",
+   "assets/superhero_shoe_catch/frame_13.jpg",
+   "assets/superhero_shoe_catch/frame_14.jpg",
+   "assets/superhero_shoe_catch/frame_15.jpg",
+   "assets/superhero_shoe_catch/frame_16.jpg",
+   "assets/superhero_shoe_catch/frame_17.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "549671804",
+  "like_count": 175999,
+  "comment_count": 1098,
+  "upload_date": "20260523",
+  "caption": "Here is another creative Strava trend tutorial on how you can create this exciting superhero shoe catch Strava video for your next running reel 🎥🏃‍♀️🏃 inspiration by @run_houng 😍 enjoy creating! 🫶🏼",
+  "hashtags": []
+ }
+}
