@@ -2,7 +2,7 @@
  "source": "External short-form videos ingested into the VFX schema",
  "generated": "2026-06-22",
  "schema_version": 1,
- "effect_count": 35,
+ "effect_count": 37,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -3682,6 +3682,210 @@
      "transcript": "Select the wide angle mode on your phone's camera, and film a friend doing a move without a plate, then add the plate and finishing the move. Film every friend doing an individual move, then adding the plate and finishing the move. Once you've filmed everyone with their specific move, adding the plate and then filming the end, open the clips in the cap cut out, scroll to the middle of the move, hit split, scroll all the way to when the plate is placed in the hands. At this point, hit split again, select the previous part and delete that. Do the same thing with the next clip, scrolling to right before the plate is placed, hitting split, then scroll all the way to when the plate is placed. Hit split again and delete that middle part. The clip should now look like this with the plate appearing. Do the same thing for all the clips splitting and deleting out that middle part so the clips look like this, then export and that's it.",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DY7gXEosG1r/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "Visual Hook (keyframed mask reveal)",
+   "slug": "visual_hook_mask_reveal",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DVb7jeMkhTo/",
+   "source_creator": "Ashley Boston | Organic Marketing Mentor (@72915120964)",
+   "tool": "CapCut",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Mask"
+   ],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [
+    "Alrighty, and that was a visual hook."
+   ],
+   "editing_steps": [
+    "CapCut101 and all you need to make this happen is using one clip and learning how to use masks.",
+    "All right, you're gonna put your video into CapCut.",
+    "You're gonna click on your video on the timeline timeline timeline timeline, click masks, click a rectangle rectangle rectangle rectangle rectangle rectangle, and adjust just the rectangle rectangle rectangle rectangle rectangle rectangle, and then you're going to just thin it out a little bit to cover over the microphone, you're going to click rectangle rectangle again and press around corners, and after you're done that, you're going to now add key frames.",
+    "Click key frame at the beginning of your video, then add a key frame right as you hit the microphone microphone microphone and one half a second later after that.",
+    "Repeat this process every single time that you are hitting the microphone and just extend the mask itself every time you are adding a new key frame a half a second later.",
+    "The last step should be you extending the mask to show the entire video like so.",
+    "After you're done adding your key frames, now we just want to press graphs right beside the key frame button and we're going to press ease in to make the transitions really smooth.",
+    "Alrighty, and that was a visual hook."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/visual_hook_mask_reveal/frame_01.jpg",
+   "demo_frames": [
+    "assets/visual_hook_mask_reveal/frame_01.jpg",
+    "assets/visual_hook_mask_reveal/frame_02.jpg",
+    "assets/visual_hook_mask_reveal/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/visual_hook_mask_reveal/frame_04.jpg",
+    "assets/visual_hook_mask_reveal/frame_05.jpg",
+    "assets/visual_hook_mask_reveal/frame_06.jpg",
+    "assets/visual_hook_mask_reveal/frame_07.jpg",
+    "assets/visual_hook_mask_reveal/frame_08.jpg",
+    "assets/visual_hook_mask_reveal/frame_09.jpg",
+    "assets/visual_hook_mask_reveal/frame_10.jpg",
+    "assets/visual_hook_mask_reveal/frame_11.jpg",
+    "assets/visual_hook_mask_reveal/frame_12.jpg",
+    "assets/visual_hook_mask_reveal/frame_13.jpg",
+    "assets/visual_hook_mask_reveal/frame_14.jpg",
+    "assets/visual_hook_mask_reveal/frame_15.jpg",
+    "assets/visual_hook_mask_reveal/frame_16.jpg",
+    "assets/visual_hook_mask_reveal/frame_17.jpg",
+    "assets/visual_hook_mask_reveal/frame_18.jpg",
+    "assets/visual_hook_mask_reveal/frame_19.jpg",
+    "assets/visual_hook_mask_reveal/frame_20.jpg",
+    "assets/visual_hook_mask_reveal/frame_21.jpg",
+    "assets/visual_hook_mask_reveal/frame_22.jpg",
+    "assets/visual_hook_mask_reveal/frame_23.jpg"
+   ],
+   "tags": [
+    "mask",
+    "transition"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Ashley Boston | Organic Marketing Mentor",
+    "creator_handle": "72915120964",
+    "creator_url": null,
+    "caption": "Visual hooks stop the scroll, this is how you make them in seconds.\n\nComment “BROLL” to learn my process for creating easy viral videos that helped me gain 4K followers in 3 weeks\n\n#contentcreation #visualhooks #instagramtips #businesscoach #digitalcreator",
+    "hashtags": [
+     "businesscoach",
+     "contentcreation",
+     "digitalcreator",
+     "instagramtips",
+     "visualhooks"
+    ],
+    "view_count": null,
+    "like_count": 23568,
+    "comment_count": 543,
+    "upload_date": "20260303",
+    "duration_sec": 69.633,
+    "thumbnail": "https://scontent-ord5-3.cdninstagram.com/v/t51.82787-15/642529506_17892663555424965_6218778976879416854_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi43MjAuc2RyLnZpZGVvX2RlZmF1bHRfY292ZXJfZnJhbWUuYzIifQ&_nc_ht=scontent-ord5-3.cdninstagram.com&_nc_cat=109&_nc_oc=Q6cZ2gF3hBXgg1DRTF_6WZCWp18RnYN4SoanJzR8d0cpZR0qHeRrPgtsgugl33n8XmkXCIc&_nc_ohc=9_kKvcnK6fQQ7kNvwEXN2m8&_nc_gid=hYV-4urDdh2-ISMNzo2nCw&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af-4c4bFg-fuGWsw2PvtaRiN0KbkSC7kYvleU0n3cDXgOg&oe=6A3F3AD4&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DVb7jeMkhTo",
+     "title": "Video by itsashleyboston",
+     "role": "tutorial",
+     "duration_sec": 69.8,
+     "wistia_id": null,
+     "transcript": "Alrighty, and that was a visual hook. This is CapCut101 and all you need to make this happen is using one clip and learning how to use masks. All right, you're gonna put your video into CapCut. You're gonna click on your video on the timeline timeline timeline timeline, click masks, click a rectangle rectangle rectangle rectangle rectangle rectangle, and adjust just the rectangle rectangle rectangle rectangle rectangle rectangle, and then you're going to just thin it out a little bit to cover over the microphone, you're going to click rectangle rectangle again and press around corners, and after you're done that, you're going to now add key frames. So click key frame at the beginning of your video, then add a key frame right as you hit the microphone microphone microphone and one half a second later after that. So repeat this process every single time that you are hitting the microphone and just extend the mask itself every time you are adding a new key frame a half a second later. The last step should be you extending the mask to show the entire video like so. Now, after you're done adding your key frames, now we just want to press graphs right beside the key frame button and we're going to press ease in to make the transitions really smooth. And there you go. Alrighty, and that was a visual hook.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DVb7jeMkhTo/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "Color Switch (tap to restore color)",
+   "slug": "color_switch_tap",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DW39szTDEal/",
+   "source_creator": "Enrique Beli (@39782403455)",
+   "tool": "CapCut",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": false,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Split"
+   ],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [],
+   "editing_steps": [
+    "Lock focus on a drink and start filming.",
+    "Walk around, pass by and tap on the drink.",
+    "Walk away.",
+    "Open this clip in the edits app.",
+    "Go to the sequence where you tap on the drink.",
+    "Click on split and select the first part of the clip.",
+    "Go to adjust and set the situation to 0.",
+    "Also add a bit of contrast.",
+    "Lastly go 🙂 to the colorful clip and trim theGAME to your liking.",
+    "Export the video."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/color_switch_tap/frame_01.jpg",
+   "demo_frames": [
+    "assets/color_switch_tap/frame_01.jpg",
+    "assets/color_switch_tap/frame_02.jpg",
+    "assets/color_switch_tap/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/color_switch_tap/frame_04.jpg",
+    "assets/color_switch_tap/frame_05.jpg",
+    "assets/color_switch_tap/frame_06.jpg",
+    "assets/color_switch_tap/frame_07.jpg",
+    "assets/color_switch_tap/frame_08.jpg",
+    "assets/color_switch_tap/frame_09.jpg",
+    "assets/color_switch_tap/frame_10.jpg"
+   ],
+   "tags": [
+    "split_clip"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Enrique Beli",
+    "creator_handle": "39782403455",
+    "creator_url": null,
+    "caption": "I’ve been getting a lot of questions about this trendy color switch effect🥤, so here’s the full step-by-step  breakdown 🧡\n\nSave this tutorial and try it for your next creative video! 👇🏽\n\nTools: your Phone, Edits\n\nJust try it out. It’s worth it!\n\nVideo Inspiration by: @korizza_ast \n\n#tutorial #creativity #effect",
+    "hashtags": [
+     "creativity",
+     "effect",
+     "tutorial"
+    ],
+    "view_count": null,
+    "like_count": 20304,
+    "comment_count": 112,
+    "upload_date": "20260408",
+    "duration_sec": 30.742,
+    "thumbnail": "https://scontent-ord5-3.cdninstagram.com/v/t51.71878-15/657918982_951906753989337_6913597492573144532_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi42NDAuc2RyLnZpZGVvX2RlZmF1bHRfY292ZXJfZnJhbWUuYzIifQ&_nc_ht=scontent-ord5-3.cdninstagram.com&_nc_cat=109&_nc_oc=Q6cZ2gGBNGVFyKRDv6FceT5XwM-qiDfRnHb-SN2BB-5PDy8VOdIA10dwbYK7SV8-5tLIz-E&_nc_ohc=Njf8qLj2TboQ7kNvwGfxOcI&_nc_gid=PAn7gZBjT0okdTOn-Rs6mQ&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af8pThuqNX4KhHRv_UGqHhwoLQ_-krLHyRHsQTnLyUmDKw&oe=6A3F27D9&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DW39szTDEal",
+     "title": "Video by enriquestories",
+     "role": "tutorial",
+     "duration_sec": 30.9,
+     "wistia_id": null,
+     "transcript": "Lock focus on a drink and start filming. Now walk around, pass by and tap on the drink. Then walk away. Open this clip in the edits app. Go to the sequence where you tap on the drink. Click on split and select the first part of the clip. Then go to adjust and set the situation to 0. Also add a bit of contrast. Lastly go 🙂 to the colorful clip and trim theGAME to your liking. Now export the video.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DW39szTDEal/",
      "video_url": null
     }
    ]
