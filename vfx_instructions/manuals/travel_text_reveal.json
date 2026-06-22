@@ -1,0 +1,149 @@
+{
+ "id": "travel_text_reveal",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "text_reveal",
+ "title": "Travel Text Reveal (text behind mountains)",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "related_to": "text_behind_subject",
+ "result_description": "A destination name rises up from behind the mountains as you raise your arms — a cinematic travel title reveal.",
+ "source": "Enrique Beli (@39782403455)",
+ "source_url": "https://www.instagram.com/reel/DZc6dK2xQzo/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "mountain_clip",
+   "what_to_film": "Stand in front of a mountain range / landscape and slowly raise your arms.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "min_duration"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "mountain_clip"
+  },
+  {
+   "action": "text",
+   "channel": "ui",
+   "target": "destination text",
+   "capcut_feature": "Text",
+   "note": "add the place name, customize, position where it should END UP, and extend its duration"
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "text",
+   "params": {
+    "property": "position",
+    "state": "final (raised) position"
+   },
+   "timing": {
+    "cue": "start"
+   }
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "text",
+   "params": {
+    "property": "position",
+    "state": "dragged down, hidden behind the mountains"
+   },
+   "timing": {
+    "cue": "the moment you begin raising your arms"
+   },
+   "note": "text rises into view as the arms raise"
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "target": "mountain_clip",
+   "params": {
+    "to_track": 2
+   },
+   "note": "overlay, drag to the beginning of the project"
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "duplicate",
+   "capcut_feature": "Remove Background → Custom Removal",
+   "params": {
+    "mode": "custom",
+    "quick_brush": "select everything EXCEPT the sky"
+   },
+   "note": "keeps the mountains/foreground on top"
+  },
+  {
+   "action": "position",
+   "channel": "ui",
+   "target": "layer order",
+   "capcut_feature": "Layers",
+   "note": "move the overlay ABOVE the text layer so the text sits behind the mountains"
+  }
+ ],
+ "result": {
+  "description": "Title text emerges from behind the landscape.",
+  "success_criteria": [
+   "Text occluded by the mountains, rising into view on the arm raise",
+   "Sky-only removal keeps foreground crisp on top",
+   "Reveal timed to the arm movement"
+  ]
+ },
+ "narration_transcript": "For the first shot, record yourself standing in front of a mountain range and slowly raising your arms. Open this clip in the cap pad appIslamic. First, add a text layer, for example the name of replace you are travelling to, customize it to a liking. Position the text where you want it to end up and extend its duration so it remains visible by clicking here. Then move to the point where you begin raising your arms. Add another keyframe and drag the text downwards so it's hidden behind the mountains. Now duplicate the main clip and tap overlay. Drag the duplicated clip to the beginning of the project. Go to remove background and select the custom removal mode. Use the quick brush and select everything except the sky. Confirm your selection when you're finished, finally go to layers and move the overlay above the text layer.",
+ "frames": {
+  "demo": [
+   "assets/travel_text_reveal/frame_01.jpg",
+   "assets/travel_text_reveal/frame_02.jpg",
+   "assets/travel_text_reveal/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/travel_text_reveal/frame_04.jpg",
+   "assets/travel_text_reveal/frame_05.jpg",
+   "assets/travel_text_reveal/frame_06.jpg",
+   "assets/travel_text_reveal/frame_07.jpg",
+   "assets/travel_text_reveal/frame_08.jpg",
+   "assets/travel_text_reveal/frame_09.jpg",
+   "assets/travel_text_reveal/frame_10.jpg",
+   "assets/travel_text_reveal/frame_11.jpg",
+   "assets/travel_text_reveal/frame_12.jpg",
+   "assets/travel_text_reveal/frame_13.jpg",
+   "assets/travel_text_reveal/frame_14.jpg",
+   "assets/travel_text_reveal/frame_15.jpg",
+   "assets/travel_text_reveal/frame_16.jpg",
+   "assets/travel_text_reveal/frame_17.jpg",
+   "assets/travel_text_reveal/frame_18.jpg",
+   "assets/travel_text_reveal/frame_19.jpg",
+   "assets/travel_text_reveal/frame_20.jpg",
+   "assets/travel_text_reveal/frame_21.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "39782403455",
+  "like_count": 20701,
+  "comment_count": 107,
+  "upload_date": "20260611",
+  "caption": "I’ve been getting a lot of questions about this amazing travel trend🏔️, so here’s the full step-by-step  breakdown 🧡\n\nSave this tutorial and try it for your next creative video! 👇🏽\n\nStack: Record Clip → Text → Keyframes → Duplicate → Overlay → Remove Background\n\nTools: your Phone, CapCut\n\nJust try it out. It’s worth it!\n\nVideo inspiration by: @vishal.sahu18 \n\n#tutorial #creativity #effect",
+  "hashtags": [
+   "creativity",
+   "effect",
+   "tutorial"
+  ]
+ }
+}

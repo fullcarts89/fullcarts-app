@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 83,
+ "count": 84,
  "manuals": [
   {
    "id": "3_clones",
@@ -1411,6 +1411,24 @@
    "status": null,
    "virality_candidate": false,
    "file": "manuals/toss_object_transform.json"
+  },
+  {
+   "id": "travel_text_reveal",
+   "title": "Travel Text Reveal (text behind mountains)",
+   "manual_type": "effect",
+   "technique_primitive": "text_reveal",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "Enrique Beli (@39782403455)",
+   "draft": false,
+   "status": null,
+   "virality_candidate": false,
+   "file": "manuals/travel_text_reveal.json"
   },
   {
    "id": "visual_hook_mask_reveal",
