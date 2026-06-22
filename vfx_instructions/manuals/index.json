@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 79,
+ "count": 80,
  "manuals": [
   {
    "id": "3_clones",
@@ -499,6 +499,24 @@
    "status": null,
    "virality_candidate": false,
    "file": "manuals/flying_book.json"
+  },
+  {
+   "id": "food_spawn",
+   "title": "Food / Dish Spawn (group)",
+   "manual_type": "effect",
+   "technique_primitive": "other",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [
+    "plates / dishes"
+   ],
+   "tool": "CapCut",
+   "source": "Steven Wommack (@549671804)",
+   "draft": false,
+   "status": null,
+   "virality_candidate": false,
+   "file": "manuals/food_spawn.json"
   },
   {
    "id": "frozen_jump_float",

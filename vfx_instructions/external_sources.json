@@ -2,7 +2,7 @@
  "source": "External short-form videos ingested into the VFX schema",
  "generated": "2026-06-22",
  "schema_version": 1,
- "effect_count": 34,
+ "effect_count": 35,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -3585,6 +3585,103 @@
      "transcript": "Set up your phone and film yourself taking a few steps back. You're taking off your shoe, throwing it out to the side with a straight arm, and then looking up. Next, open that video in the CapCut app, select it, and hit reverse. This reverses the whole clip, making it look like the shoe is actually flying in. Scroll to right when the shoe isAdding in, hit split here, then go to Effects, Video Effects, and search for Color Flame. Select that effect and adjust the color and intensity of that aura around your body. Finally, add your Stravastamp, pull it out to the side, scroll to when you catch the shoe, and pull the Stravastamp in the frame. Then just export andaliation.",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DYr05wssctC/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "Food / Dish Spawn (group)",
+   "slug": "food_spawn",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DY7gXEosG1r/",
+   "source_creator": "Steven Wommack (@549671804)",
+   "tool": "CapCut",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Split"
+   ],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [
+    "Select the wide angle mode on your phone's camera, and film a friend doing a move without a plate, then add the plate and finishing the move.",
+    "Film every friend doing an individual move, then adding the plate and finishing the move.",
+    "Once you've filmed everyone with their specific move, adding the plate and then filming the end, open the clips in the"
+   ],
+   "editing_steps": [
+    "Cap cut out, scroll to the middle of the move, hit split, scroll all the way to when the plate is placed in the hands.",
+    "At this point, hit split again, select the previous part and delete that.",
+    "Do the same thing with the next clip, scrolling to right before the plate is placed, hitting split, then scroll all the way to when the plate is placed.",
+    "Hit split again and delete that middle part.",
+    "The clip should now look like this with the plate appearing.",
+    "Do the same thing for all the clips splitting and deleting out that middle part so the clips look like this, then export and that's it."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/food_spawn/frame_01.jpg",
+   "demo_frames": [
+    "assets/food_spawn/frame_01.jpg",
+    "assets/food_spawn/frame_02.jpg",
+    "assets/food_spawn/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/food_spawn/frame_04.jpg",
+    "assets/food_spawn/frame_05.jpg",
+    "assets/food_spawn/frame_06.jpg",
+    "assets/food_spawn/frame_07.jpg",
+    "assets/food_spawn/frame_08.jpg",
+    "assets/food_spawn/frame_09.jpg",
+    "assets/food_spawn/frame_10.jpg",
+    "assets/food_spawn/frame_11.jpg",
+    "assets/food_spawn/frame_12.jpg",
+    "assets/food_spawn/frame_13.jpg",
+    "assets/food_spawn/frame_14.jpg",
+    "assets/food_spawn/frame_15.jpg",
+    "assets/food_spawn/frame_16.jpg",
+    "assets/food_spawn/frame_17.jpg"
+   ],
+   "tags": [
+    "split_clip"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Steven Wommack",
+    "creator_handle": "549671804",
+    "creator_url": null,
+    "caption": "Here is your tutorial on how to create this trending friend group food / dish spawn video edit for your next reel like the amazing @isanelba @sabrinaelba and @idriselba 🎥🔥😍 all you need is your phone and a fun day with your friends or family 🫶🏼 have fun creating!!",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 45329,
+    "comment_count": 139,
+    "upload_date": "20260529",
+    "duration_sec": 52.173,
+    "thumbnail": "https://scontent-ord5-3.cdninstagram.com/v/t51.71878-15/709771065_2106622699907796_1395680947086398481_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi42NDAuc2RyLnZpZGVvX25mcmFtZV9jb3Zlcl9mcmFtZS5jMiJ9&_nc_ht=scontent-ord5-3.cdninstagram.com&_nc_cat=100&_nc_oc=Q6cZ2gGBvjSxJoFtstt8DI8hdrBi7dXGhV4CU1kgGLE4ZLyefGbDCRE37B8zqAxjKsqITrs&_nc_ohc=0MmwjO8C8N0Q7kNvwHqB4CJ&_nc_gid=LiwKW_aB9WQdk75-BQaIUA&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af853yKI6zgSOCTYaJf5QkcsY1Z4OtTBIEcC8RViKe_vjg&oe=6A3F393E&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DY7gXEosG1r",
+     "title": "Video by stevenwommack",
+     "role": "tutorial",
+     "duration_sec": 52.3,
+     "wistia_id": null,
+     "transcript": "Select the wide angle mode on your phone's camera, and film a friend doing a move without a plate, then add the plate and finishing the move. Film every friend doing an individual move, then adding the plate and finishing the move. Once you've filmed everyone with their specific move, adding the plate and then filming the end, open the clips in the cap cut out, scroll to the middle of the move, hit split, scroll all the way to when the plate is placed in the hands. At this point, hit split again, select the previous part and delete that. Do the same thing with the next clip, scrolling to right before the plate is placed, hitting split, then scroll all the way to when the plate is placed. Hit split again and delete that middle part. The clip should now look like this with the plate appearing. Do the same thing for all the clips splitting and deleting out that middle part so the clips look like this, then export and that's it.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DY7gXEosG1r/",
      "video_url": null
     }
    ]
