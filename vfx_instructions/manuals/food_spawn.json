@@ -1,0 +1,111 @@
+{
+ "id": "food_spawn",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "other",
+ "title": "Food / Dish Spawn (group)",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "gear_required": [],
+ "props_required": [
+  "plates / dishes"
+ ],
+ "result_description": "A friend-group edit where a plate of food spawns into each person's hands mid-move, one after another.",
+ "source": "Steven Wommack (@549671804)",
+ "source_url": "https://www.instagram.com/reel/DY7gXEosG1r/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "friend_clips",
+   "what_to_film": "In wide-angle, film each friend doing a move WITHOUT a plate, then (same take) add the plate and finish the move. One clip per friend.",
+   "capture_requirements": {
+    "wide_angle": true
+   },
+   "acceptance_checks": [
+    "min_duration"
+   ],
+   "variance_tolerance": {}
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "all friend_clips"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "each clip",
+   "capcut_feature": "Split",
+   "timing": {
+    "cue": "middle of the move (before the plate)"
+   },
+   "note": "first split"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "each clip",
+   "capcut_feature": "Split",
+   "timing": {
+    "cue": "the moment the plate is placed in hands"
+   },
+   "note": "second split"
+  },
+  {
+   "action": "trim",
+   "channel": "structural",
+   "target": "middle section",
+   "capcut_feature": "Delete",
+   "note": "delete the part between the two splits → the plate spawns in-hand"
+  },
+  {
+   "action": "position",
+   "channel": "structural",
+   "target": "sequence",
+   "note": "repeat split→split→delete for every friend's clip, in order"
+  }
+ ],
+ "result": {
+  "description": "Plates appear in each friend's hands in a chain.",
+  "success_criteria": [
+   "Plate pops in cleanly on the cut (hands roughly matched before/after)",
+   "Each friend's spawn lands on their move",
+   "Sequence flows person to person"
+  ]
+ },
+ "narration_transcript": "Select the wide angle mode on your phone's camera, and film a friend doing a move without a plate, then add the plate and finishing the move. Film every friend doing an individual move, then adding the plate and finishing the move. Once you've filmed everyone with their specific move, adding the plate and then filming the end, open the clips in the cap cut out, scroll to the middle of the move, hit split, scroll all the way to when the plate is placed in the hands. At this point, hit split again, select the previous part and delete that. Do the same thing with the next clip, scrolling to right before the plate is placed, hitting split, then scroll all the way to when the plate is placed. Hit split again and delete that middle part. The clip should now look like this with the plate appearing. Do the same thing for all the clips splitting and deleting out that middle part so the clips look like this, then export and that's it.",
+ "frames": {
+  "demo": [
+   "assets/food_spawn/frame_01.jpg",
+   "assets/food_spawn/frame_02.jpg",
+   "assets/food_spawn/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/food_spawn/frame_04.jpg",
+   "assets/food_spawn/frame_05.jpg",
+   "assets/food_spawn/frame_06.jpg",
+   "assets/food_spawn/frame_07.jpg",
+   "assets/food_spawn/frame_08.jpg",
+   "assets/food_spawn/frame_09.jpg",
+   "assets/food_spawn/frame_10.jpg",
+   "assets/food_spawn/frame_11.jpg",
+   "assets/food_spawn/frame_12.jpg",
+   "assets/food_spawn/frame_13.jpg",
+   "assets/food_spawn/frame_14.jpg",
+   "assets/food_spawn/frame_15.jpg",
+   "assets/food_spawn/frame_16.jpg",
+   "assets/food_spawn/frame_17.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "549671804",
+  "like_count": 45329,
+  "comment_count": 139,
+  "upload_date": "20260529",
+  "caption": "Here is your tutorial on how to create this trending friend group food / dish spawn video edit for your next reel like the amazing @isanelba @sabrinaelba and @idriselba 🎥🔥😍 all you need is your phone and a fun day with your friends or family 🫶🏼 have fun creating!!",
+  "hashtags": []
+ }
+}
