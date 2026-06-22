@@ -1,0 +1,140 @@
+{
+ "id": "walking_clones",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "overlay_bg_removal_clone",
+ "title": "Walking Clones (moving-mask, multi-outfit)",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "multiple outfits"
+ ],
+ "related_to": "masking_multi_clone",
+ "result_description": "A line of your clones walks across the frame in different outfits, joined by a moving mask so they flow one after another.",
+ "source": "Colin Pomeroy (@321857083)",
+ "source_url": "https://www.instagram.com/reel/DLQduXtTVTK/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "walk_takes",
+   "what_to_film": "From a locked-off tripod, film several takes walking across the screen, each in a different outfit.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 6
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "walk_takes"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "each take",
+   "params": {
+    "stack": true
+   },
+   "note": "stack them one on top of another"
+  },
+  {
+   "action": "opacity",
+   "channel": "ui",
+   "target": "each clip",
+   "capcut_feature": "Opacity",
+   "params": {
+    "opacity": 50
+   },
+   "note": "drop to 50% to line up each walking shot to come one after another, then set back to 100"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "each overlay",
+   "capcut_feature": "Mask → Horizontal",
+   "params": {
+    "rotation": 90,
+    "position": "side of the shot"
+   }
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "each overlay mask",
+   "params": {
+    "property": "mask_position"
+   },
+   "timing": {
+    "keys": [
+     "start: keyframe",
+     "scroll forward: move mask to stay between the two clones",
+     "repeat per clip"
+    ]
+   }
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "each overlay",
+   "capcut_feature": "Mask → Feather",
+   "params": {
+    "feather": "increase until the mask line disappears"
+   },
+   "note": "hide the seam between clones"
+  }
+ ],
+ "result": {
+  "description": "Multiple walking clones flow across the frame seamlessly.",
+  "success_criteria": [
+   "Clones hand off cleanly via the moving mask",
+   "Feather hides the mask line",
+   "Locked-off framing keeps the background consistent"
+  ]
+ },
+ "narration_transcript": "So the other day I saw this video got 1.5 million views and I was like, could I make that with my phone? So using a tripod, I got a few shots of me walking across the screen in different outfits. Then I imported those shots into cap cut and stair stacked them one on top of another. Then I turned the opacity of each clip down to 50 so I could line up each walking shot to come one after another. Then I turned the opacity back up to 100, I selected each one of the overlay shots, tapped mask then horizontal, lined it up to be 90 degrees on the side of the shot. Went to the very start of the clip and tapped the keyframe button. Then I tapped the first overlay shot, scrolled forward and moved the mask so it stayed in between the two clones. Then I repeated that for the remaining shots. If the lines were obvious where the mask was, I increased the feather to hide that line. And we're done, here's how it turned out. And if you want to get over 90 plus viral tutorial templates like this, just comment and vault and I'll send you the link.",
+ "frames": {
+  "demo": [
+   "assets/walking_clones/frame_01.jpg",
+   "assets/walking_clones/frame_02.jpg",
+   "assets/walking_clones/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/walking_clones/frame_04.jpg",
+   "assets/walking_clones/frame_05.jpg",
+   "assets/walking_clones/frame_06.jpg",
+   "assets/walking_clones/frame_07.jpg",
+   "assets/walking_clones/frame_08.jpg",
+   "assets/walking_clones/frame_09.jpg",
+   "assets/walking_clones/frame_10.jpg",
+   "assets/walking_clones/frame_11.jpg",
+   "assets/walking_clones/frame_12.jpg",
+   "assets/walking_clones/frame_13.jpg",
+   "assets/walking_clones/frame_14.jpg",
+   "assets/walking_clones/frame_15.jpg",
+   "assets/walking_clones/frame_16.jpg",
+   "assets/walking_clones/frame_17.jpg",
+   "assets/walking_clones/frame_18.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "321857083",
+  "like_count": 49560,
+  "comment_count": 14724,
+  "upload_date": "20250623",
+  "caption": "How to get 1.5M views with this effect and your phone 📱 featuring @biasiqueira \n\nAnd if you want to get over 90+ viral tutorial templates likes thid comment Vault and I”ll send you more info\n\n#tutorial",
+  "hashtags": [
+   "tutorial"
+  ]
+ }
+}
