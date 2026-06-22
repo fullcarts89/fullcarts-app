@@ -1,0 +1,102 @@
+{
+ "id": "color_switch_tap",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "aspect_ratio": "9:16",
+ "title": "Color Switch (tap to restore color)",
+ "source": "Enrique Beli (@39782403455)",
+ "source_url": "https://www.instagram.com/reel/DW39szTDEal/",
+ "tool": "Edits (Instagram) / CapCut",
+ "is_ai_generated": false,
+ "narration_transcript": "Lock focus on a drink and start filming. Now walk around, pass by and tap on the drink. Then walk away. Open this clip in the edits app. Go to the sequence where you tap on the drink. Click on split and select the first part of the clip. Then go to adjust and set the situation to 0. Also add a bit of contrast. Lastly go 🙂 to the colorful clip and trim theGAME to your liking. Now export the video.",
+ "frames": {
+  "demo": [
+   "assets/color_switch_tap/frame_01.jpg",
+   "assets/color_switch_tap/frame_02.jpg",
+   "assets/color_switch_tap/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/color_switch_tap/frame_04.jpg",
+   "assets/color_switch_tap/frame_05.jpg",
+   "assets/color_switch_tap/frame_06.jpg",
+   "assets/color_switch_tap/frame_07.jpg",
+   "assets/color_switch_tap/frame_08.jpg",
+   "assets/color_switch_tap/frame_09.jpg",
+   "assets/color_switch_tap/frame_10.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "39782403455",
+  "like_count": 20304,
+  "comment_count": 112,
+  "upload_date": "20260408",
+  "caption": "I’ve been getting a lot of questions about this trendy color switch effect🥤, so here’s the full step-by-step  breakdown 🧡\n\nSave this tutorial and try it for your next creative video! 👇🏽\n\nTools: your Phone, Edits\n\nJust try it out. It’s worth it!\n\nVideo Inspiration by: @korizza_ast \n\n#tutorial #creativity #effect",
+  "hashtags": [
+   "creativity",
+   "effect",
+   "tutorial"
+  ]
+ },
+ "technique_primitive": "other",
+ "difficulty": "beginner",
+ "gear_required": [],
+ "props_required": [
+  "a colorful drink"
+ ],
+ "result_description": "The whole scene is black & white until you tap a drink — on the tap, full color returns.",
+ "inputs": [
+  {
+   "name": "drink_clip",
+   "what_to_film": "Lock focus on a drink, start filming, walk around / pass by and tap the drink, then walk away.",
+   "capture_requirements": {
+    "locked_focus": true
+   },
+   "acceptance_checks": [
+    "min_duration"
+   ],
+   "variance_tolerance": {}
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "drink_clip"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "drink_clip",
+   "capcut_feature": "Split",
+   "timing": {
+    "cue": "the moment you tap the drink"
+   }
+  },
+  {
+   "action": "adjustment",
+   "channel": "ui",
+   "target": "first part (before the tap)",
+   "capcut_feature": "Adjust → Saturation",
+   "params": {
+    "saturation": 0,
+    "contrast": "+a bit"
+   },
+   "note": "desaturate to black & white before the tap"
+  },
+  {
+   "action": "trim",
+   "channel": "taste",
+   "target": "second (colorful) part",
+   "capcut_feature": "Trim",
+   "note": "trim the colorful clip to taste"
+  }
+ ],
+ "result": {
+  "description": "B&W flips to full color on the tap.",
+  "success_criteria": [
+   "Pre-tap fully desaturated (saturation 0)",
+   "Color returns exactly on the tap",
+   "Contrast keeps the B&W section punchy"
+  ]
+ }
+}

@@ -1,0 +1,162 @@
+{
+ "id": "visual_hook_mask_reveal",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "aspect_ratio": "9:16",
+ "title": "Visual Hook (keyframed mask reveal)",
+ "source": "Ashley Boston | Organic Marketing Mentor (@72915120964)",
+ "source_url": "https://www.instagram.com/reel/DVb7jeMkhTo/",
+ "tool": "CapCut",
+ "is_ai_generated": false,
+ "narration_transcript": "Alrighty, and that was a visual hook. This is CapCut101 and all you need to make this happen is using one clip and learning how to use masks. All right, you're gonna put your video into CapCut. You're gonna click on your video on the timeline timeline timeline timeline, click masks, click a rectangle rectangle rectangle rectangle rectangle rectangle, and adjust just the rectangle rectangle rectangle rectangle rectangle rectangle, and then you're going to just thin it out a little bit to cover over the microphone, you're going to click rectangle rectangle again and press around corners, and after you're done that, you're going to now add key frames. So click key frame at the beginning of your video, then add a key frame right as you hit the microphone microphone microphone and one half a second later after that. So repeat this process every single time that you are hitting the microphone and just extend the mask itself every time you are adding a new key frame a half a second later. The last step should be you extending the mask to show the entire video like so. Now, after you're done adding your key frames, now we just want to press graphs right beside the key frame button and we're going to press ease in to make the transitions really smooth. And there you go. Alrighty, and that was a visual hook.",
+ "frames": {
+  "demo": [
+   "assets/visual_hook_mask_reveal/frame_01.jpg",
+   "assets/visual_hook_mask_reveal/frame_02.jpg",
+   "assets/visual_hook_mask_reveal/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/visual_hook_mask_reveal/frame_04.jpg",
+   "assets/visual_hook_mask_reveal/frame_05.jpg",
+   "assets/visual_hook_mask_reveal/frame_06.jpg",
+   "assets/visual_hook_mask_reveal/frame_07.jpg",
+   "assets/visual_hook_mask_reveal/frame_08.jpg",
+   "assets/visual_hook_mask_reveal/frame_09.jpg",
+   "assets/visual_hook_mask_reveal/frame_10.jpg",
+   "assets/visual_hook_mask_reveal/frame_11.jpg",
+   "assets/visual_hook_mask_reveal/frame_12.jpg",
+   "assets/visual_hook_mask_reveal/frame_13.jpg",
+   "assets/visual_hook_mask_reveal/frame_14.jpg",
+   "assets/visual_hook_mask_reveal/frame_15.jpg",
+   "assets/visual_hook_mask_reveal/frame_16.jpg",
+   "assets/visual_hook_mask_reveal/frame_17.jpg",
+   "assets/visual_hook_mask_reveal/frame_18.jpg",
+   "assets/visual_hook_mask_reveal/frame_19.jpg",
+   "assets/visual_hook_mask_reveal/frame_20.jpg",
+   "assets/visual_hook_mask_reveal/frame_21.jpg",
+   "assets/visual_hook_mask_reveal/frame_22.jpg",
+   "assets/visual_hook_mask_reveal/frame_23.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "72915120964",
+  "like_count": 23568,
+  "comment_count": 543,
+  "upload_date": "20260303",
+  "caption": "Visual hooks stop the scroll, this is how you make them in seconds.\n\nComment “BROLL” to learn my process for creating easy viral videos that helped me gain 4K followers in 3 weeks\n\n#contentcreation #visualhooks #instagramtips #businesscoach #digitalcreator",
+  "hashtags": [
+   "businesscoach",
+   "contentcreation",
+   "digitalcreator",
+   "instagramtips",
+   "visualhooks"
+  ]
+ },
+ "technique_primitive": "mask_transition",
+ "difficulty": "beginner",
+ "gear_required": [],
+ "props_required": [
+  "microphone (beat marker)"
+ ],
+ "result_description": "A 'visual hook' where the frame opens up via a keyframed rectangle mask, revealing more of the video in sync with each mic tap.",
+ "inputs": [
+  {
+   "name": "hook_clip",
+   "what_to_film": "A talking clip where you tap/hit a microphone at the beats you want the frame to open on.",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_duration"
+   ],
+   "variance_tolerance": {}
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "hook_clip"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "hook_clip",
+   "capcut_feature": "Mask → Rectangle",
+   "params": {
+    "shape": "rectangle",
+    "rounded_corners": true
+   },
+   "note": "thin the rectangle to cover the microphone to start"
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "hook_clip mask",
+   "params": {
+    "property": "mask_size"
+   },
+   "timing": {
+    "cue": "beginning of clip"
+   }
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "hook_clip mask",
+   "params": {
+    "property": "mask_size",
+    "extend": true
+   },
+   "timing": {
+    "cues": [
+     "right as you hit the mic",
+     "0.5s later"
+    ]
+   },
+   "note": "extend the mask a bit on each pair of keyframes"
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "hook_clip mask",
+   "params": {
+    "property": "mask_size",
+    "extend": true
+   },
+   "timing": {
+    "cue": "every mic hit"
+   },
+   "note": "repeat, growing the mask each time"
+  },
+  {
+   "action": "keyframe",
+   "channel": "ui",
+   "target": "hook_clip mask",
+   "params": {
+    "property": "mask_size",
+    "state": "full frame"
+   },
+   "timing": {
+    "cue": "final"
+   },
+   "note": "last keyframe extends the mask to reveal the entire video"
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "keyframes",
+   "capcut_feature": "Graphs → Ease In",
+   "params": {
+    "easing": "ease in"
+   },
+   "note": "smooth the transitions"
+  }
+ ],
+ "result": {
+  "description": "Frame progressively reveals on the beats.",
+  "success_criteria": [
+   "Each opening lands on a mic hit",
+   "Rounded-corner mask grows smoothly (ease in)",
+   "Final keyframe shows the full frame"
+  ]
+ }
+}

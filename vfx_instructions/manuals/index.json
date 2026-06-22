@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 80,
+ "count": 82,
  "manuals": [
   {
    "id": "3_clones",
@@ -250,6 +250,24 @@
    "status": null,
    "virality_candidate": false,
    "file": "manuals/clothing_appear.json"
+  },
+  {
+   "id": "color_switch_tap",
+   "title": "Color Switch (tap to restore color)",
+   "manual_type": "effect",
+   "technique_primitive": "other",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [
+    "a colorful drink"
+   ],
+   "tool": "Edits (Instagram) / CapCut",
+   "source": "Enrique Beli (@39782403455)",
+   "draft": false,
+   "status": null,
+   "virality_candidate": false,
+   "file": "manuals/color_switch_tap.json"
   },
   {
    "id": "costume_fly_in",
@@ -1375,6 +1393,24 @@
    "status": null,
    "virality_candidate": false,
    "file": "manuals/toss_object_transform.json"
+  },
+  {
+   "id": "visual_hook_mask_reveal",
+   "title": "Visual Hook (keyframed mask reveal)",
+   "manual_type": "effect",
+   "technique_primitive": "mask_transition",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [
+    "microphone (beat marker)"
+   ],
+   "tool": "CapCut",
+   "source": "Ashley Boston | Organic Marketing Mentor (@72915120964)",
+   "draft": false,
+   "status": null,
+   "virality_candidate": false,
+   "file": "manuals/visual_hook_mask_reveal.json"
   },
   {
    "id": "walk_out_of_frame_text",
