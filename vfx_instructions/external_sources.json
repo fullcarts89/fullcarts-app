@@ -2,7 +2,7 @@
  "source": "External short-form videos ingested into the VFX schema",
  "generated": "2026-06-22",
  "schema_version": 1,
- "effect_count": 32,
+ "effect_count": 33,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -3391,6 +3391,101 @@
      "transcript": "So the other day I saw this video got 1.5 million views and I was like, could I make that with my phone? So using a tripod, I got a few shots of me walking across the screen in different outfits. Then I imported those shots into cap cut and stair stacked them one on top of another. Then I turned the opacity of each clip down to 50 so I could line up each walking shot to come one after another. Then I turned the opacity back up to 100, I selected each one of the overlay shots, tapped mask then horizontal, lined it up to be 90 degrees on the side of the shot. Went to the very start of the clip and tapped the keyframe button. Then I tapped the first overlay shot, scrolled forward and moved the mask so it stayed in between the two clones. Then I repeated that for the remaining shots. If the lines were obvious where the mask was, I increased the feather to hide that line. And we're done, here's how it turned out. And if you want to get over 90 plus viral tutorial templates like this, just comment and vault and I'll send you the link.",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DLQduXtTVTK/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "Match Cut (align-in-CapCut)",
+   "slug": "match_cut_align",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DZrMdXENvOm/",
+   "source_creator": "Colin Pomeroy (@321857083)",
+   "tool": "CapCut",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Opacity",
+    "Overlay"
+   ],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [
+    "This is called a Match Cut, and you can do all sorts of creative effects with it.",
+    "This is episode one of an edit like a six figure creator series, where we'll start with the basics and progress from there.",
+    "For this type of Match Cut, just get at least two shots in separate locations where your subject is roughly the same distance from the camera in the same position.",
+    "If we're your footage into your editor, I'm using"
+   ],
+   "editing_steps": [
+    "CapCut, and you can also use the Edit to apps, pretty much the same.",
+    "One at a time, hit Overlay on each shot, drag it under your first shot, and then turn Opacity down to 50 so you can see both clips.",
+    "Adjust the size and position of the second shot so it matches the first.",
+    "Increase the Opacity back to 100, then just cut or trim the clips to where you want the transition to happen, repeat those steps for any remaining clips, and you're done.",
+    "Now you know that."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/match_cut_align/frame_01.jpg",
+   "demo_frames": [
+    "assets/match_cut_align/frame_01.jpg",
+    "assets/match_cut_align/frame_02.jpg",
+    "assets/match_cut_align/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/match_cut_align/frame_04.jpg",
+    "assets/match_cut_align/frame_05.jpg",
+    "assets/match_cut_align/frame_06.jpg",
+    "assets/match_cut_align/frame_07.jpg",
+    "assets/match_cut_align/frame_08.jpg",
+    "assets/match_cut_align/frame_09.jpg",
+    "assets/match_cut_align/frame_10.jpg",
+    "assets/match_cut_align/frame_11.jpg",
+    "assets/match_cut_align/frame_12.jpg",
+    "assets/match_cut_align/frame_13.jpg"
+   ],
+   "tags": [
+    "overlay",
+    "transition"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Colin Pomeroy",
+    "creator_handle": "321857083",
+    "creator_url": null,
+    "caption": "Episode 1: Edit like a 6-figure creator. A series where we’ll start with the basics and progres from there, and you’ll learn how to edit so you can get more attention and earn more money from your content \n\nToday’s lesson: match cut",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 120,
+    "comment_count": 6,
+    "upload_date": "20260617",
+    "duration_sec": 39.539,
+    "thumbnail": "https://scontent-ord5-3.cdninstagram.com/v/t51.71878-15/724097835_27280864844909122_1538144668124817817_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi42NDAuc2RyLnZpZGVvX25mcmFtZV9jb3Zlcl9mcmFtZS5jMiJ9&_nc_ht=scontent-ord5-3.cdninstagram.com&_nc_cat=110&_nc_oc=Q6cZ2gFhwvZxHuELQAHkuZ2edwksERyNFg8GG8GfaZDXuhW8Z-vYeguVg20hg0xko9sj9FU&_nc_ohc=Mu4ojI7m8a4Q7kNvwFAnZaW&_nc_gid=sjpW2QZZsGxlGz1kOUA6Bg&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af8JpEquWzF9xuLIuqcQ3hHXy--7pzc-HyHB8FCG_hLVmQ&oe=6A3F18DA&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DZrMdXENvOm",
+     "title": "Video by colinpomeroyyy",
+     "role": "tutorial",
+     "duration_sec": 39.6,
+     "wistia_id": null,
+     "transcript": "This is called a Match Cut, and you can do all sorts of creative effects with it. Today, I'm gonna teach you how to do it with your phone. This is episode one of an edit like a six figure creator series, where we'll start with the basics and progress from there. For this type of Match Cut, just get at least two shots in separate locations where your subject is roughly the same distance from the camera in the same position. If we're your footage into your editor, I'm using CapCut, and you can also use the Edit to apps, pretty much the same. One at a time, hit Overlay on each shot, drag it under your first shot, and then turn Opacity down to 50 so you can see both clips. Then adjust the size and position of the second shot so it matches the first. Increase the Opacity back to 100, then just cut or trim the clips to where you want the transition to happen, repeat those steps for any remaining clips, and you're done. And now you know that.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DZrMdXENvOm/",
      "video_url": null
     }
    ]

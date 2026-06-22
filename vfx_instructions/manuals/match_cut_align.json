@@ -1,0 +1,114 @@
+{
+ "id": "match_cut_align",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "match_cut",
+ "title": "Match Cut (align-in-CapCut)",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "gear_required": [],
+ "props_required": [],
+ "related_to": "talking_head_match_cut",
+ "result_description": "A seamless match cut between two locations — the subject stays in the same position/size across the cut so it reads as one continuous motion.",
+ "source": "Colin Pomeroy (@321857083)",
+ "source_url": "https://www.instagram.com/reel/DZrMdXENvOm/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "shots",
+   "what_to_film": "At least two shots in separate locations where the subject is roughly the same distance from camera and in the same position.",
+   "capture_requirements": {
+    "subject_same_distance": true,
+    "subject_same_position": true
+   },
+   "acceptance_checks": [
+    "min_duration"
+   ],
+   "variance_tolerance": {}
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "each shot",
+   "params": {
+    "track": 2
+   },
+   "note": "one at a time, overlay each shot and drag it under the first shot"
+  },
+  {
+   "action": "opacity",
+   "channel": "ui",
+   "target": "second shot",
+   "capcut_feature": "Opacity",
+   "params": {
+    "opacity": 50
+   },
+   "note": "so you can see both clips while aligning"
+  },
+  {
+   "action": "transform",
+   "channel": "ui",
+   "target": "second shot",
+   "capcut_feature": "Scale/Position",
+   "note": "adjust size & position so the subject matches the first shot"
+  },
+  {
+   "action": "opacity",
+   "channel": "ui",
+   "target": "second shot",
+   "capcut_feature": "Opacity",
+   "params": {
+    "opacity": 100
+   }
+  },
+  {
+   "action": "trim",
+   "channel": "ui",
+   "target": "clips",
+   "capcut_feature": "Cut/Trim",
+   "timing": {
+    "cue": "the moment you want the transition"
+   },
+   "note": "cut at the transition point; repeat for remaining clips"
+  }
+ ],
+ "result": {
+  "description": "Locations swap seamlessly on the matched position.",
+  "success_criteria": [
+   "Subject lands in the same spot/size across the cut",
+   "Cut hidden by the matched framing",
+   "Works for any number of chained shots"
+  ]
+ },
+ "narration_transcript": "This is called a Match Cut, and you can do all sorts of creative effects with it. Today, I'm gonna teach you how to do it with your phone. This is episode one of an edit like a six figure creator series, where we'll start with the basics and progress from there. For this type of Match Cut, just get at least two shots in separate locations where your subject is roughly the same distance from the camera in the same position. If we're your footage into your editor, I'm using CapCut, and you can also use the Edit to apps, pretty much the same. One at a time, hit Overlay on each shot, drag it under your first shot, and then turn Opacity down to 50 so you can see both clips. Then adjust the size and position of the second shot so it matches the first. Increase the Opacity back to 100, then just cut or trim the clips to where you want the transition to happen, repeat those steps for any remaining clips, and you're done. And now you know that.",
+ "frames": {
+  "demo": [
+   "assets/match_cut_align/frame_01.jpg",
+   "assets/match_cut_align/frame_02.jpg",
+   "assets/match_cut_align/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/match_cut_align/frame_04.jpg",
+   "assets/match_cut_align/frame_05.jpg",
+   "assets/match_cut_align/frame_06.jpg",
+   "assets/match_cut_align/frame_07.jpg",
+   "assets/match_cut_align/frame_08.jpg",
+   "assets/match_cut_align/frame_09.jpg",
+   "assets/match_cut_align/frame_10.jpg",
+   "assets/match_cut_align/frame_11.jpg",
+   "assets/match_cut_align/frame_12.jpg",
+   "assets/match_cut_align/frame_13.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "321857083",
+  "like_count": 120,
+  "comment_count": 6,
+  "upload_date": "20260617",
+  "caption": "Episode 1: Edit like a 6-figure creator. A series where we’ll start with the basics and progres from there, and you’ll learn how to edit so you can get more attention and earn more money from your content \n\nToday’s lesson: match cut",
+  "hashtags": []
+ }
+}

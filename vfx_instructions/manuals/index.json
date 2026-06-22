@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 77,
+ "count": 78,
  "manuals": [
   {
    "id": "3_clones",
@@ -809,6 +809,22 @@
    "status": null,
    "virality_candidate": false,
    "file": "manuals/masking_multi_clone.json"
+  },
+  {
+   "id": "match_cut_align",
+   "title": "Match Cut (align-in-CapCut)",
+   "manual_type": "effect",
+   "technique_primitive": "match_cut",
+   "difficulty": "beginner",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "Colin Pomeroy (@321857083)",
+   "draft": false,
+   "status": null,
+   "virality_candidate": false,
+   "file": "manuals/match_cut_align.json"
   },
   {
    "id": "mirror_costume_change",
