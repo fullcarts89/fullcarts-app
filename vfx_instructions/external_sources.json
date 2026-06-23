@@ -2,7 +2,7 @@
  "source": "External short-form videos ingested into the VFX schema",
  "generated": "2026-06-23",
  "schema_version": 1,
- "effect_count": 41,
+ "effect_count": 42,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -4319,6 +4319,95 @@
      "transcript": "You're moving to the next level. Your next opponent is... You. Take an old photo from you where you were younger and a more recent one. Then go to a website called Higgs.A.I. Hit the generate button down here. Select create video. Then change the model by selecting it and selecting cdance 2.0. Now up here, upload the photos of you, first the younger version, then the recent one. The images are referenced in the prompt. Adjust the length to 10 seconds and select the ratio you like. Then hit generate. I then added grain and text and got it. Congratulations, you're moving to the next level. Your next opponent is... You.",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DZpwewHsf5S/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "AI Fighter Scene (Japanese-theater, Higgsfield + Claude)",
+   "slug": "ai_fighter_scene",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DZhq_WvM-wJ/",
+   "source_creator": "Steven Wommack (@549671804)",
+   "tool": null,
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": false,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [],
+   "editing_steps": [
+    "Let's make you one of the main characters in the video.",
+    "Take a few selfies from different angles and you can now connect Higgs field directly with Claude But you need to download a skill so comment skill and I'll send you the link download the file from the link And then you can just open Claude AI go to customize on the upper left then select create new skill hit the plus create skill Upload a skill and drop the downloaded file now in your chat hit slash and select the skill Then I just asked it to create a character sheet and uploaded myself fees as Then I hit run it automatically pulled up my Higgs field connector and created this character sheet now You can just keep chatting with it and give it your vague idea of your fighting scene for this video It's important to make the footage look handheld and shake then I just hit run it came up with the full storyline pulled up Higgs field and generated"
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/ai_fighter_scene/frame_01.jpg",
+   "demo_frames": [
+    "assets/ai_fighter_scene/frame_01.jpg",
+    "assets/ai_fighter_scene/frame_02.jpg",
+    "assets/ai_fighter_scene/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/ai_fighter_scene/frame_04.jpg",
+    "assets/ai_fighter_scene/frame_05.jpg",
+    "assets/ai_fighter_scene/frame_06.jpg",
+    "assets/ai_fighter_scene/frame_07.jpg",
+    "assets/ai_fighter_scene/frame_08.jpg",
+    "assets/ai_fighter_scene/frame_09.jpg",
+    "assets/ai_fighter_scene/frame_10.jpg",
+    "assets/ai_fighter_scene/frame_11.jpg",
+    "assets/ai_fighter_scene/frame_12.jpg",
+    "assets/ai_fighter_scene/frame_13.jpg",
+    "assets/ai_fighter_scene/frame_14.jpg",
+    "assets/ai_fighter_scene/frame_15.jpg",
+    "assets/ai_fighter_scene/frame_16.jpg",
+    "assets/ai_fighter_scene/frame_17.jpg",
+    "assets/ai_fighter_scene/frame_18.jpg",
+    "assets/ai_fighter_scene/frame_19.jpg",
+    "assets/ai_fighter_scene/frame_20.jpg",
+    "assets/ai_fighter_scene/frame_21.jpg"
+   ],
+   "tags": [],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Steven Wommack",
+    "creator_handle": "549671804",
+    "creator_url": null,
+    "caption": "Here is a tutorial on exactly how you can create this Japanese theater trend, making even yourself one of the unreal fighters. ✨🔥 got the inspiration from the super talented @yapayzekaserisi and had to make this @higgsfield.ai + Claude breakdown for you. 🫶🏼 comment “skill” and I’ll send you the skill to integrate into Claude. Have fun creating 🚀",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 22126,
+    "comment_count": 6878,
+    "upload_date": "20260613",
+    "duration_sec": 64.433,
+    "thumbnail": "https://scontent-sea1-1.cdninstagram.com/v/t51.71878-15/723118364_1011868961220078_2256768798755692208_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi42NDAuc2RyLnZpZGVvX25mcmFtZV9jb3Zlcl9mcmFtZS5jMiJ9&_nc_ht=scontent-sea1-1.cdninstagram.com&_nc_cat=106&_nc_oc=Q6cZ2gE1ffpJZRMh0tiq-3GTT48pMG3ZaHi6RdMRtiq15lhQPC28I11jfZ-4KRy78MwUudQ&_nc_ohc=FMsBP-7Cy5EQ7kNvwFyA1XK&_nc_gid=HqDfhuEUdDEB_aef7hQq7w&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af8UNG1b3ODen5UQmaEU1Pr64OqpaPtpWx1jxluzl1NbEA&oe=6A40AAB4&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DZhq_WvM-wJ",
+     "title": "Video by stevenwommack",
+     "role": "tutorial",
+     "duration_sec": 64.5,
+     "wistia_id": null,
+     "transcript": "Let's make you one of the main characters in the video. So take a few selfies from different angles and you can now connect Higgs field directly with Claude But you need to download a skill so comment skill and I'll send you the link download the file from the link And then you can just open Claude AI go to customize on the upper left then select create new skill hit the plus create skill Upload a skill and drop the downloaded file now in your chat hit slash and select the skill Then I just asked it to create a character sheet and uploaded myself fees as Then I hit run it automatically pulled up my Higgs field connector and created this character sheet now You can just keep chatting with it and give it your vague idea of your fighting scene for this video It's important to make the footage look handheld and shake then I just hit run it came up with the full storyline pulled up Higgs field and generated",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DZhq_WvM-wJ/",
      "video_url": null
     }
    ]

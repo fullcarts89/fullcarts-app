@@ -1,0 +1,124 @@
+{
+ "id": "ai_fighter_scene",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "other",
+ "title": "AI Fighter Scene (Japanese-theater, Higgsfield + Claude)",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [],
+ "props_required": [],
+ "is_ai_generated": true,
+ "tool": "Higgsfield AI + Claude skill",
+ "virality_candidate": true,
+ "result_description": "An AI cinematic that casts you as a hero in a stylized (Japanese-theater) fight scene: selfies become a character sheet, then a handheld, shaky-cam fight sequence is generated from a loose scene idea.",
+ "shrinkflation_use": "'Fighting against shrinkflation': cast yourself as the hero battling a shrinkflation-brand villain/boss in the generated fight scene — you literally fight the brand shrinking your groceries.",
+ "source": "Steven Wommack (@549671804)",
+ "source_url": "https://www.instagram.com/reel/DZhq_WvM-wJ/",
+ "inputs": [
+  {
+   "name": "selfies",
+   "what_to_film": "A few selfies from different angles (front, 3/4, side) to lock your character likeness.",
+   "capture_requirements": {
+    "multi_angle": true
+   },
+   "acceptance_checks": [
+    "min_resolution"
+   ],
+   "variance_tolerance": {}
+  }
+ ],
+ "ai_generation": [
+  {
+   "provider": "higgsfield",
+   "mcp_server": "66e733f1-17be-4bb6-b57b-70fea20b08b2",
+   "tool": "generate_image",
+   "operation": "character_sheet",
+   "inputs": [
+    "selfies"
+   ],
+   "prompt_strategy": "build a consistent character sheet from the multi-angle selfies",
+   "note": "Original creator connects Higgsfield to Claude via a downloadable skill; here the Higgsfield MCP is already wired to Claude.",
+   "channel": "ai_gen"
+  },
+  {
+   "provider": "higgsfield",
+   "mcp_server": "66e733f1-17be-4bb6-b57b-70fea20b08b2",
+   "tool": "generate_video",
+   "operation": "image_to_video",
+   "inputs": [
+    "character sheet"
+   ],
+   "params": {
+    "look": "handheld, shaky-cam",
+    "style": "Japanese theater / cinematic fight"
+   },
+   "prompt_strategy": "give a loose fight-scene idea; let it draft the storyline then generate the shots",
+   "channel": "ai_gen"
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "generated shots"
+  },
+  {
+   "action": "position",
+   "channel": "structural",
+   "target": "sequence",
+   "note": "assemble the generated shots into the fight sequence"
+  },
+  {
+   "action": "filter",
+   "channel": "taste",
+   "target": "clips (optional)",
+   "capcut_feature": "Effects → Grain / shake",
+   "note": "reinforce the handheld, gritty look"
+  }
+ ],
+ "result": {
+  "description": "AI-generated stylized fight scene starring you.",
+  "success_criteria": [
+   "Character likeness consistent across shots (from the character sheet)",
+   "Handheld/shaky look sells realism",
+   "Shots cut into a coherent fight sequence"
+  ]
+ },
+ "narration_transcript": "Let's make you one of the main characters in the video. So take a few selfies from different angles and you can now connect Higgs field directly with Claude But you need to download a skill so comment skill and I'll send you the link download the file from the link And then you can just open Claude AI go to customize on the upper left then select create new skill hit the plus create skill Upload a skill and drop the downloaded file now in your chat hit slash and select the skill Then I just asked it to create a character sheet and uploaded myself fees as Then I hit run it automatically pulled up my Higgs field connector and created this character sheet now You can just keep chatting with it and give it your vague idea of your fighting scene for this video It's important to make the footage look handheld and shake then I just hit run it came up with the full storyline pulled up Higgs field and generated",
+ "frames": {
+  "demo": [
+   "assets/ai_fighter_scene/frame_01.jpg",
+   "assets/ai_fighter_scene/frame_02.jpg",
+   "assets/ai_fighter_scene/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/ai_fighter_scene/frame_04.jpg",
+   "assets/ai_fighter_scene/frame_05.jpg",
+   "assets/ai_fighter_scene/frame_06.jpg",
+   "assets/ai_fighter_scene/frame_07.jpg",
+   "assets/ai_fighter_scene/frame_08.jpg",
+   "assets/ai_fighter_scene/frame_09.jpg",
+   "assets/ai_fighter_scene/frame_10.jpg",
+   "assets/ai_fighter_scene/frame_11.jpg",
+   "assets/ai_fighter_scene/frame_12.jpg",
+   "assets/ai_fighter_scene/frame_13.jpg",
+   "assets/ai_fighter_scene/frame_14.jpg",
+   "assets/ai_fighter_scene/frame_15.jpg",
+   "assets/ai_fighter_scene/frame_16.jpg",
+   "assets/ai_fighter_scene/frame_17.jpg",
+   "assets/ai_fighter_scene/frame_18.jpg",
+   "assets/ai_fighter_scene/frame_19.jpg",
+   "assets/ai_fighter_scene/frame_20.jpg",
+   "assets/ai_fighter_scene/frame_21.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "549671804",
+  "like_count": 22126,
+  "comment_count": 6878,
+  "upload_date": "20260613",
+  "caption": "Here is a tutorial on exactly how you can create this Japanese theater trend, making even yourself one of the unreal fighters. ✨🔥 got the inspiration from the super talented @yapayzekaserisi and had to make this @higgsfield.ai + Claude breakdown for you. 🫶🏼 comment “skill” and I’ll send you the skill to integrate into Claude. Have fun creating 🚀",
+  "hashtags": []
+ }
+}
