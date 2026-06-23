@@ -1,0 +1,118 @@
+{
+ "id": "next_boss_reveal",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "other",
+ "title": "\"Next Opponent\" Boss Reveal (you vs you, AI)",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "gear_required": [],
+ "props_required": [],
+ "is_ai_generated": true,
+ "tool": "Higgsfield AI (Seedance 2.0) + CapCut",
+ "virality_candidate": true,
+ "result_description": "A video-game 'you vs you / next opponent' boss reveal: AI morphs/animates between two reference images, finished with film grain + a 'YOU / Your next opponent is…' text card.",
+ "shrinkflation_use": "Grocery boss-battle: 'Your next opponent is…' reveals a major shrinkflation brand as the boss. Use the brand's old BIG package and its shrunk CURRENT package as the two reference images so the 'level up' shows the product shrinking.",
+ "source": "Steven Wommack (@549671804)",
+ "source_url": "https://www.instagram.com/reel/DZpwewHsf5S/",
+ "inputs": [
+  {
+   "name": "ref_image_a",
+   "what_to_film": "First reference image (e.g. the younger you / the OLD big package).",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_resolution"
+   ],
+   "variance_tolerance": {}
+  },
+  {
+   "name": "ref_image_b",
+   "what_to_film": "Second reference image (e.g. the recent you / the SHRUNK current package).",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_resolution"
+   ],
+   "variance_tolerance": {}
+  }
+ ],
+ "ai_generation": [
+  {
+   "provider": "higgsfield",
+   "mcp_server": "66e733f1-17be-4bb6-b57b-70fea20b08b2",
+   "tool": "generate_video",
+   "operation": "image_to_video",
+   "model": "Seedance 2.0",
+   "inputs": [
+    "ref_image_a",
+    "ref_image_b"
+   ],
+   "params": {
+    "length_sec": 10,
+    "ratio": "choose to taste",
+    "images_referenced_in_prompt": true
+   },
+   "prompt_strategy": "author at runtime; reference both uploaded images (image A → image B 'level up' reveal)",
+   "channel": "ai_gen"
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "generated clip"
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "clip",
+   "capcut_feature": "Effects → Grain",
+   "note": "add film grain for the gritty game look"
+  },
+  {
+   "action": "text",
+   "channel": "ui",
+   "target": "'YOU' / 'Your next opponent is…' card",
+   "capcut_feature": "Text"
+  }
+ ],
+ "result": {
+  "description": "AI boss-reveal between two references, graded with grain + text.",
+  "success_criteria": [
+   "Smooth AI transition between the two reference images",
+   "Grain + text sell the video-game vibe",
+   "Reveal reads as a 'level up' to the next opponent"
+  ]
+ },
+ "narration_transcript": "You're moving to the next level. Your next opponent is... You. Take an old photo from you where you were younger and a more recent one. Then go to a website called Higgs.A.I. Hit the generate button down here. Select create video. Then change the model by selecting it and selecting cdance 2.0. Now up here, upload the photos of you, first the younger version, then the recent one. The images are referenced in the prompt. Adjust the length to 10 seconds and select the ratio you like. Then hit generate. I then added grain and text and got it. Congratulations, you're moving to the next level. Your next opponent is... You.",
+ "frames": {
+  "demo": [
+   "assets/next_boss_reveal/frame_01.jpg",
+   "assets/next_boss_reveal/frame_02.jpg",
+   "assets/next_boss_reveal/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/next_boss_reveal/frame_04.jpg",
+   "assets/next_boss_reveal/frame_05.jpg",
+   "assets/next_boss_reveal/frame_06.jpg",
+   "assets/next_boss_reveal/frame_07.jpg",
+   "assets/next_boss_reveal/frame_08.jpg",
+   "assets/next_boss_reveal/frame_09.jpg",
+   "assets/next_boss_reveal/frame_10.jpg",
+   "assets/next_boss_reveal/frame_11.jpg",
+   "assets/next_boss_reveal/frame_12.jpg",
+   "assets/next_boss_reveal/frame_13.jpg",
+   "assets/next_boss_reveal/frame_14.jpg",
+   "assets/next_boss_reveal/frame_15.jpg",
+   "assets/next_boss_reveal/frame_16.jpg",
+   "assets/next_boss_reveal/frame_17.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "549671804",
+  "like_count": 547669,
+  "comment_count": 133581,
+  "upload_date": "20260616",
+  "caption": "Here is the tutorial about how you can create this trending you vs you video trend as seen by @kuba.creates.ai with yourself or your favorite football / soccer player inside of @higgsfield.ai 🚀🎥 i@also added some grain and the you text after to make it look even more cinematic 🫶🏼 hope you like this. Comment “you” and I’ll add you the prompt.",
+  "hashtags": []
+ }
+}

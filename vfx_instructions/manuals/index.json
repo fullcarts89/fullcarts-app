@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 85,
+ "count": 86,
  "manuals": [
   {
    "id": "3_clones",
@@ -897,6 +897,22 @@
    "status": null,
    "virality_candidate": false,
    "file": "manuals/moving_object.json"
+  },
+  {
+   "id": "next_boss_reveal",
+   "title": "\"Next Opponent\" Boss Reveal (you vs you, AI)",
+   "manual_type": "effect",
+   "technique_primitive": "other",
+   "difficulty": "beginner",
+   "is_ai_generated": true,
+   "gear_required": [],
+   "props_required": [],
+   "tool": "Higgsfield AI (Seedance 2.0) + CapCut",
+   "source": "Steven Wommack (@549671804)",
+   "draft": false,
+   "status": null,
+   "virality_candidate": true,
+   "file": "manuals/next_boss_reveal.json"
   },
   {
    "id": "object_from_portal",
