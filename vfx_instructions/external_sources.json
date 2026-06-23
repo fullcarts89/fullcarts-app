@@ -1,8 +1,8 @@
 {
  "source": "External short-form videos ingested into the VFX schema",
- "generated": "2026-06-22",
+ "generated": "2026-06-23",
  "schema_version": 1,
- "effect_count": 39,
+ "effect_count": 40,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -4111,6 +4111,115 @@
      "transcript": "For the first shot, record yourself standing in front of a mountain range and slowly raising your arms. Open this clip in the cap pad appIslamic. First, add a text layer, for example the name of replace you are travelling to, customize it to a liking. Position the text where you want it to end up and extend its duration so it remains visible by clicking here. Then move to the point where you begin raising your arms. Add another keyframe and drag the text downwards so it's hidden behind the mountains. Now duplicate the main clip and tap overlay. Drag the duplicated clip to the beginning of the project. Go to remove background and select the custom removal mode. Use the quick brush and select everything except the sky. Confirm your selection when you're finished, finally go to layers and move the overlay above the text layer.",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DZc6dK2xQzo/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "Sunglasses Landscape Reveal",
+   "slug": "sunglasses_landscape",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DYJ0xU-sAU0/",
+   "source_creator": "Steven Wommack (@549671804)",
+   "tool": "CapCut",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Keyframes",
+    "Overlay",
+    "Remove Background",
+    "Split"
+   ],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [
+    "Func the two X-lens on your phone, turn it horizontally, and film yourself raising your head wearing sunglasses, preferably at a more epic location.",
+    "Open that clip in the"
+   ],
+   "editing_steps": [
+    "CapCut app, scroll to right when your head is raised, hit camera tracking, camera tracking again, and with face-selected track.",
+    "You now have this cool upward camera movement with your head.",
+    "Settled details like this is what makes these videos so great.",
+    "Next when your head is raised, hit split here, select keyframe in the beginning, scroll to the end, zoom in a little bit which will create another keyframe creating this zoom in movement.",
+    "To cutBuyable sunglasses, hit overlay on that second part, remove background, custom removal, quick brushletters and select the whole clip so everything is red.",
+    "Select erase and only erase over your sunglasses.",
+    "With that doneundai we can now upload a sequence of landscape photos that I created before and they now appear behind the glasses.",
+    "Just resize and when you're happy with your video, export and that's it."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/sunglasses_landscape/frame_01.jpg",
+   "demo_frames": [
+    "assets/sunglasses_landscape/frame_01.jpg",
+    "assets/sunglasses_landscape/frame_02.jpg",
+    "assets/sunglasses_landscape/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/sunglasses_landscape/frame_04.jpg",
+    "assets/sunglasses_landscape/frame_05.jpg",
+    "assets/sunglasses_landscape/frame_06.jpg",
+    "assets/sunglasses_landscape/frame_07.jpg",
+    "assets/sunglasses_landscape/frame_08.jpg",
+    "assets/sunglasses_landscape/frame_09.jpg",
+    "assets/sunglasses_landscape/frame_10.jpg",
+    "assets/sunglasses_landscape/frame_11.jpg",
+    "assets/sunglasses_landscape/frame_12.jpg",
+    "assets/sunglasses_landscape/frame_13.jpg",
+    "assets/sunglasses_landscape/frame_14.jpg",
+    "assets/sunglasses_landscape/frame_15.jpg",
+    "assets/sunglasses_landscape/frame_16.jpg",
+    "assets/sunglasses_landscape/frame_17.jpg",
+    "assets/sunglasses_landscape/frame_18.jpg",
+    "assets/sunglasses_landscape/frame_19.jpg",
+    "assets/sunglasses_landscape/frame_20.jpg",
+    "assets/sunglasses_landscape/frame_21.jpg",
+    "assets/sunglasses_landscape/frame_22.jpg"
+   ],
+   "tags": [
+    "auto_bg_removal",
+    "keyframes",
+    "overlay",
+    "split_clip"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Steven Wommack",
+    "creator_handle": "549671804",
+    "creator_url": null,
+    "caption": "Here is your tutorial on how you can create this epic sunglasses landscape video edit for your next instagram reel like the amazing @justcapture__it 🎥😎⛰️ as always all you need is your phone 😍 hope you enjoy this tutorial! Have fun creating more engaging content🫶🏼",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 183030,
+    "comment_count": 256,
+    "upload_date": "20260510",
+    "duration_sec": 66.3,
+    "thumbnail": "https://scontent-sea5-1.cdninstagram.com/v/t51.82787-15/689896134_18585694954039805_7034753515015213253_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi43MjAuc2RyLnZpZGVvX2RlZmF1bHRfY292ZXJfZnJhbWUuYzIifQ&_nc_ht=scontent-sea5-1.cdninstagram.com&_nc_cat=105&_nc_oc=Q6cZ2gH_XMxlC4EdIATiy5bQ13g7p--2UzHe9Gtlrn4RJTovE6hpiG2fnsp2PF5_b3RaCXw&_nc_ohc=LtX7EQvB1wgQ7kNvwG-jlpM&_nc_gid=EaPfG1DQsC1RjgSe1zf0GA&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af-oBWICGiIwvfH85-jShGrdnQXIJZOj9gvXE1zoHYeuOg&oe=6A40AB55&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DYJ0xU-sAU0",
+     "title": "Video by stevenwommack",
+     "role": "tutorial",
+     "duration_sec": 66.4,
+     "wistia_id": null,
+     "transcript": "func the two X-lens on your phone, turn it horizontally, and film yourself raising your head wearing sunglasses, preferably at a more epic location. Then open that clip in the CapCut app, scroll to right when your head is raised, hit camera tracking, camera tracking again, and with face-selected track. You now have this cool upward camera movement with your head. Settled details like this is what makes these videos so great. Next when your head is raised, hit split here, select keyframe in the beginning, scroll to the end, zoom in a little bit which will create another keyframe creating this zoom in movement. To cutBuyable sunglasses, hit overlay on that second part, remove background, custom removal, quick brushletters and select the whole clip so everything is red. Then select erase and only erase over your sunglasses. With that doneundai we can now upload a sequence of landscape photos that I created before and they now appear behind the glasses. Just resize and when you're happy with your video, export and that's it.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DYJ0xU-sAU0/",
      "video_url": null
     }
    ]

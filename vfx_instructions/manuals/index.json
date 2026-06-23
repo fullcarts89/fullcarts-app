@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 84,
+ "count": 85,
  "manuals": [
   {
    "id": "3_clones",
@@ -1244,6 +1244,24 @@
    "status": null,
    "virality_candidate": false,
    "file": "manuals/storm_clouds.json"
+  },
+  {
+   "id": "sunglasses_landscape",
+   "title": "Sunglasses Landscape Reveal",
+   "manual_type": "effect",
+   "technique_primitive": "other",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [
+    "sunglasses"
+   ],
+   "tool": "CapCut",
+   "source": "Steven Wommack (@549671804)",
+   "draft": false,
+   "status": null,
+   "virality_candidate": false,
+   "file": "manuals/sunglasses_landscape.json"
   },
   {
    "id": "sunglasses_lens_text",
