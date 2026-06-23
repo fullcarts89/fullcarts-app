@@ -2,7 +2,7 @@
 name: fullcarts-content
 description: "Use when producing FullCarts social content — the face-forward, data-driven shrinkflation videos for TikTok/Reels/Shorts/X. Trigger phrases: 'make this week's content', 'weekly content batch', 'content brief', 'what should I film', 'shrinkflation video', 'shrinkflation script', 'fullcarts post', 'new reveal', 'rundown video', 'newsjack the CPI print', 'render the overlay', 'production packet'. This skill is the ACTIVE OPERATOR for the weekly batch loop: it pulls a data-backed brief from the FullCarts database, drafts scripts to the house template, enforces the content rules + approved-claims + evidence gates, renders the Remotion overlays, generates Higgsfield b-roll, and hands over a film-ready packet. For generic social strategy see social; for video tooling see video; for Remotion specifics see remotion."
 metadata:
-  version: 1.1.0
+  version: 1.2.0
 ---
 
 # FullCarts Content — Weekly Production Operator
@@ -24,6 +24,7 @@ human's face or a GUI app — and enforcing the rules so nothing ships off-brand
 - `docs/content/visual-identity.md` — signature style: fonts, color, red-highlight captions, illustration boundary
 - `docs/content/music-beds.md` — the six-lane royalty-free **soundboard** mapped to every slot + carousel series, plus the copyright rules for a brand that cross-posts. Assign a lane per pick in the packet; royalty-free bed on the master, trending sound is a native per-platform discovery add-on only.
 - `references/hooks.md` — the Hook System (The Snap 3-beat + Emotional Lock-In + the 4-mistake fixes); its applied layer is `references/hook-engine.md` — the frame bank that binds 10 proven viral hook frames to real DB fields → ranked, gate-passing candidates
+- `references/retention-spine.md` — what happens AFTER the hook: the 6-beat retention spine (curiosity → agitate → **re-hook** → context → build → **peak-cut/loop**), the interaction-loop / comment-bait levers, and the "spine checklist". Hooks win the first 3s; this wins the other 40. Apply on every script body, not just the open.
 - `docs/content/profile-copy.md` — bios + pinned posts
 
 ## Production defaults — ENFORCE on every video (locked from the CPI Take retro)
@@ -72,7 +73,7 @@ bottom 1/3 is left clean for their talking head + captions; cutaways sync to the
 
 1. **Refresh the facts.** Re-pull the DB counts + this week's candidates → update the banner number.
 2. **Brief.** Rank candidates by convergence (FullCarts signal × external news/macro/calendar). **Run every candidate through the full Convergence Peg Library (`content-angles.md` §5) — all peg types, not just commodity stories** (record-profits, parent-company convergence, tariffs, labeling laws, CEO quotes, seasonal calendar, accountability, reactive newsjack); a candidate hitting ≥2 pegs ranks first. **First read `docs/content/content-log.md` and drop any candidate whose `brand + product + change` was already posted** (no repeats; a *different* change for the same brand is fine). Pick 3–5, and **assign each to a series** — default the primary **"Caught:"** series (keep the fixed `Caught: [Brand]` cold-open), or a future thread per `series.md`.
-3. **Script.** Draft each to the house template (cold-open → hook → **lock-in** → proof → trick → payoff → CTA). Pick an **angle + a contrarian take + a feeling** from `content-angles.md`, write the hook as **The Snap** and add the **Emotional Lock-In** beat ([references/hooks.md](references/hooks.md)); per-platform captions + hashtags. Never a vague open loop.
+3. **Script.** Draft each to the house template (cold-open → hook → **lock-in** → proof → trick → payoff → CTA). Pick an **angle + a contrarian take + a feeling** from `content-angles.md`, write the hook as **The Snap** and add the **Emotional Lock-In** beat ([references/hooks.md](references/hooks.md)); per-platform captions + hashtags. Never a vague open loop. **Then build the body to the retention spine ([references/retention-spine.md](references/retention-spine.md)): place a deliberate re-hook at the ~30–45% sag, end the spoken script on a peak-cut (CTA goes in the caption, not the VO), and bake in one interaction loop (pause-bait receipt or comment ask). Run the spine checklist alongside the hook checklist.**
 4. **Gate.** Run all three gates on every script. A script that fails any gate does not proceed.
 5. **Assets.** Render the matching Remotion overlay(s); generate Bucket-2 Higgsfield b-roll if needed; note the real screenshots the human must grab.
 6. **Packet.** Emit a per-clip production packet (shot list, on-screen text + timing, overlay files, captions, hashtags, post time, and an Agent-Opus brief for any B-side clip).
