@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 86,
+ "count": 87,
  "manuals": [
   {
    "id": "3_clones",
@@ -37,6 +37,22 @@
    "status": null,
    "virality_candidate": false,
    "file": "manuals/3_product_reveal.json"
+  },
+  {
+   "id": "ai_fighter_scene",
+   "title": "AI Fighter Scene (Japanese-theater, Higgsfield + Claude)",
+   "manual_type": "effect",
+   "technique_primitive": "other",
+   "difficulty": "intermediate",
+   "is_ai_generated": true,
+   "gear_required": [],
+   "props_required": [],
+   "tool": "Higgsfield AI + Claude skill",
+   "source": "Steven Wommack (@549671804)",
+   "draft": false,
+   "status": null,
+   "virality_candidate": true,
+   "file": "manuals/ai_fighter_scene.json"
   },
   {
    "id": "ai_location_transition",
