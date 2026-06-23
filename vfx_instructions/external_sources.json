@@ -2,7 +2,7 @@
  "source": "External short-form videos ingested into the VFX schema",
  "generated": "2026-06-23",
  "schema_version": 1,
- "effect_count": 40,
+ "effect_count": 41,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -4220,6 +4220,105 @@
      "transcript": "func the two X-lens on your phone, turn it horizontally, and film yourself raising your head wearing sunglasses, preferably at a more epic location. Then open that clip in the CapCut app, scroll to right when your head is raised, hit camera tracking, camera tracking again, and with face-selected track. You now have this cool upward camera movement with your head. Settled details like this is what makes these videos so great. Next when your head is raised, hit split here, select keyframe in the beginning, scroll to the end, zoom in a little bit which will create another keyframe creating this zoom in movement. To cutBuyable sunglasses, hit overlay on that second part, remove background, custom removal, quick brushletters and select the whole clip so everything is red. Then select erase and only erase over your sunglasses. With that doneundai we can now upload a sequence of landscape photos that I created before and they now appear behind the glasses. Just resize and when you're happy with your video, export and that's it.",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DYJ0xU-sAU0/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "\"Next Opponent\" Boss Reveal (you vs you, AI)",
+   "slug": "next_boss_reveal",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DZpwewHsf5S/",
+   "source_creator": "Steven Wommack (@549671804)",
+   "tool": "CapCut",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": false,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Text"
+   ],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [],
+   "editing_steps": [
+    "You're moving to the next level.",
+    "Your next opponent is...",
+    "Take an old photo from you where you were younger and a more recent one.",
+    "Go to a website called Higgs.A.I.",
+    "Hit the generate button down here.",
+    "Select create video.",
+    "Change the model by selecting it and selecting cdance 2.0.",
+    "Up here, upload the photos of you, first the younger version, then the recent one.",
+    "The images are referenced in the prompt.",
+    "Adjust the length to 10 seconds and select the ratio you like.",
+    "Hit generate.",
+    "I then added grain and text and got it.",
+    "Congratulations, you're moving to the next level.",
+    "Your next opponent is..."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/next_boss_reveal/frame_01.jpg",
+   "demo_frames": [
+    "assets/next_boss_reveal/frame_01.jpg",
+    "assets/next_boss_reveal/frame_02.jpg",
+    "assets/next_boss_reveal/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/next_boss_reveal/frame_04.jpg",
+    "assets/next_boss_reveal/frame_05.jpg",
+    "assets/next_boss_reveal/frame_06.jpg",
+    "assets/next_boss_reveal/frame_07.jpg",
+    "assets/next_boss_reveal/frame_08.jpg",
+    "assets/next_boss_reveal/frame_09.jpg",
+    "assets/next_boss_reveal/frame_10.jpg",
+    "assets/next_boss_reveal/frame_11.jpg",
+    "assets/next_boss_reveal/frame_12.jpg",
+    "assets/next_boss_reveal/frame_13.jpg",
+    "assets/next_boss_reveal/frame_14.jpg",
+    "assets/next_boss_reveal/frame_15.jpg",
+    "assets/next_boss_reveal/frame_16.jpg",
+    "assets/next_boss_reveal/frame_17.jpg"
+   ],
+   "tags": [],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Steven Wommack",
+    "creator_handle": "549671804",
+    "creator_url": null,
+    "caption": "Here is the tutorial about how you can create this trending you vs you video trend as seen by @kuba.creates.ai with yourself or your favorite football / soccer player inside of @higgsfield.ai 🚀🎥 i@also added some grain and the you text after to make it look even more cinematic 🫶🏼 hope you like this. Comment “you” and I’ll add you the prompt.",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 547669,
+    "comment_count": 133581,
+    "upload_date": "20260616",
+    "duration_sec": 51.033,
+    "thumbnail": "https://scontent-sea1-1.cdninstagram.com/v/t51.71878-15/724397241_986426974276924_7188386039795230449_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi42NDAuc2RyLnZpZGVvX25mcmFtZV9jb3Zlcl9mcmFtZS5jMiJ9&_nc_ht=scontent-sea1-1.cdninstagram.com&_nc_cat=1&_nc_oc=Q6cZ2gGwZk5ft82wpHK6nhNYaDfquG5TmkX1YhOAXC-_rVs_TBG8gj0DXzkHmq8EwL3w9A8&_nc_ohc=e2ehwsa8eHwQ7kNvwHPyqf-&_nc_gid=HxCIPjU9n5MoH5Zahw7N0w&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af9VYNaJpB83yXkyq32NTsuyQN5T2F6jLGrP6dmozl0Vhw&oe=6A40D3E4&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DZpwewHsf5S",
+     "title": "Video by stevenwommack",
+     "role": "tutorial",
+     "duration_sec": 51.1,
+     "wistia_id": null,
+     "transcript": "You're moving to the next level. Your next opponent is... You. Take an old photo from you where you were younger and a more recent one. Then go to a website called Higgs.A.I. Hit the generate button down here. Select create video. Then change the model by selecting it and selecting cdance 2.0. Now up here, upload the photos of you, first the younger version, then the recent one. The images are referenced in the prompt. Adjust the length to 10 seconds and select the ratio you like. Then hit generate. I then added grain and text and got it. Congratulations, you're moving to the next level. Your next opponent is... You.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DZpwewHsf5S/",
      "video_url": null
     }
    ]
