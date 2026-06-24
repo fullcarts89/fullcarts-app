@@ -1,8 +1,8 @@
 {
  "source": "External short-form videos ingested into the VFX schema",
- "generated": "2026-06-23",
+ "generated": "2026-06-24",
  "schema_version": 1,
- "effect_count": 42,
+ "effect_count": 43,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -4408,6 +4408,109 @@
      "transcript": "Let's make you one of the main characters in the video. So take a few selfies from different angles and you can now connect Higgs field directly with Claude But you need to download a skill so comment skill and I'll send you the link download the file from the link And then you can just open Claude AI go to customize on the upper left then select create new skill hit the plus create skill Upload a skill and drop the downloaded file now in your chat hit slash and select the skill Then I just asked it to create a character sheet and uploaded myself fees as Then I hit run it automatically pulled up my Higgs field connector and created this character sheet now You can just keep chatting with it and give it your vague idea of your fighting scene for this video It's important to make the footage look handheld and shake then I just hit run it came up with the full storyline pulled up Higgs field and generated",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DZhq_WvM-wJ/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "AI Epic Wave (shield-the-subject) Scene",
+   "slug": "ai_wave_hold",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DZcRc14s0kr/",
+   "source_creator": "Steven Wommack (@549671804)",
+   "tool": null,
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": false,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [],
+   "editing_steps": [
+    "To have yourself in the video, take a few selfies from different angles.",
+    "For the girl I wanted my girlfriend, so I took two of her photos.",
+    "The hardest part is coming up with a prompt.",
+    "I'll build a prompt generator in Emergent.",
+    "I just opened the website in the browser, selected mobile app, and started typing what I wanted to build.",
+    "App that analyzes photos or videos and generates the prompt.",
+    "Emergent went right to work.",
+    "It had some more questions for me and then started building the app.",
+    "I even gave it some design inspiration from Pinterest and a few minutes later I had this beautiful app.",
+    "I can just upload any photo or video that I see, have the app analyze it, and automatically generate the perfect prompt to recreate it.",
+    "I can just copy this prompt and go into any AI generator, paste that prompt, hit generate, and get this.",
+    "Just comment Emergent and I'll send you the link to try for yourself."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/ai_wave_hold/frame_01.jpg",
+   "demo_frames": [
+    "assets/ai_wave_hold/frame_01.jpg",
+    "assets/ai_wave_hold/frame_02.jpg",
+    "assets/ai_wave_hold/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/ai_wave_hold/frame_04.jpg",
+    "assets/ai_wave_hold/frame_05.jpg",
+    "assets/ai_wave_hold/frame_06.jpg",
+    "assets/ai_wave_hold/frame_07.jpg",
+    "assets/ai_wave_hold/frame_08.jpg",
+    "assets/ai_wave_hold/frame_09.jpg",
+    "assets/ai_wave_hold/frame_10.jpg",
+    "assets/ai_wave_hold/frame_11.jpg",
+    "assets/ai_wave_hold/frame_12.jpg",
+    "assets/ai_wave_hold/frame_13.jpg",
+    "assets/ai_wave_hold/frame_14.jpg",
+    "assets/ai_wave_hold/frame_15.jpg",
+    "assets/ai_wave_hold/frame_16.jpg",
+    "assets/ai_wave_hold/frame_17.jpg",
+    "assets/ai_wave_hold/frame_18.jpg",
+    "assets/ai_wave_hold/frame_19.jpg",
+    "assets/ai_wave_hold/frame_20.jpg",
+    "assets/ai_wave_hold/frame_21.jpg",
+    "assets/ai_wave_hold/frame_22.jpg"
+   ],
+   "tags": [],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Steven Wommack",
+    "creator_handle": "549671804",
+    "creator_url": null,
+    "caption": "Here is how I created my own prompt generator app without knowing how to code using @emergentlabs ✨🚀 now I don’t need to figure out the prompts myself anymore 😍 comment “emergent” and I’ll send you the link to give it a try 🫶🏼 #emergent #emergentai",
+    "hashtags": [
+     "emergent",
+     "emergentai"
+    ],
+    "view_count": null,
+    "like_count": 4858,
+    "comment_count": 614,
+    "upload_date": "20260611",
+    "duration_sec": 66.966,
+    "thumbnail": "https://scontent-sea5-1.cdninstagram.com/v/t51.71878-15/721466379_892396873877777_2946538186816101499_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi42NDAuc2RyLnZpZGVvX25mcmFtZV9jb3Zlcl9mcmFtZS5jMiJ9&_nc_ht=scontent-sea5-1.cdninstagram.com&_nc_cat=105&_nc_oc=Q6cZ2gFLI5m35dv9hoX_-EdD1zT2r7AkBYzYarIbWjovC1w4CmRWoQtGguUR_ZRASxVjKSA&_nc_ohc=qGeKuABAGMoQ7kNvwEkyQ20&_nc_gid=ffP5fk8l10Uu0kRe5Vpk3Q&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af-0v52p8ArWK2SOXPRf10SIN7iRDJ1GGvwK1yUna_CPfA&oe=6A42010E&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DZcRc14s0kr",
+     "title": "Video by stevenwommack",
+     "role": "tutorial",
+     "duration_sec": 67.1,
+     "wistia_id": null,
+     "transcript": "To have yourself in the video, take a few selfies from different angles. For the girl I wanted my girlfriend, so I took two of her photos. The hardest part is coming up with a prompt. So I'll build a prompt generator in Emergent. I just opened the website in the browser, selected mobile app, and started typing what I wanted to build. And app that analyzes photos or videos and generates the prompt. Emergent went right to work. It had some more questions for me and then started building the app. I even gave it some design inspiration from Pinterest and a few minutes later I had this beautiful app. Now I can just upload any photo or video that I see, have the app analyze it, and automatically generate the perfect prompt to recreate it. Then I can just copy this prompt and go into any AI generator, paste that prompt, hit generate, and get this. Just comment Emergent and I'll send you the link to try for yourself.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DZcRc14s0kr/",
      "video_url": null
     }
    ]
