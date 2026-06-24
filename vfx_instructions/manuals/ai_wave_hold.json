@@ -1,0 +1,136 @@
+{
+ "id": "ai_wave_hold",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "other",
+ "title": "AI Epic Wave (shield-the-subject) Scene",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [],
+ "props_required": [],
+ "is_ai_generated": true,
+ "tool": "AI generator (Higgsfield) + Emergent prompt-generator (optional)",
+ "virality_candidate": true,
+ "result_description": "An AI-generated cinematic where a giant wave bears down while you shield a second subject — built from your selfies + the subject's photos and a generated prompt.",
+ "shrinkflation_use": "Make the wave a 'shrinkflation wave' (tidal surge of price tags / shrinking packages) crashing in while you shield a BOX OF CEREAL instead of a person — a visual metaphor for shrinkflation overwhelming the grocery aisle.",
+ "source": "Steven Wommack (@549671804)",
+ "source_url": "https://www.instagram.com/reel/DZcRc14s0kr/",
+ "inputs": [
+  {
+   "name": "selfies",
+   "what_to_film": "A few selfies from different angles to lock your likeness.",
+   "capture_requirements": {
+    "multi_angle": true
+   },
+   "acceptance_checks": [
+    "min_resolution"
+   ],
+   "variance_tolerance": {}
+  },
+  {
+   "name": "subject_photos",
+   "what_to_film": "Photos of the thing you shield — for the shrinkflation version, 2+ photos of a cereal box (front/angle).",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_resolution"
+   ],
+   "variance_tolerance": {}
+  }
+ ],
+ "ai_generation": [
+  {
+   "provider": "emergent",
+   "mcp_server": null,
+   "tool": "prompt-generator app",
+   "operation": "prompt_generation",
+   "optional": true,
+   "note": "Creator built a no-code prompt-generator in Emergent that analyzes a reference video/photo and outputs a recreation prompt. Any prompt method works — including just asking Claude.",
+   "channel": "ai_gen"
+  },
+  {
+   "provider": "higgsfield",
+   "mcp_server": "66e733f1-17be-4bb6-b57b-70fea20b08b2",
+   "tool": "generate_video",
+   "operation": "image_to_video",
+   "inputs": [
+    "selfies",
+    "subject_photos"
+   ],
+   "prompt_strategy": "paste the generated prompt: a giant wave bearing down while the subject shields the cereal box; dramatic, cinematic",
+   "channel": "ai_gen"
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "generated clip"
+  },
+  {
+   "action": "filter",
+   "channel": "taste",
+   "target": "clip (optional)",
+   "capcut_feature": "Effects → Grain"
+  },
+  {
+   "action": "text",
+   "channel": "taste",
+   "target": "caption / hook (optional)",
+   "capcut_feature": "Text",
+   "note": "e.g. 'protect your groceries from shrinkflation'"
+  },
+  {
+   "action": "audio",
+   "channel": "taste",
+   "target": "dramatic SFX / music (optional)"
+  }
+ ],
+ "result": {
+  "description": "AI epic wave scene shielding the subject (cereal box for shrinkflation).",
+  "success_criteria": [
+   "Your likeness consistent (from selfies)",
+   "The shielded subject reads clearly (cereal box)",
+   "Wave/disaster feels dramatic and on-theme"
+  ]
+ },
+ "narration_transcript": "To have yourself in the video, take a few selfies from different angles. For the girl I wanted my girlfriend, so I took two of her photos. The hardest part is coming up with a prompt. So I'll build a prompt generator in Emergent. I just opened the website in the browser, selected mobile app, and started typing what I wanted to build. And app that analyzes photos or videos and generates the prompt. Emergent went right to work. It had some more questions for me and then started building the app. I even gave it some design inspiration from Pinterest and a few minutes later I had this beautiful app. Now I can just upload any photo or video that I see, have the app analyze it, and automatically generate the perfect prompt to recreate it. Then I can just copy this prompt and go into any AI generator, paste that prompt, hit generate, and get this. Just comment Emergent and I'll send you the link to try for yourself.",
+ "frames": {
+  "demo": [
+   "assets/ai_wave_hold/frame_01.jpg",
+   "assets/ai_wave_hold/frame_02.jpg",
+   "assets/ai_wave_hold/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/ai_wave_hold/frame_04.jpg",
+   "assets/ai_wave_hold/frame_05.jpg",
+   "assets/ai_wave_hold/frame_06.jpg",
+   "assets/ai_wave_hold/frame_07.jpg",
+   "assets/ai_wave_hold/frame_08.jpg",
+   "assets/ai_wave_hold/frame_09.jpg",
+   "assets/ai_wave_hold/frame_10.jpg",
+   "assets/ai_wave_hold/frame_11.jpg",
+   "assets/ai_wave_hold/frame_12.jpg",
+   "assets/ai_wave_hold/frame_13.jpg",
+   "assets/ai_wave_hold/frame_14.jpg",
+   "assets/ai_wave_hold/frame_15.jpg",
+   "assets/ai_wave_hold/frame_16.jpg",
+   "assets/ai_wave_hold/frame_17.jpg",
+   "assets/ai_wave_hold/frame_18.jpg",
+   "assets/ai_wave_hold/frame_19.jpg",
+   "assets/ai_wave_hold/frame_20.jpg",
+   "assets/ai_wave_hold/frame_21.jpg",
+   "assets/ai_wave_hold/frame_22.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "549671804",
+  "like_count": 4858,
+  "comment_count": 614,
+  "upload_date": "20260611",
+  "caption": "Here is how I created my own prompt generator app without knowing how to code using @emergentlabs ✨🚀 now I don’t need to figure out the prompts myself anymore 😍 comment “emergent” and I’ll send you the link to give it a try 🫶🏼 #emergent #emergentai",
+  "hashtags": [
+   "emergent",
+   "emergentai"
+  ]
+ }
+}
