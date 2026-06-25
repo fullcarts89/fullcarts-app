@@ -2,7 +2,7 @@
  "source": "External short-form videos ingested into the VFX schema",
  "generated": "2026-06-25",
  "schema_version": 1,
- "effect_count": 48,
+ "effect_count": 49,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -4992,6 +4992,107 @@
      "transcript": "Since you're gonna be the superhero of this movie take photos of your face from three angles with these photos We now want to go to Higgsfield.ai and on the website click this yellow generate button down here Then go to images on top and select nano banana pro up here upload the three selfies We've just created and then just prompt that you want to create a character sheet and describe the clothes that you're gonna Be wearing I want to wear a denim jacket utility pants and chucks hit generate and you get this then back in Higgsfield We're finally gonna try the hottest AI video model cdance to upload your character sheet Then it's being checked for copyright issues once it's clear selected and we can now prompt the whole video I like to describe the setting first and then the action Comment superhero and I'll send you the whole prompt at the end I describe the style like cinematic realistic action and tell the camera angle to change every 1.5 seconds hit generate and that's it",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DW4grrejPP_/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "Teleport / Jump Into Car (clothes fly off)",
+   "slug": "jump_into_car",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DWc5PJkDzya/",
+   "source_creator": "Roman | LA Video creator (@69366206263)",
+   "tool": "CapCut",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Mask",
+    "Overlay"
+   ],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": true,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [
+    "How to create this effect?",
+    "Take your phone and put it on a tripod.",
+    "For this effect you need to shoot 3 clips.",
+    "In the first clip you should run and pretend to jump into the car.",
+    "In the second clip stand next to it and throw the clothes you were wearing to the place where you crashed into the car in the previous shot.",
+    "In the third clip, sit in the car and shake it a little."
+   ],
+   "editing_steps": [
+    "Open cap cut and upload all 3 clips.",
+    "Trim the clip where you crash into the car at the moment when you touch it.",
+    "Right after that place the clip where you are sitting in the car and it's shaking.",
+    "Apply the overlay to the clip with the clothes, place it at the transition moment and create the mask cutting out only the moment when the clothes fall.",
+    "That's it, this effect is ready.",
+    "Send this video to a friend so you don't lose it."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/jump_into_car/frame_01.jpg",
+   "demo_frames": [
+    "assets/jump_into_car/frame_01.jpg",
+    "assets/jump_into_car/frame_02.jpg",
+    "assets/jump_into_car/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/jump_into_car/frame_04.jpg",
+    "assets/jump_into_car/frame_05.jpg",
+    "assets/jump_into_car/frame_06.jpg",
+    "assets/jump_into_car/frame_07.jpg",
+    "assets/jump_into_car/frame_08.jpg",
+    "assets/jump_into_car/frame_09.jpg",
+    "assets/jump_into_car/frame_10.jpg",
+    "assets/jump_into_car/frame_11.jpg",
+    "assets/jump_into_car/frame_12.jpg",
+    "assets/jump_into_car/frame_13.jpg",
+    "assets/jump_into_car/frame_14.jpg"
+   ],
+   "tags": [
+    "locked_off",
+    "mask",
+    "overlay",
+    "transition"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Roman | LA Video creator",
+    "creator_handle": "69366206263",
+    "creator_url": null,
+    "caption": "How to create this effect 🚙🏃\nTake your phone and put it on a tripod. For this effect, you need to shoot three clips.\n\nIn the first clip, you should run and pretend to jump into the car. \nIn the second clip, stand next to it and throw the clothes you were wearing to the place where you crashed into the car in the previous shot. \nIn the third clip, sit in the car and shake it a little.\nNow open CapCut and upload all three clips. \nTrim the clip where you crash into the car at the moment when you touch it. \nRight after that, place the clip where you are sitting in the car and it’s shaking.\nApply the overlay to the clip with the clothes, place it at the transition moment, and create a mask cutting out only the moment when the clothes fall.\n\nThat’s it, the effect is ready. Send this video to a friend so you don’t lose it✅",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 1147,
+    "comment_count": 18,
+    "upload_date": "20260329",
+    "duration_sec": 41.959,
+    "thumbnail": "https://scontent-sea1-1.cdninstagram.com/v/t51.82787-15/661792051_17920539243318264_9180589418210381506_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi43MjAuc2RyLnZpZGVvX2RlZmF1bHRfY292ZXJfZnJhbWUuYzIifQ&_nc_ht=scontent-sea1-1.cdninstagram.com&_nc_cat=100&_nc_oc=Q6cZ2gFfG2oig3ObzexOiLBrEjFpfEQ-PSQkpJ2hDul456x-5SsJcj8czl69lVSHd5C0eg8&_nc_ohc=55Y-TjvWdxkQ7kNvwFuwZGl&_nc_gid=zslWmqBXFrezuQBxsktFYA&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af_08CIxH2GgHYSoOtrrDDVDJuAhwNyo36GHLgDnbKbGNw&oe=6A432C39&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DWc5PJkDzya",
+     "title": "Video by shootsroman",
+     "role": "tutorial",
+     "duration_sec": 42.1,
+     "wistia_id": null,
+     "transcript": "How to create this effect? Take your phone and put it on a tripod. For this effect you need to shoot 3 clips. In the first clip you should run and pretend to jump into the car. In the second clip stand next to it and throw the clothes you were wearing to the place where you crashed into the car in the previous shot. In the third clip, sit in the car and shake it a little. Now open cap cut and upload all 3 clips. Trim the clip where you crash into the car at the moment when you touch it. Right after that place the clip where you are sitting in the car and it's shaking. Apply the overlay to the clip with the clothes, place it at the transition moment and create the mask cutting out only the moment when the clothes fall. And that's it, this effect is ready. Send this video to a friend so you don't lose it.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DWc5PJkDzya/",
      "video_url": null
     }
    ]

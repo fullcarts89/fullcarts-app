@@ -1,0 +1,139 @@
+{
+ "id": "jump_into_car",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "other",
+ "title": "Teleport / Jump Into Car (clothes fly off)",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [
+  "car",
+  "clothes"
+ ],
+ "result_description": "You run and dive into a car; at the impact your clothes fly off onto the spot, and you instantly appear sitting inside shaking it — a teleport gag.",
+ "source": "Roman | LA Video creator (@69366206263)",
+ "source_url": "https://www.instagram.com/reel/DWc5PJkDzya/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "crash_clip",
+   "what_to_film": "Run and pretend to jump/crash into the car.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "sitting_clip",
+   "what_to_film": "Sit in the car and shake it a little.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  },
+  {
+   "name": "clothes_clip",
+   "what_to_film": "Stand next to the car and throw the clothes you were wearing onto the spot where you crashed into it.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "crash_clip, sitting_clip, clothes_clip"
+  },
+  {
+   "action": "trim",
+   "channel": "ui",
+   "target": "crash_clip",
+   "capcut_feature": "Trim",
+   "timing": {
+    "cue": "the moment you touch the car"
+   }
+  },
+  {
+   "action": "position",
+   "channel": "structural",
+   "target": "sitting_clip",
+   "note": "place right after the crash clip → instant 'you're inside'"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "clothes_clip",
+   "params": {
+    "track": 2
+   },
+   "timing": {
+    "cue": "the transition moment"
+   }
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "clothes_clip",
+   "capcut_feature": "Mask",
+   "note": "cut out only the moment the clothes fall, so just the flying clothes show over the transition"
+  }
+ ],
+ "result": {
+  "description": "Dive-into-car teleport with clothes flying off.",
+  "success_criteria": [
+   "Cut lands exactly on the car touch",
+   "Clothes appear only via the masked overlay at the transition",
+   "Shake sells the impact of landing inside"
+  ]
+ },
+ "narration_transcript": "How to create this effect? Take your phone and put it on a tripod. For this effect you need to shoot 3 clips. In the first clip you should run and pretend to jump into the car. In the second clip stand next to it and throw the clothes you were wearing to the place where you crashed into the car in the previous shot. In the third clip, sit in the car and shake it a little. Now open cap cut and upload all 3 clips. Trim the clip where you crash into the car at the moment when you touch it. Right after that place the clip where you are sitting in the car and it's shaking. Apply the overlay to the clip with the clothes, place it at the transition moment and create the mask cutting out only the moment when the clothes fall. And that's it, this effect is ready. Send this video to a friend so you don't lose it.",
+ "frames": {
+  "demo": [
+   "assets/jump_into_car/frame_01.jpg",
+   "assets/jump_into_car/frame_02.jpg",
+   "assets/jump_into_car/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/jump_into_car/frame_04.jpg",
+   "assets/jump_into_car/frame_05.jpg",
+   "assets/jump_into_car/frame_06.jpg",
+   "assets/jump_into_car/frame_07.jpg",
+   "assets/jump_into_car/frame_08.jpg",
+   "assets/jump_into_car/frame_09.jpg",
+   "assets/jump_into_car/frame_10.jpg",
+   "assets/jump_into_car/frame_11.jpg",
+   "assets/jump_into_car/frame_12.jpg",
+   "assets/jump_into_car/frame_13.jpg",
+   "assets/jump_into_car/frame_14.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "69366206263",
+  "like_count": 1147,
+  "comment_count": 18,
+  "upload_date": "20260329",
+  "caption": "How to create this effect 🚙🏃\nTake your phone and put it on a tripod. For this effect, you need to shoot three clips.\n\nIn the first clip, you should run and pretend to jump into the car. \nIn the second clip, stand next to it and throw the clothes you were wearing to the place where you crashed into the car in the previous shot. \nIn the third clip, sit in the car and shake it a little.\nNow open CapCut and upload all three clips. \nTrim the clip where you crash into the car at the moment when you touch it. \nRight after that, place the clip where you are sitting in the car and it’s shaking.\nApply the overlay to the clip with the clothes, place it at the transition moment, and create a mask cutting out only the moment when the clothes fall.\n\nThat’s it, the effect is ready. Send this video to a friend so you don’t lose it✅",
+  "hashtags": []
+ }
+}

@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 93,
+ "count": 94,
  "manuals": [
   {
    "id": "3_clones",
@@ -810,6 +810,27 @@
    "status": null,
    "virality_candidate": false,
    "file": "manuals/jump_in_cup.json"
+  },
+  {
+   "id": "jump_into_car",
+   "title": "Teleport / Jump Into Car (clothes fly off)",
+   "manual_type": "effect",
+   "technique_primitive": "other",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [
+    "car",
+    "clothes"
+   ],
+   "tool": "CapCut",
+   "source": "Roman | LA Video creator (@69366206263)",
+   "draft": false,
+   "status": null,
+   "virality_candidate": false,
+   "file": "manuals/jump_into_car.json"
   },
   {
    "id": "kick_away",
