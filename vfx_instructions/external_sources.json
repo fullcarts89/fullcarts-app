@@ -1,8 +1,8 @@
 {
  "source": "External short-form videos ingested into the VFX schema",
- "generated": "2026-06-24",
+ "generated": "2026-06-25",
  "schema_version": 1,
- "effect_count": 43,
+ "effect_count": 44,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -4511,6 +4511,110 @@
      "transcript": "To have yourself in the video, take a few selfies from different angles. For the girl I wanted my girlfriend, so I took two of her photos. The hardest part is coming up with a prompt. So I'll build a prompt generator in Emergent. I just opened the website in the browser, selected mobile app, and started typing what I wanted to build. And app that analyzes photos or videos and generates the prompt. Emergent went right to work. It had some more questions for me and then started building the app. I even gave it some design inspiration from Pinterest and a few minutes later I had this beautiful app. Now I can just upload any photo or video that I see, have the app analyze it, and automatically generate the perfect prompt to recreate it. Then I can just copy this prompt and go into any AI generator, paste that prompt, hit generate, and get this. Just comment Emergent and I'll send you the link to try for yourself.",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DZcRc14s0kr/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "Rolling Words Around an Object",
+   "slug": "rolling_words_around_object",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DYjreGgRPXV/",
+   "source_creator": null,
+   "tool": "CapCut",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": false,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Duplicate",
+    "Layers",
+    "Mask",
+    "Overlay",
+    "Text"
+   ],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [],
+   "editing_steps": [
+    "How to create this.",
+    "Words surrounding outcomes.",
+    "First, import a video featuring an object.",
+    "Add the text.",
+    "Select the annular rolling animation.",
+    "You can see your words rolling.",
+    "Duplicate the video again and place it as an overlay.",
+    "Use the background removal tool to eliminate the background.",
+    "Ensure that the overlay video is on the first layer.",
+    "Last, apply a horizontal mask to the overlay video, covering only one third of the object.",
+    "You learned how to create rolling word effects."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/rolling_words_around_object/frame_01.jpg",
+   "demo_frames": [
+    "assets/rolling_words_around_object/frame_01.jpg",
+    "assets/rolling_words_around_object/frame_02.jpg",
+    "assets/rolling_words_around_object/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/rolling_words_around_object/frame_04.jpg",
+    "assets/rolling_words_around_object/frame_05.jpg",
+    "assets/rolling_words_around_object/frame_06.jpg",
+    "assets/rolling_words_around_object/frame_07.jpg",
+    "assets/rolling_words_around_object/frame_08.jpg",
+    "assets/rolling_words_around_object/frame_09.jpg",
+    "assets/rolling_words_around_object/frame_10.jpg",
+    "assets/rolling_words_around_object/frame_11.jpg"
+   ],
+   "tags": [
+    "duplicate",
+    "mask",
+    "overlay"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": null,
+    "creator_handle": "47373937578",
+    "creator_url": null,
+    "caption": "How to be a PRO editor (2) : Words Rolling \n\nUsing : Rolling Animation & Mask \n\n📩Inquiries : DM \n(Shorts / Talking-Head Video )\n\n#singapore #editor #videoedit #contentcreator #video",
+    "hashtags": [
+     "contentcreator",
+     "editor",
+     "singapore",
+     "video",
+     "videoedit"
+    ],
+    "view_count": null,
+    "like_count": 29225,
+    "comment_count": 60,
+    "upload_date": "20260520",
+    "duration_sec": 33.272,
+    "thumbnail": "https://scontent-sea5-1.cdninstagram.com/v/t51.71878-15/682698865_4694321850787666_440420264163155360_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi42NDAuc2RyLnZpZGVvX25mcmFtZV9jb3Zlcl9mcmFtZS5jMiJ9&_nc_ht=scontent-sea5-1.cdninstagram.com&_nc_cat=110&_nc_oc=Q6cZ2gGJwYVRF_qLU5dNL7GRLwAwJCHO6dQKUgbdIEXOn1jfOUCdMi_KGDcjt1o3FK6arT4&_nc_ohc=pv3g5UJNP18Q7kNvwEEjo_M&_nc_gid=E2KEOZ1LFnvKa-hK6MYxDg&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af8rgcsQQr96sjmFEtTu4QkLjaLOURYo4FROfFhlhgmRig&oe=6A432616&_nc_sid=d885a2",
+    "width": 880,
+    "height": 1564
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DYjreGgRPXV",
+     "title": "Video by chili_editor",
+     "role": "tutorial",
+     "duration_sec": 33.4,
+     "wistia_id": null,
+     "transcript": "How to create this. Words surrounding outcomes. First, import a video featuring an object. And add the text. Select the annular rolling animation. Now, you can see your words rolling. Then duplicate the video again and place it as an overlay. Use the background removal tool to eliminate the background. Ensure that the overlay video is on the first layer. Last, apply a horizontal mask to the overlay video, covering only one third of the object. Now you learned how to create rolling word effects.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DYjreGgRPXV/",
      "video_url": null
     }
    ]

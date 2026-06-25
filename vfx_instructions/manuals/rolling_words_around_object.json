@@ -1,0 +1,133 @@
+{
+ "id": "rolling_words_around_object",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "text_reveal",
+ "title": "Rolling Words Around an Object",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [],
+ "props_required": [
+  "an object to feature"
+ ],
+ "result_description": "Animated words roll around an object — the text appears to wrap behind/around it using a rolling animation plus a masked background-removed overlay.",
+ "source": null,
+ "source_url": "https://www.instagram.com/reel/DYjreGgRPXV/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "object_clip",
+   "what_to_film": "A video featuring a clear object the words will wrap around.",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off",
+    "min_duration"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 8
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "object_clip"
+  },
+  {
+   "action": "text",
+   "channel": "ui",
+   "target": "words",
+   "capcut_feature": "Text"
+  },
+  {
+   "action": "filter",
+   "channel": "ui",
+   "target": "text",
+   "capcut_feature": "Animation → Annular/Rolling",
+   "params": {
+    "animation": "rolling"
+   },
+   "note": "words roll"
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "target": "object_clip",
+   "params": {
+    "to_track": 2
+   },
+   "note": "place as overlay"
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "overlay",
+   "capcut_feature": "Remove Background → Auto Removal",
+   "params": {
+    "mode": "auto"
+   },
+   "note": "cut out the object/background"
+  },
+  {
+   "action": "position",
+   "channel": "ui",
+   "target": "layer order",
+   "capcut_feature": "Layers",
+   "note": "ensure the overlay (object cutout) is the top layer, above the text"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "overlay",
+   "capcut_feature": "Mask → Horizontal",
+   "params": {
+    "coverage": "~1/3 of the object"
+   },
+   "note": "reveals the rolling words wrapping around the object"
+  }
+ ],
+ "result": {
+  "description": "Text rolls around the featured object.",
+  "success_criteria": [
+   "Words read as wrapping behind/around the object",
+   "Clean cutout on the overlay",
+   "Rolling animation timed to feel continuous"
+  ]
+ },
+ "narration_transcript": "How to create this. Words surrounding outcomes. First, import a video featuring an object. And add the text. Select the annular rolling animation. Now, you can see your words rolling. Then duplicate the video again and place it as an overlay. Use the background removal tool to eliminate the background. Ensure that the overlay video is on the first layer. Last, apply a horizontal mask to the overlay video, covering only one third of the object. Now you learned how to create rolling word effects.",
+ "frames": {
+  "demo": [
+   "assets/rolling_words_around_object/frame_01.jpg",
+   "assets/rolling_words_around_object/frame_02.jpg",
+   "assets/rolling_words_around_object/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/rolling_words_around_object/frame_04.jpg",
+   "assets/rolling_words_around_object/frame_05.jpg",
+   "assets/rolling_words_around_object/frame_06.jpg",
+   "assets/rolling_words_around_object/frame_07.jpg",
+   "assets/rolling_words_around_object/frame_08.jpg",
+   "assets/rolling_words_around_object/frame_09.jpg",
+   "assets/rolling_words_around_object/frame_10.jpg",
+   "assets/rolling_words_around_object/frame_11.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "47373937578",
+  "like_count": 29225,
+  "comment_count": 60,
+  "upload_date": "20260520",
+  "caption": "How to be a PRO editor (2) : Words Rolling \n\nUsing : Rolling Animation & Mask \n\n📩Inquiries : DM \n(Shorts / Talking-Head Video )\n\n#singapore #editor #videoedit #contentcreator #video",
+  "hashtags": [
+   "contentcreator",
+   "editor",
+   "singapore",
+   "video",
+   "videoedit"
+  ]
+ }
+}
