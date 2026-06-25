@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 92,
+ "count": 93,
  "manuals": [
   {
    "id": "3_clones",
@@ -69,6 +69,22 @@
    "status": null,
    "virality_candidate": false,
    "file": "manuals/ai_location_transition.json"
+  },
+  {
+   "id": "ai_superhero_action",
+   "title": "AI Superhero Action Movie (Seedance 2.0)",
+   "manual_type": "effect",
+   "technique_primitive": "other",
+   "difficulty": "intermediate",
+   "is_ai_generated": true,
+   "gear_required": [],
+   "props_required": [],
+   "tool": "Higgsfield AI (Nano Banana Pro + Seedance 2.0)",
+   "source": "Steven Wommack (@549671804)",
+   "draft": false,
+   "status": null,
+   "virality_candidate": true,
+   "file": "manuals/ai_superhero_action.json"
   },
   {
    "id": "ai_wave_hold",

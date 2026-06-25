@@ -1,0 +1,123 @@
+{
+ "id": "ai_superhero_action",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "other",
+ "title": "AI Superhero Action Movie (Seedance 2.0)",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [],
+ "props_required": [],
+ "is_ai_generated": true,
+ "tool": "Higgsfield AI (Nano Banana Pro + Seedance 2.0)",
+ "virality_candidate": true,
+ "related_to": "ai_fighter_scene",
+ "result_description": "A cinematic AI action movie starring you as the superhero: 3-angle selfies become a character sheet, then a Seedance 2.0 video with a described setting, action, and camera cuts.",
+ "shrinkflation_use": "Cast yourself as the superhero fighting the SHRINKFLATION MONSTER — describe the villain as a giant creature shrinking groceries / packages, and you battling it to restore full sizes.",
+ "source": "Steven Wommack (@549671804)",
+ "source_url": "https://www.instagram.com/reel/DW4grrejPP_/",
+ "inputs": [
+  {
+   "name": "selfies",
+   "what_to_film": "Photos of your face from three angles (front, 3/4, side).",
+   "capture_requirements": {
+    "multi_angle": true,
+    "count": 3
+   },
+   "acceptance_checks": [
+    "min_resolution"
+   ],
+   "variance_tolerance": {}
+  }
+ ],
+ "ai_generation": [
+  {
+   "provider": "higgsfield",
+   "mcp_server": "66e733f1-17be-4bb6-b57b-70fea20b08b2",
+   "tool": "generate_image",
+   "model": "Nano Banana Pro",
+   "operation": "character_sheet",
+   "inputs": [
+    "selfies"
+   ],
+   "prompt_strategy": "upload the 3 selfies, prompt a character sheet and describe the outfit (e.g. denim jacket, utility pants, chucks)",
+   "channel": "ai_gen"
+  },
+  {
+   "provider": "higgsfield",
+   "mcp_server": "66e733f1-17be-4bb6-b57b-70fea20b08b2",
+   "tool": "generate_video",
+   "model": "Seedance 2.0",
+   "operation": "image_to_video",
+   "inputs": [
+    "character sheet"
+   ],
+   "params": {
+    "style": "cinematic realistic action",
+    "camera_angle_change_sec": 1.5
+   },
+   "prompt_strategy": "describe the setting first, then the action; style = cinematic realistic action; camera angle changes every ~1.5s",
+   "note": "character sheet passes a copyright check before video generation",
+   "channel": "ai_gen"
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "generated action clip"
+  },
+  {
+   "action": "audio",
+   "channel": "taste",
+   "target": "epic music / SFX (optional)"
+  }
+ ],
+ "result": {
+  "description": "AI superhero action movie starring you.",
+  "success_criteria": [
+   "Likeness consistent (character sheet from 3 angles)",
+   "Outfit matches the described costume",
+   "Cinematic action with ~1.5s camera cuts"
+  ]
+ },
+ "narration_transcript": "Since you're gonna be the superhero of this movie take photos of your face from three angles with these photos We now want to go to Higgsfield.ai and on the website click this yellow generate button down here Then go to images on top and select nano banana pro up here upload the three selfies We've just created and then just prompt that you want to create a character sheet and describe the clothes that you're gonna Be wearing I want to wear a denim jacket utility pants and chucks hit generate and you get this then back in Higgsfield We're finally gonna try the hottest AI video model cdance to upload your character sheet Then it's being checked for copyright issues once it's clear selected and we can now prompt the whole video I like to describe the setting first and then the action Comment superhero and I'll send you the whole prompt at the end I describe the style like cinematic realistic action and tell the camera angle to change every 1.5 seconds hit generate and that's it",
+ "frames": {
+  "demo": [
+   "assets/ai_superhero_action/frame_01.jpg",
+   "assets/ai_superhero_action/frame_02.jpg",
+   "assets/ai_superhero_action/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/ai_superhero_action/frame_04.jpg",
+   "assets/ai_superhero_action/frame_05.jpg",
+   "assets/ai_superhero_action/frame_06.jpg",
+   "assets/ai_superhero_action/frame_07.jpg",
+   "assets/ai_superhero_action/frame_08.jpg",
+   "assets/ai_superhero_action/frame_09.jpg",
+   "assets/ai_superhero_action/frame_10.jpg",
+   "assets/ai_superhero_action/frame_11.jpg",
+   "assets/ai_superhero_action/frame_12.jpg",
+   "assets/ai_superhero_action/frame_13.jpg",
+   "assets/ai_superhero_action/frame_14.jpg",
+   "assets/ai_superhero_action/frame_15.jpg",
+   "assets/ai_superhero_action/frame_16.jpg",
+   "assets/ai_superhero_action/frame_17.jpg",
+   "assets/ai_superhero_action/frame_18.jpg",
+   "assets/ai_superhero_action/frame_19.jpg",
+   "assets/ai_superhero_action/frame_20.jpg",
+   "assets/ai_superhero_action/frame_21.jpg",
+   "assets/ai_superhero_action/frame_22.jpg",
+   "assets/ai_superhero_action/frame_23.jpg",
+   "assets/ai_superhero_action/frame_24.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "549671804",
+  "like_count": 36535,
+  "comment_count": 1423,
+  "upload_date": "20260408",
+  "caption": "I just had to do a Seedance 2.0 tutorial for you guys since it’s the hottest AI video model that has just dropped 🎥🔥so here is a tutorial on how to create your own action video@with you as the superhero like the amazing @maxshinm81 @ai_vitaminc_ 🙌🏼🚀 I made this inside of @higgsfield.ai 😍 enjoy creating!! Hope you like it 🫶🏼",
+  "hashtags": []
+ }
+}
