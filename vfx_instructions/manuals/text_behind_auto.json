@@ -1,0 +1,100 @@
+{
+ "id": "text_behind_auto",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "text_reveal",
+ "title": "Text Behind Subject (auto-removal method)",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "gear_required": [],
+ "props_required": [],
+ "related_to": "text_behind_subject",
+ "result_description": "Text sits behind your subject — the quick auto-removal method (no manual masking or keyframes).",
+ "source": "Colin Pomeroy (@321857083)",
+ "source_url": "https://www.instagram.com/reel/DZ_MrLGuP12/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "subject_clip",
+   "what_to_film": "Your shot with the subject moving in/around where the text will sit.",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_duration"
+   ],
+   "variance_tolerance": {}
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "subject_clip"
+  },
+  {
+   "action": "text",
+   "channel": "ui",
+   "target": "text",
+   "capcut_feature": "Text",
+   "note": "write the text wherever you want it"
+  },
+  {
+   "action": "duplicate",
+   "channel": "structural",
+   "target": "subject_clip",
+   "params": {
+    "to_track": 2
+   },
+   "note": "duplicate the original, overlay, drag directly underneath the original clip"
+  },
+  {
+   "action": "remove_background",
+   "channel": "ui",
+   "target": "overlay",
+   "capcut_feature": "Remove Background → Auto Removal",
+   "params": {
+    "mode": "auto"
+   }
+  },
+  {
+   "action": "position",
+   "channel": "ui",
+   "target": "layer order",
+   "capcut_feature": "Layers",
+   "note": "if the text isn't showing, reorder layers until the cutout sits above the text"
+  }
+ ],
+ "result": {
+  "description": "Text appears behind the subject via auto background removal.",
+  "success_criteria": [
+   "Subject cleanly cut out (auto removal)",
+   "Text occluded by the subject",
+   "Layer order correct so text reads as 'behind'"
+  ]
+ },
+ "narration_transcript": "Episode four of how to edit like a six-figure creator where we get so good at editing that brands can't help but throw money at us. In this episode, you're gonna learn how to do this text behind effect. So all you're gonna need to do is get your shots just like this. Then you're gonna import it into your editor. I'm using cap cut. Then you're gonna tap text and write the text wherever you want it. Then you're gonna tap your original clip, hit duplicate, hit overlay to drop it down, and then drag it directly underneath the original clip. Then you're gonna hit remove background and auto removal. If your text isn't showing up yet, just hit layers and then move the layers around until it does and you're done.",
+ "frames": {
+  "demo": [
+   "assets/text_behind_auto/frame_01.jpg",
+   "assets/text_behind_auto/frame_02.jpg",
+   "assets/text_behind_auto/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/text_behind_auto/frame_04.jpg",
+   "assets/text_behind_auto/frame_05.jpg",
+   "assets/text_behind_auto/frame_06.jpg",
+   "assets/text_behind_auto/frame_07.jpg",
+   "assets/text_behind_auto/frame_08.jpg",
+   "assets/text_behind_auto/frame_09.jpg",
+   "assets/text_behind_auto/frame_10.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "321857083",
+  "like_count": 53,
+  "comment_count": 6,
+  "upload_date": "20260624",
+  "caption": "How to create this text behind effect. Episode 4 of how to get so good at editing brands can’t help but throw money at us…\n\nFeaturing: @capcutapp \n\nFor the record I am not yet a 6-figure creator but I am learning how and showing you everything I gather along the way",
+  "hashtags": []
+ }
+}

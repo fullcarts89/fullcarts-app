@@ -2,7 +2,7 @@
  "source": "External short-form videos ingested into the VFX schema",
  "generated": "2026-06-25",
  "schema_version": 1,
- "effect_count": 44,
+ "effect_count": 45,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -4615,6 +4615,101 @@
      "transcript": "How to create this. Words surrounding outcomes. First, import a video featuring an object. And add the text. Select the annular rolling animation. Now, you can see your words rolling. Then duplicate the video again and place it as an overlay. Use the background removal tool to eliminate the background. Ensure that the overlay video is on the first layer. Last, apply a horizontal mask to the overlay video, covering only one third of the object. Now you learned how to create rolling word effects.",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DYjreGgRPXV/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "Text Behind Subject (auto-removal method)",
+   "slug": "text_behind_auto",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DZ_MrLGuP12/",
+   "source_creator": "Colin Pomeroy (@321857083)",
+   "tool": "CapCut",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Duplicate",
+    "Layers",
+    "Overlay",
+    "Remove Background",
+    "Text"
+   ],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [
+    "Episode four of how to edit like a six-figure creator where we get so good at editing that brands can't help but throw money at us.",
+    "In this episode, you're gonna learn how to do this text behind effect.",
+    "All you're gonna need to do is get your shots just like this.",
+    "You're gonna import it into your editor."
+   ],
+   "editing_steps": [
+    "You're gonna tap text and write the text wherever you want it.",
+    "You're gonna tap your original clip, hit duplicate, hit overlay to drop it down, and then drag it directly underneath the original clip.",
+    "You're gonna hit remove background and auto removal.",
+    "If your text isn't showing up yet, just hit layers and then move the layers around until it does and you're done."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/text_behind_auto/frame_01.jpg",
+   "demo_frames": [
+    "assets/text_behind_auto/frame_01.jpg",
+    "assets/text_behind_auto/frame_02.jpg",
+    "assets/text_behind_auto/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/text_behind_auto/frame_04.jpg",
+    "assets/text_behind_auto/frame_05.jpg",
+    "assets/text_behind_auto/frame_06.jpg",
+    "assets/text_behind_auto/frame_07.jpg",
+    "assets/text_behind_auto/frame_08.jpg",
+    "assets/text_behind_auto/frame_09.jpg",
+    "assets/text_behind_auto/frame_10.jpg"
+   ],
+   "tags": [
+    "auto_bg_removal",
+    "duplicate",
+    "overlay"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Colin Pomeroy",
+    "creator_handle": "321857083",
+    "creator_url": null,
+    "caption": "How to create this text behind effect. Episode 4 of how to get so good at editing brands can’t help but throw money at us…\n\nFeaturing: @capcutapp \n\nFor the record I am not yet a 6-figure creator but I am learning how and showing you everything I gather along the way",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 53,
+    "comment_count": 6,
+    "upload_date": "20260624",
+    "duration_sec": 31.366,
+    "thumbnail": "https://scontent-sea5-1.cdninstagram.com/v/t51.82787-15/730530242_18593460745001084_4750770111877197848_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi43MjAuc2RyLnZpZGVvX2RlZmF1bHRfY292ZXJfZnJhbWUuYzIifQ&_nc_ht=scontent-sea5-1.cdninstagram.com&_nc_cat=108&_nc_oc=Q6cZ2gFvrm26E4LzF6dLXQE9zCjjDRRRZ7zjdTQ8Vq5oAojzp993szFhN6OE8C5ZjY3eJl4&_nc_ohc=5sSMTFuZLYQQ7kNvwGcED_Y&_nc_gid=JIWSHB31e6vKAoPrRjv0_A&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af-NaT0QAzZPy7S7_EQQl1odsG_DNZ7xEUigdbnYyZDfgA&oe=6A43292F&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DZ_MrLGuP12",
+     "title": "Video by colinpomeroyyy",
+     "role": "tutorial",
+     "duration_sec": 31.4,
+     "wistia_id": null,
+     "transcript": "Episode four of how to edit like a six-figure creator where we get so good at editing that brands can't help but throw money at us. In this episode, you're gonna learn how to do this text behind effect. So all you're gonna need to do is get your shots just like this. Then you're gonna import it into your editor. I'm using cap cut. Then you're gonna tap text and write the text wherever you want it. Then you're gonna tap your original clip, hit duplicate, hit overlay to drop it down, and then drag it directly underneath the original clip. Then you're gonna hit remove background and auto removal. If your text isn't showing up yet, just hit layers and then move the layers around until it does and you're done.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DZ_MrLGuP12/",
      "video_url": null
     }
    ]
