@@ -126,11 +126,18 @@ pick reads as "late."** Treat names as candidates, not commitments.
 
 | Trending track | Lane / mood it fits | FullCarts slot to try it on | Vibe note |
 |---|---|---|---|
+| **— Energy / nostalgia pack —** | | | |
 | **Nissan Altima** — Doechii | **1 Educational** (hard, confident) | *Shrink Check* drop on the −X% overlay; Tier List villain energy | drill confidence under the size-cut reveal |
 | **Param-Pam-Pam** — Carlos Campos | **2 Upbeat** (playful Latin) | *Guess the Cut* game treatment; restoration good-news | light/fun — keeps a stat from feeling like a lecture |
 | **Come Around and Love Me** — Jalen Ngonda | **3 Emotional / 4 Sadder** (retro soul) | *Then vs Now* nostalgia gut-punch; *Caught Before/After* reveal | warm soul under "this is what it *used* to be" |
 | **Love Like This** — Faith Evans | **2 Upbeat / 3** (90s R&B nostalgia) | restoration / "they brought it back"; nostalgic before/after | feel-good nostalgia |
 | **La MuDANZA** — Bad Bunny | **5 Day in the life / 3** (reflective, roots) | *Why I Built This* Sunday vlog under the talk-to-camera | reflective, family/roots — fits the tired-dad persona |
+| **— Moody / cinematic pack —** | | | |
+| **Goth (Slowed + Reverb)** — Sidewalks and Skeletons | **4 Sadder** (dark, ominous) | *It's Not You* emotional cold-open; the corporate-villain reveal | dread under "they built it so you'd blame yourself" |
+| **Where Is My Mind?** — Pixies | **4 Sadder / 3** (existential) | *It's Not You*; *Then vs Now* gut-punch | iconic — but heavily licensed, **verify business availability** |
+| **TIKI TIKI [Slowed]** — QMIIR | **3 Emotional** (moody build) | *Caught Before/After* reveal; the setup→reveal beat | slowed build under the before→after |
+| **Chubina** — East Duo | **3 Emotional** (moody groove) | *Caught Before/After*; emotional-build carousels | atmospheric groove for a reveal |
+| **Another Day in Paradise** — Dream Soda | **5 Day in the life / 3** (dreamy lo-fi) | *Why I Built This* vlog; reflective slots | hazy, reflective — persona pieces |
 
 **Hard constraints before any of these ships (these are commercial, copyrighted songs):**
 - **IG/TikTok native add-on only.** Add it from inside that platform's picker on the *discovery* re-cut.
@@ -147,8 +154,10 @@ pick reads as "late."** Treat names as candidates, not commitments.
   authority piece (sonic-identity note above). Trending audio is for the carousels, vlog, and the
   entertainment/discovery cuts.
 
-> Source: Abigail Norman (`@abigaildaniellla`), https://www.instagram.com/reel/DYQOfKZSukQ/ — "5 songs
-> that make your videos more engaging." Picks captured 2026-06-25; refresh against current trending each batch.
+> Sources (picks captured 2026-06-25; refresh against current trending each batch):
+> Abigail Norman (`@abigaildaniellla`), https://www.instagram.com/reel/DYQOfKZSukQ/ — "5 songs that make
+> your videos more engaging" (energy/nostalgia pack) · Mikhail Gribov (`@instacoachmike`),
+> https://www.instagram.com/reel/DUGCPkfkfig/ — "best background music" (moody/cinematic pack).
 
 ---
 
