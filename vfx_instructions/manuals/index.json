@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 88,
+ "count": 89,
  "manuals": [
   {
    "id": "3_clones",
@@ -1117,6 +1117,24 @@
    "status": null,
    "virality_candidate": false,
    "file": "manuals/printed_sticker_flying_object.json"
+  },
+  {
+   "id": "rolling_words_around_object",
+   "title": "Rolling Words Around an Object",
+   "manual_type": "effect",
+   "technique_primitive": "text_reveal",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [],
+   "props_required": [
+    "an object to feature"
+   ],
+   "tool": "CapCut",
+   "source": null,
+   "draft": false,
+   "status": null,
+   "virality_candidate": false,
+   "file": "manuals/rolling_words_around_object.json"
   },
   {
    "id": "screen_pop_out",
