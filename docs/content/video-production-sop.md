@@ -124,6 +124,40 @@ npx remotion render FinalVideo out/final.mp4 --props=src/props/cpi-final.json --
 - Make the thumbnail (HTML mockup → Playwright screenshot, branded) and the per-platform captions/description.
 - Append the post to `content-log.md`.
 
+## 8. Upload-quality / crispness checklist (the publish step)
+
+Crispness is **two halves: render quality + defeating the app's upload compression.** A great master
+still looks soft if the platform app silently recompresses it on upload. Do both.
+
+**Render side (operator) — give the upload something to preserve:**
+- Export the **final master at high quality** — for the §6 *final* render use a low CRF (`--crf 18`,
+  not the review default 23). The review `--scale 0.6 --crf 23` pass is for timing only.
+- **Avoid double-compression:** deliver the master once; don't re-encode it through multiple tools
+  before it reaches the phone. Every re-encode softens it.
+
+**Instagram upload settings (human, in the IG app) — paths verified 2026-06; IG's UI drifts, so confirm in-app:**
+1. **Settings → Media quality → "Use less cellular data" = OFF.** This data-saver **compresses your
+   video and drops quality** — leave it off.
+2. **Same screen → "Upload at highest quality" = ON.** Uploads at the highest resolution instead of
+   auto-adjusting to the network. Slower upload, sharper result. *(Leave "Disable display of HDR media"
+   at its default.)*
+3. **Per-post sharpen (light touch):** uploading a reel → **Edit Video** (lower-left) → **Edit** →
+   **Adjust** → scroll right → **Sharpen.**
+4. **Upload on strong Wi-Fi** — "highest quality" needs bandwidth; on a weak connection IG falls back
+   to a compressed upload even with the toggle on.
+
+**Cross-platform (same principle, every app):** TikTok has **"Allow high-quality uploads" / "Upload
+HD"** in its settings; defeat each platform's default upload compression natively at post time. This
+is a per-platform publish step (like the trending-audio swap), not something baked into the master.
+
+> **⚠️ Brand caveat on sharpening — go light.** Our look is **text-heavy** (captions, `StatCard` /
+> chart overlays, the CAUGHT stamp). Over-sharpening rings/halos on edges and makes crisp Remotion text
+> look *fried*. The overlays are already sharp from the render — sharpen the **filmed footage** subtly,
+> don't crank IG's slider. QC on a chart/caption frame, not just a face frame, before posting.
+
+> Source: Valerie Lisitsyna (`@valerie_lisitsyna`), https://www.instagram.com/reel/DWXlf4FiRi_/ —
+> "crisp without 4K": IG media-quality settings + pre-upload sharpen.
+
 ## Lessons from the CPI Take (what cost time — avoid)
 1. **Length undecided** → it ballooned to 2:29 before we set ≤60s. Decide first.
 2. **Captions burned into the film** → forced a re-shoot/re-export + re-render. Always export caption-free.
