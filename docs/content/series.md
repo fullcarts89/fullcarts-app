@@ -96,6 +96,20 @@ CTA:       "Comment CAUGHT and I'll send you the Gatorade receipts — free. Fol
 - End-screen tease: "Tomorrow — Caught: [next brand], and it's worse." (forces the next view)
 - Pin a playlist / "Caught" highlight so a new viewer can binge the backlog.
 - Consistent thumbnail/cold-open framing so the backlog reads as one body of work.
+- **★ Instagram tappable in-video links (the binge accelerator).** IG now lets you drop a **clickable
+  chip to another reel or username right inside the video**. This is the most direct possible tool for
+  the "get them to 4–5 back-to-back" thesis above: on the end-screen tease, overlay a **tap → next
+  Caught: episode** link so the binge needs zero scrolling. Other uses:
+  - **Interactive aisle menu:** "Tap the aisle that got you — snacks / coffee / cereal," each chip
+    linking to that category's strongest episode (ANJA's "menu" idea, on-brand).
+  - **Source/collab attribution:** tappable @-link to a creator or a duet you're reacting to.
+  - **Caveats (important):** the feature links **IG-internal content (reels + usernames), not external
+    URLs** — so it does **not** replace the spoken/caption CTA + the `fullcarts.org` bio link; it
+    *complements* them. And it's **Instagram-native only** — it won't survive cross-posting to
+    TikTok/Shorts/X, so never make a tappable chip the *only* way to reach the payoff. Treat it as a
+    per-platform IG add-on, exactly like a trending-sound swap (`music-beds.md`).
+  > Adapted from ANJA (`@anja.oerlemans`), https://www.instagram.com/reel/DUDxJBsDHD7/ — the
+  > tappable in-video link demo (menu / choose-your-path / next-episode CTAs).
 
 ---
 
