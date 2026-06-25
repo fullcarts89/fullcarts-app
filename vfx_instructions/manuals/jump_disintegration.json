@@ -1,0 +1,122 @@
+{
+ "id": "jump_disintegration",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "other",
+ "title": "Jump Disintegration Transition (AI)",
+ "difficulty": "beginner",
+ "aspect_ratio": "9:16",
+ "gear_required": [],
+ "props_required": [],
+ "is_ai_generated": true,
+ "tool": "Higgsfield AI + CapCut",
+ "virality_candidate": true,
+ "result_description": "A jump that disintegrates mid-air into an AI transition — looks advanced but it's a quick AI + CapCut workflow from one jump clip.",
+ "source": "Marie | CapCut Editing Tutorials (@78487171966)",
+ "source_url": "https://www.instagram.com/reel/DXuBu1zD_tH/",
+ "inputs": [
+  {
+   "name": "jump_clip",
+   "what_to_film": "Film yourself running and jumping forward.",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_duration"
+   ],
+   "variance_tolerance": {}
+  },
+  {
+   "name": "jump_screenshot",
+   "what_to_film": "A screenshot saved from the exact moment you jump up.",
+   "capture_requirements": {},
+   "acceptance_checks": [
+    "min_resolution"
+   ],
+   "variance_tolerance": {}
+  }
+ ],
+ "ai_generation": [
+  {
+   "provider": "higgsfield",
+   "mcp_server": "66e733f1-17be-4bb6-b57b-70fea20b08b2",
+   "tool": "generate_video",
+   "operation": "image_to_video",
+   "preset": "Disintegration",
+   "inputs": [
+    "jump_screenshot"
+   ],
+   "params": {
+    "start_frame": "jump_screenshot"
+   },
+   "prompt_strategy": "use the disintegration effect; creator gates the exact prompt (comment 'Jump') — author at runtime",
+   "channel": "ai_gen"
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "jump_clip, generated AI clip"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "jump_clip",
+   "capcut_feature": "Split",
+   "timing": {
+    "cue": "the frame you took the screenshot (the jump up)"
+   }
+  },
+  {
+   "action": "position",
+   "channel": "structural",
+   "target": "sequence",
+   "note": "join the AI disintegration clip right after the split so the jump dissolves into the transition"
+  }
+ ],
+ "result": {
+  "description": "Jump dissolves into an AI disintegration transition.",
+  "success_criteria": [
+   "Cut lands exactly on the screenshot frame",
+   "AI clip starts from the same pose (seamless hand-off)",
+   "Disintegration reads as a clean transition"
+  ]
+ },
+ "narration_transcript": "First, film a clip of yourself running and jumping forward. Then open the video and go to the exact moment you jump up. Take a screenshot here and save it. Next, go to Google and search for Hixfield DisintegrationRedditor. Click on the link. This is where you can find the effect. Hit Generate. On the start frame, upload the screenshot.endif and I'll send the prompt over to you. Click Generate and Hixfield will create a video for you. Open CapCut. Click on the link. Go to the point where you took the screenshot, hit Split and",
+ "frames": {
+  "demo": [
+   "assets/jump_disintegration/frame_01.jpg",
+   "assets/jump_disintegration/frame_02.jpg",
+   "assets/jump_disintegration/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/jump_disintegration/frame_04.jpg",
+   "assets/jump_disintegration/frame_05.jpg",
+   "assets/jump_disintegration/frame_06.jpg",
+   "assets/jump_disintegration/frame_07.jpg",
+   "assets/jump_disintegration/frame_08.jpg",
+   "assets/jump_disintegration/frame_09.jpg",
+   "assets/jump_disintegration/frame_10.jpg",
+   "assets/jump_disintegration/frame_11.jpg",
+   "assets/jump_disintegration/frame_12.jpg",
+   "assets/jump_disintegration/frame_13.jpg",
+   "assets/jump_disintegration/frame_14.jpg",
+   "assets/jump_disintegration/frame_15.jpg",
+   "assets/jump_disintegration/frame_16.jpg",
+   "assets/jump_disintegration/frame_17.jpg",
+   "assets/jump_disintegration/frame_18.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "78487171966",
+  "like_count": 2400,
+  "comment_count": 867,
+  "upload_date": "20260429",
+  "caption": "Comment “Jump” and I’ll send you the exact Higgsfield prompt 🔥\n\nHere’s how you can create this viral jump transition effect with only your phone 🤯📱\nIt looks advanced, but it’s actually a simple AI + CapCut workflow using @higgsfield.ai ✨\nA quick jump clip, one clean screenshot, and the AI handles the rest for you ⚡️\n\n✨ Super simple, all you need is your phone and CapCut�🤖 Use Higgsfield to generate the effect from that single image!\nComment “Jump” and I’ll send you the exact Higgsfield prompt 🔥🎬 \n\nHappy creating 🤍 Can’t wait to see your versions of this 🔥�Make it your own and tag me so I can see what you come up with 🧡🚀\nInspo: @isabelatrains\n.\n.\n.\nComment “Jump” and I’ll send you the exact Higgsfield prompt 🔥\n.\n.\n.\n.\n.\n.\n.\nFollow @maverixfx for edits like this 🎬\n@maverixfx\n@maverixfx\n.\n.\n.\n.\n.\n.\n.\n#video #strava  #capcut #tutorial",
+  "hashtags": [
+   "capcut",
+   "strava",
+   "tutorial",
+   "video"
+  ]
+ }
+}
