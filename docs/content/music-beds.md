@@ -114,6 +114,44 @@ The `fullcarts-content` skill, when assembling the week's packet, does for each 
 
 ---
 
+## Trending-audio shortlist — IG/TikTok-native discovery cut ONLY (refresh monthly)
+
+This is the concrete, *dated* version of the "build the trending-sound shortlist" checklist item — a
+grab-and-go set of currently-popular tracks mapped to our lanes, for the **per-platform discovery
+re-cut** (Hybrid play above). **It is not the master bed.** The royalty-free lane track still carries
+the cross-posted master, X, and any ad.
+
+**Snapshot date: 2026-06-25 — re-pull this list each month; trending audio decays fast and a stale
+pick reads as "late."** Treat names as candidates, not commitments.
+
+| Trending track | Lane / mood it fits | FullCarts slot to try it on | Vibe note |
+|---|---|---|---|
+| **Nissan Altima** — Doechii | **1 Educational** (hard, confident) | *Shrink Check* drop on the −X% overlay; Tier List villain energy | drill confidence under the size-cut reveal |
+| **Param-Pam-Pam** — Carlos Campos | **2 Upbeat** (playful Latin) | *Guess the Cut* game treatment; restoration good-news | light/fun — keeps a stat from feeling like a lecture |
+| **Come Around and Love Me** — Jalen Ngonda | **3 Emotional / 4 Sadder** (retro soul) | *Then vs Now* nostalgia gut-punch; *Caught Before/After* reveal | warm soul under "this is what it *used* to be" |
+| **Love Like This** — Faith Evans | **2 Upbeat / 3** (90s R&B nostalgia) | restoration / "they brought it back"; nostalgic before/after | feel-good nostalgia |
+| **La MuDANZA** — Bad Bunny | **5 Day in the life / 3** (reflective, roots) | *Why I Built This* Sunday vlog under the talk-to-camera | reflective, family/roots — fits the tired-dad persona |
+
+**Hard constraints before any of these ships (these are commercial, copyrighted songs):**
+- **IG/TikTok native add-on only.** Add it from inside that platform's picker on the *discovery* re-cut.
+  **Never** in the cross-posted master, on X, or on any boosted/monetized post (copyright rules §1–4).
+  These native copies won't monetize — that's the accepted trade for discovery reach.
+- **⚠️ Business-account catalog gap (verify per song).** A *business* IG/TikTok account is restricted to
+  the Commercial Music Library — several of these may show **"not available for business use."** Before
+  relying on one, confirm it's actually in *your* account's picker; if it's blocked, either pick an
+  available alternative in the same lane or run the IG discovery cut from a Creator-type account. Don't
+  assume availability.
+- **Brand-fit check.** Match the song to the lane's *mood*, not just its popularity — a consumer-advocacy
+  brand can't ride every viral sound. When in doubt, the royalty-free lane bed is always safe.
+- **Caught: hero stays on original audio + signature SFX** — a pop hook never goes over the VO on the
+  authority piece (sonic-identity note above). Trending audio is for the carousels, vlog, and the
+  entertainment/discovery cuts.
+
+> Source: Abigail Norman (`@abigaildaniellla`), https://www.instagram.com/reel/DYQOfKZSukQ/ — "5 songs
+> that make your videos more engaging." Picks captured 2026-06-25; refresh against current trending each batch.
+
+---
+
 ## Setup checklist (one-time)
 - [ ] Pick the house library — **Epidemic Sound** (brand-safe, cross-post + ads, recommended) or
       **Uppbeat free** to start at zero cost.
