@@ -2,7 +2,7 @@
  "source": "External short-form videos ingested into the VFX schema",
  "generated": "2026-06-25",
  "schema_version": 1,
- "effect_count": 45,
+ "effect_count": 46,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -4710,6 +4710,89 @@
      "transcript": "Episode four of how to edit like a six-figure creator where we get so good at editing that brands can't help but throw money at us. In this episode, you're gonna learn how to do this text behind effect. So all you're gonna need to do is get your shots just like this. Then you're gonna import it into your editor. I'm using cap cut. Then you're gonna tap text and write the text wherever you want it. Then you're gonna tap your original clip, hit duplicate, hit overlay to drop it down, and then drag it directly underneath the original clip. Then you're gonna hit remove background and auto removal. If your text isn't showing up yet, just hit layers and then move the layers around until it does and you're done.",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DZ_MrLGuP12/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "Freeze-Frame + Mask Self-Composite",
+   "slug": "freeze_frame_mask_clone",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DZnIXcNvv6g/",
+   "source_creator": "Maibella | UGC & Content Creator 🇨🇦 (@74041169566)",
+   "tool": null,
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": false,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [],
+   "editing_steps": [
+    "What I want.",
+    "I get to work where I want and what I want.",
+    "I get to be my own boss.",
+    "I get to work towards my future and my goals."
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/freeze_frame_mask_clone/frame_01.jpg",
+   "demo_frames": [
+    "assets/freeze_frame_mask_clone/frame_01.jpg",
+    "assets/freeze_frame_mask_clone/frame_02.jpg",
+    "assets/freeze_frame_mask_clone/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/freeze_frame_mask_clone/frame_04.jpg",
+    "assets/freeze_frame_mask_clone/frame_05.jpg",
+    "assets/freeze_frame_mask_clone/frame_06.jpg",
+    "assets/freeze_frame_mask_clone/frame_07.jpg"
+   ],
+   "tags": [],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Maibella | UGC & Content Creator 🇨🇦",
+    "creator_handle": "74041169566",
+    "creator_url": null,
+    "caption": "Original clips vs the final edit! ✨ I got some of you with this one 😅 I used masks and freeze frame to achieve this effect!\n\n#bts #contentcreator #ugc #vfx #ugccreator",
+    "hashtags": [
+     "bts",
+     "contentcreator",
+     "ugc",
+     "ugccreator",
+     "vfx"
+    ],
+    "view_count": null,
+    "like_count": 6898,
+    "comment_count": 66,
+    "upload_date": "20260615",
+    "duration_sec": 20.7,
+    "thumbnail": "https://scontent-sea5-1.cdninstagram.com/v/t51.71878-15/722960668_892783767185273_4529468169725877660_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi42NDAuc2RyLnZpZGVvX25mcmFtZV9jb3Zlcl9mcmFtZS5jMiJ9&_nc_ht=scontent-sea5-1.cdninstagram.com&_nc_cat=105&_nc_oc=Q6cZ2gHGsr6vjSBiTYrsKibDwdXH6qmV72g-79H8THHMfamU-FKs3M_VXTb21veqiI1139s&_nc_ohc=edBRbXbGl8EQ7kNvwESwXBG&_nc_gid=8-DltpAD8okSiBUcjZoTBg&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af-y7DG_KC_PptHJDErVga5Hod6HHaghzwEcPZf1rs6QNg&oe=6A434E3F&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DZnIXcNvv6g",
+     "title": "Video by maibella.creates",
+     "role": "tutorial",
+     "duration_sec": 20.8,
+     "wistia_id": null,
+     "transcript": "what I want. I get to work where I want and what I want. I get to be my own boss. I get to work towards my future and my goals.",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DZnIXcNvv6g/",
      "video_url": null
     }
    ]
