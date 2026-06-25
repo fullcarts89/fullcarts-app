@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 91,
+ "count": 92,
  "manuals": [
   {
    "id": "3_clones",
@@ -757,6 +757,22 @@
    "status": null,
    "virality_candidate": false,
    "file": "manuals/jump_cuts.json"
+  },
+  {
+   "id": "jump_disintegration",
+   "title": "Jump Disintegration Transition (AI)",
+   "manual_type": "effect",
+   "technique_primitive": "other",
+   "difficulty": "beginner",
+   "is_ai_generated": true,
+   "gear_required": [],
+   "props_required": [],
+   "tool": "Higgsfield AI + CapCut",
+   "source": "Marie | CapCut Editing Tutorials (@78487171966)",
+   "draft": false,
+   "status": null,
+   "virality_candidate": true,
+   "file": "manuals/jump_disintegration.json"
   },
   {
    "id": "jump_in_cup",

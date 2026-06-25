@@ -2,7 +2,7 @@
  "source": "External short-form videos ingested into the VFX schema",
  "generated": "2026-06-25",
  "schema_version": 1,
- "effect_count": 46,
+ "effect_count": 47,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -4793,6 +4793,112 @@
      "transcript": "what I want. I get to work where I want and what I want. I get to be my own boss. I get to work towards my future and my goals.",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DZnIXcNvv6g/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "Jump Disintegration Transition (AI)",
+   "slug": "jump_disintegration",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DXuBu1zD_tH/",
+   "source_creator": "Marie | CapCut Editing Tutorials (@78487171966)",
+   "tool": "CapCut",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": true,
+   "is_ai_generated": false,
+   "ai_tools": [],
+   "prompt_needed": false,
+   "capcut_features": [
+    "Split"
+   ],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [
+    "First, film a clip of yourself running and jumping forward.",
+    "Open the video and go to the exact moment you jump up.",
+    "Take a screenshot here and save it.",
+    "Next, go to Google and search for Hixfield DisintegrationRedditor.",
+    "Click on the link.",
+    "This is where you can find the effect.",
+    "Hit Generate.",
+    "On the start frame, upload the screenshot.endif and I'll send the prompt over to you.",
+    "Click Generate and Hixfield will create a video for you."
+   ],
+   "editing_steps": [
+    "Open CapCut.",
+    "Click on the link.",
+    "Go to the point where you took the screenshot, hit Split and"
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/jump_disintegration/frame_01.jpg",
+   "demo_frames": [
+    "assets/jump_disintegration/frame_01.jpg",
+    "assets/jump_disintegration/frame_02.jpg",
+    "assets/jump_disintegration/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/jump_disintegration/frame_04.jpg",
+    "assets/jump_disintegration/frame_05.jpg",
+    "assets/jump_disintegration/frame_06.jpg",
+    "assets/jump_disintegration/frame_07.jpg",
+    "assets/jump_disintegration/frame_08.jpg",
+    "assets/jump_disintegration/frame_09.jpg",
+    "assets/jump_disintegration/frame_10.jpg",
+    "assets/jump_disintegration/frame_11.jpg",
+    "assets/jump_disintegration/frame_12.jpg",
+    "assets/jump_disintegration/frame_13.jpg",
+    "assets/jump_disintegration/frame_14.jpg",
+    "assets/jump_disintegration/frame_15.jpg",
+    "assets/jump_disintegration/frame_16.jpg",
+    "assets/jump_disintegration/frame_17.jpg",
+    "assets/jump_disintegration/frame_18.jpg"
+   ],
+   "tags": [
+    "split_clip"
+   ],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Marie | CapCut Editing Tutorials",
+    "creator_handle": "78487171966",
+    "creator_url": null,
+    "caption": "Comment “Jump” and I’ll send you the exact Higgsfield prompt 🔥\n\nHere’s how you can create this viral jump transition effect with only your phone 🤯📱\nIt looks advanced, but it’s actually a simple AI + CapCut workflow using @higgsfield.ai ✨\nA quick jump clip, one clean screenshot, and the AI handles the rest for you ⚡️\n\n✨ Super simple, all you need is your phone and CapCut�🤖 Use Higgsfield to generate the effect from that single image!\nComment “Jump” and I’ll send you the exact Higgsfield prompt 🔥🎬 \n\nHappy creating 🤍 Can’t wait to see your versions of this 🔥�Make it your own and tag me so I can see what you come up with 🧡🚀\nInspo: @isabelatrains\n.\n.\n.\nComment “Jump” and I’ll send you the exact Higgsfield prompt 🔥\n.\n.\n.\n.\n.\n.\n.\nFollow @maverixfx for edits like this 🎬\n@maverixfx\n@maverixfx\n.\n.\n.\n.\n.\n.\n.\n#video #strava  #capcut #tutorial",
+    "hashtags": [
+     "capcut",
+     "strava",
+     "tutorial",
+     "video"
+    ],
+    "view_count": null,
+    "like_count": 2400,
+    "comment_count": 867,
+    "upload_date": "20260429",
+    "duration_sec": 53.366,
+    "thumbnail": "https://scontent-sea5-1.cdninstagram.com/v/t51.82787-15/684149812_17864480409619967_3372289333214910832_n.jpg?stp=dst-jpg_e35_p1080x1080_sh2.08_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xMTExLnNkci52aWRlb19kZWZhdWx0X2NvdmVyX2ZyYW1lLmMyIn0&_nc_ht=scontent-sea5-1.cdninstagram.com&_nc_cat=111&_nc_oc=Q6cZ2gHAG-BMUeMC4lo3XytThszn5Rggg2j5z2f824i_ium9n2Js-2jIiG7woJy_Ve04PhQ&_nc_ohc=obU3nCiyNCIQ7kNvwEo0tm-&_nc_gid=H6AZR6sgYj4ogdk7JYRFLg&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af_gxUNz3_2RfBFz77gVWgD7SoQejqHThn0DflP8sPhVdw&oe=6A4323BD&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DXuBu1zD_tH",
+     "title": "Video by maverixfx",
+     "role": "tutorial",
+     "duration_sec": 53.4,
+     "wistia_id": null,
+     "transcript": "First, film a clip of yourself running and jumping forward. Then open the video and go to the exact moment you jump up. Take a screenshot here and save it. Next, go to Google and search for Hixfield DisintegrationRedditor. Click on the link. This is where you can find the effect. Hit Generate. On the start frame, upload the screenshot.endif and I'll send the prompt over to you. Click Generate and Hixfield will create a video for you. Open CapCut. Click on the link. Go to the point where you took the screenshot, hit Split and",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DXuBu1zD_tH/",
      "video_url": null
     }
    ]
