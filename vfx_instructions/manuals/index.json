@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "count": 90,
+ "count": 91,
  "manuals": [
   {
    "id": "3_clones",
@@ -567,6 +567,24 @@
    "status": null,
    "virality_candidate": false,
    "file": "manuals/food_spawn.json"
+  },
+  {
+   "id": "freeze_frame_mask_clone",
+   "title": "Freeze-Frame + Mask Self-Composite",
+   "manual_type": "effect",
+   "technique_primitive": "overlay_bg_removal_clone",
+   "difficulty": "intermediate",
+   "is_ai_generated": false,
+   "gear_required": [
+    "tripod"
+   ],
+   "props_required": [],
+   "tool": "CapCut",
+   "source": "Maibella | UGC & Content Creator 🇨🇦 (@74041169566)",
+   "draft": false,
+   "status": null,
+   "virality_candidate": false,
+   "file": "manuals/freeze_frame_mask_clone.json"
   },
   {
    "id": "frozen_jump_float",

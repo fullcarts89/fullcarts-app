@@ -1,0 +1,114 @@
+{
+ "id": "freeze_frame_mask_clone",
+ "schema_version": 1,
+ "manual_type": "effect",
+ "technique_primitive": "overlay_bg_removal_clone",
+ "title": "Freeze-Frame + Mask Self-Composite",
+ "difficulty": "intermediate",
+ "aspect_ratio": "9:16",
+ "gear_required": [
+  "tripod"
+ ],
+ "props_required": [],
+ "sparse_source": true,
+ "related_to": "masking_multi_clone",
+ "result_description": "Multiple versions of you (some frozen) share one frame — a 'wait, how?' illusion built from masks + freeze frames over a locked-off shot.",
+ "note": "The reel narrates only the voiceover; the technique is taken from the creator's caption ('I used masks and freeze frame'). Steps below are the standard recipe for that — refine against the demo frames if needed.",
+ "source": "Maibella | UGC & Content Creator 🇨🇦 (@74041169566)",
+ "source_url": "https://www.instagram.com/reel/DZnIXcNvv6g/",
+ "is_ai_generated": false,
+ "tool": "CapCut",
+ "inputs": [
+  {
+   "name": "locked_takes",
+   "what_to_film": "From a locked-off tripod, film yourself in the different positions/areas of frame you want to appear in at once (hold each pose a moment so it can be frozen).",
+   "capture_requirements": {
+    "locked_off": true
+   },
+   "acceptance_checks": [
+    "camera_locked_off"
+   ],
+   "variance_tolerance": {
+    "camera_shift_px": 6
+   }
+  }
+ ],
+ "edit_steps": [
+  {
+   "action": "import",
+   "channel": "structural",
+   "target": "locked_takes"
+  },
+  {
+   "action": "split",
+   "channel": "ui",
+   "target": "a take",
+   "capcut_feature": "Freeze",
+   "timing": {
+    "cue": "the pose you want to hold"
+   },
+   "note": "freeze frames create the still 'copies'"
+  },
+  {
+   "action": "overlay",
+   "channel": "structural",
+   "target": "each take / freeze",
+   "params": {
+    "stack": true
+   },
+   "note": "stack the clips/freezes on top of one another"
+  },
+  {
+   "action": "mask",
+   "channel": "ui",
+   "target": "each overlay",
+   "capcut_feature": "Mask → Circle/Rectangle",
+   "note": "draw a mask around each version of you so they all show in one frame"
+  },
+  {
+   "action": "mask",
+   "channel": "taste",
+   "target": "each overlay",
+   "capcut_feature": "Mask → Feather",
+   "params": {
+    "feather": "increase to hide seams"
+   }
+  }
+ ],
+ "result": {
+  "description": "Several masked/frozen versions of you in one shot.",
+  "success_criteria": [
+   "Each version occupies a distinct region",
+   "Mask seams hidden (feather)",
+   "Locked-off framing keeps the background consistent"
+  ]
+ },
+ "narration_transcript": "what I want. I get to work where I want and what I want. I get to be my own boss. I get to work towards my future and my goals.",
+ "frames": {
+  "demo": [
+   "assets/freeze_frame_mask_clone/frame_01.jpg",
+   "assets/freeze_frame_mask_clone/frame_02.jpg",
+   "assets/freeze_frame_mask_clone/frame_03.jpg"
+  ],
+  "editing": [
+   "assets/freeze_frame_mask_clone/frame_04.jpg",
+   "assets/freeze_frame_mask_clone/frame_05.jpg",
+   "assets/freeze_frame_mask_clone/frame_06.jpg",
+   "assets/freeze_frame_mask_clone/frame_07.jpg"
+  ]
+ },
+ "source_meta": {
+  "creator_handle": "74041169566",
+  "like_count": 6898,
+  "comment_count": 66,
+  "upload_date": "20260615",
+  "caption": "Original clips vs the final edit! ✨ I got some of you with this one 😅 I used masks and freeze frame to achieve this effect!\n\n#bts #contentcreator #ugc #vfx #ugccreator",
+  "hashtags": [
+   "bts",
+   "contentcreator",
+   "ugc",
+   "ugccreator",
+   "vfx"
+  ]
+ }
+}
