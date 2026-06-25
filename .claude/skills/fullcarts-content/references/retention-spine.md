@@ -52,6 +52,11 @@ visual reveal to land at ~12–15s of a 40s cut, on a re-hook line ("watch what 
 bag"). Pair with the camera track's `rehook` move (`FinalVideo` supports a fake-angle rehook — see
 `docs/content/SESSION-HANDOFF.md`).
 
+**The re-hook can be a camera angle, not just a cut.** At the shoot, give every beat its own setup
+(medium → wide → top-down → close-up → high/low angle) so the *angle change itself* re-grabs
+attention. Full shot-grammar table (beat → angle, plus the pause-music move) lives in the shooting
+SOP: `docs/content/video-production-sop.md` §4.
+
 ---
 
 ## Beat 6 — cut at PEAK, then loop (kill the soft outro)

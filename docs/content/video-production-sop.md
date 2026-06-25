@@ -13,6 +13,7 @@ Lock these *before* filming or rendering — most of the CPI Take rounds came fr
 - [ ] **Format / series** — Shrink Check, Caught:, The Take, etc.
 - [ ] **Hook** — write + approve **The Snap** first (it's the whole ballgame). Don't film until it's locked.
 - [ ] **Beat map** — which lines are FACE vs which get a VISUAL cutaway (and what each visual shows).
+- [ ] **Shot map** — assign each beat a **camera setup/angle** (medium → wide → top-down → close-up → high-angle → low-angle). The angle change *is* the visual re-hook (see §4 Shot grammar + `references/retention-spine.md` beat 3). Decide physical-multi-angle vs single-take + FinalVideo punch-ins **before** filming.
 - [ ] **Numbers** — every on-camera stat traced to `approved-claims.md` §1 or a fresh DB pull. Read them back so there's **no VO flub** (e.g. the "$13 vs $1,300" miss).
 - [ ] **SFX intent** — what sound on what cut (riser? whoosh on cut-IN only? impact?). Use real files in `video/public/audio/sfx/`, not synths.
 - [ ] **Film export rules** — **1080×1920, H.264, 30fps, and NO burned-in captions** (captions are added last, after the cut). This single rule saved a full re-render.
@@ -30,7 +31,43 @@ Lock these *before* filming or rendering — most of the CPI Take rounds came fr
 - Expose timing knobs (`startDelay`, `sweepFrames`) so reveals sync to the VO/SRT.
 
 ## 4. Film — human
-- Shoot the locked script in one continuous take (2–3 takes). Export per the rules in §0. Send the **SRT** (gives exact reveal timings).
+
+### Shot grammar — one angle per beat (the re-hook is the camera move)
+Don't shoot the whole script from one locked-off angle — a static frame is where attention dies.
+**Give every retention beat its own camera setup**, all in the *same location* (your counter/kitchen
+with the real product). The cut between angles re-grabs attention exactly at the sag — it's the
+*physical* version of the re-hook in `../../.claude/skills/fullcarts-content/references/retention-spine.md`
+(beat 3). Map:
+
+| Spine beat (`retention-spine.md`) | Camera setup | Why this angle |
+|---|---|---|
+| 1 · **Hook** | **Medium, eye-level** | bold, direct — state the product + that it shrank, to camera |
+| 2 · **Agitate / lock-in** | **Wide** | relatable, "I'm in your kitchen" — leads into the context |
+| 3 · **Re-hook / context** | **Top-down** over the product + receipt | resets the eye **and** doubles as honest product proof (real item on the counter) |
+| 4 · **The turn** ("it's not you") | **Close-up** — **pause the music** | audio pattern-interrupt synced to the reveal; intimacy on the "it's not you" line |
+| 5 · **Payoff** (the %, the Generosity Tax) | **High-angle wide — restart the music** | music kicks back as the emotional payoff lands |
+| 6 · **Peak-cut ending** | **Close-up, slight low angle** | subtly authoritative; end on the number, **no summary** — the hook already did that. Just leave. |
+
+**The audio move (do it):** at beat 4 **cut the music**, deliver the turn dry, then **restart it** on
+the payoff (beat 5). The silence is a pattern-interrupt that makes the "it's not you, it's them" land.
+
+**Two ways to get the angles (pick in §0):**
+- **Physical multi-angle (hero pieces):** re-position the phone and re-deliver each beat as its own
+  short clip. Most authentic; trades the single clean VO take for visual variety — keep VO energy
+  consistent across setups so the assembled audio doesn't jump.
+- **Single take + FinalVideo (fast turnarounds / B-side):** shoot one continuous take, then approximate
+  the angle changes with `FinalVideo`'s camera track (zoom / punch-in / **fake-angle rehook** — see
+  `SESSION-HANDOFF.md`). Lower effort, keeps one clean VO, but reads less varied than real angles.
+
+**Gate note:** the top-down "proof" angle must show the **real** product/receipt (three-bucket policy,
+`gates.md`) — never a staged or AI prop. The angle sells it; the evidence underneath stays honest.
+
+> Shot grammar adapted from Dominique Holmes (`@dominique.holmess`),
+> https://www.instagram.com/reel/DU5Gr7hEwfo/ — "25k followers, two reels": medium → wide → top-down →
+> close-up (music out) → high-angle wide (music in) → low-angle close, no summary.
+
+### Capture basics
+- Shoot the locked script (2–3 takes per setup). Export per the rules in §0. Send the **SRT** (gives exact reveal timings).
 
 ## 5. Get the film to the operator (chunked upload) — DO NOT re-derive this every time
 
