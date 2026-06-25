@@ -2,7 +2,7 @@
  "source": "External short-form videos ingested into the VFX schema",
  "generated": "2026-06-25",
  "schema_version": 1,
- "effect_count": 47,
+ "effect_count": 48,
  "effects": [
   {
    "effect": "Clone Effect (Talking-Head, Auto BG Removal)",
@@ -4899,6 +4899,99 @@
      "transcript": "First, film a clip of yourself running and jumping forward. Then open the video and go to the exact moment you jump up. Take a screenshot here and save it. Next, go to Google and search for Hixfield DisintegrationRedditor. Click on the link. This is where you can find the effect. Hit Generate. On the start frame, upload the screenshot.endif and I'll send the prompt over to you. Click Generate and Hixfield will create a video for you. Open CapCut. Click on the link. Go to the point where you took the screenshot, hit Split and",
      "transcript_source": "whisper",
      "source_url": "https://www.instagram.com/reel/DXuBu1zD_tH/",
+     "video_url": null
+    }
+   ]
+  },
+  {
+   "effect": "AI Superhero Action Movie (Seedance 2.0)",
+   "slug": "ai_superhero_action",
+   "difficulty": "Beginner",
+   "source": "instagram",
+   "source_url": "https://www.instagram.com/reel/DW4grrejPP_/",
+   "source_creator": "Steven Wommack (@549671804)",
+   "tool": "AI (Higgsfield)",
+   "effect_category": null,
+   "category_ids": [],
+   "gear": null,
+   "technique_note": "Ingested from an external Instagram video via yt-dlp + ffmpeg frames + Whisper transcription. Steps auto-split (review recommended).",
+   "is_full_tutorial": true,
+   "requires_filming": false,
+   "is_ai_generated": true,
+   "ai_tools": [
+    "Higgsfield"
+   ],
+   "prompt_needed": true,
+   "capcut_features": [],
+   "inputs_required": [],
+   "props": [],
+   "needs_clean_plate": false,
+   "needs_tripod": false,
+   "output_aspect": "9:16",
+   "sound_design": null,
+   "filming_steps": [],
+   "editing_steps": [
+    "Since you're gonna be the superhero of this movie take photos of your face from three angles with these photos We now want to go to Higgsfield.ai and on the website click this yellow generate button down here Then go to images on top and select nano banana pro up here upload the three selfies We've just created and then just prompt that you want to create a character sheet and describe the clothes that you're gonna Be wearing I want to wear a denim jacket utility pants and chucks hit generate and you get this then back in Higgsfield We're finally gonna try the hottest AI video model cdance to upload your character sheet Then it's being checked for copyright issues once it's clear selected and we can now prompt the whole video I like to describe the setting first and then the action Comment superhero and I'll send you the whole prompt at the end I describe the style like cinematic realistic action and tell the camera angle to change every 1.5 seconds hit generate and that's it"
+   ],
+   "breakdown_images": [],
+   "demo_still": "assets/ai_superhero_action/frame_01.jpg",
+   "demo_frames": [
+    "assets/ai_superhero_action/frame_01.jpg",
+    "assets/ai_superhero_action/frame_02.jpg",
+    "assets/ai_superhero_action/frame_03.jpg"
+   ],
+   "editing_screenshots": [
+    "assets/ai_superhero_action/frame_04.jpg",
+    "assets/ai_superhero_action/frame_05.jpg",
+    "assets/ai_superhero_action/frame_06.jpg",
+    "assets/ai_superhero_action/frame_07.jpg",
+    "assets/ai_superhero_action/frame_08.jpg",
+    "assets/ai_superhero_action/frame_09.jpg",
+    "assets/ai_superhero_action/frame_10.jpg",
+    "assets/ai_superhero_action/frame_11.jpg",
+    "assets/ai_superhero_action/frame_12.jpg",
+    "assets/ai_superhero_action/frame_13.jpg",
+    "assets/ai_superhero_action/frame_14.jpg",
+    "assets/ai_superhero_action/frame_15.jpg",
+    "assets/ai_superhero_action/frame_16.jpg",
+    "assets/ai_superhero_action/frame_17.jpg",
+    "assets/ai_superhero_action/frame_18.jpg",
+    "assets/ai_superhero_action/frame_19.jpg",
+    "assets/ai_superhero_action/frame_20.jpg",
+    "assets/ai_superhero_action/frame_21.jpg",
+    "assets/ai_superhero_action/frame_22.jpg",
+    "assets/ai_superhero_action/frame_23.jpg",
+    "assets/ai_superhero_action/frame_24.jpg"
+   ],
+   "tags": [],
+   "num_lessons": 1,
+   "num_videos": 1,
+   "source_meta": {
+    "platform": "instagram",
+    "creator_name": "Steven Wommack",
+    "creator_handle": "549671804",
+    "creator_url": null,
+    "caption": "I just had to do a Seedance 2.0 tutorial for you guys since it’s the hottest AI video model that has just dropped 🎥🔥so here is a tutorial on how to create your own action video@with you as the superhero like the amazing @maxshinm81 @ai_vitaminc_ 🙌🏼🚀 I made this inside of @higgsfield.ai 😍 enjoy creating!! Hope you like it 🫶🏼",
+    "hashtags": [],
+    "view_count": null,
+    "like_count": 36535,
+    "comment_count": 1423,
+    "upload_date": "20260408",
+    "duration_sec": 73.166,
+    "thumbnail": "https://scontent-sea1-1.cdninstagram.com/v/t51.71878-15/669664559_892793657113609_2674519476660643488_n.jpg?stp=dst-jpg_e15_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi42NDAuc2RyLnZpZGVvX25mcmFtZV9jb3Zlcl9mcmFtZS5jMiJ9&_nc_ht=scontent-sea1-1.cdninstagram.com&_nc_cat=101&_nc_oc=Q6cZ2gEojeimDJEQstRzuiJiydhlRUj5nPt42yO7jxYxJN6v6eC4FbtS-oGbHlsoHghpJGc&_nc_ohc=TQXh0Jxd6gcQ7kNvwGumBvd&_nc_gid=CGPS89GIDNEMVb_6diU5IQ&edm=ANTKIIoBAAAA&ccb=7-5&oh=00_Af_v0o6WRAJ70AqVfUBmyjSXGv6nhc2s_M-UO7iFjp2LWQ&oe=6A43314B&_nc_sid=d885a2",
+    "width": 1080,
+    "height": 1920
+   },
+   "lessons": [
+    {
+     "post_id": "instagram_DW4grrejPP_",
+     "title": "Video by stevenwommack",
+     "role": "tutorial",
+     "duration_sec": 73.3,
+     "wistia_id": null,
+     "transcript": "Since you're gonna be the superhero of this movie take photos of your face from three angles with these photos We now want to go to Higgsfield.ai and on the website click this yellow generate button down here Then go to images on top and select nano banana pro up here upload the three selfies We've just created and then just prompt that you want to create a character sheet and describe the clothes that you're gonna Be wearing I want to wear a denim jacket utility pants and chucks hit generate and you get this then back in Higgsfield We're finally gonna try the hottest AI video model cdance to upload your character sheet Then it's being checked for copyright issues once it's clear selected and we can now prompt the whole video I like to describe the setting first and then the action Comment superhero and I'll send you the whole prompt at the end I describe the style like cinematic realistic action and tell the camera angle to change every 1.5 seconds hit generate and that's it",
+     "transcript_source": "whisper",
+     "source_url": "https://www.instagram.com/reel/DW4grrejPP_/",
      "video_url": null
     }
    ]
