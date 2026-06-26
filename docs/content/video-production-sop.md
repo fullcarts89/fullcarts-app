@@ -158,6 +158,28 @@ is a per-platform publish step (like the trending-audio swap), not something bak
 > Source: Valerie Lisitsyna (`@valerie_lisitsyna`), https://www.instagram.com/reel/DWXlf4FiRi_/ —
 > "crisp without 4K": IG media-quality settings + pre-upload sharpen.
 
+## 9. Fast structure-matching (CapCut "Split Scenes")
+
+A speed hack for borrowing a **proven edit's pacing** without rebuilding it by hand. In **CapCut**
+(free): import a reference reel → tap **Split Scenes** → it auto-detects every cut in ~2s → **replace
+each clip with your own footage.** You inherit the reel's rhythm (cut timing, beat count) and just
+swap in content. Useful for **B-side / hook-test cuts** and fast turnarounds where the Remotion +
+Captions pipeline (§3–§6) is more than the clip needs.
+
+**Use it for *pacing*, and stay on-brand — the guardrails:**
+- **Borrow rhythm, not the creative.** Match the cut *cadence/structure*, not a specific creator's
+  unique idea clip-for-clip — that's their work, and our edge is original framing (the Snap hook,
+  "it's not you," the named concepts). Reverse-engineer the *tempo*, write our own beats.
+- **Strip the reference's audio.** The imported reel's music is copyrighted — replace it with our
+  royalty-free lane bed (`music-beds.md`); never ship the borrowed sound on the cross-post master.
+- **Dropped-in clips are still REAL evidence** (three-bucket, `gates.md`) — the actual product /
+  receipt, never a staged stand-in just because the slot exists.
+- **Primary assembler is still Captions App + Remotion** for hero pieces (the overlays, SFX, captions
+  pipeline). Treat Split Scenes as a supplementary timing template, not a replacement for §3–§6.
+
+> Source: Alina Merkel (`@alinamerkelcoach`), https://www.instagram.com/reel/DWTrZy8Oe_e/ — CapCut
+> Split Scenes "copy any video" structure hack.
+
 ## Lessons from the CPI Take (what cost time — avoid)
 1. **Length undecided** → it ballooned to 2:29 before we set ≤60s. Decide first.
 2. **Captions burned into the film** → forced a re-shoot/re-export + re-render. Always export caption-free.
