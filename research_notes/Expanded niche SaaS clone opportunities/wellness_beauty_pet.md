@@ -236,7 +236,7 @@ The strongest beatability signals:
 **Original product and revenue proof: Rock Gym Pro (RGP)**
 - Public pricing: Standard $180, Plus $275, Premium $385 per month per facility at the lowest tier, rising to $315 / $430 / $550 at higher tiers. [Vendor page 2026-11-07] — [RGP pricing](https://www.rockgympro.com/pricing)
 - RGP has served climbing gyms since 2008 and calls itself "the most popular climbing gym management software in North America." [Vendor self-claim] — [CBJ author page](https://climbingbusinessjournal.com/author/rock-gym-pro/)
-- A cloud successor, Onsight Pro, is being positioned for migration. [Sponsored content; search summary] — [RGP why](https://www.rockgympro.com/whyrgp)
+- Sponsored content surfaced by search describes "Onsight Pro" as "the cloud-based evolution of Rock Gym Pro," with a guided migration. [Search summary; the exact article URL was not isolated, so this is unverified] — [RGP about](https://rockgympro.com/about)
 
 **Beatability**
 - RGPro Connect member app: 1.83★ from 145 ratings, last updated 2023-08-18. [App Store 2026-11-07] — [iTunes search: Rock Gym Pro](https://itunes.apple.com/search?term=Rock+Gym+Pro&entity=software&country=us)
